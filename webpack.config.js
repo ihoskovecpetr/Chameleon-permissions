@@ -8,6 +8,8 @@ const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
 module.exports = {
     entry: [
+        '@fortawesome/fontawesome-free-solid',
+        'babel-polyfill',
         'react-hot-loader/patch',
         './src/app.js'
     ],

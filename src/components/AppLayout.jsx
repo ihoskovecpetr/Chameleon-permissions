@@ -12,9 +12,50 @@ export default class AppLayout extends React.PureComponent {
     }
 
     render() {
-        return <div className={'test'}>
-            {`Minimal "${APP_NAME.toUpperCase()}" App.`}
-            <FontAwesomeIcon icon={ICON_USER}/>
-        </div>
+        return (
+            <div className={'app-layout'}>
+                <div className={'app-header'}>
+                    {`Minimal "${APP_NAME.toUpperCase()}" App.`}
+                    <FontAwesomeIcon icon={ICON_USER}/>
+                    <span>{this.props.user.name}</span>
+                </div>
+                <div className={'app-body'}>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                    <p>AAAAAAAAAA</p>
+                </div>
+            </div>
+        )
     }
 }
