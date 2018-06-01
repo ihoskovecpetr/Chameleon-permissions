@@ -1,11 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-const title = 'Minimal App!++';
+import AppLayout from './components/AppLayout';
 
-ReactDOM.render(
-    <div>{title}</div>,
-    document.getElementById('app')
-);
+import '@fortawesome/fontawesome-free-solid'
+//import '@fortawesome/fontawesome-free-regular'
+import './app.scss';
 
-module.hot.accept();
+//fontAwesome.library.add(faCoffee, faUser);
+
+ReactDOM.render(<AppLayout/>, document.getElementById('app'));
+
+if (module.hot) {
+    module.hot.accept();
+}

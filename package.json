@@ -4,12 +4,16 @@
   "main": "src/app.js",
   "author": "~mirek",
   "scripts": {
-    "build:webpack": "webpack --progress --config ./webpack.config.js --mode production",
+    "build:webpack": "NODE_ENV=production webpack --progress --config ./webpack.config.js --mode=production",
     "build:copy": "node copy-to-dist.js",
-    "build-projects": "npm run build:webpack && npm run build:copy",
-    "dev": "webpack-dev-server --config ./webpack.config.js --mode development"
+    "build": "npm run build:webpack && npm run build:copy",
+    "dev": "webpack-dev-server --config ./webpack.config.js --mode=development"
   },
   "dependencies": {
+    "@fortawesome/fontawesome": "^1.1.8",
+    "@fortawesome/fontawesome-free-regular": "^5.0.13",
+    "@fortawesome/fontawesome-free-solid": "^5.0.13",
+    "@fortawesome/react-fontawesome": "0.0.20",
     "bootstrap": "^4.1.1",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
@@ -22,9 +26,15 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
+    "css-loader": "^0.28.11",
     "fs-extra": "^6.0.1",
     "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.4.0",
+    "node-sass": "^4.9.0",
+    "optimize-css-assets-webpack-plugin": "^4.0.2",
     "react-hot-loader": "^4.2.0",
+    "sass-loader": "^7.0.1",
+    "style-loader": "^0.21.0",
     "webpack": "^4.10.2",
     "webpack-cli": "^2.1.4",
     "webpack-dev-server": "^3.1.4"
