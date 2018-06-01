@@ -1,4 +1,5 @@
 import React from 'react';
+import {name as APP_NAME}  from '../../package.json';
 
 import FontAwesomeIcon from '@fortawesome/react-fontawesome'
 
@@ -12,7 +13,7 @@ export default class AppLayout extends React.PureComponent {
 
     render() {
         return <div className={'test'}>
-            {'Minimal App!'}
+            {`Minimal "${APP_NAME.toUpperCase()}" App.`}
             <FontAwesomeIcon icon={ICON_USER}/>
         </div>
     }
