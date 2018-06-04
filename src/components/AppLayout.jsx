@@ -1,61 +1,73 @@
 import React from 'react';
-import {name as APP_NAME}  from '../../package.json';
+import {name as APP_NAME, version as APP_VERSION}  from '../../package.json';
 
-import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import AppHeader from './AppHeader';
+import AppBody from './AppBody';
+import AppToolbox from './AppToolbox';
 
-const ICON_USER = 'user';
+const SMALL_WIDTH = 600;
+const MIDDLE_WIDTH = 1000;
 
 export default class AppLayout extends React.PureComponent {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            width: '',
+        };
+
+        this.refresh = this.refresh.bind(this);
+        this.logout = this.logout.bind(this);
+        this.home = this.home.bind(this);
+        this.updateDimensions = this.updateDimensions.bind(this);
+
+        this.appName = `${APP_NAME.charAt(0).toUpperCase()}${APP_NAME.substr(1)}`;
+    }
+
+    componentDidMount() {
+        this.updateDimensions();
+        window.addEventListener("resize", this.updateDimensions);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.updateDimensions);
     }
 
     render() {
         return (
             <div className={'app-layout'}>
-                <div className={'app-header'}>
-                    {`Minimal "${APP_NAME.toUpperCase()}" App.`}
-                    <FontAwesomeIcon icon={ICON_USER}/>
-                    <span>{this.props.user.name}</span>
-                </div>
-                <div className={'app-body'}>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                    <p>AAAAAAAAAA</p>
-                </div>
+                <AppHeader
+                    appName = {this.appName}
+                    appVersion = {APP_VERSION}
+                    user = {this.props.user}
+                    refresh = {this.refresh}
+                    logout = {this.logout}
+                    home = {this.home}
+                    width = {this.state.width}
+                />
+                <AppToolbox
+                    visible = {true}
+                />
+                <AppBody
+                    data = {[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50]}
+                />
             </div>
         )
+    }
+
+    refresh() {
+        console.log('REFRESH')
+    }
+
+    logout() {
+        console.log('LOGOUT')
+    }
+
+    home() {
+        console.log('HOME')
+    }
+
+    updateDimensions() {
+        const w = window.innerWidth;
+        this.setState({ width: w <= SMALL_WIDTH ? 'small' : w <= MIDDLE_WIDTH ? 'middle' : 'big'});
     }
 }

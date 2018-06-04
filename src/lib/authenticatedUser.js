@@ -1,20 +1,19 @@
-export  async function getAuthenticatedUser(/*callback*/) {
-    let remoteUser;
-    const req = new XMLHttpRequest();
-    req.open('GET', "/remote-user", true);
-    req.send(null);
-    req.onreadystatechange = function () {
-        if (req.readyState !== XMLHttpRequest.DONE) {
-            return;
-        }
-        if (req.status !== 200) {
-            return;
-        }
-        remoteUser = JSON.parse(req.responseText);
-        console.log(`Remote user: ${remoteUser.user} [${remoteUser.name}], role: ${remoteUser.role}`);
-        return remoteUser;
-    };
-    //return {user: 'miroslav.kozel', name: 'Miroslav Kozel', role: []};
-    //return Promise.reject('No user authenticated!!')
+export  function getAuthenticatedUser() {
+    return fetch('/remote-user',
+        {
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+                'cache-control': 'no-cache',
+                'pragma': 'no-cache'
+            }
+        })
+        .then(response => {
+            return response.json()
+                .then(data => {
+                    if(response.ok) return data;
+                    else return Promise.reject({status: response.status, data})
+                })
+        });
 }
 

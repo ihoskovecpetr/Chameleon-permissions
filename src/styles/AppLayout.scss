@@ -1,9 +1,17 @@
-$app-header-background-color: #34574b;
-$app-header-color: #e1e1e1;
-$app-padding-horizontal: 15px;
-$app-header-padding-vertical: 15px;
+$app-header-background-color: #4c3356;//#34574b;
+$app-header-color: #d7d7d7;
+$app-header-clickable-color: #d7d7d7;
+
+$app-toolbox-background-color: #919191;
+$app-toolbox-color: #0f0f0f;
+
+$app-header-toolbox-box-radius: 5px;
+
+$app-padding-horizontal: 20px;
 $app-body-background-color: #c3c3c3;
 $app-body-color: #0f0f0f;
+
+$app-header-height: 40px;
 
 html {
   height: 100%;
@@ -26,12 +34,69 @@ body {
   right: 0;
   display: flex;
   flex-direction: column;
+  /* min-width: 480px; */
+  /* max-width: 600px; */
+  //margin-left: auto;
+  //margin-right: auto;
 }
 
 .app-header {
-  padding: $app-header-padding-vertical $app-padding-horizontal;
+  padding: 8px $app-padding-horizontal;
   color: $app-header-color;
   background-color: $app-header-background-color;
+  display: flex;
+  flex-wrap: nowrap;
+  //height: $app-header-height;
+  //min-height: $app-header-height;
+  align-items: center;
+  flex: 0 0 auto;
+  .header-group {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    span {
+      white-space: nowrap;
+    }
+    &.right {
+      margin-left: auto;
+    }
+    &.center {
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 5px;
+    }
+    span.version {
+      font-size: 0.7em;
+      margin-left: 6px;
+      margin-top: 0.3em;
+    }
+  }
+}
+
+.app-toolbox {
+  padding: 0 $app-padding-horizontal;
+  color: $app-toolbox-color;
+  background-color: $app-toolbox-background-color;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  flex: 0 0 auto;
+
+  .toolbox-group {
+    white-space: nowrap;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    padding: 10px;
+    margin: 5px 5px 0 0;
+    border: 1px solid #7d7d7d;
+    border-radius: $app-header-toolbox-box-radius;
+    &.clear {
+      border: none;
+      width: 100%;
+      padding: 0;
+    }
+  }
 }
 
 .app-body {
@@ -39,4 +104,30 @@ body {
   padding: 0 $app-padding-horizontal;
   color: $app-body-color;
   background-color: $app-body-background-color;
+}
+
+.fa-icon {
+  margin-left: 20px;
+  margin-right: 7px;
+  &.first {
+    margin-left: 0;
+  }
+  &.last {
+    margin-right: 0;
+  }
+  &.next {
+    margin-left: 7px;
+  }
+  &.clickable {
+    cursor: pointer;
+    color: $app-header-clickable-color;
+    padding: 3px;
+    //border: 1px solid lighten($app-header-background-color, 10%);
+    border: 1px solid transparentize(desaturate($app-header-clickable-color, 50%), 0.7);
+    border-radius: $app-header-toolbox-box-radius;
+    &:hover {
+      color: lighten($app-header-color, 15%);
+      background-color: lighten($app-header-background-color, 3%);
+    }
+  }
 }

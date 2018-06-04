@@ -22,7 +22,7 @@ module.exports = {
         compress: true,
         proxy: {
             '/remote-user': {
-                target: 'https://booking-devel',
+                target: 'http://localhost:3000',
                 secure: false
             }
         }

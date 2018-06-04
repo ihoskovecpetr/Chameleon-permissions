@@ -9,13 +9,10 @@ import {version as APP_VERSION } from '../package.json';
 import './app.scss';
 //fontAwesome.library.add(faCoffee, faUser);
 
-const apiHost = process.env['API_HOST'] ? process.env['API_HOST'] : '';
-
-getAuthenticatedUser(apiHost)
+getAuthenticatedUser()
     .then(user => {
         console.log(user);
         ReactDOM.render(<AppLayout
-            apiHost = {apiHost}
             user = {user}
             version = {APP_VERSION}
         />, document.getElementById('app'));
