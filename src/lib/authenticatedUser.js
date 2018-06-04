@@ -1,5 +1,5 @@
 export  async function getAuthenticatedUser(/*callback*/) {
-    /*let remoteUser;
+    let remoteUser;
     const req = new XMLHttpRequest();
     req.open('GET', "/remote-user", true);
     req.send(null);
@@ -12,9 +12,9 @@ export  async function getAuthenticatedUser(/*callback*/) {
         }
         remoteUser = JSON.parse(req.responseText);
         console.log(`Remote user: ${remoteUser.user} [${remoteUser.name}], role: ${remoteUser.role}`);
-        callback(remoteUser);
-    };*/
-    return {user: 'miroslav.kozel', name: 'Miroslav Kozel', role: []};
+        return remoteUser;
+    };
+    //return {user: 'miroslav.kozel', name: 'Miroslav Kozel', role: []};
     //return Promise.reject('No user authenticated!!')
 }
 

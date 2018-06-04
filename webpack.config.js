@@ -19,7 +19,13 @@ module.exports = {
         hot: true,
         //open: true,
         port: 8080,
-        compress: true
+        compress: true,
+        proxy: {
+            '/remote-user': {
+                target: 'https://booking-devel',
+                secure: false
+            }
+        }
     },
     optimization: {
         minimizer: [
