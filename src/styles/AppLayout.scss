@@ -11,7 +11,8 @@ $app-padding-horizontal: 20px;
 $app-body-background-color: #c3c3c3;
 $app-body-color: #0f0f0f;
 
-$app-header-height: 40px;
+$app-small-width: 600px;
+$app-middle-width: 1000px;
 
 html {
   height: 100%;
@@ -46,8 +47,6 @@ body {
   background-color: $app-header-background-color;
   display: flex;
   flex-wrap: nowrap;
-  //height: $app-header-height;
-  //min-height: $app-header-height;
   align-items: center;
   flex: 0 0 auto;
   .header-group {
@@ -129,5 +128,11 @@ body {
       color: lighten($app-header-color, 15%);
       background-color: lighten($app-header-background-color, 3%);
     }
+  }
+}
+
+@media only screen and (max-width: $app-small-width) {
+  .header-group.hidden-sm {
+    display: none;
   }
 }

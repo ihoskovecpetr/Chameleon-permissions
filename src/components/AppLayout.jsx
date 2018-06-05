@@ -5,31 +5,16 @@ import AppHeader from './AppHeader';
 import AppBody from './AppBody';
 import AppToolbox from './AppToolbox';
 
-const SMALL_WIDTH = 600;
-const MIDDLE_WIDTH = 1000;
-
 export default class AppLayout extends React.PureComponent {
     constructor(props) {
         super(props);
-        this.state = {
-            width: '',
-        };
+        this.state = {};
 
         this.refresh = this.refresh.bind(this);
         this.logout = this.logout.bind(this);
         this.home = this.home.bind(this);
-        this.updateDimensions = this.updateDimensions.bind(this);
 
         this.appName = `${APP_NAME.charAt(0).toUpperCase()}${APP_NAME.substr(1)}`;
-    }
-
-    componentDidMount() {
-        this.updateDimensions();
-        window.addEventListener("resize", this.updateDimensions);
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener("resize", this.updateDimensions);
     }
 
     render() {
@@ -64,10 +49,5 @@ export default class AppLayout extends React.PureComponent {
 
     home() {
         console.log('HOME')
-    }
-
-    updateDimensions() {
-        const w = window.innerWidth;
-        this.setState({ width: w <= SMALL_WIDTH ? 'small' : w <= MIDDLE_WIDTH ? 'middle' : 'big'});
     }
 }
