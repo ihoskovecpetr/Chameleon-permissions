@@ -1,8 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {getAuthenticatedUser} from './lib/authenticatedUser';
-import AppLayout from './components/AppLayout';
-import {version as APP_VERSION } from '../package.json';
+import DataProvider from './components/DataProvider';
 
 //import '@fortawesome/fontawesome-free-solid'
 //import '@fortawesome/fontawesome-free-regular'
@@ -12,9 +11,8 @@ import './app.scss';
 getAuthenticatedUser()
     .then(user => {
         console.log(user);
-        ReactDOM.render(<AppLayout
+        ReactDOM.render(<DataProvider
             user = {user}
-            version = {APP_VERSION}
         />, document.getElementById('app'));
     })
     .catch(console.log);

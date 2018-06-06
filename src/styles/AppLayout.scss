@@ -14,10 +14,20 @@ $app-body-color: #0f0f0f;
 $app-small-width: 600px;
 $app-middle-width: 1000px;
 
+$app-error-box-background-color: #ae0000;
+$app-info-box-background-color: #327b36;
+$app-message-box-color: #d7d7d7;
+
+
 html {
   height: 100%;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 15px;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
 }
 
 body {
@@ -95,6 +105,39 @@ body {
       width: 100%;
       padding: 0;
     }
+  }
+}
+
+.app-message-box {
+  padding: 5px $app-padding-horizontal;
+  background-color: #3d3d3d;
+  color: $app-message-box-color;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  flex: 0 0 auto;
+  .close-button {
+    margin-right: 7px;
+    cursor: pointer;
+    color: lighten($app-message-box-color, 10%);
+    padding: 2px 0;
+    border: 1px solid transparentize(desaturate($app-message-box-color, 50%), 0.5);
+    border-radius: $app-header-toolbox-box-radius;
+    &:hover {
+      color: lighten($app-message-box-color, 15%);
+      &.error {
+        background-color: lighten($app-error-box-background-color, 5%);
+      }
+      &.info {
+        background-color: lighten($app-info-box-background-color, 5%);
+      }
+    }
+  }
+  &.error {
+    background-color: $app-error-box-background-color;
+  }
+  &.info {
+    background-color: $app-info-box-background-color;
   }
 }
 

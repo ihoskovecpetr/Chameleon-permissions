@@ -11,7 +11,7 @@ export default class AppToolbox extends React.PureComponent {
     render() {
         return (
             <div className={'app-toolbox'}>
-                <div className={'toolbox-group'}>
+                <div onClick={() => this.props.addProject({value: 8888})} className={'toolbox-group'}>
                 {'Some tools 1 here'}
                 </div>
                 <div className={'toolbox-group'}>

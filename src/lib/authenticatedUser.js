@@ -1,4 +1,5 @@
 export  function getAuthenticatedUser() {
+    //TODO solve JWT if stored and valid
     return fetch('/remote-user',
         {
             credentials: 'same-origin',
