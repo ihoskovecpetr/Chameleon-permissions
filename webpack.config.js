@@ -11,6 +11,7 @@ module.exports = {
         '@fortawesome/fontawesome-free-solid',
         'babel-polyfill',
         'react-hot-loader/patch',
+        'bootstrap/dist/css/bootstrap.min.css',
         './src/app.js'
     ],
     devServer: {
@@ -51,6 +52,10 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
+                use: [devMode ? 'style-loader' : MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
+            },
+            {
+                test: /\.css$/,
                 use: [devMode ? 'style-loader' : MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
             }
         ]

@@ -1,8 +1,11 @@
 import React from 'react';
 import moment from 'moment';
 import {name, version}  from '../../package.json';
+import * as logger from 'loglevel';
 
 import AppLayout from './AppLayout';
+
+const DEFAULT_MESSAGE_TIMEOUT_MS = 0;
 
 export default class DataProvider extends React.PureComponent {
     constructor(props) {
@@ -18,12 +21,15 @@ export default class DataProvider extends React.PureComponent {
         this.refresh = this.refresh.bind(this);
         this.logout = this.logout.bind(this);
         this.home = this.home.bind(this);
+
         this.updateProject = this.updateProject.bind(this);
         this.addProject = this.addProject.bind(this);
+
         this.fetchData = this.fetchData.bind(this);
         this.setMessage = this.setMessage.bind(this);
 
-        this.appName = `${name.charAt(0).toUpperCase()}${name.substr(1)}`;
+        this.appName = name.toUpperCase();//`${name.charAt(0).toUpperCase()}${name.substr(1)}`;
+        this.messageTimer = null;
     }
 
     componentDidMount() {
@@ -53,54 +59,83 @@ export default class DataProvider extends React.PureComponent {
         )
     }
 
+    //******************************************************************************************************************
+    // SERVER DATA
+    //******************************************************************************************************************
     refresh() {
-        console.log('REFRESH DATA');
+        logger.debug('Refreshing data');
         this.fetchData();
     }
 
     fetchData() {
-        this.setState({isFetching: true, error: null});
-        console.log('FETCH DATA');
+        this.setMessage(null);
+        this.setState({isFetching: true});
+        logger.debug('Fetching data');
         getMockData()
             .then(projects => {
+                logger.debug(projects);
                 this.setState({dataTimestamp: moment(), projects: projects});
+                this.setMessage({type: 'info', text: 'Fetching done successfully!'}, DEFAULT_MESSAGE_TIMEOUT_MS)
             })
-            .catch(reason => this.setMessage({type: 'info', text: 'Fetching error occurred!'}))
+            .catch(reason => {
+                logger.error(reason);
+                this.setMessage({type: 'error', text: `Error occurred during fetching data from server: ${reason instanceof Error ? reason.message : JSON.stringify(reason)}`})
+            })
             .then(() => this.setState({isFetching: false}))
     }
 
+    //******************************************************************************************************************
+    // PROJECT MANIPULATION
+    //******************************************************************************************************************
+    editProject(id) {
+
+    }
+
+    addProject(project) {
+        logger.debug('ADD PROJECT: ' + JSON.stringify(project));
+        this.setState({projects: [{id: this.state.projects.length, value: project.value}, ...this.state.projects]});
+    }
+
+    updateProject(project) {
+        logger.debug('UPDATE PROJECT: ' + JSON.stringify(project));
+        this.setState({projects: this.state.projects.map(item => item.id === project.id ? project : item)})
+    }
+
+    //******************************************************************************************************************
+    // APP NAVIGATION
+    //******************************************************************************************************************
     logout() {
         //TODO delete JWT and redirect to home/login
-        console.log(`LOGOUT ${this.props.user.name}`);
+        logger.debug(`LOGOUT ${this.props.user.name}`);
         this.setState({projects: []});
     }
 
     home() {
         //TODO redirect to home/
-        console.log('HOME');
+        logger.debug('HOME');
         this.setState({projects: []});
     }
 
-    addProject(project) {
-        console.log('ADD PROJECT: ' + JSON.stringify(project));
-        this.setState({projects: [{id: this.state.projects.length, value: project.value}, ...this.state.projects]});
-    }
-
-    updateProject(project) {
-        console.log('UPDATE PROJECT: ' + JSON.stringify(project));
-        this.setState({projects: this.state.projects.map(item => item.id === project.id ? project : item)})
-    }
-
-    setMessage(message) {
+    //******************************************************************************************************************
+    // HELPERS
+    //******************************************************************************************************************
+    setMessage(message, timeout) {
+        if(this.messageTimer) clearTimeout(this.messageTimer);
+        this.messageTimer = null;
         this.setState({message: message});
+        if(timeout && message && message.type === 'info') this.messageTimer = setTimeout(() => {this.setState({message: null})}, timeout);
     }
 }
 
+
+//**********************************************************************************************************************
+// MOCK DATA
+//**********************************************************************************************************************
 function getMockData() {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
-            reject();
-            return
+            //reject(new Error('Fake fetching error.'));
+            //return;
             const projects = new Array(Math.round(Math.random() * 1000)).fill(0);
             resolve(projects.map((item, index) => {
                 return {
@@ -108,6 +143,6 @@ function getMockData() {
                     value: Math.round(Math.random() * 1000)
                 }
             }))
-        }, 100)
+        }, 300)
     })
 }

@@ -20,8 +20,9 @@ export default class AppHeader extends React.PureComponent {
                     <FontAwesomeIcon onClick={this.props.home} className={`fa-icon first clickable`} icon={ICON_HOME} fixedWidth/>
                     <FontAwesomeIcon onClick={this.props.refresh} className={'fa-icon next clickable'} icon={ICON_RELOAD} fixedWidth/>
                     <span>{this.props.appName}</span>
-                    <span className={'version'}>{this.props.appVersion}</span>
-                    <FontAwesomeIcon className={'fa-icon'} icon={ICON_USER}/>
+                    <span className={'version'}>{`- ${this.props.appVersion}`}</span>
+                    <div className={'header-divider'}/>
+                    <FontAwesomeIcon className={'fa-icon first'} icon={ICON_USER}/>
                     <span>{this.props.user.name}</span>
                     <FontAwesomeIcon onClick={this.props.logout} className={'fa-icon next clickable'} icon={ICON_LOGOUT} fixedWidth/>
                 </div>

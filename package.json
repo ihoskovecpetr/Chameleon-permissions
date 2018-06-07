@@ -16,6 +16,7 @@
     "@fortawesome/react-fontawesome": "0.0.20",
     "babel-polyfill": "^6.26.0",
     "bootstrap": "^4.1.1",
+    "loglevel": "^1.6.1",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
     "react-select": "^1.2.1",

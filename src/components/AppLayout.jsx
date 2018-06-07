@@ -4,6 +4,7 @@ import AppHeader from './AppHeader';
 import AppBody from './AppBody';
 import AppToolbox from './AppToolbox';
 import MessageBox from './MessageBox';
+import FetchingIndicator from './FetchingIndicator';
 
 export default class AppLayout extends React.PureComponent {
     constructor(props) {
@@ -33,6 +34,7 @@ export default class AppLayout extends React.PureComponent {
                     projects = {this.props.projects}
                     updateProject = {this.props.updateProject}
                 />
+                <FetchingIndicator open={this.props.isFetching}/>
             </div>
         )
     }
