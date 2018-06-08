@@ -15,7 +15,10 @@ export default class AppHeader extends React.PureComponent {
 
     render() {
         const nameLong = this.props.user.name;
-        const nameShort = 'M. Kozel';
+        let nameShort = this.props.user.name ? this.props.user.name.split(' ') : this.props.user.name;
+        if(nameShort && Array.isArray(nameShort) && nameShort.length > 1) {
+            nameShort = `${nameShort[0].charAt(0)}. ${nameShort.slice(1).join(' ')}`
+        } else nameShort = this.props.user.name;
         return (
             <div className={'app-header'}>
                 <div className={'header-group'}>

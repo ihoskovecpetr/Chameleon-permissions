@@ -1,0 +1,115 @@
+$app-toolbox-background-color: #919191;
+$app-toolbox-color: #0f0f0f;
+$data-body-padding-horizontal: $app-padding-horizontal;
+$toolbox-box-radius: $app-header-button-radius;
+$data-body-background-color: #c3c3c3;
+$data-body-color: #0f0f0f;
+
+.app-toolbox {
+  padding: 0 $data-body-padding-horizontal;
+  color: $app-toolbox-color;
+  background-color: $app-toolbox-background-color;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  flex: 0 0 auto;
+
+  .toolbox-group {
+    white-space: nowrap;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    padding: 0.6rem;
+    margin: 0.3rem 0.3rem 0 0;
+    border: 1px solid #7d7d7d;
+    border-radius: $toolbox-box-radius;
+    &.clear {
+      border: none;
+      width: 100%;
+      padding: 0;
+    }
+  }
+}
+.data-header {
+  //padding: 0 $data-body-padding-horizontal;
+  background-color: #535353;
+  color: #e1e1e1;
+  font-size: 1rem;
+  table {
+    margin: 0.1rem 0;
+    table-layout: fixed;
+  }
+}
+.data-body {
+  overflow: hidden;
+  //padding: 0 $data-body-padding-horizontal;
+  color: $data-body-color;
+  background-color: $data-body-background-color;
+  font-size: 1rem;
+  width: 100%;
+  table {
+    margin-bottom: 0.1rem;
+    table-layout: fixed;
+  }
+/*
+  -ms-overflow-style: none;  // IE 10+
+  overflow: -moz-scrollbars-none;  // Firefox
+  &::-webkit-scrollbar {
+    display: none;  // Safari and Chrome
+  }
+*/
+}
+
+.table th, .table td {
+  padding: 0.2rem 0.4rem;
+  font-weight: normal;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  &:last-child {
+    padding-right: $data-body-padding-horizontal;
+  }
+  &:first-child {
+    padding-left: $data-body-padding-horizontal;
+  }
+  &.first {
+    width: 15%;
+    @include media(">=tablet") {
+      width: 8%;
+    }
+  }
+  &.second {
+    width: 30%;
+    @include media(">=tablet") {
+      width: 20%;
+    }
+  }
+  &.third {
+    //width: 15%;
+    display: none;
+    @include media(">=tablet") {
+      width: 15%;
+      display: table-cell;
+    }
+  }
+  &.fourth {
+    width: 25%;
+    @include media(">=tablet") {
+      width: 17%;
+    }
+  }
+  &.fifth {
+    width: 30%;
+    @include media(">=tablet") {
+      width: 20%;
+    }
+  }
+  &.sixth {
+    //width: 20%;
+    display: none;
+    @include media(">=tablet") {
+      width: 20%;
+      display: table-cell;
+    }
+  }
+}

@@ -2,7 +2,6 @@ import React from 'react';
 
 import AppHeader from './AppHeader';
 import AppBody from './AppBody';
-import AppToolbox from './AppToolbox';
 import MessageBox from './MessageBox';
 import FetchingIndicator from './FetchingIndicator';
 
@@ -23,9 +22,6 @@ export default class AppLayout extends React.PureComponent {
                     home = {this.props.home}
                     dataTimestamp = {this.props.dataTimestamp}
                 />
-                <AppToolbox
-                    addProject = {this.props.addProject}
-                />
                 <MessageBox
                     message = {this.props.message}
                     close = {() => this.props.setMessage(null)}
@@ -33,6 +29,7 @@ export default class AppLayout extends React.PureComponent {
                 <AppBody
                     projects = {this.props.projects}
                     updateProject = {this.props.updateProject}
+                    addProject = {this.props.addProject}
                 />
                 <FetchingIndicator open={this.props.isFetching}/>
             </div>

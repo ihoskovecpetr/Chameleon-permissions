@@ -2,14 +2,9 @@ $app-header-background-color: #4c3356;//#34574b;
 $app-header-color: #d7d7d7;
 $app-header-clickable-color: #d7d7d7;
 
-$app-toolbox-background-color: #919191;
-$app-toolbox-color: #0f0f0f;
-
-$app-header-toolbox-box-radius: 0.3rem;
+$app-header-button-radius: 0.3rem;
 
 $app-padding-horizontal: 1.3rem;
-$app-body-background-color: #c3c3c3;
-$app-body-color: #0f0f0f;
 
 $app-error-box-background-color: #ae0000;
 $app-info-box-background-color: #327b36;
@@ -115,32 +110,6 @@ body {
   }
 }
 
-.app-toolbox {
-  padding: 0 $app-padding-horizontal;
-  color: $app-toolbox-color;
-  background-color: $app-toolbox-background-color;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  flex: 0 0 auto;
-
-  .toolbox-group {
-    white-space: nowrap;
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: center;
-    padding: 0.6rem;
-    margin: 0.3rem 0.3rem 0 0;
-    border: 1px solid #7d7d7d;
-    border-radius: $app-header-toolbox-box-radius;
-    &.clear {
-      border: none;
-      width: 100%;
-      padding: 0;
-    }
-  }
-}
-
 .app-message-box {
   padding: 0.3rem $app-padding-horizontal;
   background-color: #3d3d3d;
@@ -156,7 +125,7 @@ body {
     width: 1.2rem;
     height: 1.2rem;
     border: 1px solid;
-    border-radius: $app-header-toolbox-box-radius;
+    border-radius: $app-header-button-radius;
     &:hover {
       background-color: transparentize(white, 0.9);
     }
@@ -186,12 +155,11 @@ body {
     display: none;
   }
 }
-
 .app-body {
-  overflow-y: auto;
-  padding: 0 $app-padding-horizontal;
-  color: $app-body-color;
-  background-color: $app-body-background-color;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 100%;
+  overflow: hidden;
 }
 
 .fa-icon {
@@ -213,7 +181,7 @@ body {
     width: 1.6rem;
     height: 1.6rem;
     border: 1px solid transparentize(desaturate($app-header-clickable-color, 50%), 0.7);
-    border-radius: $app-header-toolbox-box-radius;
+    border-radius: $app-header-button-radius;
     &:hover {
       color: lighten($app-header-color, 15%);
       background-color: lighten($app-header-background-color, 5%);
@@ -248,36 +216,3 @@ body {
   from {background-color: rgba(30, 30, 30, 0);}
   to {background-color: rgba(30, 30, 30, 0.3);}
 }
-
-//**********************************************************************************************************************
-// MEDIA QUERIES
-//**********************************************************************************************************************
-
-/*
-@media only screen and (max-width: $app-xl-width) {
-  html {
-    font-size: 15px;
-  }
-}
-
-@media only screen and (max-width: $app-lg-width) {
-  html {
-    font-size: 15px;
-  }
-}
-
-@media only screen and (max-width: $app-md-width) {
-  html {
-    font-size: 14px;
-  }
-}
-
-@media only screen and (max-width: $app-sm-width) {
-  .header-group.hidden-sm {
-    display: none;
-  }
-  html {
-    font-size: 12px;
-  }
-}
-*/

@@ -5,7 +5,7 @@ import * as logger from 'loglevel';
 
 import AppLayout from './AppLayout';
 
-const DEFAULT_MESSAGE_TIMEOUT_MS = 0;
+const DEFAULT_MESSAGE_TIMEOUT_MS = 3000;
 
 export default class DataProvider extends React.PureComponent {
     constructor(props) {
@@ -75,7 +75,7 @@ export default class DataProvider extends React.PureComponent {
             .then(projects => {
                 logger.debug(projects);
                 this.setState({dataTimestamp: moment(), projects: projects});
-                this.setMessage({type: 'info', text: 'Fetching done successfully!'}, DEFAULT_MESSAGE_TIMEOUT_MS)
+                //this.setMessage({type: 'info', text: 'Fetching done successfully!'}, DEFAULT_MESSAGE_TIMEOUT_MS)
             })
             .catch(reason => {
                 logger.error(reason);
@@ -87,10 +87,6 @@ export default class DataProvider extends React.PureComponent {
     //******************************************************************************************************************
     // PROJECT MANIPULATION
     //******************************************************************************************************************
-    editProject(id) {
-
-    }
-
     addProject(project) {
         logger.debug('ADD PROJECT: ' + JSON.stringify(project));
         this.setState({projects: [{id: this.state.projects.length, value: project.value}, ...this.state.projects]});
@@ -136,7 +132,7 @@ function getMockData() {
         setTimeout(() => {
             //reject(new Error('Fake fetching error.'));
             //return;
-            const projects = new Array(Math.round(Math.random() * 1000)).fill(0);
+            const projects = new Array(Math.round(Math.random() * 1500)).fill(0);
             resolve(projects.map((item, index) => {
                 return {
                     id: index,

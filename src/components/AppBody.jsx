@@ -1,13 +1,15 @@
 import React from 'react';
-import moment from 'moment';
 
+import DataHeader from './DataHeader';
+import DataBody from './DataBody';
+import AppToolbox from './AppToolbox';
 import ProjectEditModal from './ProjectEditModal';
 
 export default class AppBody extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            edited: null
+            editedProject: null
         };
 
         this.edit = this.edit.bind(this);
@@ -18,10 +20,16 @@ export default class AppBody extends React.PureComponent {
     render() {
         return (
             <div className={'app-body'}>
-                {this.props.projects.map(project => <div onClick = {() => this.edit(project.id)} key={project.id}>{project.value}</div>)}
+                <AppToolbox
+                    isOpen = {true}
+                />
+                <DataHeader/>
+                <DataBody
+                    projects = {this.props.projects}
+                />
                 <ProjectEditModal
-                    project = {this.state.edited}
-                    isOpen = {!!this.state.edited}
+                    project = {this.state.editedProject}
+                    isOpen = {!!this.state.editedProject}
                     close = {this.close}
                     save = {this.save}
                 />
@@ -32,18 +40,16 @@ export default class AppBody extends React.PureComponent {
     edit(id) {
         const project = this.props.projects.find(project => project.id === id);
         if(project) {
-            this.setState({edited: {...project}});
+            this.setState({editedProject: {...project}});
         }
     }
 
     close() {
-        this.setState({edited: null});
+        this.setState({editedProject: null});
     }
 
     save(project) {
         this.close();
         if(project) this.props.updateProject(project)
     }
-
-    //() => this.props.updateProject({id: project.id, value: project.value + 1})
 }
