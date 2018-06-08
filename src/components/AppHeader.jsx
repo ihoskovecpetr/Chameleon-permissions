@@ -14,6 +14,8 @@ export default class AppHeader extends React.PureComponent {
     }
 
     render() {
+        const nameLong = this.props.user.name;
+        const nameShort = 'M. Kozel';
         return (
             <div className={'app-header'}>
                 <div className={'header-group'}>
@@ -23,14 +25,15 @@ export default class AppHeader extends React.PureComponent {
                     <span className={'version'}>{`- ${this.props.appVersion}`}</span>
                     <div className={'header-divider'}/>
                     <FontAwesomeIcon className={'fa-icon first'} icon={ICON_USER}/>
-                    <span>{this.props.user.name}</span>
+                    <span className={'header-name long'}>{nameLong}</span>
+                    <span className={'header-name short'}>{nameShort}</span>
                     <FontAwesomeIcon onClick={this.props.logout} className={'fa-icon next clickable'} icon={ICON_LOGOUT} fixedWidth/>
                 </div>
-                {/*this.props.width !== 'small' ?*/}
-                    <div className={'header-group right hidden-sm'}>
-                        <span>{moment().format('dddd D.M.YYYY')}</span>
-                    </div>
-                {/*: null*/}
+
+                <div className={'header-group right header-date'}>
+                    <span>{moment().format('dddd D.M.YYYY')}</span>
+                </div>
+
             </div>
         )
     }
