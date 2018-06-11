@@ -5,7 +5,8 @@ import * as logger from 'loglevel';
 
 import AppLayout from './AppLayout';
 
-const DEFAULT_MESSAGE_TIMEOUT_MS = 3000;
+const DEFAULT_MESSAGE_TIMEOUT_MS = 0;
+const SHOW_MESSAGE_ON_SUCCESS = true;
 
 export default class DataProvider extends React.PureComponent {
     constructor(props) {
@@ -75,7 +76,7 @@ export default class DataProvider extends React.PureComponent {
             .then(projects => {
                 logger.debug(projects);
                 this.setState({dataTimestamp: moment(), projects: projects});
-                //this.setMessage({type: 'info', text: 'Fetching done successfully!'}, DEFAULT_MESSAGE_TIMEOUT_MS)
+                if(SHOW_MESSAGE_ON_SUCCESS) this.setMessage({type: 'info', text: 'Fetching done successfully!'}, DEFAULT_MESSAGE_TIMEOUT_MS)
             })
             .catch(reason => {
                 logger.error(reason);

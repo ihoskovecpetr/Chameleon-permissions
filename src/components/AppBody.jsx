@@ -22,10 +22,12 @@ export default class AppBody extends React.PureComponent {
             <div className={'app-body'}>
                 <AppToolbox
                     isOpen = {true}
+                    addProject = {this.props.addProject}
                 />
                 <DataHeader/>
                 <DataBody
                     projects = {this.props.projects}
+                    edit = {this.edit}
                 />
                 <ProjectEditModal
                     project = {this.state.editedProject}

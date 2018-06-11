@@ -111,7 +111,7 @@ body {
 }
 
 .app-message-box {
-  padding: 0.3rem $app-padding-horizontal;
+  padding: 0.3rem $app-padding-horizontal 0.3rem $app-padding-horizontal + 0.15rem;
   background-color: #3d3d3d;
   display: flex;
   align-items: center;

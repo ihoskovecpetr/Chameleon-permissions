@@ -19,7 +19,7 @@ export default class DataBody extends React.PureComponent {
             >
                 <Table>
                     <tbody>
-                    {this.props.projects.map(project => <tr onClick = {() => this.edit(project.id)} key={project.id}>
+                    {this.props.projects.map(project => <tr onClick = {() => this.props.edit(project.id)} key={project.id}>
                         <td className={'first'}>{project.id}</td>
                         <td className={'second'}>{project.value}</td>
                         <td className={'third'}>Column 3</td>
