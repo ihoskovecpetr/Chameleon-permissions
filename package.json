@@ -4,9 +4,9 @@
   "main": "src/app.js",
   "author": "~mirek",
   "scripts": {
-    "build:webpack": "NODE_ENV=production webpack --progress --config ./webpack.config.js --mode=production",
-    "build:copy": "node copy-to-dist.js",
-    "build": "npm run build:webpack && npm run build:copy",
+    "build": "rimraf build && NODE_ENV=production webpack --progress --config ./webpack.config.js --mode=production",
+    "copy": "node copy-to-dist.js",
+    "build:copy": "npm run build && npm run copy",
     "dev": "webpack-dev-server --config ./webpack.config.js --mode=development"
   },
   "dependencies": {
