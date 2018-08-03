@@ -1,4 +1,4 @@
-const APP_NAME = require('./package.json').name;
+const APP_NAME = "projects";
 const devMode = process.env.NODE_ENV !== 'production';
 
 const webpack = require('webpack');
