@@ -3,7 +3,7 @@ import moment from 'moment';
 import {name, version}  from '../../package.json';
 import * as logger from 'loglevel';
 
-import {getProjects} from '../lib/serverData';
+import {getProjects, createProject, updateProject} from '../lib/serverData';
 
 import AppLayout from './AppLayout';
 
@@ -26,7 +26,7 @@ export default class DataProvider extends React.PureComponent {
         this.home = this.home.bind(this);
 
         this.updateProject = this.updateProject.bind(this);
-        this.addProject = this.addProject.bind(this);
+        this.createProject = this.createProject.bind(this);
 
         this.fetchData = this.fetchData.bind(this);
         this.setMessage = this.setMessage.bind(this);
@@ -57,7 +57,7 @@ export default class DataProvider extends React.PureComponent {
                 setMessage = {this.setMessage}
 
                 updateProject = {this.updateProject}
-                addProject = {this.addProject}
+                createProject = {this.createProject}
             />
         )
     }
@@ -70,34 +70,58 @@ export default class DataProvider extends React.PureComponent {
         this.fetchData();
     }
 
-    fetchData() {
+    async fetchData() {
         this.setMessage(null);
         this.setState({isFetching: true});
         logger.debug('Fetching data');
-        getProjects()
-            .then(projects => {
-                logger.debug(projects);
-                this.setState({dataTimestamp: moment(), projects: projects});
-                if(SHOW_MESSAGE_ON_SUCCESS) this.setMessage({type: 'info', text: 'Fetching done successfully!'}, DEFAULT_MESSAGE_TIMEOUT_MS)
-            })
-            .catch(reason => {
-                logger.error(reason);
-                this.setMessage({type: 'error', text: `Error occurred during fetching data from server: ${reason instanceof Error ? reason.message : JSON.stringify(reason)}`})
-            })
-            .then(() => this.setState({isFetching: false}))
+        try {
+            const projects = await getProjects();
+            logger.debug(projects);
+            this.setState({dataTimestamp: moment(), projects: projects});
+            if (SHOW_MESSAGE_ON_SUCCESS) this.setMessage({
+                type: 'info',
+                text: 'Fetching done successfully!'
+            }, DEFAULT_MESSAGE_TIMEOUT_MS)
+        } catch (e) {
+            logger.error(e);
+            this.setMessage({type: 'error', text: `Error occurred during fetching data from the server: ${e instanceof Error ? e.message : JSON.stringify(e)}`})
+        }
+        this.setState({isFetching: false});
     }
 
     //******************************************************************************************************************
     // PROJECT MANIPULATION
     //******************************************************************************************************************
-    addProject(project) {
-        logger.debug('ADD PROJECT: ' + JSON.stringify(project));
-        this.setState({projects: [{id: this.state.projects.length, value: project.value}, ...this.state.projects]});
+    async createProject(projectData) {
+        this.setMessage(null);
+        this.setState({isFetching: true});
+        logger.debug('Create project: ' + JSON.stringify(projectData));
+        try {
+            const project = await createProject(projectData);
+            this.setState({projects: [...this.state.projects, project]});
+        } catch (e) {
+            logger.error(e);
+            this.setMessage({type: 'error', text: `Create Project Error: ${e instanceof Error ? e.message : JSON.stringify(e)}`})
+        }
+        this.setState({isFetching: false});
     }
 
-    updateProject(project) {
-        logger.debug('UPDATE PROJECT: ' + JSON.stringify(project));
-        this.setState({projects: this.state.projects.map(item => item.id === project.id ? project : item)})
+    async updateProject(projectData) {
+        this.setMessage(null);
+        this.setState({isFetching: true});
+        logger.debug('Update project: ' + JSON.stringify(projectData));
+        try {
+            const project = await updateProject(projectData);
+            const newProjects = [...this.props.projects];
+            const index = this.props.projects.findIndex(project => projectData._id == project._id);
+            if(index >= 0) newProjects[index] = project;
+            else newProjects.push(project);
+            this.setState({projects: newProjects});
+        } catch (e) {
+            logger.error(e);
+            this.setMessage({type: 'error', text: `Update Project Error: ${e instanceof Error ? e.message : JSON.stringify(e)}`})
+        }
+        this.setState({isFetching: false});
     }
 
     //******************************************************************************************************************

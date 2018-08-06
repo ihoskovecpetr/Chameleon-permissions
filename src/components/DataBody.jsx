@@ -2,6 +2,8 @@ import React from 'react';
 import { Table } from 'reactstrap';
 import { Scrollbars } from 'react-custom-scrollbars';
 
+import tableLayout from '../constants/DataLayout.json';
+
 export default class DataBody extends React.PureComponent {
     constructor(props) {
         super(props);
@@ -19,13 +21,8 @@ export default class DataBody extends React.PureComponent {
             >
                 <Table>
                     <tbody>
-                    {this.props.projects.map(project => <tr onClick = {() => this.props.edit(project.id)} key={project.id}>
-                        <td className={'first'}>{project.id}</td>
-                        <td className={'second'}>{project.value}</td>
-                        <td className={'third'}>Column 3</td>
-                        <td className={'fourth'}>{'A'}</td>
-                        <td className={'fifth'}>{'B'}</td>
-                        <td className={'sixth'}>{'C'}</td>
+                    {this.props.projects.map(project => <tr onClick = {() => this.props.edit(project.id)} key={project.projectId}>
+                        {tableLayout[this.props.layout ? this.props.layout : 'full'].map((column, i) => <td key={i} className={column.className}>{project[column.field]}</td>)}
                     </tr>)}
                     </tbody>
                 </Table>

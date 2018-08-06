@@ -29,7 +29,7 @@ export default class AppLayout extends React.PureComponent {
                 <AppBody
                     projects = {this.props.projects}
                     updateProject = {this.props.updateProject}
-                    addProject = {this.props.addProject}
+                    createProject = {this.props.createProject}
                 />
                 <FetchingIndicator open={this.props.isFetching}/>
             </div>

@@ -25,6 +25,10 @@ module.exports = {
             '/remote-user': {
                 target: 'http://localhost:3000',
                 secure: false
+            },
+            '/api/project': {
+                target: 'http://localhost:3000',
+                secure: false
             }
         }
     },

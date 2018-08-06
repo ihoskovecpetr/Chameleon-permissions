@@ -15,6 +15,7 @@ export default class AppBody extends React.PureComponent {
         this.edit = this.edit.bind(this);
         this.close = this.close.bind(this);
         this.save = this.save.bind(this);
+        this.create = this.create.bind(this);
     }
 
     render() {
@@ -22,12 +23,15 @@ export default class AppBody extends React.PureComponent {
             <div className={'app-body'}>
                 <AppToolbox
                     isOpen = {true}
-                    addProject = {this.props.addProject}
+                    createProject = {this.create}
                 />
-                <DataHeader/>
+                <DataHeader
+                    layout={'full'}
+                />
                 <DataBody
                     projects = {this.props.projects}
                     edit = {this.edit}
+                    layout={'full'}
                 />
                 <ProjectEditModal
                     project = {this.state.editedProject}
@@ -52,6 +56,16 @@ export default class AppBody extends React.PureComponent {
 
     save(project) {
         this.close();
-        if(project) this.props.updateProject(project)
+        if(project) {
+            if(project.projectId) {
+                this.props.updateProject(project);
+            } else {
+                this.props.createProject(project);
+            }
+        }
+    }
+
+    create() {
+        this.setState({editedProject: {}})
     }
 }
