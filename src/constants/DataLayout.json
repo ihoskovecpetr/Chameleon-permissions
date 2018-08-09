@@ -1,11 +1,13 @@
 {
-  "full": [
-    {"className": "first", "label": "ID", "field": "projectId"},
+  "all": [
     {"className": "second", "label": "Project Name", "field": "name"},
     {"className": "third", "label": "Status", "field": "status"},
     {"className": "fourth", "label": "Column 4"},
     {"className": "fifth", "label": "Column 5"},
     {"className": "sixth", "label": "Column 6"}
   ],
-  "activebid": []
+  "bid": [
+    {"className": "second", "label": "Project Name", "field": "name"},
+    {"className": "third", "label": "Status", "field": "status"}
+  ]
 }

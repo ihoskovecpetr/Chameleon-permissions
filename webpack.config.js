@@ -6,9 +6,10 @@ const HtmlWepackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
+const PROXY_REMOTE_USER = 'miroslav.kozel';
+
 module.exports = {
     entry: [
-        '@fortawesome/fontawesome-free-solid',
         'babel-polyfill',
         'react-hot-loader/patch',
         'bootstrap/dist/css/bootstrap.min.css',
@@ -24,11 +25,13 @@ module.exports = {
         proxy: {
             '/remote-user': {
                 target: 'http://localhost:3000',
-                secure: false
+                secure: false,
+                headers: {'remote_user': PROXY_REMOTE_USER}
             },
             '/api/project': {
                 target: 'http://localhost:3000',
-                secure: false
+                secure: false,
+                headers: {'remote_user': PROXY_REMOTE_USER}
             }
         }
     },

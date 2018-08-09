@@ -1,6 +1,6 @@
 import React from 'react';
 import moment from 'moment';
-import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export default class AppToolbox extends React.PureComponent {
     constructor(props) {

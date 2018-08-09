@@ -1,6 +1,6 @@
 import React from 'react';
 import moment from 'moment';
-import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const ICON_USER = 'user';
 const ICON_RELOAD = 'sync-alt';
@@ -25,13 +25,19 @@ export default class AppHeader extends React.PureComponent {
                     <FontAwesomeIcon onClick={this.props.home} className={`fa-icon first clickable`} icon={ICON_HOME} fixedWidth/>
                     <FontAwesomeIcon onClick={this.props.refresh} className={'fa-icon next clickable'} icon={ICON_RELOAD} fixedWidth/>
                     <span>{this.props.appName}</span>
-                    <span className={'version'}>{`- ${this.props.appVersion}`}</span>
+                    <span className={'version'}>{` (${this.props.appVersion})`}</span>
                     <div className={'header-divider'}/>
                     <FontAwesomeIcon className={'fa-icon first'} icon={ICON_USER}/>
                     <span className={'header-name long'}>{nameLong}</span>
                     <span className={'header-name short'}>{nameShort}</span>
                     <FontAwesomeIcon onClick={this.props.logout} className={'fa-icon next clickable'} icon={ICON_LOGOUT} fixedWidth/>
                 </div>
+
+                <div className={'header-group center header-switch'}>
+                    <div onClick={() => this.props.setLayout('all')} className={`switch${this.props.layout !== 'bid' ? ' active' : ''}`}>{'All'}</div>
+                    <div onClick={() => this.props.setLayout('bid')} className={`switch${this.props.layout === 'bid' ? ' active' : ''}`}>{'Bid'}</div>
+                </div>
+
 
                 <div className={'header-group right header-date'}>
                     <span>{moment().format('dddd D.M.YYYY')}</span>

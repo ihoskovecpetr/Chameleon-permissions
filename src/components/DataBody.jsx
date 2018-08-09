@@ -20,8 +20,8 @@ export default class DataBody extends React.PureComponent {
                 autoHideDuration={200}
             >
                 <Table>
-                    <tbody>
-                    {this.props.projects.map(project => <tr onClick = {() => this.props.edit(project.id)} key={project.projectId}>
+                    <tbody style={{borderBottom: '1px solid #dee2e6'}}>
+                    {this.props.projects.map(project => <tr onClick = {() => this.props.edit(project)} key={project._id}>
                         {tableLayout[this.props.layout ? this.props.layout : 'full'].map((column, i) => <td key={i} className={column.className}>{project[column.field]}</td>)}
                     </tr>)}
                     </tbody>

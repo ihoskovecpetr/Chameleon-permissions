@@ -21,6 +21,8 @@ export default class AppLayout extends React.PureComponent {
                     logout = {this.props.logout}
                     home = {this.props.home}
                     dataTimestamp = {this.props.dataTimestamp}
+                    layout = {this.props.layout}
+                    setLayout = {this.props.setLayout}
                 />
                 <MessageBox
                     message = {this.props.message}
@@ -28,8 +30,10 @@ export default class AppLayout extends React.PureComponent {
                 />
                 <AppBody
                     projects = {this.props.projects}
+                    layout = {this.props.layout}
                     updateProject = {this.props.updateProject}
                     createProject = {this.props.createProject}
+                    removeProject = {this.props.removeProject}
                 />
                 <FetchingIndicator open={this.props.isFetching}/>
             </div>

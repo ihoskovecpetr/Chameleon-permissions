@@ -7,10 +7,13 @@ import DataProvider from './components/DataProvider';
 
 logger.setLevel('debug');
 
-//import '@fortawesome/fontawesome-free-solid'
-//import '@fortawesome/fontawesome-free-regular'
+
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { far } from '@fortawesome/free-regular-svg-icons';
+library.add(fas, far);
+
 import './app.scss';
-//fontAwesome.library.add(faCoffee, faUser);
 
 getAuthenticatedUser()
     .then(user => {
@@ -19,7 +22,7 @@ getAuthenticatedUser()
             user = {user}
         />, document.getElementById('app'));
     })
-    .catch(logger.warn);
+    .catch(logger.warn); //TODO
 
 if (module.hot) {
     logger.debug('Accepting Hot Module');

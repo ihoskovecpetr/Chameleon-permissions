@@ -3,7 +3,7 @@ import moment from 'moment';
 import {name, version}  from '../../package.json';
 import * as logger from 'loglevel';
 
-import {getProjects, createProject, updateProject} from '../lib/serverData';
+import {getProjects, createProject, updateProject, removeProject} from '../lib/serverData';
 
 import AppLayout from './AppLayout';
 
@@ -18,20 +18,24 @@ export default class DataProvider extends React.PureComponent {
             isFetching: false,
             message: null,
 
-            projects: []
+            projects: [],
+            layout: sessionStorage.layout || 'all'
         };
 
         this.refresh = this.refresh.bind(this);
         this.logout = this.logout.bind(this);
         this.home = this.home.bind(this);
 
+        this.setLayout = this.setLayout.bind(this);
+
         this.updateProject = this.updateProject.bind(this);
         this.createProject = this.createProject.bind(this);
+        this.removeProject = this.removeProject.bind(this);
 
         this.fetchData = this.fetchData.bind(this);
         this.setMessage = this.setMessage.bind(this);
 
-        this.appName = name.toUpperCase();//`${name.charAt(0).toUpperCase()}${name.substr(1)}`;
+        this.appName = `${name.charAt(0).toUpperCase()}${name.substr(1)}`;//`${name.charAt(0).toUpperCase()}${name.substr(1)}`; name.toUpperCase();
         this.messageTimer = null;
     }
 
@@ -47,6 +51,7 @@ export default class DataProvider extends React.PureComponent {
                 user = {this.props.user}
                 isFetching = {this.state.isFetching}
                 message = {this.state.message}
+                layout = {this.state.layout}
 
                 projects = {this.state.projects}
                 dataTimestamp = {this.state.dataTimestamp}
@@ -55,9 +60,11 @@ export default class DataProvider extends React.PureComponent {
                 logout = {this.logout}
                 home = {this.home}
                 setMessage = {this.setMessage}
+                setLayout = {this.setLayout}
 
                 updateProject = {this.updateProject}
                 createProject = {this.createProject}
+                removeProject = {this.removeProject}
             />
         )
     }
@@ -76,7 +83,7 @@ export default class DataProvider extends React.PureComponent {
         logger.debug('Fetching data');
         try {
             const projects = await getProjects();
-            logger.debug(projects);
+            //logger.debug(projects);
             this.setState({dataTimestamp: moment(), projects: projects});
             if (SHOW_MESSAGE_ON_SUCCESS) this.setMessage({
                 type: 'info',
@@ -84,7 +91,7 @@ export default class DataProvider extends React.PureComponent {
             }, DEFAULT_MESSAGE_TIMEOUT_MS)
         } catch (e) {
             logger.error(e);
-            this.setMessage({type: 'error', text: `Error occurred during fetching data from the server: ${e instanceof Error ? e.message : JSON.stringify(e)}`})
+            this.setMessage({type: 'error', text: `Error occurred while fetching data from the server: ${e instanceof Error ? e.message : JSON.stringify(e)}`})
         }
         this.setState({isFetching: false});
     }
@@ -106,16 +113,33 @@ export default class DataProvider extends React.PureComponent {
         this.setState({isFetching: false});
     }
 
-    async updateProject(projectData) {
+    async updateProject(id, projectData) {
         this.setMessage(null);
         this.setState({isFetching: true});
         logger.debug('Update project: ' + JSON.stringify(projectData));
         try {
-            const project = await updateProject(projectData);
-            const newProjects = [...this.props.projects];
-            const index = this.props.projects.findIndex(project => projectData._id == project._id);
+            const project = await updateProject(id, projectData);
+            const newProjects = [...this.state.projects];
+            const index = newProjects.findIndex(project => id == project._id);
             if(index >= 0) newProjects[index] = project;
             else newProjects.push(project);
+            this.setState({projects: newProjects});
+        } catch (e) {
+            logger.error(e);
+            this.setMessage({type: 'error', text: `Update Project Error: ${e instanceof Error ? e.message : JSON.stringify(e)}`})
+        }
+        this.setState({isFetching: false});
+    }
+
+    async removeProject(id) {
+        this.setMessage(null);
+        this.setState({isFetching: true});
+        logger.debug('Remove project: ' + id);
+        try {
+            await removeProject(id);
+            const newProjects = [...this.state.projects];
+            const index = newProjects.findIndex(project => id == project._id);
+            if(index >= 0) newProjects.splice(index, 1);
             this.setState({projects: newProjects});
         } catch (e) {
             logger.error(e);
@@ -147,5 +171,12 @@ export default class DataProvider extends React.PureComponent {
         this.messageTimer = null;
         this.setState({message: message});
         if(timeout && message && message.type === 'info') this.messageTimer = setTimeout(() => {this.setState({message: null})}, timeout);
+    }
+
+    setLayout(layout) {
+        if(this.state.layout !== layout) {
+            this.setState({layout: layout});
+            sessionStorage.layout = layout;
+        }
     }
 }
