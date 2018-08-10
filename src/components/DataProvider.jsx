@@ -19,7 +19,7 @@ export default class DataProvider extends React.PureComponent {
             message: null,
 
             projects: [],
-            layout: sessionStorage.layout || 'all'
+            layout: sessionStorage.projects_layout || 'all'
         };
 
         this.refresh = this.refresh.bind(this);
@@ -160,7 +160,7 @@ export default class DataProvider extends React.PureComponent {
     home() {
         //TODO redirect to home/
         logger.debug('HOME');
-        this.setState({projects: []});
+        //this.setState({projects: []});
     }
 
     //******************************************************************************************************************
@@ -176,7 +176,7 @@ export default class DataProvider extends React.PureComponent {
     setLayout(layout) {
         if(this.state.layout !== layout) {
             this.setState({layout: layout});
-            sessionStorage.layout = layout;
+            sessionStorage.projects_layout = layout;
         }
     }
 }

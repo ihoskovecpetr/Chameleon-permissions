@@ -1,4 +1,4 @@
-const APP_NAME = "projects";
+const APP_NAME = require('./package.json').name;
 const devMode = process.env.NODE_ENV !== 'production';
 
 const webpack = require('webpack');
@@ -28,7 +28,7 @@ module.exports = {
                 secure: false,
                 headers: {'remote_user': PROXY_REMOTE_USER}
             },
-            '/api/project': {
+            '/api': {
                 target: 'http://localhost:3000',
                 secure: false,
                 headers: {'remote_user': PROXY_REMOTE_USER}

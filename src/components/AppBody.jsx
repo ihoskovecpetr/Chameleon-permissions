@@ -1,53 +1,41 @@
 import React from 'react';
 
+import * as LayoutTypes from '../constants/LayoutTypes';
+
 import DataHeader from './DataHeader';
 import DataBody from './DataBody';
 import AppToolbox from './AppToolbox';
 import ProjectEditModal from './ProjectEditModal';
 
+import ProjectsLayout from './layouts/ProjectsLayout';
+
 export default class AppBody extends React.PureComponent {
-    constructor(props) {
-        super(props);
-        this.state = {
-            editedProject: sessionStorage.project ? JSON.parse(sessionStorage.project) : null
-        };
-
-        this.edit = this.edit.bind(this);
-        this.close = this.close.bind(this);
-        this.save = this.save.bind(this);
-        this.create = this.create.bind(this);
-        this.remove = this.remove.bind(this);
-        this.updateStatus = this.updateStatus.bind(this);
-        this.isNameUnique = this.isNameUnique.bind(this);
-    }
-
     render() {
-        return (
-            <div className={'app-body'}>
-                <AppToolbox
-                    isOpen = {this.props.layout === 'all'}
-                    createProject = {this.create}
-                    layout = {this.props.layout}
-                />
-                <DataHeader
-                    layout={this.props.layout}
-                />
-                <DataBody
-                    projects = {this.props.projects}
-                    edit = {this.edit}
-                    layout = {this.props.layout}
-                    updateStatus = {this.updateStatus}
-                />
-                <ProjectEditModal
-                    key = {this.state.editedProject && this.state.editedProject._id ? this.state.editedProject._id : +new Date()}
-                    project = {this.state.editedProject}
-                    close = {this.close}
-                    save = {this.save}
-                    remove = {this.remove}
-                    isNameUnique = {this.isNameUnique}
-                />
-            </div>
-        )
+        switch(this.props.layout) {
+            case LayoutTypes.PROJECTS:
+                return <ProjectsLayout
+
+                />;
+            case LayoutTypes.ACTIVE_BID:
+                return (
+                    <div className={'app-body'}>
+                        {'ACTIVE BIDS'}
+                    </div>
+                );
+            case LayoutTypes.PEOPLE:
+                return (
+                    <div className={'app-body'}>
+                        {'PEOPLE'}
+                    </div>
+                );
+            case LayoutTypes.COMPANY:
+                return (
+                    <div className={'app-body'}>
+                        {'COMPANIES'}
+                    </div>
+                );
+            default: return null;
+        }
     }
 
     create() {

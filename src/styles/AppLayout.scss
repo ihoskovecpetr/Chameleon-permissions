@@ -20,13 +20,13 @@ html {
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
-  @include media(">small-phone") {
+  @include media(">=small-phone") {
     font-size: 13px;
   }
-  @include media(">phone") {
+  @include media(">=phone") {
     font-size: 14px;
   }
-  @include media(">tablet") {
+  @include media(">=tablet") {
     font-size: 15px;
   }
   @include media(">=desktop") {
@@ -49,6 +49,7 @@ body {
   right: 0;
   display: flex;
   flex-direction: column;
+  background-color: #dcdcdc;
 }
 
 .app-header {
@@ -77,33 +78,39 @@ body {
     span.version {
       font-size: 0.6rem;
       margin-left: 0.3rem;
-      display: none;
       align-self: flex-end;
       margin-bottom: 0.2rem;
-      @include media(">=phone") {
-        display: inline-block;
+      @include media("<desktop") {
+        display: none;
+      }
+    }
+    span.app-name {
+      margin-left: 0.2rem;
+      @include media("<phone") {
+        display: none;
       }
     }
     .header-divider {
       background-color: $app-header-color;
       width: 2px;
       height: 1.2rem;
-      margin: 0 1rem;
+      //margin: 0 1rem;
+      margin: 0 0.7rem;
       opacity: 0.8;
     }
     &.header-date {
-      display: none;
-      @include media(">=600px") {
-        display: inline-block;
+      @include media("<desktop") {
+        display: none;
       }
     }
     &.header-switch {
-      width: 11rem;
+      //width: 30rem;
       height: 1.6rem;
       display: inline-flex;
       margin-right: 0.5rem;
+      //font-size: 0.95rem;
       .switch {
-        width: 50%;
+        //width: 25%;
         border-top: 1px solid transparentize(desaturate($app-header-clickable-color, 50%), 0.7);
         border-bottom: 1px solid transparentize(desaturate($app-header-clickable-color, 50%), 0.7);
         border-right: 1px solid transparentize(desaturate($app-header-clickable-color, 50%), 0.7);
@@ -113,8 +120,17 @@ body {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        padding: 0 0.4rem;
-        font-size: 0.9rem;
+        padding: 0 0.5rem;
+        .fa-layout-icon {
+          //margin-right: 0.5rem;
+        }
+        .switch-text {
+          font-size: 0.9rem;
+          margin-left: 0.5rem;
+          @include media("<=tablet") {
+            display: none;
+          }
+        }
         &:first-child {
           border-top-left-radius: 0.8rem;
           border-bottom-left-radius: 0.8rem;
@@ -137,18 +153,17 @@ body {
       }
       @include media("<=phone") {
         margin-right: 0;
-
       }
     }
     .header-name {
       display: none;
       &.short {
-        @include media("<=phone") {
+        @include media("<phone") {
           display: inline-block;
         }
       }
       &.long {
-        @include media(">phone") {
+        @include media(">=phone") {
           display: inline-block;
         }
       }
@@ -158,7 +173,7 @@ body {
 
 .app-message-box {
   padding: 0.3rem $app-padding-horizontal 0.3rem $app-padding-horizontal + 0.15rem;
-  background-color: #3d3d3d;
+  background-color: #696969;
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
@@ -209,16 +224,11 @@ body {
 }
 
 .fa-icon {
-  margin-left: 1.4rem;
-  margin-right: 0.5rem;
-  &.first {
-    margin-left: 0;
-  }
-  &.last {
-    margin-right: 0;
-  }
-  &.next {
+  &.margin-left {
     margin-left: 0.5rem;
+  }
+  &.margin-right {
+    margin-right: 0.5rem;
   }
   &.clickable {
     cursor: pointer;

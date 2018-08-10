@@ -12,6 +12,7 @@ export default class DataBody extends React.PureComponent {
     }
 
     render() {
+        const {projects} = this.props;
         return (
             <Scrollbars
                 className={'data-body'}
@@ -21,8 +22,8 @@ export default class DataBody extends React.PureComponent {
             >
                 <Table>
                     <tbody style={{borderBottom: '1px solid #dee2e6'}}>
-                    {this.props.projects.map(project => <tr onClick = {() => this.props.edit(project)} key={project._id}>
-                        {tableLayout[this.props.layout ? this.props.layout : 'full'].map((column, i) => <td key={i} className={column.className}>{project[column.field]}</td>)}
+                    {Object.keys(projects).map(projectId => <tr onClick = {() => this.props.edit(project)} key={projectId}>
+                        {tableLayout[this.props.layout ? this.props.layout : 'full'].map((column, i) => <td key={i} className={column.className}>{projects[projectId][column.field]}</td>)}
                     </tr>)}
                     </tbody>
                 </Table>
