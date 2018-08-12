@@ -31,34 +31,23 @@ $data-body-hover: desaturate(lighten($app-header-background-color, 45%), 21%);
     }
   }
 }
-.data-header {
-  //padding: 0 $data-body-padding-horizontal;
+.table-header {
   background-color: #535353;
   color: #e1e1e1;
   font-size: 1rem;
-  table {
-    margin: 0.1rem 0;
-    table-layout: fixed;
-  }
+  width: 100%;
+  margin-bottom: 0;
+  table-layout: fixed;
+
 }
-.data-body {
+.table-body {
   overflow: hidden;
-  //padding: 0 $data-body-padding-horizontal;
   color: $data-body-color;
   background-color: $data-body-background-color;
   font-size: 1rem;
   width: 100%;
-  table {
-    margin-bottom: 0.1rem;
-    table-layout: fixed;
-  }
-/*
-  -ms-overflow-style: none;  // IE 10+
-  overflow: -moz-scrollbars-none;  // Firefox
-  &::-webkit-scrollbar {
-    display: none;  // Safari and Chrome
-  }
-*/
+  margin-bottom: 0;
+  table-layout: fixed;
 }
 .table tbody tr {
   cursor: pointer;
@@ -79,6 +68,24 @@ $data-body-hover: desaturate(lighten($app-header-background-color, 45%), 21%);
   &:first-child {
     padding-left: $data-body-padding-horizontal;
   }
+  &.projects-name {
+    width: 3%;
+  }
+  &.projects-manager {
+    width: 3%;
+    @include media("<=phone") {
+      display: none;
+    }
+  }
+  &.projects-status {
+    width: 3%;
+  }
+
+  .sort-icon {
+    margin-right: 0.2rem;
+    cursor: pointer;
+  }
+
   &.first {
     width: 15%;
     @include media(">=tablet") {

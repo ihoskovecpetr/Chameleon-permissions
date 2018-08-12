@@ -3,7 +3,7 @@ import React from 'react';
 import AppHeader from './AppHeader';
 import MessageBox from './MessageBox';
 import FetchingIndicator from './FetchingIndicator';
-import ProjectsLayout from './layouts/ProjectsLayout';
+import ProjectsLayout from './projects/ProjectsLayout';
 
 import * as LayoutTypes from '../constants/LayoutTypes';
 

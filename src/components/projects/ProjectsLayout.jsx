@@ -1,9 +1,7 @@
 import React from 'react';
 
-import DataHeader from '../DataHeader';
-import DataBody from '../DataBody';
-import AppToolbox from '../AppToolbox';
-import ProjectEditModal from '../ProjectEditModal';
+import ProjectsToolbox from './ProjectsToolbox';
+import ProjectsTable from './ProjectsTable';
 
 export default class ProjectsLayout extends React.PureComponent {
     constructor(props) {
@@ -24,26 +22,15 @@ export default class ProjectsLayout extends React.PureComponent {
     render() {
         return (
             <div className={'app-body'}>
-                <AppToolbox
+                <ProjectsToolbox
                     createProject = {this.create}
                     isOpen={true}
                 />
-                <DataHeader
-                    layout={'all'}
-                />
-                <DataBody
+                <ProjectsTable
                     projects = {this.props.projects}
                     edit = {this.edit}
                     layout = {'all'}
                     updateStatus = {this.updateStatus}
-                />
-                <ProjectEditModal
-                    key = {this.state.editedProject && this.state.editedProject._id ? this.state.editedProject._id : +new Date()}
-                    project = {null}
-                    close = {this.close}
-                    save = {this.save}
-                    remove = {this.remove}
-                    isNameUnique = {this.isNameUnique}
                 />
             </div>
         )

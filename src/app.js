@@ -23,7 +23,7 @@ library.add(fas, far);
 import './app.scss';
 
 const finalCreateStore = compose(
-    persistState('appState', {key : 'projects'}),
+    persistState('appState', {key : 'projects', slicer: () => state => ({appState: {layout: state['appState'].layout}})}),
     applyMiddleware(thunk)
 )(createStore);
 
@@ -60,4 +60,5 @@ if (module.hot) {
         store.replaceReducer(nextRootReducer);
     });*/
 }
+
 

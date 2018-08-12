@@ -2,12 +2,8 @@ import React from 'react';
 
 import * as LayoutTypes from '../constants/LayoutTypes';
 
-import DataHeader from './DataHeader';
-import DataBody from './DataBody';
-import AppToolbox from './AppToolbox';
-import ProjectEditModal from './ProjectEditModal';
 
-import ProjectsLayout from './layouts/ProjectsLayout';
+import ProjectsLayout from './projects/ProjectsLayout';
 
 export default class AppBody extends React.PureComponent {
     render() {

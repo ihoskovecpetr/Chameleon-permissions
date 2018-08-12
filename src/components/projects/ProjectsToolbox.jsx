@@ -2,7 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-export default class AppToolbox extends React.PureComponent {
+export default class ProjectsToolbox extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {};
