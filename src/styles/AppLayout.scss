@@ -41,6 +41,10 @@ body {
   display: flex;
   box-sizing: border-box;
   margin: 0;
+  ::-webkit-scrollbar {
+    //display: none;
+    //width: 15px;
+  }
 }
 
 .app-layout {
@@ -118,7 +122,6 @@ body {
           border-top: 1px solid transparentize(desaturate($app-header-clickable-color, 50%), 0.7);
           border-bottom: 1px solid transparentize(desaturate($app-header-clickable-color, 50%), 0.7);
           border-right: 1px solid transparentize(desaturate($app-header-clickable-color, 50%), 0.7);
-          cursor: pointer;
           text-align: center;
           color: $app-header-clickable-color;
           white-space: nowrap;
@@ -148,10 +151,11 @@ body {
             cursor: default;
             background-color: lighten($app-header-background-color, 20%);
           }
-          &:not(.active) {
+          &.clickable {
             &:hover {
               color: lighten($app-header-color, 15%);
               background-color: transparentize(white, 0.9);
+              cursor: pointer;
             }
           }
         }
@@ -228,6 +232,7 @@ body {
   overflow: hidden;
   max-width: $app-max-width;
   margin: 0 auto;
+  width: 100%;
 }
 
 .fa-icon {

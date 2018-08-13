@@ -3,13 +3,13 @@ import React from 'react';
 import * as LayoutTypes from '../constants/LayoutTypes';
 
 
-import ProjectsLayout from './projects/ProjectsLayout';
+import ProjectList from './projects/ProjectsLayout';
 
 export default class AppBody extends React.PureComponent {
     render() {
         switch(this.props.layout) {
             case LayoutTypes.PROJECTS:
-                return <ProjectsLayout
+                return <ProjectList
 
                 />;
             case LayoutTypes.ACTIVE_BID:

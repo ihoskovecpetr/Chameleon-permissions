@@ -8,3 +8,6 @@ export const SET_MESSAGE = 'SET_MESSAGE';
 export const SET_FETCHING = 'SET_FETCHING';
 
 export const SET_DATA = 'SET_DATA';
+
+export const EDIT_PROJECT = 'EDIT_PROJECT';
+export const CREATE_PROJECT = 'CREATE_PROJECT';

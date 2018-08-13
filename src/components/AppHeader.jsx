@@ -30,6 +30,12 @@ export default class AppHeader extends React.PureComponent {
             userNameShort = `${userNameShort[0].charAt(0)}. ${userNameShort.slice(1).join(' ')}`
         } else userNameShort = userName;
 
+        const switchEnabled = this.props.layout === LayoutTypes.PROJECTS || this.props.layout === LayoutTypes.ACTIVE_BID || this.props.layout === LayoutTypes.PEOPLE || this.props.layout === LayoutTypes.COMPANY;
+        const projectsSwitchActive = this.props.layout === LayoutTypes.PROJECTS || this.props.layout === LayoutTypes.PROJECT_DETAIL;
+        const activeBidSwitchActive = this.props.layout === LayoutTypes.ACTIVE_BID || this.props.layout === LayoutTypes.ACTIVE_BID_DETAIL;
+        const peopleSwitchActive = this.props.layout === LayoutTypes.PEOPLE || this.props.layout === LayoutTypes.PEOPLE_DETAIL;
+        const companySwitchActive = this.props.layout === LayoutTypes.COMPANY || this.props.layout === LayoutTypes.COMPANY_DETAIL;
+
         return (
             <div className={'app-header-outer'}>
                 <div className={'app-header'}>
@@ -46,19 +52,19 @@ export default class AppHeader extends React.PureComponent {
                     </div>
 
                     <div className={'header-group center header-switch'}>
-                        <div onClick={() => this.props.setLayout(LayoutTypes.PROJECTS)} className={`switch${this.props.layout === LayoutTypes.PROJECTS ? ' active' : ''}`}>
+                        <div onClick={() => switchEnabled && !projectsSwitchActive ? this.props.setLayout(LayoutTypes.PROJECTS) : undefined} className={`switch${projectsSwitchActive ? ' active' : switchEnabled ? ' clickable' : ''}`}>
                             <FontAwesomeIcon className={'fa-layout-icon'} icon={ICON_PROJECTS}/>
                             <span className={'switch-text'}>{'Projects'}</span>
                         </div>
-                        <div onClick={() => this.props.setLayout(LayoutTypes.ACTIVE_BID)} className={`switch${this.props.layout === LayoutTypes.ACTIVE_BID ? ' active' : ''}`}>
+                        <div onClick={() => switchEnabled && !activeBidSwitchActive ? this.props.setLayout(LayoutTypes.ACTIVE_BID) : undefined} className={`switch${activeBidSwitchActive ? ' active' : switchEnabled ? ' clickable' : ''}`}>
                             <FontAwesomeIcon className={'fa-layout-icon'} icon={ICON_ACTIVE_BID}/>
                             <span className={'switch-text'}>{'Active Bids'}</span>
                         </div>
-                        <div onClick={() => this.props.setLayout(LayoutTypes.PEOPLE)} className={`switch${this.props.layout === LayoutTypes.PEOPLE ? ' active' : ''}`}>
+                        <div onClick={() => switchEnabled && !peopleSwitchActive ? this.props.setLayout(LayoutTypes.PEOPLE) : undefined} className={`switch${peopleSwitchActive ? ' active' : switchEnabled ? ' clickable' : ''}`}>
                             <FontAwesomeIcon className={'fa-layout-icon'} icon={ICON_PEOPLE}/>
                             <span className={'switch-text'}>{'People'}</span>
                         </div>
-                        <div onClick={() => this.props.setLayout(LayoutTypes.COMPANY)} className={`switch${this.props.layout === LayoutTypes.COMPANY ? ' active' : ''}`}>
+                        <div onClick={() => switchEnabled && !companySwitchActive ? this.props.setLayout(LayoutTypes.COMPANY) : undefined} className={`switch${companySwitchActive ? ' active' : switchEnabled ? ' clickable' : ''}`}>
                             <FontAwesomeIcon className={'fa-layout-icon'} icon={ICON_COMPANY}/>
                             <span className={'switch-text'}>{'Companies'}</span>
                         </div>

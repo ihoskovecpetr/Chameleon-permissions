@@ -1,7 +1,7 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Constants from '../constants/Constatnts';
 
-import {getProjects, createProject, updateProject, removeProject} from '../lib/serverData';
+import {getProjects, sendNewProject, sendUpdateProject, sendRemoveProject} from '../lib/serverData';
 
 export function setLayout(layout) {
     return {
@@ -35,6 +35,19 @@ export function setData(data) {
     return {
         type: ActionTypes.SET_DATA,
         data: data
+    }
+}
+
+export function editProject(project) {
+    return {
+        type: ActionTypes.EDIT_PROJECT,
+        project: project
+    }
+}
+
+export function createProject() {
+    return {
+        type: ActionTypes.CREATE_PROJECT
     }
 }
 

@@ -1,0 +1,87 @@
+$app-toolbox-background-color: #919191;
+$app-toolbox-color: #0f0f0f;
+$toolbox-box-radius: $app-header-button-radius;
+$tool-height: 1.7rem;
+
+.app-toolbox {
+  padding: 0 $detail-body-padding-horizontal;
+  color: $app-toolbox-color;
+  background-color: $app-toolbox-background-color;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  flex: 0 0 auto;
+  .toolbox-id {
+    margin-left: auto;
+    font-size: 0.8rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 1rem;
+    background-color: #757575;
+    color: #adadad;
+    @include media("<=small-phone") {
+      display: none;
+    }
+  }
+  .toolbox-group {
+    white-space: nowrap;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    padding: 0.3rem 0;
+    margin: 0.3rem 0.3rem 0 0;
+    //border: 1px solid #7d7d7d;
+    //border-radius: $toolbox-box-radius;
+    &.clear {
+      border: none;
+      width: 100%;
+      padding: 0;
+    }
+
+    .tool-box-button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0.1rem 0.8rem;
+      &:not(:last-child) {
+        margin-right: 0.6rem;
+      }
+      text-align: center;
+      border-radius: 0.8rem;
+      height: $tool-height;
+      cursor: pointer;
+      color: #0f0f0f;
+      background-color: #c3c3c3;
+      &:hover {
+        background-color: #d7d7d7;
+      }
+      min-width: 5rem;
+      &.green {
+        color: #e1e1e1;
+        background-color: #08710f;
+        &:hover {
+          background-color: #08850f;
+        }
+      }
+      &.disabled {
+        cursor: default;
+        color: #4b4b4b;
+        background-color: #9b9b9b;
+        &:hover {
+          background-color: #9b9b9b;
+        }
+      }
+    }
+    .tool-box-icon {
+      &:not(:last-child) {
+        margin-right: 0.6rem;
+      }
+      font-size: $tool-height;
+      color: #373737;
+      cursor: pointer;
+      &:hover {
+        color: #464646;
+      }
+    }
+  }
+}
+

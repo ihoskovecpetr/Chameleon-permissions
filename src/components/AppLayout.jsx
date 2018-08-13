@@ -3,11 +3,14 @@ import React from 'react';
 import AppHeader from './AppHeader';
 import MessageBox from './MessageBox';
 import FetchingIndicator from './FetchingIndicator';
-import ProjectsLayout from './projects/ProjectsLayout';
+
+import ProjectList from './projects/ProjectList';
+import ProjectDetail from './projects/ProjectDetail';
 
 import * as LayoutTypes from '../constants/LayoutTypes';
 
 import {name, version}  from '../../package.json';
+
 
 export default class AppLayout extends React.PureComponent {
     constructor(props) {
@@ -19,9 +22,20 @@ export default class AppLayout extends React.PureComponent {
         let AppBody = null;
         switch(this.props.appState.layout) {
             case LayoutTypes.PROJECTS:
-                AppBody = <ProjectsLayout
-                    projects={this.props.projects}
-                />;
+                AppBody =
+                    <ProjectList
+                        projects={this.props.projects}
+                        edit={this.props.editProject}
+                        create={this.props.createProject}
+                    />;
+                break;
+            case LayoutTypes.PROJECT_DETAIL:
+                AppBody =
+                    <ProjectDetail
+                        project={this.props.appState.project}
+                        projects={this.props.projects}
+                        setLayout={this.props.setLayout}
+                    />;
                 break;
         }
         return (

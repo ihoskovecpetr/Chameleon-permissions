@@ -5,7 +5,8 @@ const initialState = {
     layout: LayoutTypes.PROJECTS,
     fetching: false,
     message: null,
-    dataTimeStamp: null
+    dataTimeStamp: null,
+    project: null
 };
 
 function AppStateReducer(state = initialState, action = null) {
@@ -26,6 +27,16 @@ function AppStateReducer(state = initialState, action = null) {
             case ActionTypes.SET_MESSAGE:
                 if(action.message !== state.message) {
                     return {...state, message: action.message};
+                } else return state;
+
+            case ActionTypes.EDIT_PROJECT:
+                if(state.layout === LayoutTypes.PROJECTS) {
+                    return {...state, layout: LayoutTypes.PROJECT_DETAIL, project: action.project};
+                } else return state;
+
+            case ActionTypes.CREATE_PROJECT:
+                if(state.layout === LayoutTypes.PROJECTS) {
+                    return {...state, layout: LayoutTypes.PROJECT_DETAIL, project: null};
                 } else return state;
 
             default:

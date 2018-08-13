@@ -20,7 +20,6 @@ export default class MessageBox extends React.PureComponent {
     }
 
     render() {
-        console.log('RENDER MESSAGE');
         return (
             <div className={`app-message-box ${this.state.message ? this.state.message.type ? this.state.message.type : '' : 'hidden'}`}>
                 <FontAwesomeIcon onClick={this.props.close} className={'close-button'} icon={'times'} fixedWidth/>

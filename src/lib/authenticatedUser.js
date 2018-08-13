@@ -1,5 +1,5 @@
 export async function getAuthenticatedUser() {
-    return {name: 'Miroslav Kozel', role: ['booking:admin']}
+    //return {name: 'Miroslav Kozel', role: ['booking:admin']}
     const options = {
         credentials: 'same-origin',
         headers: {'Content-Type': 'application/json', 'cache-control': 'no-cache','pragma': 'no-cache'}
