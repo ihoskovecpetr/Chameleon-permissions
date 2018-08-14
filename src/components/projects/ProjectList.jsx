@@ -21,6 +21,7 @@ export default class ProjectList extends React.PureComponent {
                 />
                 <ProjectListData
                     projects = {this.props.projects}
+                    users={this.props.users}
                     edit = {this.edit}
                 />
             </div>

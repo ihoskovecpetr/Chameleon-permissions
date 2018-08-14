@@ -11,3 +11,7 @@ export const SET_DATA = 'SET_DATA';
 
 export const EDIT_PROJECT = 'EDIT_PROJECT';
 export const CREATE_PROJECT = 'CREATE_PROJECT';
+
+export const ADD_PROJECT = 'ADD_PROJECT';
+export const UPDATE_PROJECT = 'UPDATE_PROJECT';
+export const REMOVE_PROJECT = 'REMOVE_PROJECT';

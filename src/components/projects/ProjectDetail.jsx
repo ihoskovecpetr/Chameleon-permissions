@@ -51,8 +51,12 @@ export default class ProjectDetail extends React.PureComponent {
     }
 
     save() {
-        console.log('SAVE PROJECT')
-        console.log(this.state.project)
+        if(this.props.project) {
+            this.props.updateProject(this.props.project, this.state.project);
+        } else {
+            this.props.addProject(this.state.project);
+        }
+
         this.props.setLayout(LayoutTypes.PROJECTS)
     }
 

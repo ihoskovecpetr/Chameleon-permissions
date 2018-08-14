@@ -8,6 +8,12 @@ function ProjectsReducer (state = [], action = null) {
                     state = action.data.projects.reduce((object, project) => {object[project._id] = project; return object}, {});
                 } else return state;
                 return state;
+
+            case ActionTypes.UPDATE_PROJECT:
+            case ActionTypes.ADD_PROJECT:
+                if(action.project && action.project._id) return {...state, [action.project._id]: action.project};
+                else return state;
+
             default:
                 return state;
         }

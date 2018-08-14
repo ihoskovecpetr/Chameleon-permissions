@@ -23,7 +23,10 @@ library.add(fas, far);
 import './app.scss';
 
 const finalCreateStore = compose(
-    persistState('appState', {key : 'projects', slicer: () => state => ({appState: {layout: state['appState'].layout}})}),
+    persistState('appState', {key : 'projects', slicer: () => state => ({appState: {
+        layout: state['appState'].layout,
+        project: state['appState'].project
+    }})}),
     applyMiddleware(thunk)
 )(createStore);
 

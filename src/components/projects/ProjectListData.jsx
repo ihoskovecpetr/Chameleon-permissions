@@ -21,7 +21,7 @@ export default class ProjectListData extends React.PureComponent {
     }
 
     render() {
-        const {projects} = this.props;
+        const {projects, users} = this.props;
         return (
             <Fragment>
                 <Table className={'table-header'} borderless={true}>
@@ -38,7 +38,7 @@ export default class ProjectListData extends React.PureComponent {
                         <tbody style={{borderBottom: '1px solid #dee2e6'}}>
                         {Object.keys(projects).map(projectId => <tr onClick = {() => this.props.edit(projectId)} key={projectId}>
                             <td className={'projects-name'}>{projects[projectId].name}</td>
-                            <td className={'projects-manager'}>{this.getManager(projects[projectId])}</td>
+                            <td className={'projects-manager'}>{this.getManager(projects[projectId], users)}</td>
                             <td className={'projects-status'}>{projects[projectId].status}</td>
                         </tr>)}
                         </tbody>
@@ -68,9 +68,10 @@ export default class ProjectListData extends React.PureComponent {
         else this.setState({sortStatus: sort});
     }
 
-    getManager(project) {
-        const manager = project.team.find(person => person.role.indexOf('manager') <= 0);
-        if(manager) return manager.id.name;
+    getManager(project, users) {
+        if(!project || !project.team) return '---';
+        const manager = project.team.find(person => users[person.id] && users[person.id].role.indexOf('manager') <= 0);
+        if(manager) return users[manager.id].name;
         else return '---';
     }
 }

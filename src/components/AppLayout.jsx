@@ -25,6 +25,7 @@ export default class AppLayout extends React.PureComponent {
                 AppBody =
                     <ProjectList
                         projects={this.props.projects}
+                        users={this.props.users}
                         edit={this.props.editProject}
                         create={this.props.createProject}
                     />;
@@ -34,7 +35,11 @@ export default class AppLayout extends React.PureComponent {
                     <ProjectDetail
                         project={this.props.appState.project}
                         projects={this.props.projects}
+                        users={this.props.users}
                         setLayout={this.props.setLayout}
+                        updateProject={this.props.updateProject}
+                        addProject={this.props.addProject}
+                        //removeProject={this.props.removeProject}
                     />;
                 break;
         }

@@ -188,6 +188,9 @@ body {
   flex-wrap: nowrap;
   flex: 0 0 auto;
   color: #cecece;
+  max-width: $app-max-width;
+  width: 100%;
+  margin: 0 auto;
   .close-button {
     margin-right: 7px;
     cursor: pointer;
