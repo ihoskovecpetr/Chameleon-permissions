@@ -5,7 +5,7 @@ const ICON_REMOVE = 'trash';
 const ICON_CHECKBOX_CHECKED = ['far','check-square'];
 const ICON_CHECKBOX_UNCHECKED = ['far', 'square'];
 
-export default class ProjectDetailToolbox extends React.PureComponent {
+export default class Toolbox extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {

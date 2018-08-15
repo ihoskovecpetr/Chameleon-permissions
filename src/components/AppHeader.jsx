@@ -29,11 +29,10 @@ export default class AppHeader extends React.PureComponent {
             userNameShort = `${userNameShort[0].charAt(0)}. ${userNameShort.slice(1).join(' ')}`
         } else userNameShort = userName;
 
-        const switchEnabled = this.props.view === ViewTypes.PROJECTS || this.props.view === ViewTypes.ACTIVE_BID || this.props.view === ViewTypes.PEOPLE || this.props.view === ViewTypes.COMPANY;
-        const projectsSwitchActive = this.props.view === ViewTypes.PROJECTS || this.props.view === ViewTypes.PROJECT_DETAIL;
-        const activeBidSwitchActive = this.props.view === ViewTypes.ACTIVE_BID || this.props.view === ViewTypes.ACTIVE_BID_DETAIL;
-        const peopleSwitchActive = this.props.view === ViewTypes.PEOPLE || this.props.view === ViewTypes.PEOPLE_DETAIL;
-        const companySwitchActive = this.props.view === ViewTypes.COMPANY || this.props.view === ViewTypes.COMPANY_DETAIL;
+        const switchEnabled = this.props.view === ViewTypes.PROJECT_LIST || this.props.view === ViewTypes.ACTIVE_BID || this.props.view === ViewTypes.PEOPLE_LIST || this.props.view === ViewTypes.COMPANIES_LIST;
+        const projectsSwitchActive = this.props.view === ViewTypes.PROJECT_LIST || this.props.view === ViewTypes.PROJECT_DETAIL || this.props.view === ViewTypes.PROJECT_EDIT;
+        const peopleSwitchActive = this.props.view === ViewTypes.PEOPLE_LIST || this.props.view === ViewTypes.PEOPLE_DETAIL || this.props.view === ViewTypes.PEOPLE_EDIT;
+        const companySwitchActive = this.props.view === ViewTypes.COMPANIES_LIST || this.props.view === ViewTypes.COMPANIES_DETAIL || this.props.view === ViewTypes.COMPANIES_EDIT;
 
         return (
             <div className={'app-header-outer'}>
@@ -51,15 +50,15 @@ export default class AppHeader extends React.PureComponent {
                     </div>
 
                     <div className={'header-group center header-switch'}>
-                        <div onClick={() => switchEnabled && !projectsSwitchActive ? this.props.setView(ViewTypes.PROJECTS) : undefined} className={`switch${projectsSwitchActive ? ' active' : switchEnabled ? ' clickable' : ''}`}>
+                        <div onClick={() => switchEnabled && !projectsSwitchActive ? this.props.setView(ViewTypes.PROJECT_LIST) : undefined} className={`switch${projectsSwitchActive ? ' active' : switchEnabled ? ' clickable' : ''}`}>
                             <FontAwesomeIcon className={'fa-view-icon'} icon={ICON_PROJECTS}/>
                             <span className={'switch-text'}>{'Projects'}</span>
                         </div>
-                        <div onClick={() => switchEnabled && !peopleSwitchActive ? this.props.setView(ViewTypes.PEOPLE) : undefined} className={`switch${peopleSwitchActive ? ' active' : switchEnabled ? ' clickable' : ''}`}>
+                        <div onClick={() => switchEnabled && !peopleSwitchActive ? this.props.setView(ViewTypes.PEOPLE_LIST) : undefined} className={`switch${peopleSwitchActive ? ' active' : switchEnabled ? ' clickable' : ''}`}>
                             <FontAwesomeIcon className={'fa-view-icon'} icon={ICON_PEOPLE}/>
                             <span className={'switch-text'}>{'People'}</span>
                         </div>
-                        <div onClick={() => switchEnabled && !companySwitchActive ? this.props.setView(ViewTypes.COMPANY) : undefined} className={`switch${companySwitchActive ? ' active' : switchEnabled ? ' clickable' : ''}`}>
+                        <div onClick={() => switchEnabled && !companySwitchActive ? this.props.setView(ViewTypes.COMPANIES_LIST) : undefined} className={`switch${companySwitchActive ? ' active' : switchEnabled ? ' clickable' : ''}`}>
                             <FontAwesomeIcon className={'fa-view-icon'} icon={ICON_COMPANIES}/>
                             <span className={'switch-text'}>{'Companies'}</span>
                         </div>

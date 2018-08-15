@@ -8,7 +8,7 @@ import * as ProjectStatus from '../../constants/ProjectStatus';
 
 const statusOptions = Object.keys(ProjectStatus).map(key => {return {value: ProjectStatus[key], label: ProjectStatus[key]}});
 
-export default class ProjectDetailData extends React.PureComponent {
+export default class Data extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {

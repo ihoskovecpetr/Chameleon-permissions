@@ -9,10 +9,20 @@ function ProjectsReducer (state = {}, action = null) {
                 } else return state;
                 return state;
 
+            case ActionTypes.RESET_STORE:
+                return {};
+
             case ActionTypes.UPDATE_PROJECT:
-            case ActionTypes.ADD_PROJECT:
+            case ActionTypes.CREATE_PROJECT:
                 if(action.project && action.project._id) return {...state, [action.project._id]: action.project};
                 else return state;
+
+            case ActionTypes.REMOVE_PROJECT:
+                if(action.id && state[action.id]) {
+                    const projects = {...state};
+                    delete projects[action.id];
+                    return projects;
+                } else return state;
 
             default:
                 return state;

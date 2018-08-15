@@ -7,7 +7,7 @@ const ICON_SORT = 'sort';
 const ICON_SORT_UP = 'sort-up';
 const ICON_SORT_DOWN = 'sort-down';
 
-export default class ProjectListData extends React.PureComponent {
+export default class Data extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -21,7 +21,7 @@ export default class ProjectListData extends React.PureComponent {
     }
 
     render() {
-        const {projects, users} = this.props;
+        const {selectedProject, projects, users} = this.props;
         return (
             <Fragment>
                 <Table className={'table-header'} borderless={true}>
@@ -36,7 +36,7 @@ export default class ProjectListData extends React.PureComponent {
                 <Scrollbars autoHide={true} autoHideTimeout={800} autoHideDuration={200}>
                     <Table className={'table-body'}>
                         <tbody style={{borderBottom: '1px solid #dee2e6'}}>
-                        {Object.keys(projects).map(projectId => <tr onClick = {() => this.props.edit(projectId)} key={projectId}>
+                        {Object.keys(projects).map(projectId => <tr className={selectedProject === projectId ? 'selected' : ''} onClick = {() => this.props.select(projectId)} onDoubleClick={event => event.altKey ? this.props.edit(projectId) : this.props.detail(projectId)} key={projectId}>
                             <td className={'projects-name'}>{projects[projectId].name}</td>
                             <td className={'projects-manager'}>{this.getManager(projects[projectId], users)}</td>
                             <td className={'projects-status'}>{projects[projectId].status}</td>

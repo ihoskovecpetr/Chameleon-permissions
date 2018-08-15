@@ -2,14 +2,17 @@ import * as ViewTypes from '../constants/ViewTypes';
 import * as ActionTypes from '../constants/ActionTypes';
 
 const initialState = {
-    view: ViewTypes.PROJECTS,
+    view: ViewTypes.PROJECT_LIST,
     prevView: null,
     fetching: false,
     message: null,
     dataTimeStamp: null,
     selectedProject: null,
+    editedProject: {},
     selectedPerson: null,
+    editedPerson: {},
     selectedCompany: null,
+    editedCompany: {},
     box: []
 };
 
@@ -33,14 +36,14 @@ function AppStateReducer(state = initialState, action = null) {
                     return {...state, message: action.message};
                 } else return state;
 
-            case ActionTypes.EDIT_PROJECT:
-                if(state.view === ViewTypes.PROJECTS) {
-                    return {...state, prevView: state.view, view: ViewTypes.PROJECT_DETAIL, selectedProject: action.project};
+            case ActionTypes.SELECT_PROJECT:
+                if((action.id || action.id === null) && action.id !== state.selectedProject) {
+                    return {...state, selectedProject: action.id, editedProject: {}};
                 } else return state;
 
-            case ActionTypes.CREATE_PROJECT:
-                if(state.view === ViewTypes.PROJECTS) {
-                    return {...state, prevView: state.view, view: ViewTypes.PROJECT_DETAIL, selectedProject: null};
+            case ActionTypes.EDIT_PROJECT:
+                if(action.project) {
+                    return {...state, editedProject: action.project};
                 } else return state;
 
             default:

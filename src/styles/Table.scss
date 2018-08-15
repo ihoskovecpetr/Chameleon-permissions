@@ -2,6 +2,7 @@ $data-body-padding-horizontal: $app-padding-horizontal;
 $data-body-background-color: #c3c3c3;
 $data-body-color: #0f0f0f;
 $data-body-hover: desaturate(lighten($app-header-background-color, 45%), 21%);
+$data-body-selected: desaturate(lighten($app-header-background-color, 40%), 10%);
 
 .table-header {
   background-color: #535353;
@@ -24,6 +25,9 @@ $data-body-hover: desaturate(lighten($app-header-background-color, 45%), 21%);
   cursor: pointer;
   &:hover {
     background-color: $data-body-hover;
+  }
+  &.selected {
+    background-color: $data-body-selected;
   }
 }
 

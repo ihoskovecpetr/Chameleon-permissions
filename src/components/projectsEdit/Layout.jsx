@@ -2,10 +2,10 @@ import React from 'react';
 
 import * as ViewTypes from '../../constants/ViewTypes';
 
-import ProjectDetailToolbox from './ProjectDetailToolbox';
-import ProjectDetailData from './ProjectDetailData';
+import Toolbox from './Toolbox';
+import Data from './Data';
 
-export default class ProjectDetail extends React.PureComponent {
+export default class Layout extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -26,7 +26,7 @@ export default class ProjectDetail extends React.PureComponent {
     render() {
         return (
             <div className={'app-body'}>
-                <ProjectDetailToolbox
+                <Toolbox
                     close = {this.close}
                     save = {this.save}
                     remove = {this.state.remove}
@@ -35,7 +35,7 @@ export default class ProjectDetail extends React.PureComponent {
                     id = {this.props.selectedProject && this.props.projects[this.props.selectedProject] ? this.props.projects[this.props.selectedProject].projectId : null}
                     validation = {this.state.validation}
                 />
-                <ProjectDetailData
+                <Data
                     selectedProject = {this.props.selectedProject}
                     projects = {this.props.projects}
                     setSaveDisabled = {this.setSaveDisabled}
@@ -47,7 +47,7 @@ export default class ProjectDetail extends React.PureComponent {
     }
 
     close() {
-        this.props.setView(ViewTypes.PROJECTS)
+        this.props.setView(ViewTypes.PROJECT_LIST)
     }
 
     save() {
@@ -57,7 +57,7 @@ export default class ProjectDetail extends React.PureComponent {
             this.props.addProject(this.state.project);
         }
 
-        this.props.setView(ViewTypes.PROJECTS)
+        this.props.setView(ViewTypes.PROJECT_LIST)
     }
 
     remove(id) {

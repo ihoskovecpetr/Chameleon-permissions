@@ -4,8 +4,8 @@ import AppHeader from './AppHeader';
 import MessageBox from './MessageBox';
 import FetchingIndicator from './FetchingIndicator';
 
-import ProjectList from './projects/ProjectList';
-import ProjectDetail from './projects/ProjectDetail';
+import ProjectsList from './views/ProjectsList';
+import ProjectsEdit from './views/ProjectsEdit';
 
 import * as ViewTypes from '../constants/ViewTypes';
 
@@ -21,25 +21,40 @@ export default class AppLayout extends React.PureComponent {
     render() {
         let AppBody = null;
         switch(this.props.appState.view) {
-            case ViewTypes.PROJECTS:
+            case ViewTypes.PROJECT_LIST:
                 AppBody =
-                    <ProjectList
+                    <ProjectsList
                         projects={this.props.projects}
+                        people={this.props.people}
+                        companies={this.props.companies}
                         users={this.props.users}
-                        edit={this.props.editProject}
-                        create={this.props.createProject}
+
+
+                        selectedProject={this.props.appState.selectedProject}
+
+                        setView={this.props.setView}
+                        selectProject={this.props.selectProject}
                     />;
                 break;
             case ViewTypes.PROJECT_DETAIL:
+            case ViewTypes.PROJECT_EDIT:
                 AppBody =
-                    <ProjectDetail
-                        selectedProject={this.props.appState.selectedProject}
+                    <ProjectsEdit
                         projects={this.props.projects}
+                        people={this.props.people}
+                        companies={this.props.companies}
                         users={this.props.users}
+
+                        selectedProject={this.props.appState.selectedProject}
+                        editedProject={this.props.appState.editedProject}
+
                         setView={this.props.setView}
+                        selectProject={this.props.selectProject}
+                        editProject={this.props.editProject}
+
                         updateProject={this.props.updateProject}
-                        addProject={this.props.addProject}
-                        //removeProject={this.props.removeProject}
+                        createProject={this.props.createProject}
+                        removeProject={this.props.removeProject}
                     />;
                 break;
         }
