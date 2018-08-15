@@ -1,4 +1,4 @@
-export const SET_LAYOUT = 'SET_LAYOUT';
+export const SET_VIEW = 'SET_VIEW';
 
 export const RESET_STORE = 'RESET_STORE';
 export const SET_INIT_DATA = 'SET_INIT_DATA';

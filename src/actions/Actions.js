@@ -3,12 +3,12 @@ import * as Constants from '../constants/Constatnts';
 
 import * as logger from 'loglevel';
 
-import {getProjects, getUsers, sendNewProject, sendUpdateProject, sendRemoveProject} from '../lib/serverData';
+import * as server from '../lib/serverData';
 
-export function setLayout(layout) {
+export function setView(view) {
     return {
-        type: ActionTypes.SET_LAYOUT,
-        layout: layout
+        type: ActionTypes.SET_VIEW,
+        view: view
     }
 }
 
@@ -54,16 +54,19 @@ export function createProject() {
 }
 
 //**********************************************************************************************************************
-// THUNK ACTIONS
+// SERVER / THUNK ACTIONS
 //**********************************************************************************************************************
 export function getData() {
     return async (dispatch, getState) => {
         dispatch(setFetching(true));
         dispatch(setMessage(null));
         try {
-            const projects = await getProjects();
-            const users = await getUsers();
-            dispatch(setData({projects, users}));
+            const projects = await server.getProjects();
+            const people = await server.getPeople();
+            const companies = await server.getCompanies();
+            const users = await server.getUsers();
+
+            dispatch(setData({projects, people, companies, users}));
             if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
                 type: 'info',
                 text: 'Fetching done successfully!',
@@ -76,13 +79,13 @@ export function getData() {
         dispatch(setFetching(false));
     }
 }
-
+//PROJECTS
 export function updateProject(id, project) {
     return async (dispatch, getState) => {
         dispatch(setFetching(true));
         dispatch(setMessage(null));
         try {
-            const updatedProject = await sendUpdateProject(id, project);
+            const updatedProject = await server.updateProject(id, project);
             console.log(updatedProject);
             dispatch({type: ActionTypes.UPDATE_PROJECT, project: updatedProject});
             if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
@@ -103,7 +106,7 @@ export function addProject(project) {
         dispatch(setFetching(true));
         dispatch(setMessage(null));
         try {
-            const newProject = await sendNewProject(project);
+            const newProject = await server.createProject(project);
             dispatch({type: ActionTypes.ADD_PROJECT, project: newProject});
             if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
                 type: 'info',

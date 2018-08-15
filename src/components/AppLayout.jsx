@@ -7,7 +7,7 @@ import FetchingIndicator from './FetchingIndicator';
 import ProjectList from './projects/ProjectList';
 import ProjectDetail from './projects/ProjectDetail';
 
-import * as LayoutTypes from '../constants/LayoutTypes';
+import * as ViewTypes from '../constants/ViewTypes';
 
 import {name, version}  from '../../package.json';
 
@@ -20,8 +20,8 @@ export default class AppLayout extends React.PureComponent {
 
     render() {
         let AppBody = null;
-        switch(this.props.appState.layout) {
-            case LayoutTypes.PROJECTS:
+        switch(this.props.appState.view) {
+            case ViewTypes.PROJECTS:
                 AppBody =
                     <ProjectList
                         projects={this.props.projects}
@@ -30,13 +30,13 @@ export default class AppLayout extends React.PureComponent {
                         create={this.props.createProject}
                     />;
                 break;
-            case LayoutTypes.PROJECT_DETAIL:
+            case ViewTypes.PROJECT_DETAIL:
                 AppBody =
                     <ProjectDetail
-                        project={this.props.appState.project}
+                        selectedProject={this.props.appState.selectedProject}
                         projects={this.props.projects}
                         users={this.props.users}
-                        setLayout={this.props.setLayout}
+                        setView={this.props.setView}
                         updateProject={this.props.updateProject}
                         addProject={this.props.addProject}
                         //removeProject={this.props.removeProject}
@@ -52,8 +52,8 @@ export default class AppLayout extends React.PureComponent {
                     refresh = {this.props.getData}
                     //logout = {this.props.logout}
                     //home = {this.props.home}
-                    layout = {this.props.appState.layout}
-                    setLayout = {this.props.setLayout}
+                    view = {this.props.appState.view}
+                    setView = {this.props.setView}
                 />
                 <MessageBox message = {this.props.appState.message} close = {this.closeMessage}/>
                 {AppBody}

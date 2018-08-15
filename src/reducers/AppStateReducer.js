@@ -1,21 +1,25 @@
-import * as LayoutTypes from '../constants/LayoutTypes';
+import * as ViewTypes from '../constants/ViewTypes';
 import * as ActionTypes from '../constants/ActionTypes';
 
 const initialState = {
-    layout: LayoutTypes.PROJECTS,
+    view: ViewTypes.PROJECTS,
+    prevView: null,
     fetching: false,
     message: null,
     dataTimeStamp: null,
-    project: null
+    selectedProject: null,
+    selectedPerson: null,
+    selectedCompany: null,
+    box: []
 };
 
 function AppStateReducer(state = initialState, action = null) {
     if(action && action.type) {
         switch(action.type) {
 
-            case ActionTypes.SET_LAYOUT:
-                if(action.layout && action.layout !== state.layout) {
-                    return {...state, layout: action.layout};
+            case ActionTypes.SET_VIEW:
+                if(action.view && action.view !== state.view) {
+                    return {...state, prevView: state.view,  view: action.view};
                 } else return state;
 
             case ActionTypes.SET_FETCHING:
@@ -30,13 +34,13 @@ function AppStateReducer(state = initialState, action = null) {
                 } else return state;
 
             case ActionTypes.EDIT_PROJECT:
-                if(state.layout === LayoutTypes.PROJECTS) {
-                    return {...state, layout: LayoutTypes.PROJECT_DETAIL, project: action.project};
+                if(state.view === ViewTypes.PROJECTS) {
+                    return {...state, prevView: state.view, view: ViewTypes.PROJECT_DETAIL, selectedProject: action.project};
                 } else return state;
 
             case ActionTypes.CREATE_PROJECT:
-                if(state.layout === LayoutTypes.PROJECTS) {
-                    return {...state, layout: LayoutTypes.PROJECT_DETAIL, project: null};
+                if(state.view === ViewTypes.PROJECTS) {
+                    return {...state, prevView: state.view, view: ViewTypes.PROJECT_DETAIL, selectedProject: null};
                 } else return state;
 
             default:

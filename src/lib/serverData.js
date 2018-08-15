@@ -1,3 +1,6 @@
+//**********************************************************************************************************************
+// PROJECTS
+//**********************************************************************************************************************
 export async function getProjects() {
     let error;
     try {
@@ -22,7 +25,7 @@ export async function getProjects() {
     if(error) throw error;
 }
 
-export async function sendNewProject(project) {
+export async function createProject(project) {
     let error;
     try {
         const options = {
@@ -48,7 +51,7 @@ export async function sendNewProject(project) {
     if(error) throw error;
 }
 
-export async function sendUpdateProject(id, project) {
+export async function updateProject(id, project) {
     let error;
     try {
         const options = {
@@ -74,7 +77,7 @@ export async function sendUpdateProject(id, project) {
     if(error) throw error;
 }
 
-export async function sendRemoveProject(id) {
+export async function removeProject(id) {
     let error;
     try {
         const options = {
@@ -98,7 +101,9 @@ export async function sendRemoveProject(id) {
     }
     if(error) throw error;
 }
-
+//**********************************************************************************************************************
+// USERS
+//**********************************************************************************************************************
 export async function getUsers() {
     let error;
     try {
@@ -107,6 +112,59 @@ export async function getUsers() {
             headers: {'cache-control': 'no-cache', 'pragma': 'no-cache'}
         };
         const response = await fetch(`/api/project/users`, options);
+        const contentType = response.headers.get("content-type");
+        const data = contentType && contentType.indexOf("application/json") !== -1 ? await response.json() : null;
+        if (response.ok) {
+            return  data;
+        } else {
+            if(data) {
+                if(typeof data === 'string') error = new Error(`${data} - ${response.statusText} (${response.status})`);
+                else error = new Error(data.error ? data.error : `(${response.status}) ${response.statusText}`);
+            } else error = new Error(`${response.statusText} (${response.status})`);
+        }
+    } catch (e) {
+        error = e;
+    }
+    if(error) throw error;
+}
+
+//**********************************************************************************************************************
+// PEOPLE
+//**********************************************************************************************************************
+export async function getPeople() {
+    let error;
+    try {
+        const options = {
+            credentials: 'same-origin',
+            headers: {'cache-control': 'no-cache', 'pragma': 'no-cache'}
+        };
+        const response = await fetch(`/api/project/people`, options);
+        const contentType = response.headers.get("content-type");
+        const data = contentType && contentType.indexOf("application/json") !== -1 ? await response.json() : null;
+        if (response.ok) {
+            return  data;
+        } else {
+            if(data) {
+                if(typeof data === 'string') error = new Error(`${data} - ${response.statusText} (${response.status})`);
+                else error = new Error(data.error ? data.error : `(${response.status}) ${response.statusText}`);
+            } else error = new Error(`${response.statusText} (${response.status})`);
+        }
+    } catch (e) {
+        error = e;
+    }
+    if(error) throw error;
+}
+//**********************************************************************************************************************
+// COMPANIES
+//**********************************************************************************************************************
+export async function getCompanies() {
+    let error;
+    try {
+        const options = {
+            credentials: 'same-origin',
+            headers: {'cache-control': 'no-cache', 'pragma': 'no-cache'}
+        };
+        const response = await fetch(`/api/project/companies`, options);
         const contentType = response.headers.get("content-type");
         const data = contentType && contentType.indexOf("application/json") !== -1 ? await response.json() : null;
         if (response.ok) {

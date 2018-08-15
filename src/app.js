@@ -24,8 +24,12 @@ import './app.scss';
 
 const finalCreateStore = compose(
     persistState('appState', {key : 'projects', slicer: () => state => ({appState: {
-        layout: state['appState'].layout,
-        project: state['appState'].project
+                view: state['appState'].view,
+                prevView: state['appState'].prevView,
+                selectedProject: state['appState'].selectedProject,
+                selectedPerson: state['appState'].selectedPerson,
+                selectedCompany: state['appState'].selectedCompany,
+                box: state['appState'].box
     }})}),
     applyMiddleware(thunk)
 )(createStore);

@@ -1,4 +1,4 @@
-function CompaniesReducer (state = [], action = null) {
+function CompaniesReducer (state = {}, action = null) {
     if(action && action.type) {
         switch(action.type) {
             case 'AAAA':

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import * as LayoutTypes from '../../constants/LayoutTypes';
+import * as ViewTypes from '../../constants/ViewTypes';
 
 import ProjectDetailToolbox from './ProjectDetailToolbox';
 import ProjectDetailData from './ProjectDetailData';
@@ -31,12 +31,12 @@ export default class ProjectDetail extends React.PureComponent {
                     save = {this.save}
                     remove = {this.state.remove}
                     saveDisabled = {this.state.saveDisabled}
-                    create = {!this.props.project}
-                    id = {this.props.project && this.props.projects[this.props.project] ? this.props.projects[this.props.project].projectId : null}
+                    create = {!this.props.selectedProject}
+                    id = {this.props.selectedProject && this.props.projects[this.props.selectedProject] ? this.props.projects[this.props.selectedProject].projectId : null}
                     validation = {this.state.validation}
                 />
                 <ProjectDetailData
-                    project = {this.props.project}
+                    selectedProject = {this.props.selectedProject}
                     projects = {this.props.projects}
                     setSaveDisabled = {this.setSaveDisabled}
                     currentProject = {this.currentProject}
@@ -47,7 +47,7 @@ export default class ProjectDetail extends React.PureComponent {
     }
 
     close() {
-        this.props.setLayout(LayoutTypes.PROJECTS)
+        this.props.setView(ViewTypes.PROJECTS)
     }
 
     save() {
@@ -57,7 +57,7 @@ export default class ProjectDetail extends React.PureComponent {
             this.props.addProject(this.state.project);
         }
 
-        this.props.setLayout(LayoutTypes.PROJECTS)
+        this.props.setView(ViewTypes.PROJECTS)
     }
 
     remove(id) {

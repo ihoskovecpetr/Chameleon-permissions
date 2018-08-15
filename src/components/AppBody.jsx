@@ -1,30 +1,30 @@
 import React from 'react';
 
-import * as LayoutTypes from '../constants/LayoutTypes';
+import * as ViewTypes from '../constants/ViewTypes';
 
 
-import ProjectList from './projects/ProjectsLayout';
+import ProjectList from './projects/ProjectsLView';
 
 export default class AppBody extends React.PureComponent {
     render() {
-        switch(this.props.layout) {
-            case LayoutTypes.PROJECTS:
+        switch(this.props.view) {
+            case ViewTypes.PROJECTS:
                 return <ProjectList
 
                 />;
-            case LayoutTypes.ACTIVE_BID:
+            case ViewTypes.ACTIVE_BID:
                 return (
                     <div className={'app-body'}>
                         {'ACTIVE BIDS'}
                     </div>
                 );
-            case LayoutTypes.PEOPLE:
+            case ViewTypes.PEOPLE:
                 return (
                     <div className={'app-body'}>
                         {'PEOPLE'}
                     </div>
                 );
-            case LayoutTypes.COMPANY:
+            case ViewTypes.COMPANY:
                 return (
                     <div className={'app-body'}>
                         {'COMPANIES'}

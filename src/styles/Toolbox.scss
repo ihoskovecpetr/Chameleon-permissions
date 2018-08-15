@@ -62,6 +62,16 @@ $tool-height: 1.7rem;
           background-color: #08850f;
         }
       }
+      &.red {
+        color: #e1e1e1;
+        background-color: #ad0100;
+        &:hover {
+          background-color: #be0100;
+        }
+      }
+      &.remove {
+        margin: 0 0.5rem 0 2rem;
+      }
       &.disabled {
         cursor: default;
         color: #4b4b4b;
@@ -70,6 +80,9 @@ $tool-height: 1.7rem;
           background-color: #9b9b9b;
         }
       }
+    }
+    .tool-box-checkbox {
+      color: #424242;
     }
     .tool-box-icon {
       &:not(:last-child) {

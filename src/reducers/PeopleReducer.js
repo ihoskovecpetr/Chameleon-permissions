@@ -1,4 +1,4 @@
-function PeopleReducer (state = [], action = null) {
+function PeopleReducer (state = {}, action = null) {
     if(action && action.type) {
         switch(action.type) {
             case 'AAAA':
