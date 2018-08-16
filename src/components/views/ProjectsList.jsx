@@ -14,15 +14,15 @@ const ICON_SORT_DOWN = 'long-arrow-alt-down'; //sort-down
 export default class ProjectsList extends React.PureComponent {
 
     componentDidUpdate(prevProps) { //remove selected project if doesn't exist in filtered set
-        if(this.props.selectedProject && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.filterList(this.props.projects, this.props.filter, !this.props.sort, this.props.search).indexOf(this.props.selectedProject) < 0) this.props.selectProject(null);
+        if(this.props.selectedProject && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.filterList(this.props.projects, this.props.filter, this.props.search).indexOf(this.props.selectedProject) < 0) this.props.selectProject(null);
     }
 
     render() {
         console.log('RENDER PROJECTS LIST');
         const {selectedProject, projects, users, filter, sort, search} = this.props;
 
-        const filteredProjectIds = this.filterList(projects, filter, !sort, search);
-        const projectIds = sort ? this.sortList(projects, filteredProjectIds, sort) : filteredProjectIds;
+        const filteredProjectIds = this.filterList(projects, filter, search);
+        const sortedProjectIds = this.sortList(projects, filteredProjectIds, sort);
 
         return (
             <div className={'app-body'}>
@@ -55,7 +55,7 @@ export default class ProjectsList extends React.PureComponent {
                     <Scrollbars autoHide={true} autoHideTimeout={800} autoHideDuration={200}>
                         <Table className={'table-body'}>
                             <tbody style={{borderBottom: '1px solid #dee2e6'}}>
-                            {projectIds.map(projectId => <tr className={selectedProject === projectId ? 'selected' : ''} onClick = {() => this.select(projectId)} onDoubleClick={event => event.altKey ? this.edit(projectId) : this.detail(projectId)} key={projectId}>
+                            {sortedProjectIds.map(projectId => <tr className={selectedProject === projectId ? 'selected' : ''} onClick = {() => this.select(projectId)} onDoubleClick={event => event.altKey ? this.edit(projectId) : this.detail(projectId)} key={projectId}>
                                 <td className={'projects-name'}>{this.getComputedField('name', projects[projectId], users)}</td>
                                 <td className={'projects-manager'}>{this.getComputedField('manager', projects[projectId], users)}</td>
                                 <td className={'projects-status'}>{this.getComputedField('status', projects[projectId], users)}</td>
@@ -70,7 +70,7 @@ export default class ProjectsList extends React.PureComponent {
     // ***************************************************
     // FILTER AND SORT SOURCE LIST - MEMOIZE
     // ***************************************************
-    filterList = memoize((object, filter, defaultSort, search) => {
+    filterList = memoize((object, filter, search) => {
         console.log('MEMOIZE FILTER')
         const ids = Object.keys(object).map(id => id).filter(id => {
             const project = object[id];
@@ -93,26 +93,29 @@ export default class ProjectsList extends React.PureComponent {
             }
             return true;
         });
-
-        if(defaultSort) ids.sort((a, b) => object[b].created.localeCompare(object[a].created)); //default sort - latest created first
+        //if(defaultSort) ids.sort((a, b) => object[b].created.localeCompare(object[a].created)); //default sort - latest created first
         return ids;
     });
 
     sortList = memoize((object, ids, sort) => {
         console.log('MEMOIZE SORT')
-        return ids.sort((a, b) => {
-            const down = sort.indexOf('-') === 0;
-            let field = down ? sort.substr(1) : sort;
-            if(field === 'status') field = 'status-order';
-            let dataA = down ? this.getComputedField(field, object[a]) : this.getComputedField(field, object[b]);
-            let dataB = down ? this.getComputedField(field, object[b]) : this.getComputedField(field, object[a]);
-            if(typeof dataA === 'undefined' && typeof dataB === 'undefined') return 0;
-            if(typeof dataA === 'undefined') return 1;
-            if(typeof dataB === 'undefined') return 0;
-            if(dataA === null) dataA = '';
-            if(dataB === null) dataB = '';
-            return dataA.localeCompare(dataB);
-        })
+        if(!sort) {
+            return ids.sort((a, b) => object[b].created.localeCompare(object[a].created)); //default sort - latest created first
+        } else {
+            return ids.sort((a, b) => {
+                const down = sort.indexOf('-') === 0;
+                let field = down ? sort.substr(1) : sort;
+                if (field === 'status') field = 'status-order';
+                let dataA = down ? this.getComputedField(field, object[a]) : this.getComputedField(field, object[b]);
+                let dataB = down ? this.getComputedField(field, object[b]) : this.getComputedField(field, object[a]);
+                if (typeof dataA === 'undefined' && typeof dataB === 'undefined') return 0;
+                if (typeof dataA === 'undefined') return 1;
+                if (typeof dataB === 'undefined') return 0;
+                if (dataA === null) dataA = '';
+                if (dataB === null) dataB = '';
+                return dataA.localeCompare(dataB);
+            })
+        }
     });
 
     // ***************************************************
