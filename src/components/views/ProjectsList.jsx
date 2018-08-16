@@ -2,42 +2,38 @@ import React, {Fragment} from 'react';
 import { Table } from 'reactstrap';
 import { Scrollbars } from 'react-custom-scrollbars';
 import * as ViewTypes from '../../constants/ViewTypes';
+import * as ProjectStatus from '../../constants/ProjectStatus';
+import * as FilterTypes from '../../constants/FilterTypes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import memoize from 'memoize-one';
 
-const ICON_SORT = 'sort';
-const ICON_SORT_UP = 'sort-up';
-const ICON_SORT_DOWN = 'sort-down';
+const ICON_SORT = 'arrows-alt-v'; //sort
+const ICON_SORT_UP = 'long-arrow-alt-up'; //sort-up
+const ICON_SORT_DOWN = 'long-arrow-alt-down'; //sort-down
 
 export default class ProjectsList extends React.PureComponent {
-    constructor(props) {
-        super(props);
-        this.state = {
-            sortName: 0,
-            sortStatus: 0,
-            sortManager: 0
-        };
 
-        this.handleSortName = this.handleSortName.bind(this);
-        this.handleSortManager = this.handleSortManager.bind(this);
-        this.handleSortStatus = this.handleSortStatus.bind(this);
-
-        this.detail = this.detail.bind(this);
-        this.create = this.create.bind(this);
-        this.select = this.select.bind(this);
-        this.edit = this.edit.bind(this);
+    componentDidUpdate(prevProps) { //remove selected project if doesn't exist in filtered set
+        if(this.props.selectedProject && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.filterList(this.props.projects, this.props.filter, this.props.sort, this.props.search).indexOf(this.props.selectedProject) < 0) this.props.selectProject(null);
     }
 
     render() {
-        const {selectedProject, projects, users} = this.props;
+        console.log('RENDER PROJECTS LIST');
+        const {selectedProject, projects, users, filter, sort, search} = this.props;
+
+        const filteredProjectIds = this.filterList(projects, filter, sort, search);
+        const projectIds = sort ? this.sortList(projects, filteredProjectIds, sort) : filteredProjectIds;
+
         return (
             <div className={'app-body'}>
                 <div className={'app-toolbox'}>
                     <div className={'toolbox-group'}>
                         <FontAwesomeIcon onClick={this.create} className={'tool-box-icon'} icon={'plus-circle'}/>
                         {this.props.selectedProject ? <Fragment>
-                            <div onClick={() => this.detail()} style={{marginLeft: '1rem', cursor: 'pointer'}}>{'Detail'}</div>
-                            <div onClick={() => this.edit()} style={{marginLeft: '1rem', cursor: 'pointer'}}>{'Edit'}</div>
+                            <div onClick={this.detail} style={{marginLeft: '1rem', cursor: 'pointer'}}>{'Detail'}</div>
+                            <div onClick={this.edit} style={{marginLeft: '1rem', cursor: 'pointer'}}>{'Edit'}</div>
                         </Fragment> : null}
+                        <div onClick={this.activeOnly} style={{marginLeft: '1rem', cursor: 'pointer'}}>{'Active Only'}</div>
                     </div>
                     <div className={'toolbox-group clear'}/>
                 </div>
@@ -45,19 +41,19 @@ export default class ProjectsList extends React.PureComponent {
                     <Table className={'table-header'} borderless={true}>
                         <thead>
                         <tr>
-                            <th className={'projects-name'}><FontAwesomeIcon onClick={this.handleSortName} className={`sort-icon${this.state.sortName === 0 ? ' not-set' : ''}`} icon={this.state.sortName === 1 ? ICON_SORT_DOWN : this.state.sortName === 2 ? ICON_SORT_UP : ICON_SORT}/>{'Project Name'}</th>
-                            <th className={'projects-manager'}><FontAwesomeIcon onClick={this.handleSortManager} className={`sort-icon${this.state.sortManager === 0 ? ' not-set' : ''}`} icon={this.state.sortManager === 1 ? ICON_SORT_DOWN : this.state.sortManager === 2 ? ICON_SORT_UP : ICON_SORT}/>{'Project Manager'}</th>
-                            <th className={'projects-status'}><FontAwesomeIcon onClick={this.handleSortStatus} className={`sort-icon${this.state.sortStatus === 0 ? ' not-set' : ''}`} icon={this.state.sortStatus === 1 ? ICON_SORT_DOWN : this.state.sortStatus === 2 ? ICON_SORT_UP : ICON_SORT}/>{'Status'}</th>
+                            <th className={'projects-name'}><FontAwesomeIcon onClick={() => this.handleSort('name')} className={`sort-icon${sort.indexOf('name') < 0 ? ' not-set' : ''}`} icon={sort === 'name' ? ICON_SORT_UP : sort === '-name' ? ICON_SORT_DOWN : ICON_SORT}/><span className={'sortable-column'} onClick={() => this.handleSort('name')}>{'Project Name'}</span></th>
+                            <th className={'projects-manager'}><FontAwesomeIcon onClick={() => this.handleSort('manager')} className={`sort-icon${sort.indexOf('manager') < 0 ? ' not-set' : ''}`} icon={sort === 'manager' ? ICON_SORT_UP : sort === '-manager' ? ICON_SORT_DOWN : ICON_SORT}/><span className={'sortable-column'} onClick={() => this.handleSort('manager')}>{'Project Manager'}</span></th>
+                            <th className={'projects-status'}><FontAwesomeIcon onClick={() => this.handleSort('status')} className={`sort-icon${sort.indexOf('status') < 0 ? ' not-set' : ''}`} icon={sort === 'status' ? ICON_SORT_UP : sort === '-status' ? ICON_SORT_DOWN : ICON_SORT}/><span className={'sortable-column'} onClick={() => this.handleSort('status')}>{'Status'}</span></th>
                         </tr>
                         </thead>
                     </Table>
                     <Scrollbars autoHide={true} autoHideTimeout={800} autoHideDuration={200}>
                         <Table className={'table-body'}>
                             <tbody style={{borderBottom: '1px solid #dee2e6'}}>
-                            {Object.keys(projects).map(projectId => <tr className={selectedProject === projectId ? 'selected' : ''} onClick = {() => this.select(projectId)} onDoubleClick={event => event.altKey ? this.edit(projectId) : this.detail(projectId)} key={projectId}>
-                                <td className={'projects-name'}>{projects[projectId].name}</td>
-                                <td className={'projects-manager'}>{this.getManager(projects[projectId], users)}</td>
-                                <td className={'projects-status'}>{projects[projectId].status}</td>
+                            {projectIds.map(projectId => <tr className={selectedProject === projectId ? 'selected' : ''} onClick = {() => this.select(projectId)} onDoubleClick={event => event.altKey ? this.edit(projectId) : this.detail(projectId)} key={projectId}>
+                                <td className={'projects-name'}>{this.getComputedField('name', projects[projectId], users)}</td>
+                                <td className={'projects-manager'}>{this.getComputedField('manager', projects[projectId], users)}</td>
+                                <td className={'projects-status'}>{this.getComputedField('status', projects[projectId], users)}</td>
                             </tr>)}
                             </tbody>
                         </Table>
@@ -66,61 +62,107 @@ export default class ProjectsList extends React.PureComponent {
             </div>
         )
     }
+    // ***************************************************
+    // FILTER AND SORT SOURCE LIST - MEMOIZE
+    // ***************************************************
+    filterList = memoize((object, filter, sort, search) => {
+        const ids = Object.keys(object).map(id => id).filter(id => {
+            const project = object[id];
+            //filter
+            for(const f of filter) {
+                switch (f) {
+                    case FilterTypes.ACTIVE_PROJECTS_FILTER:
+                        if(!ProjectStatus[project.status] || !ProjectStatus[project.status].active) return false;
+                        break;
 
-    select(project) {
-        //if(this.props.selectedProject === project) this.props.selectProject(null);
-        //else this.props.selectProject(project);
-        this.props.selectProject(project);
-    }
+                }
+            }
+            //search
 
-    create() {
+            return true;
+        });
+
+        if(!sort) ids.sort((a, b) => object[b].created.localeCompare(object[a].created)); //default sort - latest created first
+        return ids;
+    });
+
+    sortList = memoize((object, ids, sort) => ids.sort((a, b) => {
+        const down = sort.indexOf('-') === 0;
+        let field = down ? sort.substr(1) : sort;
+        if(field === 'status') field = 'status-order';
+        let dataA = down ? this.getComputedField(field, object[a]) : this.getComputedField(field, object[b]);
+        let dataB = down ? this.getComputedField(field, object[b]) : this.getComputedField(field, object[a]);
+        if(typeof dataA === 'undefined' && typeof dataB === 'undefined') return 0;
+        if(typeof dataA === 'undefined') return 1;
+        if(typeof dataB === 'undefined') return 0;
+        if(dataA === null) dataA = '';
+        if(dataB === null) dataB = '';
+        return dataA.localeCompare(dataB);
+    }));
+
+    // ***************************************************
+    // ROUTING
+    // ***************************************************
+    select = (id) => {
+        this.props.selectProject(id);
+    };
+
+    create = () => {
         this.props.selectProject(null);
-        this.props.setView(ViewTypes.PROJECT_DETAIL); //TODO EDIT_PROJECT
-    }
+        this.props.setView(ViewTypes.PROJECT_EDIT);
+    };
 
-    detail(project) {
-        if(project) {
-            this.props.selectProject(project);
-            this.props.setView(ViewTypes.PROJECT_DETAIL); //TODO EDIT_PROJECT
+    detail = (id) => {
+        if(id) {
+            this.props.selectProject(id);
+            this.props.setView(ViewTypes.PROJECT_DETAIL);
         } else if(this.props.selectedProject) {
-            this.props.setView(ViewTypes.PROJECT_DETAIL); //TODO DETAIL_PROJECT
+            this.props.setView(ViewTypes.PROJECT_DETAIL);
         }
-    }
+    };
 
-    edit(project) {
-        if(project) {
-            this.props.selectProject(project);
-            this.props.setView(ViewTypes.PROJECT_DETAIL); //TODO EDIT_PROJECT
+    edit = (id) => {
+        if(id) {
+            this.props.selectProject(id);
+            this.props.setView(ViewTypes.PROJECT_EDIT);
         } else if(this.props.selectedProject) {
-            this.props.setView(ViewTypes.PROJECT_DETAIL); //TODO DETAIL_PROJECT
+            this.props.setView(ViewTypes.PROJECT_EDIT);
         }
-    }
+    };
 
-    handleSortName() {
-        let sort = this.state.sortName + 1;
-        if(sort > 2) sort = 0;
-        if(sort > 0) this.setState({sortName: sort, sortManager: 0, sortStatus: 0});
-        else this.setState({sortName: sort});
-    }
+    activeOnly = () => {
+        if(this.props.filter.indexOf(FilterTypes.ACTIVE_PROJECTS_FILTER) >= 0) this.props.setFilter(FilterTypes.ACTIVE_PROJECTS_FILTER, true);
+        else this.props.setFilter(FilterTypes.ACTIVE_PROJECTS_FILTER, false);
+    };
 
-    handleSortManager() {
-        let sort = this.state.sortManager + 1;
-        if(sort > 2) sort = 0;
-        if(sort > 0) this.setState({sortName: 0, sortManager: sort, sortStatus: 0});
-        else this.setState({sortManager: sort});
-    }
+    // ***************************************************
+    // SORT HANDLER
+    // ***************************************************
+    handleSort = (sort) => {
+        let result = '';
+        if(this.props.sort.indexOf(sort) < 0) result = `-${sort}`;
+        else if(this.props.sort === `-${sort}`) result = sort;
+        this.props.setSort(result);
+    };
 
-    handleSortStatus() {
-        let sort = this.state.sortStatus + 1;
-        if(sort > 2) sort = 0;
-        if(sort > 0) this.setState({sortName: 0, sortManager: 0, sortStatus: sort});
-        else this.setState({sortStatus: sort});
-    }
+    // ***************************************************
+    // COMPUTE FIELD
+    // ***************************************************
+    getComputedField(field, project) {
+        switch(field) {
+            case 'manager':
+                if(!project || !project.team) return '---';
+                const manager = project.team.find(person => this.props.users[person.id] && this.props.users[person.id].role.indexOf('manager') <= 0);
+                if(manager) return this.props.users[manager.id].name;
+                else return '---';
 
-    getManager(project, users) {
-        if(!project || !project.team) return '---';
-        const manager = project.team.find(person => users[person.id] && users[person.id].role.indexOf('manager') <= 0);
-        if(manager) return users[manager.id].name;
-        else return '---';
+            case 'status-order':
+                return ProjectStatus[project['status']] && ProjectStatus[project['status']].sortOrder ? ProjectStatus[project['status']].sortOrder.toString() : '0';
+
+            case 'status':
+                return ProjectStatus[project['status']].label;
+
+            default: return project && project[field] ? project[field] : '---';
+        }
     }
 }

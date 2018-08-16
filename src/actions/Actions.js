@@ -4,13 +4,15 @@ import * as Constants from '../constants/Constatnts';
 import * as logger from 'loglevel';
 
 import * as server from '../lib/serverData';
-
-// logged in user
+// *********************************************************************************************************************
+// lLOGGED IN USER
+// *********************************************************************************************************************
 export function setUser(user) {
     return {type: ActionTypes.SET_USER, user: user};
 }
-
-// routing, info
+// *********************************************************************************************************************
+// ROUTING, INFO, ...
+// *********************************************************************************************************************
 export function setView(view) {
     return {type: ActionTypes.SET_VIEW, view: view};
 }
@@ -22,8 +24,9 @@ export function setFetching(isFetching) {
 export function setMessage(message) {
     return {type: ActionTypes.SET_MESSAGE, message: message};
 }
-
-// data store
+// *********************************************************************************************************************
+// DATA STORE
+// *********************************************************************************************************************
 export function setData(data) {
     return {type: ActionTypes.SET_DATA, data: data};
 }
@@ -55,8 +58,9 @@ export function getData() {
         dispatch(setFetching(false));
     }
 }
-
-// projects
+// *********************************************************************************************************************
+// PROJECTS
+// *********************************************************************************************************************
 export function selectProject(id) {
     return {type: ActionTypes.SELECT_PROJECT, id: id}
 }
@@ -125,3 +129,18 @@ export function removeProject(id) {
         dispatch(setFetching(false));
     }
 }
+
+export function setProjectsFilter(filter, remove) {
+    return {type: ActionTypes.SET_PROJECTS_FILTER, filter: filter, remove: remove};
+}
+
+export function setProjectsSerach(search) {
+    return {type: ActionTypes.SET_PROJECTS_SERACH, search: search};
+}
+
+export function setProjectsSort(sort) {
+    return {type: ActionTypes.SET_PROJECTS_SORT, sort: sort};
+}
+// *********************************************************************************************************************
+// PEOPLE
+// *********************************************************************************************************************

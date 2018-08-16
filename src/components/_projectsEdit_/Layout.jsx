@@ -47,7 +47,7 @@ export default class Layout extends React.PureComponent {
     }
 
     close() {
-        this.props.setView(ViewTypes.PROJECT_LIST)
+        this.props.setView(ViewTypes.PROJECTS_LIST)
     }
 
     save() {
@@ -57,7 +57,7 @@ export default class Layout extends React.PureComponent {
             this.props.addProject(this.state.project);
         }
 
-        this.props.setView(ViewTypes.PROJECT_LIST)
+        this.props.setView(ViewTypes.PROJECTS_LIST)
     }
 
     remove(id) {

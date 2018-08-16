@@ -27,8 +27,17 @@ const finalCreateStore = compose(
                 view: state['appState'].view,
                 prevView: state['appState'].prevView,
                 selectedProject: state['appState'].selectedProject,
+                projectsFilter: state['appState'].projectsFilter,
+                projectsSearch: state['appState'].projectsSearch,
+                projectsSort: state['appState'].projectsSort,
                 selectedPerson: state['appState'].selectedPerson,
+                peopleFilter: state['appState'].peopleFilter,
+                peopleSearch: state['appState'].peopleSearch,
+                peopleSort: state['appState'].peopleSort,
                 selectedCompany: state['appState'].selectedCompany,
+                companiesFilter: state['appState'].companiesFilter,
+                companiesSearch: state['appState'].companiesSearch,
+                companiesSort: state['appState'].companiesSort,
                 box: state['appState'].box
     }})}),
     applyMiddleware(thunk)

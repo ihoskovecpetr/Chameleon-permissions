@@ -5,7 +5,8 @@ import MessageBox from './MessageBox';
 import FetchingIndicator from './FetchingIndicator';
 
 import ProjectsList from './views/ProjectsList';
-import ProjectsEdit from './views/ProjectsEdit';
+import ProjectEdit from './views/ProjectEdit';
+import ProjectDetail from './views/ProjectDetail';
 
 import * as ViewTypes from '../constants/ViewTypes';
 
@@ -13,15 +14,11 @@ import {name, version}  from '../../package.json';
 
 
 export default class AppLayout extends React.PureComponent {
-    constructor(props) {
-        super(props);
-        this.closeMessage = this.closeMessage.bind(this);
-    }
 
     render() {
         let AppBody = null;
         switch(this.props.appState.view) {
-            case ViewTypes.PROJECT_LIST:
+            case ViewTypes.PROJECTS_LIST:
                 AppBody =
                     <ProjectsList
                         projects={this.props.projects}
@@ -29,17 +26,38 @@ export default class AppLayout extends React.PureComponent {
                         companies={this.props.companies}
                         users={this.props.users}
 
-
                         selectedProject={this.props.appState.selectedProject}
+                        filter = {this.props.appState.projectsFilter}
+                        search = {this.props.appState.projectsSearch}
+                        sort = {this.props.appState.projectsSort}
 
                         setView={this.props.setView}
                         selectProject={this.props.selectProject}
+                        setFilter={this.props.setProjectsFilter}
+                        setSearch={this.props.setProjectsSearch}
+                        setSort={this.props.setProjectsSort}
                     />;
                 break;
             case ViewTypes.PROJECT_DETAIL:
+                AppBody =
+                    <ProjectDetail
+                        projects={this.props.projects}
+                        people={this.props.people}
+                        companies={this.props.companies}
+                        users={this.props.users}
+
+                        selectedProject={this.props.appState.selectedProject}
+                        editedProject={this.props.appState.editedProject}
+
+                        setView={this.props.setView}
+                        selectProject={this.props.selectProject}
+                        editProject={this.props.editProject}
+                        removeProject={this.props.removeProject}
+                    />;
+                break;
             case ViewTypes.PROJECT_EDIT:
                 AppBody =
-                    <ProjectsEdit
+                    <ProjectEdit
                         projects={this.props.projects}
                         people={this.props.people}
                         companies={this.props.companies}
@@ -70,15 +88,11 @@ export default class AppLayout extends React.PureComponent {
                     view = {this.props.appState.view}
                     setView = {this.props.setView}
                 />
-                <MessageBox message = {this.props.appState.message} close = {this.closeMessage}/>
+                <MessageBox message = {this.props.appState.message} setMessage = {this.props.setMessage}/>
                 {AppBody}
                 <FetchingIndicator open={this.props.appState.fetching}/>
             </div>
         )
-    }
-
-    closeMessage() {
-        this.props.setMessage(null);
     }
 
 }

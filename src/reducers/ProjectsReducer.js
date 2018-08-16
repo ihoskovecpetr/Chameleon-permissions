@@ -3,14 +3,12 @@ import * as ActionTypes from '../constants/ActionTypes';
 function ProjectsReducer (state = {}, action = null) {
     if(action && action.type) {
         switch(action.type) {
-            case ActionTypes.SET_DATA:
-                if(action.data.projects) {
-                    state = action.data.projects.reduce((object, project) => {object[project._id] = project; return object}, {});
-                } else return state;
-                return state;
-
             case ActionTypes.RESET_STORE:
                 return {};
+
+            case ActionTypes.SET_DATA:
+                if(action.data.projects) return action.data.projects.reduce((object, project) => {object[project._id] = project; return object}, {});
+                return state;
 
             case ActionTypes.UPDATE_PROJECT:
             case ActionTypes.CREATE_PROJECT:

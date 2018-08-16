@@ -29,8 +29,8 @@ export default class AppHeader extends React.PureComponent {
             userNameShort = `${userNameShort[0].charAt(0)}. ${userNameShort.slice(1).join(' ')}`
         } else userNameShort = userName;
 
-        const switchEnabled = this.props.view === ViewTypes.PROJECT_LIST || this.props.view === ViewTypes.ACTIVE_BID || this.props.view === ViewTypes.PEOPLE_LIST || this.props.view === ViewTypes.COMPANIES_LIST;
-        const projectsSwitchActive = this.props.view === ViewTypes.PROJECT_LIST || this.props.view === ViewTypes.PROJECT_DETAIL || this.props.view === ViewTypes.PROJECT_EDIT;
+        const switchEnabled = this.props.view === ViewTypes.PROJECTS_LIST || this.props.view === ViewTypes.ACTIVE_BID || this.props.view === ViewTypes.PEOPLE_LIST || this.props.view === ViewTypes.COMPANIES_LIST;
+        const projectsSwitchActive = this.props.view === ViewTypes.PROJECTS_LIST || this.props.view === ViewTypes.PROJECT_DETAIL || this.props.view === ViewTypes.PROJECT_EDIT;
         const peopleSwitchActive = this.props.view === ViewTypes.PEOPLE_LIST || this.props.view === ViewTypes.PEOPLE_DETAIL || this.props.view === ViewTypes.PEOPLE_EDIT;
         const companySwitchActive = this.props.view === ViewTypes.COMPANIES_LIST || this.props.view === ViewTypes.COMPANIES_DETAIL || this.props.view === ViewTypes.COMPANIES_EDIT;
 
@@ -50,7 +50,7 @@ export default class AppHeader extends React.PureComponent {
                     </div>
 
                     <div className={'header-group center header-switch'}>
-                        <div onClick={() => switchEnabled && !projectsSwitchActive ? this.props.setView(ViewTypes.PROJECT_LIST) : undefined} className={`switch${projectsSwitchActive ? ' active' : switchEnabled ? ' clickable' : ''}`}>
+                        <div onClick={() => switchEnabled && !projectsSwitchActive ? this.props.setView(ViewTypes.PROJECTS_LIST) : undefined} className={`switch${projectsSwitchActive ? ' active' : switchEnabled ? ' clickable' : ''}`}>
                             <FontAwesomeIcon className={'fa-view-icon'} icon={ICON_PROJECTS}/>
                             <span className={'switch-text'}>{'Projects'}</span>
                         </div>

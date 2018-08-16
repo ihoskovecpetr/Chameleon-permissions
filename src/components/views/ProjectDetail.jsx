@@ -6,13 +6,13 @@ import Select from 'react-select';
 import * as ViewTypes from '../../constants/ViewTypes';
 import * as ProjectStatus from '../../constants/ProjectStatus';
 
-const statusOptions = Object.keys(ProjectStatus).map(key => {return {value: ProjectStatus[key], label: ProjectStatus[key]}});
+const statusOptions = Object.keys(ProjectStatus).map(key => {return {value: ProjectStatus[key].key, label: ProjectStatus[key].label}});
 
 const ICON_REMOVE = 'trash';
 const ICON_CHECKBOX_CHECKED = ['far','check-square'];
 const ICON_CHECKBOX_UNCHECKED = ['far', 'square'];
 
-export default class ProjectsEdit extends React.PureComponent {
+export default class ProjectDetail extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -20,7 +20,7 @@ export default class ProjectsEdit extends React.PureComponent {
             project: null,
             validation: {},
             removeArmed: false,
-            status: !props.selectedProject ? ProjectStatus.PREBID : undefined
+            status: !props.selectedProject ? ProjectStatus.PREBID.key : undefined
         };
 
         this.handleRemoveArmed = this.handleRemoveArmed.bind(this);
@@ -106,7 +106,7 @@ export default class ProjectsEdit extends React.PureComponent {
     }
 
     close() {
-        this.props.setView(ViewTypes.PROJECT_LIST)
+        this.props.setView(ViewTypes.PROJECTS_LIST)
     }
 
     save() {
@@ -116,7 +116,7 @@ export default class ProjectsEdit extends React.PureComponent {
             this.props.addProject(this.state.project);
         }
 
-        this.props.setView(ViewTypes.PROJECT_LIST)
+        this.props.setView(ViewTypes.PROJECTS_LIST)
     }
 
     remove(id) {

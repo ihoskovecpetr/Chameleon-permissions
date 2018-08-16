@@ -17,6 +17,10 @@ export const CREATE_PROJECT = 'CREATE_PROJECT';
 export const UPDATE_PROJECT = 'UPDATE_PROJECT';
 export const REMOVE_PROJECT = 'REMOVE_PROJECT';
 
+export const SET_PROJECTS_FILTER = 'SET_PROJECTS_FILTER';
+export const SET_PROJECTS_SERACH = 'SET_PROJECTS_SERACH';
+export const SET_PROJECTS_SORT = 'SET_PROJECTS_SORT';
+
 //people
 
 //companies

@@ -12,7 +12,7 @@ export default class Data extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            status: !props.selectedProject ? ProjectStatus.PREBID : undefined
+            status: !props.selectedProject ? ProjectStatus.PREBID.key : undefined
         };
 
         this.editable = true;

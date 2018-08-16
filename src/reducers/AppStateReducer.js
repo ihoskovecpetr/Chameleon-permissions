@@ -1,18 +1,32 @@
 import * as ViewTypes from '../constants/ViewTypes';
 import * as ActionTypes from '../constants/ActionTypes';
+import * as FilterTypes from '../constants/FilterTypes';
 
 const initialState = {
-    view: ViewTypes.PROJECT_LIST,
+    view: ViewTypes.PROJECTS_LIST,
     prevView: null,
     fetching: false,
     message: null,
     dataTimeStamp: null,
+
     selectedProject: null,
     editedProject: {},
+    projectsFilter: [FilterTypes.USER_FILTER, FilterTypes.ACTIVE_PROJECTS_FILTER],
+    projectsSearch: '',
+    projectsSort: '',
+
     selectedPerson: null,
     editedPerson: {},
+    peopleFilter: [],
+    peopleSearch: '',
+    peopleSort: '',
+
     selectedCompany: null,
     editedCompany: {},
+    companiesFilter: [],
+    companiesSearch: '',
+    companiesSort: '',
+
     box: []
 };
 
@@ -44,6 +58,39 @@ function AppStateReducer(state = initialState, action = null) {
             case ActionTypes.EDIT_PROJECT:
                 if(action.project) {
                     return {...state, editedProject: action.project};
+                } else return state;
+
+            case ActionTypes.SET_PROJECTS_FILTER:
+                if(action.filter) {
+                    if(Array.isArray(action.filter)) {
+                        if(state.projectsFilter.length !== action.filter.length) return {...state, projectsFilter: action.filter};
+                        for(const filter of action.filter) {
+                            if(state.projectsFilter.indexOf(filter) < 0) return {...state, projectsFilter: action.filter};
+                        }
+                        return state;
+                    } else {
+                        const index = state.projectsFilter.indexOf(action.filter);
+                        if(action.remove) {
+                            if(index >= 0) {
+                              const filter = [...state.projectsFilter];
+                              filter.splice(index, 1);
+                              return {...state, projectsFilter: filter};
+                            } else return state;
+                        } else {
+                            if(index < 0) return {...state, projectsFilter: [...state.projectsFilter, action.filter]};
+                            else return state;
+                        }
+                    }
+                } else return state;
+
+            case ActionTypes.SET_PROJECTS_SORT:
+                if(typeof action.sort !== 'undefined' && action.sort !== state.projectsSort) {
+                    return {...state, projectsSort: action.sort}
+                } else return state;
+
+            case ActionTypes.SET_PROJECTS_SERACH:
+                if(action.search && action.search !== state.projectsSearch) {
+                    return {...state, projectsSearch: action.search}
                 } else return state;
 
             default:
