@@ -25,6 +25,7 @@ export default class AppLayout extends React.PureComponent {
                         people={this.props.people}
                         companies={this.props.companies}
                         users={this.props.users}
+                        user={this.props.user}
 
                         selectedProject={this.props.appState.selectedProject}
                         filter = {this.props.appState.projectsFilter}

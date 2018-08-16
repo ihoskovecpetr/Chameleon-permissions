@@ -14,26 +14,31 @@ const ICON_SORT_DOWN = 'long-arrow-alt-down'; //sort-down
 export default class ProjectsList extends React.PureComponent {
 
     componentDidUpdate(prevProps) { //remove selected project if doesn't exist in filtered set
-        if(this.props.selectedProject && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.filterList(this.props.projects, this.props.filter, this.props.sort, this.props.search).indexOf(this.props.selectedProject) < 0) this.props.selectProject(null);
+        if(this.props.selectedProject && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.filterList(this.props.projects, this.props.filter, !this.props.sort, this.props.search).indexOf(this.props.selectedProject) < 0) this.props.selectProject(null);
     }
 
     render() {
         console.log('RENDER PROJECTS LIST');
         const {selectedProject, projects, users, filter, sort, search} = this.props;
 
-        const filteredProjectIds = this.filterList(projects, filter, sort, search);
+        const filteredProjectIds = this.filterList(projects, filter, !sort, search);
         const projectIds = sort ? this.sortList(projects, filteredProjectIds, sort) : filteredProjectIds;
 
         return (
             <div className={'app-body'}>
                 <div className={'app-toolbox'}>
+                    <div className={'toolbox-group'}  style={{marginRight: 'auto'}}>
+                        <div onClick={this.create} className={'tool-box-button green'}>{'New'}</div>
+                        <div onClick={this.props.selectedProject ? this.detail : undefined} className={`tool-box-button${this.props.selectedProject ? '' : ' disabled'}`}>{'Show'}</div>
+                        <div onClick={this.props.selectedProject ? this.edit : undefined} className={`tool-box-button${this.props.selectedProject ? '' : ' disabled'}`}>{'Edit'}</div>
+                        <div onClick={this.props.selectedProject ? this.remove : undefined} className={`tool-box-button red${this.props.selectedProject ? '' : ' disabled'}`}>{'Remove'}</div>
+                    </div>
                     <div className={'toolbox-group'}>
-                        <FontAwesomeIcon onClick={this.create} className={'tool-box-icon'} icon={'plus-circle'}/>
-                        {this.props.selectedProject ? <Fragment>
-                            <div onClick={this.detail} style={{marginLeft: '1rem', cursor: 'pointer'}}>{'Detail'}</div>
-                            <div onClick={this.edit} style={{marginLeft: '1rem', cursor: 'pointer'}}>{'Edit'}</div>
-                        </Fragment> : null}
-                        <div onClick={this.activeOnly} style={{marginLeft: '1rem', cursor: 'pointer'}}>{'Active Only'}</div>
+                        <div onClick={this.activeOnly} style={{cursor: 'pointer'}}>{'Search Filter [XXXXXXXXXXXXXXXXXXXXXXXXXXXX]'}</div>
+                    </div>
+                    <div className={'toolbox-group'} style={{marginLeft: 'auto'}}>
+                        <div onClick={this.activeOnly} style={{cursor: 'pointer'}}>{'Active Only'}</div>
+                        <div onClick={this.ownOnly} style={{marginLeft: '1rem', cursor: 'pointer'}}>{'Own Only'}</div>
                     </div>
                     <div className={'toolbox-group clear'}/>
                 </div>
@@ -65,7 +70,8 @@ export default class ProjectsList extends React.PureComponent {
     // ***************************************************
     // FILTER AND SORT SOURCE LIST - MEMOIZE
     // ***************************************************
-    filterList = memoize((object, filter, sort, search) => {
+    filterList = memoize((object, filter, defaultSort, search) => {
+        console.log('MEMOIZE FILTER')
         const ids = Object.keys(object).map(id => id).filter(id => {
             const project = object[id];
             //filter
@@ -75,30 +81,39 @@ export default class ProjectsList extends React.PureComponent {
                         if(!ProjectStatus[project.status] || !ProjectStatus[project.status].active) return false;
                         break;
 
+                    case FilterTypes.USER_FILTER:
+                        if(project.team && Array.isArray(project.team) && project.team.length > 0) {
+                            for(const teamMember of project.team) {
+                                if(teamMember.id === this.props.user.id) return true;
+                            }
+                        }
+                        return false;
+
                 }
             }
-            //search
-
             return true;
         });
 
-        if(!sort) ids.sort((a, b) => object[b].created.localeCompare(object[a].created)); //default sort - latest created first
+        if(defaultSort) ids.sort((a, b) => object[b].created.localeCompare(object[a].created)); //default sort - latest created first
         return ids;
     });
 
-    sortList = memoize((object, ids, sort) => ids.sort((a, b) => {
-        const down = sort.indexOf('-') === 0;
-        let field = down ? sort.substr(1) : sort;
-        if(field === 'status') field = 'status-order';
-        let dataA = down ? this.getComputedField(field, object[a]) : this.getComputedField(field, object[b]);
-        let dataB = down ? this.getComputedField(field, object[b]) : this.getComputedField(field, object[a]);
-        if(typeof dataA === 'undefined' && typeof dataB === 'undefined') return 0;
-        if(typeof dataA === 'undefined') return 1;
-        if(typeof dataB === 'undefined') return 0;
-        if(dataA === null) dataA = '';
-        if(dataB === null) dataB = '';
-        return dataA.localeCompare(dataB);
-    }));
+    sortList = memoize((object, ids, sort) => {
+        console.log('MEMOIZE SORT')
+        return ids.sort((a, b) => {
+            const down = sort.indexOf('-') === 0;
+            let field = down ? sort.substr(1) : sort;
+            if(field === 'status') field = 'status-order';
+            let dataA = down ? this.getComputedField(field, object[a]) : this.getComputedField(field, object[b]);
+            let dataB = down ? this.getComputedField(field, object[b]) : this.getComputedField(field, object[a]);
+            if(typeof dataA === 'undefined' && typeof dataB === 'undefined') return 0;
+            if(typeof dataA === 'undefined') return 1;
+            if(typeof dataB === 'undefined') return 0;
+            if(dataA === null) dataA = '';
+            if(dataB === null) dataB = '';
+            return dataA.localeCompare(dataB);
+        })
+    });
 
     // ***************************************************
     // ROUTING
@@ -135,6 +150,11 @@ export default class ProjectsList extends React.PureComponent {
         else this.props.setFilter(FilterTypes.ACTIVE_PROJECTS_FILTER, false);
     };
 
+    ownOnly = () => {
+        if(this.props.filter.indexOf(FilterTypes.USER_FILTER) >= 0) this.props.setFilter(FilterTypes.USER_FILTER, true);
+        else this.props.setFilter(FilterTypes.USER_FILTER, false);
+    };
+
     // ***************************************************
     // SORT HANDLER
     // ***************************************************
@@ -160,7 +180,7 @@ export default class ProjectsList extends React.PureComponent {
                 return ProjectStatus[project['status']] && ProjectStatus[project['status']].sortOrder ? ProjectStatus[project['status']].sortOrder.toString() : '0';
 
             case 'status':
-                return ProjectStatus[project['status']].label;
+                return ProjectStatus[project['status']] ? ProjectStatus[project['status']].label : '---';
 
             default: return project && project[field] ? project[field] : '---';
         }

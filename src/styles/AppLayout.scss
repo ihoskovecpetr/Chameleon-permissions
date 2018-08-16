@@ -15,23 +15,23 @@ $app-warn-box-background-color: #edab44;
 html {
   height: 100%;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 12px;
+  font-size: 11px;
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
   @include media(">=small-phone") {
-    font-size: 13px;
+    font-size: 12px;
   }
   @include media(">=phone") {
-    font-size: 14px;
+    font-size: 13px;
   }
   @include media(">=tablet") {
-    font-size: 15px;
+    font-size: 14px;
   }
   @include media(">=desktop") {
-    font-size: 16px;
+    font-size: 15px;
   }
 }
 

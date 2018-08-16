@@ -9,7 +9,7 @@ $tool-height: 1.7rem;
   background-color: $app-toolbox-background-color;
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: wrap-reverse;
   flex: 0 0 auto;
   .toolbox-id {
     margin-left: auto;
@@ -27,10 +27,11 @@ $tool-height: 1.7rem;
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
-    padding: 0.3rem 0;
-    margin: 0.3rem 0.3rem 0 0;
+    //padding: 0.3rem 0;
+    //margin: 0.3rem 0.3rem 0 0;
     //border: 1px solid #7d7d7d;
     //border-radius: $toolbox-box-radius;
+    margin: 0 0.5rem 0.5rem 0;
     &.clear {
       border: none;
       width: 100%;
