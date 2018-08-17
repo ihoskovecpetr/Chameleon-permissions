@@ -13,6 +13,8 @@ const ICON_PEOPLE = 'users';
 const ICON_COMPANIES = 'building';
 const ICON_PROJECTS = 'tasks';
 
+const ICON_BOX = 'box';
+
 export default class AppHeader extends React.PureComponent {
     constructor(props) {
         super(props);
@@ -29,11 +31,11 @@ export default class AppHeader extends React.PureComponent {
             userNameShort = `${userNameShort[0].charAt(0)}. ${userNameShort.slice(1).join(' ')}`
         } else userNameShort = userName;
 
-        const switchEnabled = this.props.view === ViewTypes.PROJECTS_LIST || this.props.view === ViewTypes.ACTIVE_BID || this.props.view === ViewTypes.PEOPLE_LIST || this.props.view === ViewTypes.COMPANIES_LIST;
+        const switchEnabled = this.props.view === ViewTypes.PROJECTS_LIST || this.props.view === ViewTypes.BOX || this.props.view === ViewTypes.PEOPLE_LIST || this.props.view === ViewTypes.COMPANIES_LIST;
         const projectsSwitchActive = this.props.view === ViewTypes.PROJECTS_LIST || this.props.view === ViewTypes.PROJECT_DETAIL || this.props.view === ViewTypes.PROJECT_EDIT;
         const peopleSwitchActive = this.props.view === ViewTypes.PEOPLE_LIST || this.props.view === ViewTypes.PEOPLE_DETAIL || this.props.view === ViewTypes.PEOPLE_EDIT;
         const companySwitchActive = this.props.view === ViewTypes.COMPANIES_LIST || this.props.view === ViewTypes.COMPANIES_DETAIL || this.props.view === ViewTypes.COMPANIES_EDIT;
-
+        const boxActive = this.props.view === ViewTypes.BOX
         return (
             <div className={'app-header-outer'}>
                 <div className={'app-header'}>
@@ -62,6 +64,11 @@ export default class AppHeader extends React.PureComponent {
                             <FontAwesomeIcon className={'fa-view-icon'} icon={ICON_COMPANIES}/>
                             <span className={'switch-text'}>{'Companies'}</span>
                         </div>
+                    </div>
+
+                    <div onClick={this.props.box && this.props.box.length > 0 ? () => this.props.setView(ViewTypes.BOX) : undefined} className={`header-group box${this.props.box && this.props.box.length > 0 ? ' full' : ''}${boxActive ? ' active' : ''}`}>
+                        <FontAwesomeIcon className={'icon-box'} icon={ICON_BOX}/>
+                        {this.props.box && this.props.box.length > 0 ? <span className="badge">{this.props.box.length}</span> : null}
                     </div>
 
                     <div className={'header-group right header-date'}>

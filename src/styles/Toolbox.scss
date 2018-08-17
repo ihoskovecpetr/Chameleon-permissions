@@ -3,6 +3,8 @@ $app-toolbox-color: #0f0f0f;
 $toolbox-box-radius: $app-header-button-radius;
 $tool-height: 1.7rem;
 
+$too-box-search-radius: 0.8rem;
+
 $tool-button-color-default: #b4b4b4;
 $tool-button-color-red: #9b0006;
 $tool-button-color-green: #007300;
@@ -133,17 +135,18 @@ $tool-button-color-disabled: #9b9b9b;
         display: flex;
         height: $tool-height;
         text-align: center;
-        padding: 0 0.4rem;
         align-items: center;
         border: 1px solid $app-toolbox-background-color;
         &.search {
-          border-radius: 0.3rem 0  0 0.3rem;
+          border-radius: $too-box-search-radius 0  0 $too-box-search-radius;
           border-right: none;
+          padding: 0 0.3rem 0 0.5rem;
         }
         &.clear {
           cursor: pointer;
-          border-radius: 0 0.3rem 0.3rem 0;
+          border-radius: 0 $too-box-search-radius $too-box-search-radius 0;
           border-left: none;
+          padding: 0 0.5rem 0 0.3rem;
         }
       }
     }

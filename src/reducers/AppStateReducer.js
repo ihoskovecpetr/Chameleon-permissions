@@ -27,7 +27,7 @@ const initialState = {
     companiesSearch: '',
     companiesSort: '',
 
-    box: []
+    box: ['a', 'b', 'c']
 };
 
 function AppStateReducer(state = initialState, action = null) {

@@ -88,6 +88,7 @@ export default class AppLayout extends React.PureComponent {
                     //home = {this.props.home}
                     view = {this.props.appState.view}
                     setView = {this.props.setView}
+                    box = {this.props.appState.box}
                 />
                 <MessageBox message = {this.props.appState.message} setMessage = {this.props.setMessage}/>
                 {AppBody}
