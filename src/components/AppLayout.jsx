@@ -35,7 +35,7 @@ export default class AppLayout extends React.PureComponent {
                         setView={this.props.setView}
                         selectProject={this.props.selectProject}
                         setFilter={this.props.setProjectsFilter}
-                        setSearch={this.props.setProjectsSearch}
+                        setSearch={this.props.setProjectsSerach}
                         setSort={this.props.setProjectsSort}
                     />;
                 break;

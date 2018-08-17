@@ -131,7 +131,7 @@ export function removeProject(id) {
 }
 
 export function setProjectsFilter(filter, remove) {
-    return {type: ActionTypes.SET_PROJECTS_FILTER, filter: filter, remove: remove};
+    return {type: ActionTypes.SET_PROJECTS_FILTER, filter: filter, state: remove};
 }
 
 export function setProjectsSerach(search) {

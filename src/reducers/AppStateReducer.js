@@ -11,7 +11,7 @@ const initialState = {
 
     selectedProject: null,
     editedProject: {},
-    projectsFilter: [FilterTypes.USER_FILTER, FilterTypes.ACTIVE_PROJECTS_FILTER],
+    projectsFilter: [],//[FilterTypes.USER_FILTER, FilterTypes.ACTIVE_PROJECTS_FILTER],
     projectsSearch: '',
     projectsSort: '',
 
@@ -70,15 +70,15 @@ function AppStateReducer(state = initialState, action = null) {
                         return state;
                     } else {
                         const index = state.projectsFilter.indexOf(action.filter);
-                        if(action.remove) {
-                            if(index >= 0) {
-                              const filter = [...state.projectsFilter];
-                              filter.splice(index, 1);
-                              return {...state, projectsFilter: filter};
-                            } else return state;
-                        } else {
+                        if(action.state) {
                             if(index < 0) return {...state, projectsFilter: [...state.projectsFilter, action.filter]};
                             else return state;
+                        } else {
+                            if(index >= 0) {
+                                const filter = [...state.projectsFilter];
+                                filter.splice(index, 1);
+                                return {...state, projectsFilter: filter};
+                            } else return state;
                         }
                     }
                 } else return state;
@@ -89,7 +89,7 @@ function AppStateReducer(state = initialState, action = null) {
                 } else return state;
 
             case ActionTypes.SET_PROJECTS_SERACH:
-                if(action.search && action.search !== state.projectsSearch) {
+                if(typeof action.search !== 'undefined' && action.search !== state.projectsSearch) {
                     return {...state, projectsSearch: action.search}
                 } else return state;
 

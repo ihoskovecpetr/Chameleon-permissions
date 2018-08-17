@@ -3,14 +3,58 @@ $app-toolbox-color: #0f0f0f;
 $toolbox-box-radius: $app-header-button-radius;
 $tool-height: 1.7rem;
 
+$tool-button-color-default: #b4b4b4;
+$tool-button-color-red: #9b0006;
+$tool-button-color-green: #007300;
+$tool-button-color-orange: #cf9d3a;
+$tool-button-color-blue: #2257ad;
+$tool-button-color-disabled: #9b9b9b;
+
+// BUTTON MIXIN ********************************************************************************************************
+@mixin tool-button($bg, $fg-dark: true, $disabled: false) {
+  $gradient-step: 10%;
+  $focus-step: 3%;
+
+  border: 1px solid darken($app-toolbox-background-color, 5%);
+  @if $disabled {
+    @if $fg-dark {color: darken($bg, 30%);} @else {color: lighten($bg, 30%);}
+    text-shadow: none;
+    cursor: default;
+    background-color: $bg;
+    background: linear-gradient(to bottom, $bg, $bg);
+    &:hover, &:focus, &:active {
+      background-color: $bg;
+      background: linear-gradient(to bottom, $bg, $bg);
+    }
+  }
+  @else {
+    @if $fg-dark {color: lighten(#000, 15%);} @else {color: darken(#fff, 15%);}
+    text-shadow: darken($bg, 20%) 0 0 0.01rem;
+    cursor: pointer;
+    background-color: $bg;
+    background: linear-gradient(to bottom, lighten($bg, $gradient-step / 2), darken($bg, $gradient-step / 2));
+    &:hover, &:focus {
+      background-color: lighten($bg, $focus-step);
+      background: linear-gradient(to bottom, lighten($bg, ($gradient-step / 2) + $focus-step), darken($bg, ($gradient-step / 2) - $focus-step));
+      transition: all 0.3s ease;
+    }
+    &:active {
+      background-color: $bg;
+      background: linear-gradient(to bottom, $bg, $bg);
+      transition: all 0.3s ease;
+    }
+  }
+}
+//**********************************************************************************************************************
 .app-toolbox {
-  padding: 0 $detail-body-padding-horizontal;
+  padding: 0.5rem $detail-body-padding-horizontal 0 $detail-body-padding-horizontal;
   color: $app-toolbox-color;
   background-color: $app-toolbox-background-color;
   display: flex;
   align-items: center;
   flex-wrap: wrap-reverse;
   flex: 0 0 auto;
+  justify-content: space-between;
   .toolbox-id {
     margin-left: auto;
     font-size: 0.8rem;
@@ -22,21 +66,21 @@ $tool-height: 1.7rem;
       display: none;
     }
   }
+  .inner-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap-reverse;
+    justify-content: space-between;
+    flex: 1 1 auto;
+  }
   .toolbox-group {
     white-space: nowrap;
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
-    //padding: 0.3rem 0;
-    //margin: 0.3rem 0.3rem 0 0;
-    //border: 1px solid #7d7d7d;
-    //border-radius: $toolbox-box-radius;
-    margin: 0 0.5rem 0.5rem 0;
-    &.clear {
-      border: none;
-      width: 100%;
-      padding: 0;
-    }
+    margin-bottom: 0.5rem;
+    margin-right: 0.5rem;
+    &:last-child {margin-right: 0;}
 
     .tool-box-button {
       display: flex;
@@ -49,37 +93,87 @@ $tool-height: 1.7rem;
       text-align: center;
       border-radius: 0.8rem;
       height: $tool-height;
-      cursor: pointer;
-      color: #0f0f0f;
-      background-color: #c3c3c3;
-      &:hover {
-        background-color: #d7d7d7;
-      }
       min-width: 5rem;
+      @include tool-button($tool-button-color-default);
       &.green {
-        color: #e1e1e1;
-        background-color: #08710f;
-        &:hover {
-          background-color: #08850f;
-        }
+        @include tool-button($tool-button-color-green, false);
       }
       &.red {
-        color: #e1e1e1;
-        background-color: #ad0100;
-        &:hover {
-          background-color: #be0100;
-        }
+        @include tool-button($tool-button-color-red, false);
+      }
+      &.disabled {
+        @include tool-button($tool-button-color-disabled, true, true);
       }
       &.remove {
         margin: 0 0.5rem 0 2rem;
       }
-      &.disabled {
-        cursor: default;
-        color: #4b4b4b;
-        background-color: #9b9b9b;
-        &:hover {
-          background-color: #9b9b9b;
+
+    }
+    .tool-box-search-container {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: center;
+      .input-search {
+        min-width: 22rem;
+        height: $tool-height;
+        padding: 0.2rem 0.3rem;
+        border-radius: 0;
+        background-color: #eeeeee;
+        border: 1px solid $app-toolbox-background-color;
+        box-shadow: none;
+        &:focus {
+          outline: none;
+          //box-shadow: inset 0 0 1px 1px rgba(lighten($app-header-background-color, 30%), 0.5);
+          //border: 1px solid lighten($app-header-background-color, 20%);
         }
+      }
+      .icon {
+        color: #767676;
+        background-color: #d6d6d6;
+        display: flex;
+        height: $tool-height;
+        text-align: center;
+        padding: 0 0.4rem;
+        align-items: center;
+        border: 1px solid $app-toolbox-background-color;
+        &.search {
+          border-radius: 0.3rem 0  0 0.3rem;
+          border-right: none;
+        }
+        &.clear {
+          cursor: pointer;
+          border-radius: 0 0.3rem 0.3rem 0;
+          border-left: none;
+        }
+      }
+    }
+    .tool-box-button-switch {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: $tool-height;
+      min-width: $tool-height;
+      padding: 0.1rem 0.7rem 0.1rem 0.5rem ;
+      color: #e1e1e1;
+      text-shadow: darken($app-toolbox-background-color, 30%) 0 0 0.1rem;
+      background-color: darken($app-toolbox-background-color, 15%);
+      text-align: center;
+      border-radius: $tool-height / 2;
+      cursor: pointer;
+      &.reversed {
+        color: darken($app-toolbox-background-color, 15%);
+        text-shadow: none;
+        background-color: #c5c5c5;
+      }
+      //border: 1px solid darken($app-toolbox-background-color, 15%);
+      &:not(:last-child) {
+        margin-right: 0.3rem;
+      }
+      .check {
+        margin-right: 0.2rem;
+      }
+      .text.reversed {
+        text-decoration: line-through;
       }
     }
     .tool-box-checkbox {

@@ -5,42 +5,65 @@ import * as ViewTypes from '../../constants/ViewTypes';
 import * as ProjectStatus from '../../constants/ProjectStatus';
 import * as FilterTypes from '../../constants/FilterTypes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Input } from 'reactstrap';
+
 import memoize from 'memoize-one';
 
 const ICON_SORT = 'arrows-alt-v'; //sort
 const ICON_SORT_UP = 'long-arrow-alt-up'; //sort-up
 const ICON_SORT_DOWN = 'long-arrow-alt-down'; //sort-down
 
+const ICON_CHECKBOX_CHECKED = ['far','check-circle'];
+const ICON_CHECKBOX_UNCHECKED = ['far', 'circle'];
+
+const ICON_SEARCH = 'search';
+const ICON_CLEAR = 'times';
+
 export default class ProjectsList extends React.PureComponent {
 
     componentDidUpdate(prevProps) { //remove selected project if doesn't exist in filtered set
-        if(this.props.selectedProject && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.filterList(this.props.projects, this.props.filter, this.props.search).indexOf(this.props.selectedProject) < 0) this.props.selectProject(null);
+        if(this.props.selectedProject && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.searchList(this.props.projects, this.filterList(this.props.projects, this.props.filter), this.props.search).indexOf(this.props.selectedProject) < 0) this.props.selectProject(null);
     }
 
     render() {
         console.log('RENDER PROJECTS LIST');
         const {selectedProject, projects, users, filter, sort, search} = this.props;
 
-        const filteredProjectIds = this.filterList(projects, filter, search);
-        const sortedProjectIds = this.sortList(projects, filteredProjectIds, sort);
+        const filteredProjectIds = this.filterList(projects, filter);
+        const searchedProjectIds = this.searchList(projects, filteredProjectIds, search);
+        const sortedProjectIds = this.sortList(projects, searchedProjectIds, sort);
+
+        const userFilter = filter.indexOf(FilterTypes.USER_FILTER) >= 0;
+        const activeFilter = filter.indexOf(FilterTypes.ACTIVE_PROJECTS_FILTER) >= 0 || filter.indexOf(FilterTypes.NON_ACTIVE_PROJECTS_FILTER) >= 0;
+        const activeFilterReversed = filter.indexOf(FilterTypes.NON_ACTIVE_PROJECTS_FILTER) >= 0;
+        const awardedFilter = filter.indexOf(FilterTypes.AWARDED_PROJECTS_FILTER) >= 0 || filter.indexOf(FilterTypes.NOT_AWARDED_PROJECTS_FILTER) >= 0;
+        const awardFilterReversed = filter.indexOf(FilterTypes.NOT_AWARDED_PROJECTS_FILTER) >= 0;
 
         return (
             <div className={'app-body'}>
                 <div className={'app-toolbox'}>
-                    <div className={'toolbox-group'}  style={{marginRight: 'auto'}}>
-                        <div onClick={this.create} className={'tool-box-button green'}>{'New'}</div>
-                        <div onClick={this.props.selectedProject ? this.detail : undefined} className={`tool-box-button${this.props.selectedProject ? '' : ' disabled'}`}>{'Show'}</div>
-                        <div onClick={this.props.selectedProject ? this.edit : undefined} className={`tool-box-button${this.props.selectedProject ? '' : ' disabled'}`}>{'Edit'}</div>
-                        <div onClick={this.props.selectedProject ? this.remove : undefined} className={`tool-box-button red${this.props.selectedProject ? '' : ' disabled'}`}>{'Remove'}</div>
+                    <div className={'inner-container'}>
+                        <div className={'toolbox-group'}>
+                            <div onClick={this.create} className={'tool-box-button green'}>{'New'}</div>
+                            <div onClick={this.props.selectedProject ? this.detail : undefined} className={`tool-box-button${this.props.selectedProject ? '' : ' disabled'}`}>{'Show'}</div>
+                            <div onClick={this.props.selectedProject ? this.edit : undefined} className={`tool-box-button${this.props.selectedProject ? '' : ' disabled'}`}>{'Edit'}</div>
+                            <div onClick={this.props.selectedProject ? this.remove : undefined} className={`tool-box-button red${this.props.selectedProject ? '' : ' disabled'}`}>{'Remove'}</div>
+                        </div>
                     </div>
-                    <div className={'toolbox-group'}>
-                        <div onClick={this.activeOnly} style={{cursor: 'pointer'}}>{'Search Filter [XXXXXXXXXXXXXXXXXXXXXXXXXXXX]'}</div>
+                    <div className={'inner-container'}>
+                        <div className={'toolbox-group'}>
+                            <div className={'tool-box-search-container'}>
+                                <div className={'icon search'}><FontAwesomeIcon icon={ICON_SEARCH}/></div>
+                                <Input value={search} onChange={this.searchInputHandler} className={`input-search`}/>
+                                <div className={'icon clear'} onClick={this.clearSerachInputHanler}><FontAwesomeIcon icon={ICON_CLEAR}/></div>
+                            </div>
+                        </div>
+                        <div className={'toolbox-group'}>
+                            <div onClick={this.userFilterHandler} className={`tool-box-button-switch`}><FontAwesomeIcon className={'check'} icon={userFilter ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/><span className={`text`}>{'My'}</span></div>
+                            <div className={`tool-box-button-switch${activeFilterReversed ? ' reversed' : ''}`}><FontAwesomeIcon onClick={this.activeFilterHandler} className={'check'} icon={activeFilter ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/><span onClick={this.activeFilterReverseHandler} className={`text${activeFilterReversed ? ' reversed' : ''}`}>{'Active'}</span></div>
+                            <div className={`tool-box-button-switch${awardFilterReversed ? ' reversed ' : ''}`}><FontAwesomeIcon onClick={this.awardedFilterHandler} className={'check'} icon={awardedFilter ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/><span onClick={this.awardedFilterReverseHandler} className={`text${awardFilterReversed ? ' reversed' : ''}`}>{'Awarded'}</span></div>
+                        </div>
                     </div>
-                    <div className={'toolbox-group'} style={{marginLeft: 'auto'}}>
-                        <div onClick={this.activeOnly} style={{cursor: 'pointer'}}>{'Active Only'}</div>
-                        <div onClick={this.ownOnly} style={{marginLeft: '1rem', cursor: 'pointer'}}>{'Own Only'}</div>
-                    </div>
-                    <div className={'toolbox-group clear'}/>
                 </div>
                 <Fragment>
                     <Table className={'table-header'} borderless={true}>
@@ -70,15 +93,27 @@ export default class ProjectsList extends React.PureComponent {
     // ***************************************************
     // FILTER AND SORT SOURCE LIST - MEMOIZE
     // ***************************************************
-    filterList = memoize((object, filter, search) => {
-        console.log('MEMOIZE FILTER')
-        const ids = Object.keys(object).map(id => id).filter(id => {
+    filterList = memoize((object, filter) => {
+        console.log('FILTER')
+        return Object.keys(object).map(id => id).filter(id => {
             const project = object[id];
             //filter
             for(const f of filter) {
                 switch (f) {
+                    case FilterTypes.AWARDED_PROJECTS_FILTER:
+                        if(!ProjectStatus[project.status] || !ProjectStatus[project.status].awarded) return false;
+                        break;
+
+                    case FilterTypes.NOT_AWARDED_PROJECTS_FILTER:
+                        if(ProjectStatus[project.status] && ProjectStatus[project.status].awarded) return false;
+                        break;
+
                     case FilterTypes.ACTIVE_PROJECTS_FILTER:
                         if(!ProjectStatus[project.status] || !ProjectStatus[project.status].active) return false;
+                        break;
+
+                    case FilterTypes.NON_ACTIVE_PROJECTS_FILTER:
+                        if(ProjectStatus[project.status] && ProjectStatus[project.status].active) return false;
                         break;
 
                     case FilterTypes.USER_FILTER:
@@ -93,12 +128,10 @@ export default class ProjectsList extends React.PureComponent {
             }
             return true;
         });
-        //if(defaultSort) ids.sort((a, b) => object[b].created.localeCompare(object[a].created)); //default sort - latest created first
-        return ids;
     });
 
     sortList = memoize((object, ids, sort) => {
-        console.log('MEMOIZE SORT')
+        console.log('SORT')
         if(!sort) {
             return ids.sort((a, b) => object[b].created.localeCompare(object[a].created)); //default sort - latest created first
         } else {
@@ -116,6 +149,14 @@ export default class ProjectsList extends React.PureComponent {
                 return dataA.localeCompare(dataB);
             })
         }
+    });
+
+    searchList = memoize((object, ids, search) => {
+        console.log('SEARCH')
+        if(search === '2') {
+            const a = [...ids];
+            a.splice(2,1); return a;}
+        else return ids
     });
 
     // ***************************************************
@@ -148,14 +189,53 @@ export default class ProjectsList extends React.PureComponent {
         }
     };
 
-    activeOnly = () => {
-        if(this.props.filter.indexOf(FilterTypes.ACTIVE_PROJECTS_FILTER) >= 0) this.props.setFilter(FilterTypes.ACTIVE_PROJECTS_FILTER, true);
-        else this.props.setFilter(FilterTypes.ACTIVE_PROJECTS_FILTER, false);
+    activeFilterHandler = () => {
+        if(this.props.filter.indexOf(FilterTypes.ACTIVE_PROJECTS_FILTER) >= 0) this.props.setFilter(FilterTypes.ACTIVE_PROJECTS_FILTER, false);
+        else if(this.props.filter.indexOf(FilterTypes.NON_ACTIVE_PROJECTS_FILTER) >= 0) this.props.setFilter(FilterTypes.NON_ACTIVE_PROJECTS_FILTER, false);
+        else this.props.setFilter(FilterTypes.ACTIVE_PROJECTS_FILTER, true);
     };
 
-    ownOnly = () => {
-        if(this.props.filter.indexOf(FilterTypes.USER_FILTER) >= 0) this.props.setFilter(FilterTypes.USER_FILTER, true);
-        else this.props.setFilter(FilterTypes.USER_FILTER, false);
+    activeFilterReverseHandler = () => {
+        if(this.props.filter.indexOf(FilterTypes.ACTIVE_PROJECTS_FILTER) >= 0) {
+            this.props.setFilter(FilterTypes.ACTIVE_PROJECTS_FILTER, false);
+            this.props.setFilter(FilterTypes.NON_ACTIVE_PROJECTS_FILTER, true);
+        }
+        else if(this.props.filter.indexOf(FilterTypes.NON_ACTIVE_PROJECTS_FILTER) >= 0) {
+            this.props.setFilter(FilterTypes.NON_ACTIVE_PROJECTS_FILTER, false);
+            this.props.setFilter(FilterTypes.ACTIVE_PROJECTS_FILTER, true);
+        }
+        else this.props.setFilter(FilterTypes.NON_ACTIVE_PROJECTS_FILTER, true);
+    };
+
+    awardedFilterHandler = () => {
+        if(this.props.filter.indexOf(FilterTypes.AWARDED_PROJECTS_FILTER) >= 0) this.props.setFilter(FilterTypes.AWARDED_PROJECTS_FILTER, false);
+        else if(this.props.filter.indexOf(FilterTypes.NOT_AWARDED_PROJECTS_FILTER) >= 0) this.props.setFilter(FilterTypes.NOT_AWARDED_PROJECTS_FILTER, false);
+        else this.props.setFilter(FilterTypes.AWARDED_PROJECTS_FILTER, true);
+    };
+
+    awardedFilterReverseHandler = () => {
+        if(this.props.filter.indexOf(FilterTypes.AWARDED_PROJECTS_FILTER) >= 0) {
+            this.props.setFilter(FilterTypes.AWARDED_PROJECTS_FILTER, false);
+            this.props.setFilter(FilterTypes.NOT_AWARDED_PROJECTS_FILTER, true);
+        }
+        else if(this.props.filter.indexOf(FilterTypes.NOT_AWARDED_PROJECTS_FILTER) >= 0) {
+            this.props.setFilter(FilterTypes.NOT_AWARDED_PROJECTS_FILTER, false);
+            this.props.setFilter(FilterTypes.AWARDED_PROJECTS_FILTER, true);
+        }
+        else this.props.setFilter(FilterTypes.NOT_AWARDED_PROJECTS_FILTER, true);
+    };
+
+    userFilterHandler = () => {
+        if(this.props.filter.indexOf(FilterTypes.USER_FILTER) >= 0) this.props.setFilter(FilterTypes.USER_FILTER, false);
+        else this.props.setFilter(FilterTypes.USER_FILTER, true);
+    };
+
+    searchInputHandler = (event) => {
+       this.props.setSearch(event.target.value);
+    };
+
+    clearSerachInputHanler = () => {
+       this.props.setSearch('');
     };
 
     // ***************************************************
