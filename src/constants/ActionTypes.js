@@ -10,6 +10,12 @@ export const SET_FETCHING = 'SET_FETCHING';
 export const RESET_STORE = 'RESET_STORE';
 export const SET_DATA = 'SET_DATA';
 
+// box
+export const ADD_TO_BOX = 'ADD_TO_BOX';
+export const REMOVE_FROM_BOX = 'REMOVE_FROM_BOX';
+export const EMPTY_BOX = 'EMPTY_BOX';
+export const SELECT_BOX_ITEM = 'SELECT_BOX_ITEM';
+
 // projects
 export const SELECT_PROJECT = 'VIEW_PROJECT';
 export const EDIT_PROJECT = 'EDIT_PROJECT';

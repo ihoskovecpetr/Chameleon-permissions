@@ -8,6 +8,8 @@ import ProjectsList from './views/ProjectsList';
 import ProjectEdit from './views/ProjectEdit';
 import ProjectDetail from './views/ProjectDetail';
 
+import Box from './views/Box';
+
 import * as ViewTypes from '../constants/ViewTypes';
 
 import {name, version}  from '../../package.json';
@@ -28,6 +30,7 @@ export default class AppLayout extends React.PureComponent {
                         user={this.props.user}
 
                         selectedProject={this.props.appState.selectedProject}
+
                         filter = {this.props.appState.projectsFilter}
                         search = {this.props.appState.projectsSearch}
                         sort = {this.props.appState.projectsSort}
@@ -37,9 +40,13 @@ export default class AppLayout extends React.PureComponent {
                         setFilter={this.props.setProjectsFilter}
                         setSearch={this.props.setProjectsSerach}
                         setSort={this.props.setProjectsSort}
+
+                        addToBox={this.props.addToBox}
                     />;
                 break;
             case ViewTypes.PROJECT_DETAIL:
+            case ViewTypes.BOX_PROJECT_DETAIL:
+            case ViewTypes.SUB_PROJECT_DETAIL:
                 AppBody =
                     <ProjectDetail
                         projects={this.props.projects}
@@ -47,16 +54,15 @@ export default class AppLayout extends React.PureComponent {
                         companies={this.props.companies}
                         users={this.props.users}
 
-                        selectedProject={this.props.appState.selectedProject}
-                        editedProject={this.props.appState.editedProject}
+                        selectedProject={this.props.appState.view === ViewTypes.PROJECT_DETAIL ? this.props.appState.selectedProject : this.props.appState.view === ViewTypes.SUB_PROJECT_DETAIL ? this.props.appState.subDetailId : this.props.appState.view === ViewTypes.BOX_PROJECT_DETAIL ? this.props.appState.selectedBoxItem : null}
 
                         setView={this.props.setView}
-                        selectProject={this.props.selectProject}
-                        editProject={this.props.editProject}
-                        removeProject={this.props.removeProject}
+                        editProject={this.props.appState.view === ViewTypes.SUB_PROJECT_DETAIL ? undefined : this.props.editProject}
+                        removeProject={this.props.appState.view === ViewTypes.SUB_PROJECT_DETAIL ? undefined : this.props.removeProject}
                     />;
                 break;
             case ViewTypes.PROJECT_EDIT:
+            case ViewTypes.BOX_PROJECT_EDIT:
                 AppBody =
                     <ProjectEdit
                         projects={this.props.projects}
@@ -76,6 +82,22 @@ export default class AppLayout extends React.PureComponent {
                         removeProject={this.props.removeProject}
                     />;
                 break;
+            case ViewTypes.BOX:
+                AppBody =
+                    <Box
+                        box = {this.props.appState.box}
+
+                        projects={this.props.projects}
+                        people={this.props.people}
+                        companies={this.props.companies}
+
+                        setView={this.props.setView}
+                        selectBoxItem={this.props.selectBoxItem}
+
+                        removeFromBox={this.props.removeFromBox}
+                        emptyBox={this.props.emptyBox}
+
+                    />
         }
         return (
             <div className={'app-layout'}>
@@ -89,6 +111,7 @@ export default class AppLayout extends React.PureComponent {
                     view = {this.props.appState.view}
                     setView = {this.props.setView}
                     box = {this.props.appState.box}
+                    switchesEnabled = {(this.props.appState.view !== ViewTypes.PROJECT_EDIT && this.props.appState.view !== ViewTypes.PERSON_EDIT && this.props.appState.view !== ViewTypes.COMPANY_EDIT) || Object.keys(this.props.appState.editedData).length === 0}
                 />
                 <MessageBox message = {this.props.appState.message} setMessage = {this.props.setMessage}/>
                 {AppBody}

@@ -25,7 +25,7 @@ import './app.scss';
 const finalCreateStore = compose(
     persistState('appState', {key : 'projects', slicer: () => state => ({appState: {
                 view: state['appState'].view,
-                prevView: state['appState'].prevView,
+                previousView: state['appState'].previousView,
                 selectedProject: state['appState'].selectedProject,
                 projectsFilter: state['appState'].projectsFilter,
                 projectsSearch: state['appState'].projectsSearch,

@@ -6,6 +6,7 @@ import * as ProjectStatus from '../../constants/ProjectStatus';
 import * as FilterTypes from '../../constants/FilterTypes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Input } from 'reactstrap';
+import Fuse from 'fuse.js';
 
 import memoize from 'memoize-one';
 
@@ -19,6 +20,8 @@ const ICON_CHECKBOX_UNCHECKED = ['far', 'circle'];
 const ICON_SEARCH = 'search';
 const ICON_CLEAR = 'times';
 
+const ICON_BOX = 'box';
+
 export default class ProjectsList extends React.PureComponent {
 
     componentDidUpdate(prevProps) { //remove selected project if doesn't exist in filtered set
@@ -26,7 +29,7 @@ export default class ProjectsList extends React.PureComponent {
     }
 
     render() {
-        console.log('RENDER PROJECTS LIST');
+        //console.log('RENDER PROJECTS LIST');
         const {selectedProject, projects, users, filter, sort, search} = this.props;
 
         const filteredProjectIds = this.filterList(projects, filter);
@@ -47,7 +50,7 @@ export default class ProjectsList extends React.PureComponent {
                             <div onClick={this.create} className={'tool-box-button green'}>{'New'}</div>
                             <div onClick={this.props.selectedProject ? this.detail : undefined} className={`tool-box-button${this.props.selectedProject ? '' : ' disabled'}`}>{'Show'}</div>
                             <div onClick={this.props.selectedProject ? this.edit : undefined} className={`tool-box-button${this.props.selectedProject ? '' : ' disabled'}`}>{'Edit'}</div>
-                            <div onClick={this.props.selectedProject ? this.remove : undefined} className={`tool-box-button red${this.props.selectedProject ? '' : ' disabled'}`}>{'Remove'}</div>
+                            <div onClick={this.props.selectedProject ? this.addToBox : undefined} className={`tool-box-button icon box blue${this.props.selectedProject ? '' : ' disabled'}`}><FontAwesomeIcon icon={ICON_BOX}/></div>
                         </div>
                     </div>
                     <div className={'inner-container'}>
@@ -93,10 +96,10 @@ export default class ProjectsList extends React.PureComponent {
     // ***************************************************
     // FILTER AND SORT SOURCE LIST - MEMOIZE
     // ***************************************************
-    filterList = memoize((object, filter) => {
-        console.log('FILTER')
-        return Object.keys(object).map(id => id).filter(id => {
-            const project = object[id];
+    filterList = memoize((projects, filter) => {
+        //console.log('FILTER');
+        return Object.keys(projects).map(id => id).filter(id => {
+            const project = projects[id];
             //filter
             for(const f of filter) {
                 switch (f) {
@@ -130,17 +133,17 @@ export default class ProjectsList extends React.PureComponent {
         });
     });
 
-    sortList = memoize((object, ids, sort) => {
-        console.log('SORT')
+    sortList = memoize((projects, ids, sort) => {
+        //console.log('SORT');
         if(!sort) {
-            return ids.sort((a, b) => object[b].created.localeCompare(object[a].created)); //default sort - latest created first
+            return ids.sort((a, b) => projects[b].created.localeCompare(projects[a].created)); //default sort - latest created first
         } else {
             return ids.sort((a, b) => {
                 const down = sort.indexOf('-') === 0;
                 let field = down ? sort.substr(1) : sort;
                 if (field === 'status') field = 'status-order';
-                let dataA = down ? this.getComputedField(field, object[a]) : this.getComputedField(field, object[b]);
-                let dataB = down ? this.getComputedField(field, object[b]) : this.getComputedField(field, object[a]);
+                let dataA = down ? this.getComputedField(field, projects[a]) : this.getComputedField(field, projects[b]);
+                let dataB = down ? this.getComputedField(field, projects[b]) : this.getComputedField(field, projects[a]);
                 if (typeof dataA === 'undefined' && typeof dataB === 'undefined') return 0;
                 if (typeof dataA === 'undefined') return 1;
                 if (typeof dataB === 'undefined') return 0;
@@ -151,12 +154,25 @@ export default class ProjectsList extends React.PureComponent {
         }
     });
 
-    searchList = memoize((object, ids, search) => {
-        console.log('SEARCH')
-        if(search === '2') {
-            const a = [...ids];
-            a.splice(2,1); return a;}
-        else return ids
+    searchList = memoize((projects, ids, search) => {
+        //console.log('SEARCH');
+        if(search && search.trim()) {
+            const data = ids.map(id => {
+                return {
+                    _id: projects[id]._id,
+                    name: projects[id].name,
+                    $name: projects[id].$name,
+                    team: projects[id].team.map(member => this.props.users[member.id])
+                }
+            });
+            const fuse = new Fuse(data, {
+                verbose: false,
+                id: '_id',
+                findAllMatches: true,
+                keys: ['name', '$name', 'team.name']
+            });
+            return fuse.search(search.trim());
+        } else return ids;
     });
 
     // ***************************************************
@@ -187,6 +203,10 @@ export default class ProjectsList extends React.PureComponent {
         } else if(this.props.selectedProject) {
             this.props.setView(ViewTypes.PROJECT_EDIT);
         }
+    };
+
+    addToBox = () => {
+        if(this.props.selectedProject) this.props.addToBox(this.props.selectedProject);
     };
 
     activeFilterHandler = () => {

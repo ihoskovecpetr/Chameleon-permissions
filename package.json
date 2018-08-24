@@ -16,6 +16,7 @@
     "@fortawesome/react-fontawesome": "^0.1.1",
     "babel-polyfill": "^6.26.0",
     "bootstrap": "^4.1.1",
+    "fuse.js": "^3.2.1",
     "loglevel": "^1.6.1",
     "memoize-one": "^4.0.0",
     "moment": "^2.22.2",

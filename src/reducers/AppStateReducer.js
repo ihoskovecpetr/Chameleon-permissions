@@ -4,30 +4,34 @@ import * as FilterTypes from '../constants/FilterTypes';
 
 const initialState = {
     view: ViewTypes.PROJECTS_LIST,
-    prevView: null,
     fetching: false,
     message: null,
     dataTimeStamp: null,
 
     selectedProject: null,
-    editedProject: {},
     projectsFilter: [],//[FilterTypes.USER_FILTER, FilterTypes.ACTIVE_PROJECTS_FILTER],
     projectsSearch: '',
     projectsSort: '',
 
     selectedPerson: null,
-    editedPerson: {},
     peopleFilter: [],
     peopleSearch: '',
     peopleSort: '',
 
     selectedCompany: null,
-    editedCompany: {},
     companiesFilter: [],
     companiesSearch: '',
     companiesSort: '',
 
-    box: ['a', 'b', 'c']
+    box: [],
+    selectedBoxItem: null,
+
+    previousView: null,
+
+    editedData: {},
+
+    subDetailId: null
+
 };
 
 function AppStateReducer(state = initialState, action = null) {
@@ -36,7 +40,8 @@ function AppStateReducer(state = initialState, action = null) {
 
             case ActionTypes.SET_VIEW:
                 if(action.view && action.view !== state.view) {
-                    return {...state, prevView: state.view,  view: action.view};
+                    const storePrevious = state.view !== ViewTypes.SUB_PROJECT_DETAIL && state.view !== ViewTypes.SUB_PERSON_DETAIL && state.view !== ViewTypes.SUB_COMPANY_DETAIL;
+                    return {...state, previousView: storePrevious ? state.view : state.previousView,  view: action.view};
                 } else return state;
 
             case ActionTypes.SET_FETCHING:
@@ -58,6 +63,11 @@ function AppStateReducer(state = initialState, action = null) {
             case ActionTypes.EDIT_PROJECT:
                 if(action.project) {
                     return {...state, editedProject: action.project};
+                } else return state;
+
+            case ActionTypes.SELECT_BOX_ITEM:
+                if(action.id) {
+                    return {...state, selectedBoxItem: action.id};
                 } else return state;
 
             case ActionTypes.SET_PROJECTS_FILTER:
@@ -92,6 +102,24 @@ function AppStateReducer(state = initialState, action = null) {
                 if(typeof action.search !== 'undefined' && action.search !== state.projectsSearch) {
                     return {...state, projectsSearch: action.search}
                 } else return state;
+
+            case ActionTypes.ADD_TO_BOX:
+                if(action.id && state.box.indexOf(action.id) < 0) return {...state, box: [...state.box, action.id]};
+                else return state;
+
+            case ActionTypes.REMOVE_FROM_BOX:
+                if(action.id) {
+                    const index = state.box.indexOf(action.id);
+                    if(index >= 0) {
+                        const newBox = [...state.box];
+                        newBox.splice(index, 1);
+                        return {...state, box: newBox};
+                    } else return state;
+                } else return state;
+
+            case ActionTypes.EMPTY_BOX:
+                if(state.box.length > 0) return {...state, box: []}
+                else return state;
 
             default:
                 return state;

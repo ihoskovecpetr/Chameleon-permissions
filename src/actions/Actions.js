@@ -59,6 +59,24 @@ export function getData() {
     }
 }
 // *********************************************************************************************************************
+// BOX
+// *********************************************************************************************************************
+export function addToBox(id) {
+    return {type: ActionTypes.ADD_TO_BOX, id: id};
+}
+
+export function removeFromBox(id) {
+    return {type: ActionTypes.REMOVE_FROM_BOX, id: id};
+}
+
+export function emptyBox() {
+    return {type: ActionTypes.EMPTY_BOX};
+}
+
+export function selectBoxItem(id) {
+    return {type: ActionTypes.SELECT_BOX_ITEM, id: id};
+}
+// *********************************************************************************************************************
 // PROJECTS
 // *********************************************************************************************************************
 export function selectProject(id) {

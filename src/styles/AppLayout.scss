@@ -114,6 +114,7 @@ body {
         }
       }
       &.box {
+        position: relative;
         margin-left: 1rem;
         font-size: 1.4rem;
         &.full {
@@ -123,13 +124,20 @@ body {
           color: lighten($app-header-background-color, 40%);
         }
         .badge {
-          position: relative;
-          margin-left: -1.45rem;
-          margin-top: 0.6rem;
-          color: $app-header-background-color;
+          position: absolute;
+          min-width: 1.2rem;
+          height: 1.1rem;
+          border-radius: 50%;
           font-size: 0.6rem;
-          width: 1.5rem;
-          text-align: center;
+          display: flex;
+          background-color: #387cea;
+          color: $app-header-color;
+          align-items: center;
+          justify-content: center;
+          //box-shadow: 0 0 0.1rem #2a2a2a;
+          border: 1px solid $app-header-background-color;
+          top: -0.3rem;
+          right: -0.3rem;
         }
       }
       &.header-switch {
@@ -168,6 +176,7 @@ body {
           &.active {
             cursor: default;
             background-color: lighten($app-header-background-color, 20%);
+            background: linear-gradient(to bottom, lighten($app-header-background-color, 25%), lighten($app-header-background-color, 15%));
           }
           &.clickable {
             &:hover {

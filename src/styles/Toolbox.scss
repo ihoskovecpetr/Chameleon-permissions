@@ -19,7 +19,7 @@ $tool-button-color-disabled: #9b9b9b;
 
   border: 1px solid darken($app-toolbox-background-color, 5%);
   @if $disabled {
-    @if $fg-dark {color: darken($bg, 30%);} @else {color: lighten($bg, 30%);}
+    @if $fg-dark {color: darken($bg, 15%);} @else {color: lighten($bg, 15%);}
     text-shadow: none;
     cursor: default;
     background-color: $bg;
@@ -49,7 +49,7 @@ $tool-button-color-disabled: #9b9b9b;
 }
 //**********************************************************************************************************************
 .app-toolbox {
-  padding: 0.5rem $detail-body-padding-horizontal 0 $detail-body-padding-horizontal;
+  padding: 0.6rem $detail-body-padding-horizontal 0 $detail-body-padding-horizontal;
   color: $app-toolbox-color;
   background-color: $app-toolbox-background-color;
   display: flex;
@@ -80,7 +80,7 @@ $tool-button-color-disabled: #9b9b9b;
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.6rem;
     margin-right: 0.5rem;
     &:last-child {margin-right: 0;}
 
@@ -95,7 +95,7 @@ $tool-button-color-disabled: #9b9b9b;
       text-align: center;
       border-radius: 0.8rem;
       height: $tool-height;
-      min-width: 5rem;
+      min-width: 4.5rem;
       @include tool-button($tool-button-color-default);
       &.green {
         @include tool-button($tool-button-color-green, false);
@@ -103,11 +103,24 @@ $tool-button-color-disabled: #9b9b9b;
       &.red {
         @include tool-button($tool-button-color-red, false);
       }
+      &.orange {
+        @include tool-button($tool-button-color-orange, false);
+      }
+      &.blue {
+        @include tool-button($tool-button-color-blue, false);
+      }
       &.disabled {
         @include tool-button($tool-button-color-disabled, true, true);
       }
       &.remove {
         margin: 0 0.5rem 0 2rem;
+      }
+      &.icon {
+        font-size: 0.7rem;
+        min-width: 0;
+        padding: 0.1rem 0.5rem;
+        //padding: 0;
+        //width: $tool-height;
       }
 
     }
@@ -117,23 +130,24 @@ $tool-button-color-disabled: #9b9b9b;
       align-items: center;
       .input-search {
         min-width: 22rem;
-        height: $tool-height;
+        height: calc(#{$tool-height} + 2px);
         padding: 0.2rem 0.3rem;
         border-radius: 0;
         background-color: #eeeeee;
         border: 1px solid $app-toolbox-background-color;
         box-shadow: none;
+        z-index: 0;
         &:focus {
           outline: none;
-          //box-shadow: inset 0 0 1px 1px rgba(lighten($app-header-background-color, 30%), 0.5);
-          //border: 1px solid lighten($app-header-background-color, 20%);
+          box-shadow:  0 0 1px 1px rgba(lighten($app-header-background-color, 30%), 0.5);
+          border: 1px solid lighten($app-header-background-color, 20%);
         }
       }
       .icon {
         color: #767676;
         background-color: #d6d6d6;
         display: flex;
-        height: $tool-height;
+        height: calc(#{$tool-height} + 2px);
         text-align: center;
         align-items: center;
         border: 1px solid $app-toolbox-background-color;
