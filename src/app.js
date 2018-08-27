@@ -38,7 +38,9 @@ const finalCreateStore = compose(
                 companiesFilter: state['appState'].companiesFilter,
                 companiesSearch: state['appState'].companiesSearch,
                 companiesSort: state['appState'].companiesSort,
-                box: state['appState'].box
+                box: state['appState'].box,
+                selectedBoxItem: state['appState'].selectedBoxItem,
+                nextDetailId: state['appState'].nextDetailId
     }})}),
     applyMiddleware(thunk)
 )(createStore);
@@ -54,18 +56,24 @@ const rootElement = document.getElementById('app');
 (async () => {
     try {
         const user = await getAuthenticatedUser();
-        logger.info(user);
         store.dispatch(Actions.setUser(user));
+        logger.info(user);
+    } catch(e) {
+        logger.warn('Error while getAuthenticatedUser')
+    }
+
+    try {
         store.dispatch(Actions.getData());
         ReactDOM.render(
-            <Provider store = {store}>
+            <Provider store={store}>
                 <AppLayoutConnected/>
             </Provider>,
             rootElement
         );
     } catch(e) {
-        logger.warn('Error while getAuthenticatedUser')
+        logger.warn('Error while getting initial data')
     }
+
 })();
 
 if (module.hot) {

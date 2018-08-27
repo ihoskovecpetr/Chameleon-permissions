@@ -176,7 +176,7 @@ body {
           &.active {
             cursor: default;
             background-color: lighten($app-header-background-color, 20%);
-            background: linear-gradient(to bottom, lighten($app-header-background-color, 25%), lighten($app-header-background-color, 15%));
+            //background: linear-gradient(to bottom, lighten($app-header-background-color, 25%), lighten($app-header-background-color, 15%));
           }
           &.clickable {
             &:hover {

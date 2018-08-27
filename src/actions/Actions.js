@@ -17,12 +17,20 @@ export function setView(view) {
     return {type: ActionTypes.SET_VIEW, view: view};
 }
 
+export function returnToPreviousView() {
+    return {type: ActionTypes.RETURN_TO_PREVIOUS_VIEW};
+}
+
 export function setFetching(isFetching) {
     return {type: ActionTypes.SET_FETCHING, isFetching: isFetching};
 }
 
 export function setMessage(message) {
     return {type: ActionTypes.SET_MESSAGE, message: message};
+}
+
+export function editItem(data) {
+    return {type: ActionTypes.EDIT_ITEM, data: data};
 }
 // *********************************************************************************************************************
 // DATA STORE
@@ -83,16 +91,23 @@ export function selectProject(id) {
     return {type: ActionTypes.SELECT_PROJECT, id: id}
 }
 
-export function editProject(project) {
-    return {type: ActionTypes.EDIT_PROJECT, project: project}
+export function selectProjectNext(id) {
+    return {type: ActionTypes.SELECT_PROJECT_NEXT, id: id}
 }
 
-export function updateProject(id, project) {
+export function editProject() {
+    return {type: ActionTypes.EDIT_PROJECT}
+}
+
+export function updateProject() {
     return async (dispatch, getState) => {
+        const projectUpdate = getState().appState.editedData;
+        const id = getState().appState.selectedProject;
+        if(!id || !projectUpdate || Object.keys(projectUpdate).length === 0) return;
         dispatch(setFetching(true));
         dispatch(setMessage(null));
         try {
-            const updatedProject = await server.updateProject(id, project);
+            const updatedProject = await server.updateProject(id, projectUpdate);
             console.log(updatedProject);
             dispatch({type: ActionTypes.UPDATE_PROJECT, project: updatedProject});
             if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
@@ -108,8 +123,10 @@ export function updateProject(id, project) {
     }
 }
 
-export function createProject(project) {
+export function createProject() {
     return async (dispatch, getState) => {
+        const project = getState().appState.editedData;
+        if(!project || Object.keys(project).length === 0) return;
         dispatch(setFetching(true));
         dispatch(setMessage(null));
         try {
@@ -128,8 +145,10 @@ export function createProject(project) {
     }
 }
 
-export function removeProject(id) {
+export function removeProject() {
     return async (dispatch, getState) => {
+        const id = getState().appState.selectedProject;
+        if(!id) return;
         dispatch(setFetching(true));
         dispatch(setMessage(null));
         try {
@@ -153,7 +172,7 @@ export function setProjectsFilter(filter, remove) {
 }
 
 export function setProjectsSerach(search) {
-    return {type: ActionTypes.SET_PROJECTS_SERACH, search: search};
+    return {type: ActionTypes.SET_PROJECTS_SEARCH, search: search};
 }
 
 export function setProjectsSort(sort) {

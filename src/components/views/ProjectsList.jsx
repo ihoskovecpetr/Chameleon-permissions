@@ -48,9 +48,9 @@ export default class ProjectsList extends React.PureComponent {
                     <div className={'inner-container'}>
                         <div className={'toolbox-group'}>
                             <div onClick={this.create} className={'tool-box-button green'}>{'New'}</div>
-                            <div onClick={this.props.selectedProject ? this.detail : undefined} className={`tool-box-button${this.props.selectedProject ? '' : ' disabled'}`}>{'Show'}</div>
-                            <div onClick={this.props.selectedProject ? this.edit : undefined} className={`tool-box-button${this.props.selectedProject ? '' : ' disabled'}`}>{'Edit'}</div>
-                            <div onClick={this.props.selectedProject ? this.addToBox : undefined} className={`tool-box-button icon box blue${this.props.selectedProject ? '' : ' disabled'}`}><FontAwesomeIcon icon={ICON_BOX}/></div>
+                            <div onClick={this.props.selectedProject ? () => this.detail() : undefined} className={`tool-box-button${this.props.selectedProject ? '' : ' disabled'}`}>{'Show'}</div>
+                            <div onClick={this.props.selectedProject ? () => this.edit() : undefined} className={`tool-box-button${this.props.selectedProject ? '' : ' disabled'}`}>{'Edit'}</div>
+                            <div onClick={this.props.selectedProject ? () => this.addToBox() : undefined} className={`tool-box-button icon box blue${this.props.selectedProject ? '' : ' disabled'}`}><FontAwesomeIcon icon={ICON_BOX}/></div>
                         </div>
                     </div>
                     <div className={'inner-container'}>

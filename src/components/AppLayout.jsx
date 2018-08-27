@@ -46,36 +46,40 @@ export default class AppLayout extends React.PureComponent {
                 break;
             case ViewTypes.PROJECT_DETAIL:
             case ViewTypes.BOX_PROJECT_DETAIL:
-            case ViewTypes.SUB_PROJECT_DETAIL:
+            case ViewTypes.PROJECT_DETAIL_NEXT:
                 AppBody =
                     <ProjectDetail
                         projects={this.props.projects}
                         people={this.props.people}
                         companies={this.props.companies}
                         users={this.props.users}
+                        user={this.props.user}
 
-                        selectedProject={this.props.appState.view === ViewTypes.PROJECT_DETAIL ? this.props.appState.selectedProject : this.props.appState.view === ViewTypes.SUB_PROJECT_DETAIL ? this.props.appState.subDetailId : this.props.appState.view === ViewTypes.BOX_PROJECT_DETAIL ? this.props.appState.selectedBoxItem : null}
+                        selectedProject={this.props.appState.view === ViewTypes.PROJECT_DETAIL ? this.props.appState.selectedProject : this.props.appState.view === ViewTypes.PROJECT_DETAIL_NEXT ? this.props.appState.nextDetailId : this.props.appState.view === ViewTypes.BOX_PROJECT_DETAIL ? this.props.appState.selectedBoxItem : null}
 
-                        setView={this.props.setView}
-                        editProject={this.props.appState.view === ViewTypes.SUB_PROJECT_DETAIL ? undefined : this.props.editProject}
-                        removeProject={this.props.appState.view === ViewTypes.SUB_PROJECT_DETAIL ? undefined : this.props.removeProject}
+                        returnToPreviousView={this.props.returnToPreviousView}
+
+                        selectProjectNext={this.props.selectProjectNext}
+                        //TODO person, company
+
+                        editProject={this.props.appState.view === ViewTypes.PROJECT_DETAIL ? this.props.editProject : undefined}
+                        removeProject={this.props.appState.view === ViewTypes.PROJECT_DETAIL ? this.props.removeProject : undefined}
                     />;
                 break;
             case ViewTypes.PROJECT_EDIT:
-            case ViewTypes.BOX_PROJECT_EDIT:
                 AppBody =
                     <ProjectEdit
                         projects={this.props.projects}
                         people={this.props.people}
                         companies={this.props.companies}
                         users={this.props.users}
+                        user={this.props.user}
 
                         selectedProject={this.props.appState.selectedProject}
-                        editedProject={this.props.appState.editedProject}
+                        editedData={this.props.appState.editedData}
 
-                        setView={this.props.setView}
-                        selectProject={this.props.selectProject}
-                        editProject={this.props.editProject}
+                        returnToPreviousView={this.props.returnToPreviousView}
+                        editItem={this.props.editItem}
 
                         updateProject={this.props.updateProject}
                         createProject={this.props.createProject}

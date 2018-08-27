@@ -30,19 +30,28 @@ const initialState = {
 
     editedData: {},
 
-    subDetailId: null
+    nextDetailId: null
 
 };
 
 function AppStateReducer(state = initialState, action = null) {
     if(action && action.type) {
         switch(action.type) {
-
+            // routing, info
             case ActionTypes.SET_VIEW:
                 if(action.view && action.view !== state.view) {
-                    const storePrevious = state.view !== ViewTypes.SUB_PROJECT_DETAIL && state.view !== ViewTypes.SUB_PERSON_DETAIL && state.view !== ViewTypes.SUB_COMPANY_DETAIL;
-                    return {...state, previousView: storePrevious ? state.view : state.previousView,  view: action.view};
+                    return {...state, view: action.view, previousView: action.view === ViewTypes.PROJECT_DETAIL_NEXT || action.view === ViewTypes.PERSON_DETAI_NEXT || action.view === ViewTypes.COMPANY_DETAIL_NEXT ? state.view : null};
                 } else return state;
+
+            case ActionTypes.RETURN_TO_PREVIOUS_VIEW:
+                    switch(state.view) {
+                        case ViewTypes.PROJECT_EDIT:
+                        case ViewTypes.PROJECT_DETAIL:
+                            return {...state, view: ViewTypes.PROJECTS_LIST, previousView: null};
+                        case ViewTypes.PROJECT_DETAIL_NEXT:
+                            return {...state, view: state.previousView ? state.previousView : state.view, previousView: null};
+                        default: return state;
+                    }
 
             case ActionTypes.SET_FETCHING:
                 if(action.isFetching !== state.fetching) {
@@ -55,19 +64,25 @@ function AppStateReducer(state = initialState, action = null) {
                     return {...state, message: action.message};
                 } else return state;
 
+            case ActionTypes.EDIT_ITEM:
+                if(action.data) {
+                    return {...state, editedData: action.data};
+                } else return state;
+
+            // projects
             case ActionTypes.SELECT_PROJECT:
                 if((action.id || action.id === null) && action.id !== state.selectedProject) {
-                    return {...state, selectedProject: action.id, editedProject: {}};
+                    return {...state, selectedProject: action.id};
+                } else return state;
+
+            case ActionTypes.SELECT_PROJECT_NEXT:
+                if(action.id && action.id !== state.nextDetailId) {
+                    return {...state, nextDetailId: action.id};
                 } else return state;
 
             case ActionTypes.EDIT_PROJECT:
                 if(action.project) {
-                    return {...state, editedProject: action.project};
-                } else return state;
-
-            case ActionTypes.SELECT_BOX_ITEM:
-                if(action.id) {
-                    return {...state, selectedBoxItem: action.id};
+                    return {...state, editedData: {}};
                 } else return state;
 
             case ActionTypes.SET_PROJECTS_FILTER:
@@ -98,9 +113,15 @@ function AppStateReducer(state = initialState, action = null) {
                     return {...state, projectsSort: action.sort}
                 } else return state;
 
-            case ActionTypes.SET_PROJECTS_SERACH:
+            case ActionTypes.SET_PROJECTS_SEARCH:
                 if(typeof action.search !== 'undefined' && action.search !== state.projectsSearch) {
                     return {...state, projectsSearch: action.search}
+                } else return state;
+
+            // box
+            case ActionTypes.SELECT_BOX_ITEM:
+                if(action.id) {
+                    return {...state, selectedBoxItem: action.id};
                 } else return state;
 
             case ActionTypes.ADD_TO_BOX:
