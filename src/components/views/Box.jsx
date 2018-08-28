@@ -44,6 +44,5 @@ export default class Box extends React.PureComponent {
 
     removeFromBox = id => {
         this.props.removeFromBox(id);
-        console.log(this.props.box.length)
     };
 }

@@ -20,7 +20,7 @@ const ICON_CHECKBOX_UNCHECKED = ['far', 'circle'];
 const ICON_SEARCH = 'search';
 const ICON_CLEAR = 'times';
 
-const ICON_BOX = 'box';
+const ICON_BOX = 'box-open';
 
 export default class ProjectsList extends React.PureComponent {
 
@@ -47,10 +47,10 @@ export default class ProjectsList extends React.PureComponent {
                 <div className={'app-toolbox'}>
                     <div className={'inner-container'}>
                         <div className={'toolbox-group'}>
-                            <div onClick={this.create} className={'tool-box-button green'}>{'New'}</div>
-                            <div onClick={this.props.selectedProject ? () => this.detail() : undefined} className={`tool-box-button${this.props.selectedProject ? '' : ' disabled'}`}>{'Show'}</div>
-                            <div onClick={this.props.selectedProject ? () => this.edit() : undefined} className={`tool-box-button${this.props.selectedProject ? '' : ' disabled'}`}>{'Edit'}</div>
-                            <div onClick={this.props.selectedProject ? () => this.addToBox() : undefined} className={`tool-box-button icon box blue${this.props.selectedProject ? '' : ' disabled'}`}><FontAwesomeIcon icon={ICON_BOX}/></div>
+                            <div onClick={this.addProject} className={'tool-box-button green'}>{'New'}</div>
+                            <div onClick={this.props.selectedProject ? () => this.showProject() : undefined} className={`tool-box-button${this.props.selectedProject ? '' : ' disabled'}`}>{'Show'}</div>
+                            <div onClick={this.props.selectedProject ? () => this.editProject() : undefined} className={`tool-box-button${this.props.selectedProject ? '' : ' disabled'}`}>{'Edit'}</div>
+                            <div onClick={this.props.selectedProject ? this.addToBox : undefined} className={`tool-box-button icon box blue${this.props.selectedProject ? '' : ' disabled'}`}><FontAwesomeIcon icon={ICON_BOX}/></div>
                         </div>
                     </div>
                     <div className={'inner-container'}>
@@ -81,7 +81,7 @@ export default class ProjectsList extends React.PureComponent {
                     <Scrollbars autoHide={true} autoHideTimeout={800} autoHideDuration={200}>
                         <Table className={'table-body'}>
                             <tbody style={{borderBottom: '1px solid #dee2e6'}}>
-                            {sortedProjectIds.map(projectId => <tr className={selectedProject === projectId ? 'selected' : ''} onClick = {() => this.select(projectId)} onDoubleClick={event => event.altKey ? this.edit(projectId) : this.detail(projectId)} key={projectId}>
+                            {sortedProjectIds.map(projectId => <tr className={selectedProject === projectId ? 'selected' : ''} onClick = {() => this.selectProject(projectId)} onDoubleClick={event => event.altKey ? this.editProject(projectId) : this.showProject(projectId)} key={projectId}>
                                 <td className={'projects-name'}>{this.getComputedField('name', projects[projectId], users)}</td>
                                 <td className={'projects-manager'}>{this.getComputedField('manager', projects[projectId], users)}</td>
                                 <td className={'projects-status'}>{this.getComputedField('status', projects[projectId], users)}</td>
@@ -178,31 +178,20 @@ export default class ProjectsList extends React.PureComponent {
     // ***************************************************
     // ROUTING
     // ***************************************************
-    select = (id) => {
+    selectProject = (id) => {
         this.props.selectProject(id);
     };
 
-    create = () => {
-        this.props.selectProject(null);
-        this.props.setView(ViewTypes.PROJECT_EDIT);
+    addProject = () => {
+        this.props.addProject();
     };
 
-    detail = (id) => {
-        if(id) {
-            this.props.selectProject(id);
-            this.props.setView(ViewTypes.PROJECT_DETAIL);
-        } else if(this.props.selectedProject) {
-            this.props.setView(ViewTypes.PROJECT_DETAIL);
-        }
+    showProject = (id) => {
+        this.props.showProject(id);
     };
 
-    edit = (id) => {
-        if(id) {
-            this.props.selectProject(id);
-            this.props.setView(ViewTypes.PROJECT_EDIT);
-        } else if(this.props.selectedProject) {
-            this.props.setView(ViewTypes.PROJECT_EDIT);
-        }
+    editProject = (id) => {
+        this.props.editProject(id);
     };
 
     addToBox = () => {

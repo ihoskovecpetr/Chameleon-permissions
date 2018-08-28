@@ -1,40 +1,8 @@
 import * as ViewTypes from '../constants/ViewTypes';
 import * as ActionTypes from '../constants/ActionTypes';
-import * as FilterTypes from '../constants/FilterTypes';
+import * as ProjectStatus from '../constants/ProjectStatus';
 
-const initialState = {
-    view: ViewTypes.PROJECTS_LIST,
-    fetching: false,
-    message: null,
-    dataTimeStamp: null,
-
-    selectedProject: null,
-    projectsFilter: [],//[FilterTypes.USER_FILTER, FilterTypes.ACTIVE_PROJECTS_FILTER],
-    projectsSearch: '',
-    projectsSort: '',
-
-    selectedPerson: null,
-    peopleFilter: [],
-    peopleSearch: '',
-    peopleSort: '',
-
-    selectedCompany: null,
-    companiesFilter: [],
-    companiesSearch: '',
-    companiesSort: '',
-
-    box: [],
-    selectedBoxItem: null,
-
-    previousView: null,
-
-    editedData: {},
-
-    nextDetailId: null
-
-};
-
-function AppStateReducer(state = initialState, action = null) {
+function AppStateReducer(state = null, action = null) {
     if(action && action.type) {
         switch(action.type) {
             // routing, info
@@ -69,21 +37,47 @@ function AppStateReducer(state = initialState, action = null) {
                     return {...state, editedData: action.data};
                 } else return state;
 
-            // projects
+            // *********************************************************************************************************
+            // PROJECTS
+            // *********************************************************************************************************
             case ActionTypes.SELECT_PROJECT:
                 if((action.id || action.id === null) && action.id !== state.selectedProject) {
                     return {...state, selectedProject: action.id};
                 } else return state;
 
-            case ActionTypes.SELECT_PROJECT_NEXT:
+            case ActionTypes.SHOW_PROJECT:
+                if(action.id) {
+                    if(action.id !== state.selectedProject) {
+                        return {...state, selectedProject: action.id, view: ViewTypes.PROJECT_DETAIL};
+                    } else {
+                        return {...state, view: ViewTypes.PROJECT_DETAIL};
+                    }
+                } else {
+                    if(state.selectedProject) {
+                        return {...state, view: ViewTypes.PROJECT_DETAIL};
+                    } else return state;
+                }
+
+            case ActionTypes.SHOW_PROJECT_NEXT:
                 if(action.id && action.id !== state.nextDetailId) {
-                    return {...state, nextDetailId: action.id};
+                    return {...state, nextDetailId: action.id, view: ViewTypes.PROJECT_DETAIL_NEXT, previousView: state.view === ViewTypes.PROJECT_DETAIL || state.view === ViewTypes.PERSON_DETAIL || state.view === ViewTypes.COMPANY_DETAIL ? state.view : state.previousView};
                 } else return state;
 
             case ActionTypes.EDIT_PROJECT:
-                if(action.project) {
-                    return {...state, editedData: {}};
-                } else return state;
+                if(action.id) {
+                    if(action.id !== state.selectedProject) {
+                        return {...state, selectedProject: action.id, view: ViewTypes.PROJECT_EDIT, editedData: {}};
+                    } else {
+                        return {...state, view: ViewTypes.PROJECT_EDIT, editedData: {}};
+                    }
+                } else {
+                    if(state.selectedProject) {
+                        return {...state, view: ViewTypes.PROJECT_EDIT, editedData: {}};
+                    } else return state;
+                }
+
+            case ActionTypes.ADD_PROJECT:
+                return {...state, editedData: {status: 'PREBID'}, selectedProject: null, view: ViewTypes.PROJECT_EDIT};
 
             case ActionTypes.SET_PROJECTS_FILTER:
                 if(action.filter) {
@@ -118,7 +112,19 @@ function AppStateReducer(state = initialState, action = null) {
                     return {...state, projectsSearch: action.search}
                 } else return state;
 
-            // box
+            case ActionTypes.CREATE_PROJECT:
+                if(action.project && action.project._id) {
+                    return {...state, selectedProject: action.project._id};
+                } else return state;
+
+            case ActionTypes.REMOVE_PROJECT:
+                if(action.project && state.selectedProject === action.project) {
+                    return {...state, selectedProject: null};
+                } else return state;
+
+            // *********************************************************************************************************
+            // BOX
+            // *********************************************************************************************************
             case ActionTypes.SELECT_BOX_ITEM:
                 if(action.id) {
                     return {...state, selectedBoxItem: action.id};

@@ -64,7 +64,8 @@ $tool-button-color-disabled: #9b9b9b;
     border-radius: 1rem;
     background-color: #757575;
     color: #adadad;
-    @include media("<=small-phone") {
+    margin-bottom: 0.6rem;
+    @include media("<=phone") {
       display: none;
     }
   }
@@ -93,7 +94,7 @@ $tool-button-color-disabled: #9b9b9b;
         margin-right: 0.6rem;
       }
       text-align: center;
-      border-radius: 0.8rem;
+      border-radius: $tool-height / 2;
       height: $tool-height;
       min-width: 4.5rem;
       @include tool-button($tool-button-color-default);
@@ -113,7 +114,7 @@ $tool-button-color-disabled: #9b9b9b;
         @include tool-button($tool-button-color-disabled, true, true);
       }
       &.remove {
-        margin: 0 0.5rem 0 2rem;
+        margin: 0 0.5rem;
       }
       &.icon {
         font-size: 0.7rem;
@@ -121,8 +122,34 @@ $tool-button-color-disabled: #9b9b9b;
         padding: 0.1rem 0.5rem;
         //padding: 0;
         //width: $tool-height;
+        &.box {
+          padding: 0.1rem 0.4rem;
+        }
       }
 
+    }
+    .tool-box-validation {
+      .tool-box-validation-container {
+        position: absolute;
+        display: none;
+        z-index: 1;
+        font-size: 0.75rem;
+        padding: 0.3rem 0.5rem;
+        background-color: desaturate(lighten($app-header-background-color, 10%), 15%);
+        color: #dedede;
+        border-radius: 0.5rem;
+        margin-top: 0.2rem;
+      }
+      .tool-box-validation-icon {
+        color: #ffc101;
+        visibility: hidden;
+        &.active {
+          visibility: visible;
+          &:hover + .tool-box-validation-container {
+            display: block;
+          }
+        }
+      }
     }
     .tool-box-search-container {
       display: flex;

@@ -91,14 +91,23 @@ export function selectProject(id) {
     return {type: ActionTypes.SELECT_PROJECT, id: id}
 }
 
-export function selectProjectNext(id) {
-    return {type: ActionTypes.SELECT_PROJECT_NEXT, id: id}
+export function showProject(id) {
+    return {type: ActionTypes.SHOW_PROJECT, id: id}
 }
 
-export function editProject() {
-    return {type: ActionTypes.EDIT_PROJECT}
+export function showProjectNext(id) {
+    return {type: ActionTypes.SHOW_PROJECT_NEXT, id: id}
 }
 
+export function addProject() {
+    return {type: ActionTypes.ADD_PROJECT}
+}
+
+export function editProject(id) {
+    return {type: ActionTypes.EDIT_PROJECT, id: id}
+}
+
+// remote db opp
 export function updateProject() {
     return async (dispatch, getState) => {
         const projectUpdate = getState().appState.editedData;
@@ -108,7 +117,6 @@ export function updateProject() {
         dispatch(setMessage(null));
         try {
             const updatedProject = await server.updateProject(id, projectUpdate);
-            console.log(updatedProject);
             dispatch({type: ActionTypes.UPDATE_PROJECT, project: updatedProject});
             if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
                 type: 'info',
@@ -131,7 +139,7 @@ export function createProject() {
         dispatch(setMessage(null));
         try {
             const newProject = await server.createProject(project);
-            dispatch({type: ActionTypes.ADD_PROJECT, project: newProject});
+            dispatch({type: ActionTypes.CREATE_PROJECT, project: newProject});
             if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
                 type: 'info',
                 text: 'Create project done successfully!',

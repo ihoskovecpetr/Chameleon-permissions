@@ -1,6 +1,6 @@
 import * as ActionTypes from '../constants/ActionTypes';
 
-function PeopleReducer (state = {}, action = null) {
+function PeopleReducer (state = null, action = null) {
     if(action && action.type) {
         switch(action.type) {
             case ActionTypes.RESET_STORE:

@@ -105,6 +105,10 @@ $detail-group-padding-vertical: 0.2rem;
     &:disabled {
       background-color: #e6e6e6;
     }
+
+    &.readonly {
+      background-color: $detail-body-background-color;
+    }
   }
   .detail-select {
     //margin-bottom: 0.5rem;
@@ -140,9 +144,9 @@ $detail-group-padding-vertical: 0.2rem;
           }
         }
       }
-      &.invalid {
-        background-color: #f5d3d7;
-      }
+    }
+    &.invalid .detail-select__control {
+      background-color: #f5d3d7;
     }
     .detail-select__menu {
       margin-top: 0.15rem;

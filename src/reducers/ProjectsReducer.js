@@ -1,6 +1,6 @@
 import * as ActionTypes from '../constants/ActionTypes';
 
-function ProjectsReducer (state = {}, action = null) {
+function ProjectsReducer (state = null, action = null) {
     if(action && action.type) {
         switch(action.type) {
             case ActionTypes.RESET_STORE:
@@ -16,9 +16,9 @@ function ProjectsReducer (state = {}, action = null) {
                 else return state;
 
             case ActionTypes.REMOVE_PROJECT:
-                if(action.id && state[action.id]) {
+                if(action.project && state[action.project]) {
                     const projects = {...state};
-                    delete projects[action.id];
+                    delete projects[action.project];
                     return projects;
                 } else return state;
 

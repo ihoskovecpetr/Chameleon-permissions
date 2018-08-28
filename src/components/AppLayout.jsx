@@ -18,6 +18,7 @@ import {name, version}  from '../../package.json';
 export default class AppLayout extends React.PureComponent {
 
     render() {
+        //console.log(this.props.appState)
         let AppBody = null;
         switch(this.props.appState.view) {
             case ViewTypes.PROJECTS_LIST:
@@ -31,15 +32,18 @@ export default class AppLayout extends React.PureComponent {
 
                         selectedProject={this.props.appState.selectedProject}
 
-                        filter = {this.props.appState.projectsFilter}
-                        search = {this.props.appState.projectsSearch}
-                        sort = {this.props.appState.projectsSort}
+                        filter={this.props.appState.projectsFilter}
+                        search={this.props.appState.projectsSearch}
+                        sort={this.props.appState.projectsSort}
 
-                        setView={this.props.setView}
-                        selectProject={this.props.selectProject}
                         setFilter={this.props.setProjectsFilter}
                         setSearch={this.props.setProjectsSerach}
                         setSort={this.props.setProjectsSort}
+
+                        selectProject={this.props.selectProject}
+                        showProject={this.props.showProject}
+                        editProject={this.props.editProject}
+                        addProject={this.props.addProject}
 
                         addToBox={this.props.addToBox}
                     />;
@@ -64,6 +68,7 @@ export default class AppLayout extends React.PureComponent {
 
                         editProject={this.props.appState.view === ViewTypes.PROJECT_DETAIL ? this.props.editProject : undefined}
                         removeProject={this.props.appState.view === ViewTypes.PROJECT_DETAIL ? this.props.removeProject : undefined}
+                        addToBox={this.props.addToBox}
                     />;
                 break;
             case ViewTypes.PROJECT_EDIT:

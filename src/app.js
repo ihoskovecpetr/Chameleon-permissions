@@ -13,6 +13,8 @@ import Reducer from './reducers/Reducer';
 import AppLayout from './components/AppLayout';
 import * as Actions from './actions/Actions';
 
+import initialState from './reducers/InitialState';
+
 logger.setLevel('debug');
 
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -22,30 +24,37 @@ library.add(fas, far);
 
 import './app.scss';
 
+const appStatePath = 'appState';
+
 const finalCreateStore = compose(
-    persistState('appState', {key : 'projects', slicer: () => state => ({appState: {
-                view: state['appState'].view,
-                previousView: state['appState'].previousView,
-                selectedProject: state['appState'].selectedProject,
-                projectsFilter: state['appState'].projectsFilter,
-                projectsSearch: state['appState'].projectsSearch,
-                projectsSort: state['appState'].projectsSort,
-                selectedPerson: state['appState'].selectedPerson,
-                peopleFilter: state['appState'].peopleFilter,
-                peopleSearch: state['appState'].peopleSearch,
-                peopleSort: state['appState'].peopleSort,
-                selectedCompany: state['appState'].selectedCompany,
-                companiesFilter: state['appState'].companiesFilter,
-                companiesSearch: state['appState'].companiesSearch,
-                companiesSort: state['appState'].companiesSort,
-                box: state['appState'].box,
-                selectedBoxItem: state['appState'].selectedBoxItem,
-                nextDetailId: state['appState'].nextDetailId
-    }})}),
+    persistState(appStatePath, {
+        key : 'projects',
+        slicer: path => state => ({
+            view: state[path].view,
+            previousView: state[path].previousView,
+            selectedProject: state[path].selectedProject,
+            projectsFilter: state[path].projectsFilter,
+            projectsSearch: state[path].projectsSearch,
+            projectsSort: state[path].projectsSort,
+            selectedPerson: state[path].selectedPerson,
+            peopleFilter: state[path].peopleFilter,
+            peopleSearch: state[path].peopleSearch,
+            peopleSort: state[path].peopleSort,
+            selectedCompany: state[path].selectedCompany,
+            companiesFilter: state[path].companiesFilter,
+            companiesSearch: state[path].companiesSearch,
+            companiesSort: state[path].companiesSort,
+            box: state[path].box,
+            selectedBoxItem: state[path].selectedBoxItem,
+            nextDetailId: state[path].nextDetailId,
+            editedData: state[path].editedData
+        }),
+        merge: (initialState, persistedState) => ({...initialState, [appStatePath]: {...initialState[appStatePath], ...persistedState}})
+    }),
     applyMiddleware(thunk)
 )(createStore);
 
-const store = finalCreateStore(Reducer);
+const store = finalCreateStore(Reducer, initialState);
 
 const mapStateToProps = state => state;
 const mapDispatchToProps = dispatch => bindActionCreators(Actions, dispatch);

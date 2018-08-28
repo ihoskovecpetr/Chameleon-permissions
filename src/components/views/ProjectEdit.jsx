@@ -3,100 +3,98 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Input, Col,  Row, Label, FormGroup } from 'reactstrap';
 import Select from 'react-select';
-import * as ViewTypes from '../../constants/ViewTypes';
+//import * as ViewTypes from '../../constants/ViewTypes';
 import * as ProjectStatus from '../../constants/ProjectStatus';
 
-const statusOptions = Object.keys(ProjectStatus).map(key => {return {value: ProjectStatus[key].key, label: ProjectStatus[key].label}});
+const statusOptions = Object.keys(ProjectStatus).map(key => {return {value: key, label: ProjectStatus[key].label}});
 
-const ICON_REMOVE = 'trash';
+//const ICON_REMOVE = 'trash';
 const ICON_CHECKBOX_CHECKED = ['far','check-square'];
 const ICON_CHECKBOX_UNCHECKED = ['far', 'square'];
+const ICON_VALIDATION = 'exclamation-circle';
 
 export default class ProjectEdit extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
             saveDisabled: true,
-            project: null,
             validation: {},
-            removeArmed: false,
-            status: !props.selectedProject ? ProjectStatus.PREBID.key : undefined
+            removeArmed: false
         };
+    }
 
-        this.handleRemoveArmed = this.handleRemoveArmed.bind(this);
+    componentDidMount() {
+        this.checkProject();
+    }
 
-        this.close = this.close.bind(this);
-        this.save = this.save.bind(this);
-        this.remove = this.remove.bind(this);
-
-        this.currentProject = this.currentProject.bind(this);
-        this.setSaveDisabled = this.setSaveDisabled.bind(this);
-        this.isCurrentProjectValid = this.isCurrentProjectValid.bind(this);
-
-        this.editable = true;
-
-        this.handleNameChange = this.handleNameChange.bind(this);
-        this.handleStatusChange = this.handleStatusChange.bind(this);
-
-        this.sendCurrentProject = this.sendCurrentProject.bind(this);
-        this.getCurrentState = this.getCurrentState.bind(this);
-        this.handleStatusNoteChange = this.handleStatusNoteChange.bind(this);
+    componentDidUpdate(prevProps) {
+        if(this.props.editedData !== prevProps.editedData || this.props.projects !== prevProps.projects) this.checkProject();
     }
 
     render() {
+        const {selectedProject, editedData, projects} = this.props;
 
-        const name = this.state.name !== undefined ? this.state.name : this.props.create ? '' : this.props.projects[this.props.selectedProject] ? this.props.projects[this.props.selectedProject].name : '';
-        const status = this.state.status !== undefined ? this.state.status : this.props.projects[this.props.selectedProject] ? this.props.projects[this.props.selectedProject].status : null;
-        const statusNote = this.state.statusNote !== undefined ? this.state.statusNote : this.props.projects[this.props.selectedProject] ? this.props.projects[this.props.selectedProject].statusNote : '';
+        const name = editedData.name !== undefined ? editedData.name : !selectedProject ? '' : projects[selectedProject] ? projects[selectedProject].name : '';
+        const status = editedData.status !== undefined ? editedData.status : projects[selectedProject] ? projects[selectedProject].status : null;
+        const statusNote = editedData.statusNote !== undefined ? editedData.statusNote : projects[selectedProject] ? projects[selectedProject].statusNote : '';
 
         return (
             <div className={'app-body'}>
                 <div className={'app-toolbox'}>
-                    <div className={'toolbox-group'}>
-                        <div onClick={this.close} className={'tool-box-button'}>{'Cancel'}</div>
-                        <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button green${this.state.saveDisabled ? ' disabled' : ''}`}>{this.state.create ? 'Create' : 'Save'}</div>
-                        {this.state.create ? null :
-                            <Fragment>
-                                <div onClick={!this.state.removeArmed ? undefined : this.remove} className={`tool-box-button remove red${!this.state.removeArmed ? ' disabled' : ''}`}>{'Remove Project'}</div>
-                                <FontAwesomeIcon className={`tool-box-checkbox`} onClick={this.handleRemoveArmed} icon={this.state.removeArmed ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED} style={{cursor: 'pointer'}}/>
-                            </Fragment>
-                        }
+                    <div className={'inner-container'}>
+                        <div className={'toolbox-group'}>
+                            <div onClick={this.close} className={'tool-box-button'}>{'Cancel'}</div>
+                            <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button green${this.state.saveDisabled ? ' disabled' : ''}`}>{this.props.selectedProject ? 'Save' : 'Create'}</div>
+                            <div className={'tool-box-validation'}>
+                                <FontAwesomeIcon className={`tool-box-validation-icon${Object.keys(this.state.validation).length > 0 ? ' active' : ''}`} icon={ICON_VALIDATION}/>
+                                <div className={'tool-box-validation-container'}>
+                                    {Object.keys(this.state.validation).map(validationField => <div key={validationField}>{`${this.state.validation[validationField].field}: ${this.state.validation[validationField].status}`}</div>)}
+                                </div>
+                            </div>
+                            {!this.props.selectedProject ? null :
+                                <Fragment>
+                                    <div onClick={!this.state.removeArmed ? undefined : this.remove} className={`tool-box-button remove red${!this.state.removeArmed ? ' disabled' : ''}`}>{'Remove Project'}</div>
+                                    <FontAwesomeIcon className={`tool-box-checkbox`} onClick={this.handleRemoveArmed} icon={this.state.removeArmed ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED} style={{cursor: 'pointer'}}/>
+                                </Fragment>
+                            }
+                        </div>
                     </div>
-                    {this.props.id ? <div className={'toolbox-id'}>{this.props.id}</div> : null}
-                    <div className={'toolbox-group clear'}/>
+                    <div className={'inner-container'}>
+                    {this.props.selectedProject && this.props.projects[this.props.selectedProject] ? <div className={'toolbox-id'}>{this.props.projects[this.props.selectedProject].projectId}</div> : null}
+                    </div>
                 </div>
                 <Scrollbars autoHide={true} autoHideTimeout={800} autoHideDuration={200}>
                     <div className={'detail-body'}>
                         <div className={'detail-row'}>
                             <div className={'detail-group size-7'}>
-                                <div onClick={() => this.setState({editable: !this.editable})} className={`detail-label${this.state.name !== undefined && this.props.selectedProject  ? ' value-changed' : ''}`}>{'Project name:'}</div>
-                                <Input disabled={!this.editable} className={`detail-input${this.state.validation.name ? ' invalid' : ''}`} onChange={this.handleNameChange} value={name}/>
+                                <div className={`detail-label${this.props.editedData.name !== undefined && this.props.selectedProject  ? ' value-changed' : ''}`}>{'Project name:'}</div>
+                                <Input className={`detail-input${this.state.validation.name ? ' invalid' : ''}`} onChange={this.handleNameChange} value={name}/>
                             </div>
                             <div className={'detail-group size-5'}>
-                                <div className={`detail-label${this.state.status !== undefined && this.props.selectedProject ? ' value-changed' : ''}`}>{'Project status:'}</div>
-                                {this.editable ? <Select
+                                <div className={`detail-label${this.props.editedData.status !== undefined && this.props.selectedProject ? ' value-changed' : ''}`}>{'Project status:'}</div>
+                                <Select
                                     options={statusOptions}
-                                    value={{value: status, label: status}}
+                                    value={{value: status, label: ProjectStatus[status] ? ProjectStatus[status].label : ''}}
                                     onChange={this.handleStatusChange}
                                     isSearchable={false}
-                                    className={'detail-select'}
+                                    className={`detail-select${this.state.validation.status ? ' invalid' : ''}`}
                                     classNamePrefix={'detail-select'}
-                                /> : <Input disabled={!this.editable} className={'detail-input'} value={status}/>}
+                                />
                             </div>
                         </div>
                         <div className={'detail-row'}>
                             <div className={'detail-group size-12'}>
-                                <div className={`detail-label${this.state.statusNote !== undefined && this.props.selectedProject ? ' value-changed' : ''}`}>{'Status note:'}</div>
-                                <Input disabled={!this.editable} className={`detail-input${this.state.statusNote ? ' invalid' : ''}`} onChange={this.handleStatusNoteChange} value={statusNote}/>
+                                <div className={`detail-label${this.props.editedData.statusNote !== undefined && this.props.selectedProject ? ' value-changed' : ''}`}>{'Status note:'}</div>
+                                <Input className={`detail-input`} onChange={this.handleStatusNoteChange} value={statusNote}/>
                             </div>
                         </div>
                         <div className={'detail-spacer'}/>
                         <div className={'detail-row'}>
                             <div className={'detail-group size-6'}>
-                                <div className={`detail-label${this.state.statusNote !== undefined && this.props.selectedProject ? ' value-changed' : ''}`}>{'Client Company:'}</div>
+                                <div className={`detail-label${this.props.editedData.statusNote !== undefined && this.props.selectedProject ? ' value-changed' : ''}`}>{'Client Company:'}</div>
                             </div>
                             <div className={'detail-group size-6'}>
-                                <div className={`detail-label${this.state.statusNote !== undefined && this.props.selectedProject ? ' value-changed' : ''}`}>{'Client People:'}</div>
+                                <div className={`detail-label${this.props.editedData.statusNote !== undefined && this.props.selectedProject ? ' value-changed' : ''}`}>{'Client People:'}</div>
                             </div>
                         </div>
                     </div>
@@ -104,80 +102,81 @@ export default class ProjectEdit extends React.PureComponent {
             </div>
         )
     }
+    // *****************************************************************************************************************
+    // CLOSE, SAVE, REMOVE
+    // *****************************************************************************************************************
+    close = () => {
+        this.props.returnToPreviousView();
+    };
 
-    close() {
-        this.props.setView(ViewTypes.PROJECTS_LIST)
+    save = () => {
+        if(this.props.selectedProject) this.props.updateProject();
+        else this.props.createProject();
+        this.close();
+    };
+
+    remove = () => {
+        this.props.removeProject();
+        this.close();
+    };
+
+    // *****************************************************************************************************************
+    // HELPERS
+    // *****************************************************************************************************************
+    checkProject() {
+        const disable = !this.isCurrentProjectValid() || Object.keys(this.props.editedData).length === 0;
+        if(this.state.saveDisabled !== disable) this.setState({saveDisabled: disable});
     }
 
-    save() {
-        if(this.props.project) {
-            this.props.updateProject(this.props.project, this.state.project);
-        } else {
-            this.props.addProject(this.state.project);
+    isProjectsNameUsed = name => {
+        if(!name) return false;
+        return Object.keys(this.props.projects).filter(projectId => projectId !== this.props.selectedProject).map(projectId => this.props.projects[projectId].name.toLowerCase()).indexOf(name.toLowerCase()) >= 0;
+    };
+
+    handleRemoveArmed = () => {
+        this.setState({removeArmed: !this.state.removeArmed})
+    };
+
+    updateEditedData = updateData => {
+        const newData = {...this.props.editedData, ...updateData};
+        const project = this.props.selectedProject ? this.props.projects[this.props.selectedProject] : undefined;
+        for(const key of Object.keys(newData)) {
+            if(project && project[key] === newData[key])  delete newData[key];
         }
+        return newData;
+    };
 
-        this.props.setView(ViewTypes.PROJECTS_LIST)
-    }
-
-    remove(id) {
-
-    }
-
-    currentProject(project) {
-        this.setState({project: project}, this.setSaveDisabled);
-    }
-
-    setSaveDisabled() {
-        const disabled = this.state.project === null || Object.keys(this.state.project).length === 0 || !this.isCurrentProjectValid();
-        if(this.state.saveDisabled !== disabled) this.setState({saveDisabled: disabled});
-    }
-
-    isCurrentProjectValid() { //TODO check name is unique, report notValidStatus
-        const project = Object.assign({}, this.props.projects && this.props.projects[this.props.project] ? this.props.projects[this.props.project] : {}, this.state.project);
+    // *****************************************************************************************************************
+    // VALIDATION
+    // *****************************************************************************************************************
+    isCurrentProjectValid = () => {
+        const origProject = this.props.selectedProject && this.props.projects && this.props.projects[this.props.selectedProject] ? this.props.projects[this.props.selectedProject] : {};
+        if(!origProject._id && this.props.selectedProject) return true; // when refresh, no data fetched yet
+        const project = Object.assign({}, origProject, this.props.editedData);
         const validation = {};
+
         if(!project.name || !project.name.trim()) validation['name'] = {field: 'Project name', status: 'Is empty'};
-        if(!project.status) validation['name'] = {field: 'Project status', status: 'Is not set'};
+        if(this.isProjectsNameUsed(project.name)) validation['name'] = {field: 'Project name', status: 'Is not unique'};
+        if(!project.status) validation['status'] = {field: 'Project status', status: 'Is not set'};
+        if(!ProjectStatus[project.status]) validation['status'] = {field: 'Project status', status: 'Is invalid'};
+
         this.setState({validation: validation});
         return Object.keys(validation).length === 0;
-    }
+    };
 
-    handleRemoveArmed() {
-        this.setState({removeArmed: !this.state.removeArmed})
-    }
+    // *****************************************************************************************************************
+    // VALUES CHANGE HANDLERS
+    // *****************************************************************************************************************
+    handleNameChange = event => {
+        this.props.editItem(this.updateEditedData({name: event.target.value}));
+    };
 
-    handleNameChange(event) {
-        if(!this.props.selectedProject) this.setState({ name: event.target.value }, this.sendCurrentProject);
-        else {
-            if(event.target.value !== this.props.projects[this.props.selectedProject].name) this.setState({ name: event.target.value }, this.sendCurrentProject);
-            else this.setState({ name: undefined }, this.sendCurrentProject);
-        }
-    }
+    handleStatusChange = option => {
+        this.props.editItem(this.updateEditedData({status: option.value}));
+    };
 
-    handleStatusChange(option) {
-        if(!this.props.selectedProject) this.setState({ status: option.value }, this.sendCurrentProject);
-        else {
-            if(option.value !== this.props.projects[this.props.selectedProject].status) this.setState({ status: option.value }, this.sendCurrentProject);
-            else this.setState({ status: undefined }, this.sendCurrentProject);
-        }
-    }
+    handleStatusNoteChange = event => {
+        this.props.editItem(this.updateEditedData({statusNote: event.target.value}));
+    };
 
-    handleStatusNoteChange(event) {
-        if(!this.props.selectedProject) this.setState({ statusNote: event.target.value }, this.sendCurrentProject);
-        else {
-            if(event.target.value !== this.props.projects[this.props.selectedProject].statusNote) this.setState({ statusNote: event.target.value }, this.sendCurrentProject);
-            else this.setState({ statusNote: undefined }, this.sendCurrentProject);
-        }
-    }
-
-    //**************************
-
-    sendCurrentProject() {
-        this.props.currentProject(this.getCurrentState());
-    }
-
-    getCurrentState() {
-        const state = {...this.state};
-        for(const key of Object.keys(state)) if(state[key] === undefined) delete state[key];
-        return state;
-    }
 }
