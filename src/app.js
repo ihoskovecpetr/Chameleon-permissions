@@ -21,6 +21,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 library.add(fas, far);
+window.FontAwesomeConfig.searchPseudoElements= true;
 
 import './app.scss';
 
@@ -47,7 +48,8 @@ const finalCreateStore = compose(
             box: state[path].box,
             selectedBoxItem: state[path].selectedBoxItem,
             nextDetailId: state[path].nextDetailId,
-            editedData: state[path].editedData
+            editedData: state[path].editedData,
+            activeBid: state[path].activeBid
         }),
         merge: (initialState, persistedState) => ({...initialState, [appStatePath]: {...initialState[appStatePath], ...persistedState}})
     }),

@@ -37,6 +37,11 @@ function AppStateReducer(state = null, action = null) {
                     return {...state, editedData: action.data};
                 } else return state;
 
+            case ActionTypes.SET_ACTIVE_BID:
+                if(typeof action.activeBid !== 'undefined' && action.activeBid !== state.activeBid) {
+                    return {...state, activeBid: action.activeBid};
+                } else return state;
+
             // *********************************************************************************************************
             // PROJECTS
             // *********************************************************************************************************

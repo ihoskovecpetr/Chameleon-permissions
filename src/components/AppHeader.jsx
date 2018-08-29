@@ -36,8 +36,6 @@ export default class AppHeader extends React.PureComponent {
         const companySwitchActive = this.props.view === ViewTypes.COMPANIES_LIST || this.props.view === ViewTypes.COMPANY_DETAIL || this.props.view === ViewTypes.COMPANY_DETAIL_NEXT || this.props.view === ViewTypes.COMPANY_EDIT;
         const boxActive = this.props.view === ViewTypes.BOX;
 
-        const activeBid = true;
-
         return (
             <div className={'app-header-outer'}>
                 <div className={'app-header'}>
@@ -54,9 +52,10 @@ export default class AppHeader extends React.PureComponent {
                     </div>
 
                     <div className={'header-group center header-switch'}>
-                        <div onClick={() => this.props.switchesEnabled && this.props.view !== ViewTypes.PROJECTS_LIST ? this.props.setView(ViewTypes.PROJECTS_LIST) : undefined} className={`switch${projectsSwitchActive ? ' active' : ''}${this.props.switchesEnabled && this.props.view !== ViewTypes.PROJECTS_LIST ? ' clickable' : ''}${activeBid ? ' marked' : ''}`}>
+                        <div onClick={() => this.props.switchesEnabled && this.props.view !== ViewTypes.PROJECTS_LIST ? this.props.setView(ViewTypes.PROJECTS_LIST) : undefined} className={`switch${projectsSwitchActive ? ' active' : ''}${this.props.switchesEnabled && this.props.view !== ViewTypes.PROJECTS_LIST ? ' clickable' : ''}`}>
                             <FontAwesomeIcon icon={ICON_PROJECTS}/>
                             <span className={'switch-text'}>{'Projects'}</span>
+                            {this.props.activeBid ? <FontAwesomeIcon className={'dot'} icon={'circle'}/> : null}
                         </div>
                         <div onClick={() => this.props.switchesEnabled && this.props.view !== ViewTypes.PEOPLE_LIST ? this.props.setView(ViewTypes.PEOPLE_LIST) : undefined} className={`switch${peopleSwitchActive ? ' active' : ''}${this.props.switchesEnabled && this.props.view !== ViewTypes.PEOPLE_LIST ? ' clickable' : ''}`}>
                             <FontAwesomeIcon icon={ICON_PEOPLE}/>

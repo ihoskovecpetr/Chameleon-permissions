@@ -12,6 +12,7 @@ export default {
         projectsFilter: [],//[FilterTypes.USER_FILTER, FilterTypes.ACTIVE_PROJECTS_FILTER],
         projectsSearch: '',
         projectsSort: '',
+        activeBid: false,
 
         selectedPerson: null,
         peopleFilter: [],

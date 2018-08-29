@@ -13,8 +13,6 @@ export const COMPANY_DETAIL = 'COMPANY_DETAIL';
 export const COMPANY_EDIT = 'COMPANY_EDIT';
 export const COMPANY_DETAIL_NEXT = 'PROJECT_DETAIL_NEXT';
 
-export const ACTIVE_BIDS = 'ACTIVE_BIDS';
-
 export const BOX = 'BOX';
 export const BOX_PROJECT_DETAIL = 'BOX_PROJECT_DETAIL';
 export const BOX_PROJECT_EDIT = 'BOX_PROJECT_EDIT';

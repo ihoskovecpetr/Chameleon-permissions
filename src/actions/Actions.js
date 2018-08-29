@@ -32,6 +32,10 @@ export function setMessage(message) {
 export function editItem(data) {
     return {type: ActionTypes.EDIT_ITEM, data: data};
 }
+
+export function setActiveBid(activeBid) {
+    return {type: ActionTypes.SET_ACTIVE_BID, activeBid: activeBid};
+}
 // *********************************************************************************************************************
 // DATA STORE
 // *********************************************************************************************************************

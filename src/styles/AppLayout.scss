@@ -161,6 +161,12 @@ body {
               display: none;
             }
           }
+          .dot {
+            position: absolute;
+            font-size: 0.5rem;
+            margin-top: 0.1rem;
+            margin-left: 0.1rem;
+          }
           &:first-child {
             border-top-left-radius: 0.8rem;
             border-bottom-left-radius: 0.8rem;
@@ -181,16 +187,6 @@ body {
               color: lighten($app-header-color, 15%);
               background-color: transparentize(white, 0.9);
             }
-          }
-          &.marked:after {
-            content: '';
-            position: absolute;
-            width: 0.4rem;
-            height: 0.4rem;
-            background-color: $app-header-color; //lighten($app-header-background-color, 50%);
-            border-radius: 0.2rem;
-            margin-top: 0.1rem;
-            margin-left: 0.1rem;
           }
         }
         @include media("<=phone") {

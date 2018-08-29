@@ -5,6 +5,7 @@ import MessageBox from './MessageBox';
 import FetchingIndicator from './FetchingIndicator';
 
 import ProjectsList from './views/ProjectsList';
+import ActiveBid from './views/ActiveBid';
 import ProjectEdit from './views/ProjectEdit';
 import ProjectDetail from './views/ProjectDetail';
 
@@ -22,7 +23,34 @@ export default class AppLayout extends React.PureComponent {
         let AppBody = null;
         switch(this.props.appState.view) {
             case ViewTypes.PROJECTS_LIST:
-                AppBody =
+                AppBody = this.props.appState.activeBid ?
+                    <ActiveBid
+                        projects={this.props.projects}
+                        people={this.props.people}
+                        companies={this.props.companies}
+                        users={this.props.users}
+                        user={this.props.user}
+
+                        selectedProject={this.props.appState.selectedProject}
+
+                        filter={this.props.appState.projectsFilter}
+                        search={this.props.appState.projectsSearch}
+                        sort={this.props.appState.projectsSort}
+
+                        setFilter={this.props.setProjectsFilter}
+                        setSearch={this.props.setProjectsSerach}
+                        setSort={this.props.setProjectsSort}
+
+                        selectProject={this.props.selectProject}
+                        showProject={this.props.showProject}
+                        editProject={this.props.editProject}
+                        addProject={this.props.addProject}
+
+                        addToBox={this.props.addToBox}
+                        setActiveBid={this.props.setActiveBid}
+
+                    />
+                    :
                     <ProjectsList
                         projects={this.props.projects}
                         people={this.props.people}
@@ -46,6 +74,8 @@ export default class AppLayout extends React.PureComponent {
                         addProject={this.props.addProject}
 
                         addToBox={this.props.addToBox}
+                        setActiveBid={this.props.setActiveBid}
+
                     />;
                 break;
             case ViewTypes.PROJECT_DETAIL:
@@ -118,6 +148,7 @@ export default class AppLayout extends React.PureComponent {
                     //logout = {this.props.logout}
                     //home = {this.props.home}
                     view = {this.props.appState.view}
+                    activeBid = {this.props.appState.activeBid}
                     setView = {this.props.setView}
                     box = {this.props.appState.box}
                     switchesEnabled = {(this.props.appState.view !== ViewTypes.PROJECT_EDIT && this.props.appState.view !== ViewTypes.PERSON_EDIT && this.props.appState.view !== ViewTypes.COMPANY_EDIT) || Object.keys(this.props.appState.editedData).length === 0}

@@ -22,7 +22,7 @@ const ICON_CLEAR = 'times';
 
 const ICON_BOX = 'box-open';
 
-export default class ProjectsList extends React.PureComponent {
+export default class ActiveBid extends React.PureComponent {
 
     componentDidUpdate(prevProps) { //remove selected project if doesn't exist in filtered set
         if(this.props.selectedProject && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.searchList(this.props.projects, this.filterList(this.props.projects, this.props.filter), this.props.search).indexOf(this.props.selectedProject) < 0) this.props.selectProject(null);
@@ -65,7 +65,7 @@ export default class ProjectsList extends React.PureComponent {
                             <div onClick={this.userFilterHandler} className={`tool-box-button-switch`}><FontAwesomeIcon className={'check'} icon={userFilter ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/><span className={`text`}>{'My'}</span></div>
                             <div className={`tool-box-button-switch${activeFilterReversed ? ' reversed' : ''}`}><FontAwesomeIcon onClick={this.activeFilterHandler} className={'check'} icon={activeFilter ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/><span onClick={this.activeFilterReverseHandler} className={`text${activeFilterReversed ? ' reversed' : ''}`}>{'Active'}</span></div>
                             <div className={`tool-box-button-switch${awardFilterReversed ? ' reversed ' : ''}`}><FontAwesomeIcon onClick={this.awardedFilterHandler} className={'check'} icon={awardedFilter ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/><span onClick={this.awardedFilterReverseHandler} className={`text${awardFilterReversed ? ' reversed' : ''}`}>{'Awarded'}</span></div>
-                            <div onClick={() => this.props.setActiveBid(true)}>{'X'}</div>
+                            <div onClick={() => this.props.setActiveBid(false)}>{'X'}</div>
                         </div>
                     </div>
                 </div>
