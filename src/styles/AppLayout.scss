@@ -21,16 +21,16 @@ html {
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
-  @include media(">=small-phone") {
+  @include media(">small-phone") {
     font-size: 12px;
   }
-  @include media(">=phone") {
+  @include media(">phone") {
     font-size: 13px;
   }
-  @include media(">=tablet") {
+  @include media(">tablet") {
     font-size: 14px;
   }
-  @include media(">=desktop") {
+  @include media(">desktop") {
     font-size: 15px;
   }
 }

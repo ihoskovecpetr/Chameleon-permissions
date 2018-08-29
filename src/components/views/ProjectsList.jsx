@@ -1,12 +1,13 @@
 import React, {Fragment} from 'react';
 import { Table } from 'reactstrap';
 import { Scrollbars } from 'react-custom-scrollbars';
-import * as ViewTypes from '../../constants/ViewTypes';
 import * as ProjectStatus from '../../constants/ProjectStatus';
 import * as FilterTypes from '../../constants/FilterTypes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Input } from 'reactstrap';
 import Fuse from 'fuse.js';
+import moment from 'moment';
+import Select from 'react-select';
 
 import memoize from 'memoize-one';
 
@@ -21,6 +22,9 @@ const ICON_SEARCH = 'search';
 const ICON_CLEAR = 'times';
 
 const ICON_BOX = 'box-open';
+
+import {columnDef, columnDefBids} from '../../constants/TableColumnsDef';
+const statusOptions = Object.keys(ProjectStatus).map(key => {return {value: key, label: ProjectStatus[key].label}});
 
 export default class ProjectsList extends React.PureComponent {
 
@@ -45,7 +49,7 @@ export default class ProjectsList extends React.PureComponent {
         return (
             <div className={'app-body'}>
                 <div className={'app-toolbox'}>
-                    <div className={'inner-container'}>
+                    <div className={'inner-container space'}>
                         <div className={'toolbox-group'}>
                             <div onClick={this.addProject} className={'tool-box-button green'}>{'New'}</div>
                             <div onClick={this.props.selectedProject ? () => this.showProject() : undefined} className={`tool-box-button${this.props.selectedProject ? '' : ' disabled'}`}>{'Show'}</div>
@@ -53,8 +57,8 @@ export default class ProjectsList extends React.PureComponent {
                             <div onClick={this.props.selectedProject ? this.addToBox : undefined} className={`tool-box-button icon box blue${this.props.selectedProject ? '' : ' disabled'}`}><FontAwesomeIcon icon={ICON_BOX}/></div>
                         </div>
                     </div>
-                    <div className={'inner-container'}>
-                        <div className={'toolbox-group'}>
+                    <div className={'inner-container flex'}>
+                        <div className={'toolbox-group right-auto'}>
                             <div className={'tool-box-search-container'}>
                                 <div className={'icon search'}><FontAwesomeIcon icon={ICON_SEARCH}/></div>
                                 <Input value={search} onChange={this.searchInputHandler} className={`input-search`}/>
@@ -63,37 +67,72 @@ export default class ProjectsList extends React.PureComponent {
                         </div>
                         <div className={'toolbox-group'}>
                             <div onClick={this.userFilterHandler} className={`tool-box-button-switch`}><FontAwesomeIcon className={'check'} icon={userFilter ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/><span className={`text`}>{'My'}</span></div>
-                            <div className={`tool-box-button-switch${activeFilterReversed ? ' reversed' : ''}`}><FontAwesomeIcon onClick={this.activeFilterHandler} className={'check'} icon={activeFilter ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/><span onClick={this.activeFilterReverseHandler} className={`text${activeFilterReversed ? ' reversed' : ''}`}>{'Active'}</span></div>
-                            <div className={`tool-box-button-switch${awardFilterReversed ? ' reversed ' : ''}`}><FontAwesomeIcon onClick={this.awardedFilterHandler} className={'check'} icon={awardedFilter ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/><span onClick={this.awardedFilterReverseHandler} className={`text${awardFilterReversed ? ' reversed' : ''}`}>{'Awarded'}</span></div>
-                            <div onClick={() => this.props.setActiveBid(true)}>{'X'}</div>
+
+                            {this.props.activeBid ? null :
+                                <Fragment>
+                                    <div className={`tool-box-button-switch${activeFilterReversed ? ' reversed' : ''}`}><FontAwesomeIcon onClick={this.activeFilterHandler} className={'check'} icon={activeFilter ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/><span onClick={this.activeFilterReverseHandler} className={`text${activeFilterReversed ? ' reversed' : ''}`}>{'Active'}</span></div>
+                                    <div className={`tool-box-button-switch${awardFilterReversed ? ' reversed ' : ''}`}><FontAwesomeIcon onClick={this.awardedFilterHandler} className={'check'} icon={awardedFilter ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/><span onClick={this.awardedFilterReverseHandler} className={`text${awardFilterReversed ? ' reversed' : ''}`}>{'Awarded'}</span></div>
+                                </Fragment>
+                            }
+                            <div onClick={() => this.props.setActiveBid(!this.props.activeBid)} className={'tool-box-button blue active-bid'}>
+                                {this.props.activeBid ? 'All' : 'Bids'}
+                            </div>
                         </div>
                     </div>
                 </div>
                 <Fragment>
-                    <Table className={'table-header'} borderless={true}>
-                        <thead>
-                        <tr>
-                            <th className={'projects-name'}><FontAwesomeIcon onClick={() => this.handleSort('name')} className={`sort-icon${sort.indexOf('name') < 0 ? ' not-set' : ''}`} icon={sort === 'name' ? ICON_SORT_UP : sort === '-name' ? ICON_SORT_DOWN : ICON_SORT}/><span className={'sortable-column'} onClick={() => this.handleSort('name')}>{'Project Name'}</span></th>
-                            <th className={'projects-manager'}><FontAwesomeIcon onClick={() => this.handleSort('manager')} className={`sort-icon${sort.indexOf('manager') < 0 ? ' not-set' : ''}`} icon={sort === 'manager' ? ICON_SORT_UP : sort === '-manager' ? ICON_SORT_DOWN : ICON_SORT}/><span className={'sortable-column'} onClick={() => this.handleSort('manager')}>{'Project Manager'}</span></th>
-                            <th className={'projects-status'}><FontAwesomeIcon onClick={() => this.handleSort('status')} className={`sort-icon${sort.indexOf('status') < 0 ? ' not-set' : ''}`} icon={sort === 'status' ? ICON_SORT_UP : sort === '-status' ? ICON_SORT_DOWN : ICON_SORT}/><span className={'sortable-column'} onClick={() => this.handleSort('status')}>{'Status'}</span></th>
-                        </tr>
-                        </thead>
-                    </Table>
+                    {this.getHeader(this.props.activeBid ? columnDefBids : columnDef)}
                     <Scrollbars autoHide={true} autoHideTimeout={800} autoHideDuration={200}>
-                        <Table className={'table-body'}>
-                            <tbody style={{borderBottom: '1px solid #dee2e6'}}>
-                            {sortedProjectIds.map(projectId => <tr className={selectedProject === projectId ? 'selected' : ''} onClick = {() => this.selectProject(projectId)} onDoubleClick={event => event.altKey ? this.editProject(projectId) : this.showProject(projectId)} key={projectId}>
-                                <td className={'projects-name'}>{this.getComputedField('name', projects[projectId], users)}</td>
-                                <td className={'projects-manager'}>{this.getComputedField('manager', projects[projectId], users)}</td>
-                                <td className={'projects-status'}>{this.getComputedField('status', projects[projectId], users)}</td>
-                            </tr>)}
-                            </tbody>
-                        </Table>
+                        {this.getTable(this.props.activeBid ? columnDefBids : columnDef, sortedProjectIds)}
                     </Scrollbars>
                 </Fragment>
             </div>
         )
     }
+    // ***************************************************
+    // TABLE CONTENT
+    // ***************************************************
+    getHeader = columnDef => {
+        return (
+            <Table className={'table-header'} borderless={true}>
+                <thead>
+                <tr>
+                {columnDef.map((column, i) =>
+                    <th key={i} className={column.className}>
+                        {column.sort ? <FontAwesomeIcon
+                            icon={this.props.sort === column.sort ? ICON_SORT_UP : this.props.sort === `-${column.sort}` ? ICON_SORT_DOWN : ICON_SORT}
+                            onClick={() => this.handleSort(column.sort)}
+                            className={`sort-icon${this.props.sort.indexOf(column.sort) < 0 ? ' not-set' : ''}`}
+                        /> : null}
+                        <span className={column.sort ? 'sortable-column' : ''} onClick={() => column.sort ? this.handleSort(column.sort) : undefined}>{column.label}</span>
+                    </th>
+                )}
+                </tr>
+                </thead>
+            </Table>
+        )
+    };
+
+    getTable = (columnDef, sortedProjectIds) => {
+        return (
+            <Table className={`table-body${this.props.activeBid ? ' active-bid' : ''}`}>
+                <tbody style={{borderBottom: '1px solid #dee2e6'}}>
+                {sortedProjectIds.map(projectId => <tr className={`${this.props.selectedProject === projectId ? 'selected' : ''}${this.props.activeBid ? '' : ' selectable'}`} onClick = {this.props.activeBid ? undefined : () => this.selectProject(projectId)} onDoubleClick={this.props.activeBid ? undefined : event => event.altKey ? this.editProject(projectId) : this.showProject(projectId)} key={projectId}>
+                    {columnDef.map((column, i) =>
+                        <td key={i}
+                            className={`${column.className}${this.props.activeBid && i === 0 ? ' selectable' : ''}${this.props.selectedProject === projectId ? ' selected' : ''}${this.props.activeBid ? ' active-bid' : ''}`}
+                            onClick={this.props.activeBid && i === 0 ? () => this.selectProject(projectId) : undefined}
+                            onDoubleClick={!this.props.activeBid || i > 0 ? undefined : event => event.altKey ? this.editProject(projectId) : this.showProject(projectId)}
+                        >
+                            {this.getComputedField(column.field, this.props.projects[projectId], this.props.activeBid)}
+                        </td>
+                    )}
+                </tr>)}
+                </tbody>
+            </Table>
+        )
+    };
+
     // ***************************************************
     // FILTER AND SORT SOURCE LIST - MEMOIZE
     // ***************************************************
@@ -127,7 +166,6 @@ export default class ProjectsList extends React.PureComponent {
                             }
                         }
                         return false;
-
                 }
             }
             return true;
@@ -198,7 +236,9 @@ export default class ProjectsList extends React.PureComponent {
     addToBox = () => {
         if(this.props.selectedProject) this.props.addToBox(this.props.selectedProject);
     };
-
+    // ***************************************************
+    // HANDLERS
+    // ***************************************************
     activeFilterHandler = () => {
         if(this.props.filter.indexOf(FilterTypes.ACTIVE_PROJECTS_FILTER) >= 0) this.props.setFilter(FilterTypes.ACTIVE_PROJECTS_FILTER, false);
         else if(this.props.filter.indexOf(FilterTypes.NON_ACTIVE_PROJECTS_FILTER) >= 0) this.props.setFilter(FilterTypes.NON_ACTIVE_PROJECTS_FILTER, false);
@@ -248,9 +288,6 @@ export default class ProjectsList extends React.PureComponent {
        this.props.setSearch('');
     };
 
-    // ***************************************************
-    // SORT HANDLER
-    // ***************************************************
     handleSort = (sort) => {
         let result = '';
         if(this.props.sort.indexOf(sort) < 0) result = `-${sort}`;
@@ -258,10 +295,20 @@ export default class ProjectsList extends React.PureComponent {
         this.props.setSort(result);
     };
 
+    handleRestLastContact = id => {
+        this.props.updateProject(id, {lastContact: moment()});
+    };
+
+    handleStatusChange = (id, status) => {
+        if(status !== this.props.projects[id].status) {
+            this.props.updateProject(id, {status: status});
+        }
+    };
+
     // ***************************************************
     // COMPUTE FIELD
     // ***************************************************
-    getComputedField(field, project) {
+    getComputedField(field, project, editable) {
         switch(field) {
             case 'manager':
                 if(!project || !project.team) return '---';
@@ -273,7 +320,20 @@ export default class ProjectsList extends React.PureComponent {
                 return ProjectStatus[project['status']] && ProjectStatus[project['status']].sortOrder ? ProjectStatus[project['status']].sortOrder.toString() : '0';
 
             case 'status':
-                return ProjectStatus[project['status']] ? ProjectStatus[project['status']].label : '---';
+                const status = ProjectStatus[project['status']] ? ProjectStatus[project['status']].label : '---';
+                return editable ?
+                    <Select
+                        className={'table-select'}
+                        options={statusOptions}
+                        value={{value: project['status'], label: ProjectStatus[project['status']] ? ProjectStatus[project['status']].label : ''}}
+                        onChange={option => this.handleStatusChange(project._id, option.value)}
+                        isSearchable={false}
+                        classNamePrefix={'table-select'}
+                    /> : status;
+
+            case 'lastContact':
+                const lastContact = project && project.lastContact ? moment(project.lastContact).format('D.M.Y H:mm:ss') : 'Not Set';
+                return editable ? <div onClick={() => this.handleRestLastContact(project._id)} className={'table-button'}>{lastContact}</div> : lastContact;
 
             default: return project && project[field] ? project[field] : '---';
         }

@@ -14,6 +14,7 @@ import Box from './views/Box';
 import * as ViewTypes from '../constants/ViewTypes';
 
 import {name, version}  from '../../package.json';
+import * as FilterTypes from "../constants/FilterTypes";
 
 
 export default class AppLayout extends React.PureComponent {
@@ -23,34 +24,7 @@ export default class AppLayout extends React.PureComponent {
         let AppBody = null;
         switch(this.props.appState.view) {
             case ViewTypes.PROJECTS_LIST:
-                AppBody = this.props.appState.activeBid ?
-                    <ActiveBid
-                        projects={this.props.projects}
-                        people={this.props.people}
-                        companies={this.props.companies}
-                        users={this.props.users}
-                        user={this.props.user}
-
-                        selectedProject={this.props.appState.selectedProject}
-
-                        filter={this.props.appState.projectsFilter}
-                        search={this.props.appState.projectsSearch}
-                        sort={this.props.appState.projectsSort}
-
-                        setFilter={this.props.setProjectsFilter}
-                        setSearch={this.props.setProjectsSerach}
-                        setSort={this.props.setProjectsSort}
-
-                        selectProject={this.props.selectProject}
-                        showProject={this.props.showProject}
-                        editProject={this.props.editProject}
-                        addProject={this.props.addProject}
-
-                        addToBox={this.props.addToBox}
-                        setActiveBid={this.props.setActiveBid}
-
-                    />
-                    :
+                AppBody =
                     <ProjectsList
                         projects={this.props.projects}
                         people={this.props.people}
@@ -60,22 +34,24 @@ export default class AppLayout extends React.PureComponent {
 
                         selectedProject={this.props.appState.selectedProject}
 
-                        filter={this.props.appState.projectsFilter}
-                        search={this.props.appState.projectsSearch}
-                        sort={this.props.appState.projectsSort}
+                        filter={this.props.appState.activeBid ? this.props.appState.projectsFilter.filter(filter => filter === FilterTypes.USER_FILTER).concat([FilterTypes.ACTIVE_PROJECTS_FILTER, FilterTypes.NOT_AWARDED_PROJECTS_FILTER]) : this.props.appState.projectsFilter}
+                        search={this.props.appState.activeBid ? this.props.appState.activeBidSearch : this.props.appState.projectsSearch}
+                        sort={this.props.appState.activeBid ? this.props.appState.activeBidSort : this.props.appState.projectsSort}
 
                         setFilter={this.props.setProjectsFilter}
-                        setSearch={this.props.setProjectsSerach}
-                        setSort={this.props.setProjectsSort}
+                        setSearch={this.props.appState.activeBid ? this.props.setActiveBidSearch : this.props.setProjectsSearch}
+                        setSort={this.props.appState.activeBid ? this.props.setActiveBidSort : this.props.setProjectsSort}
 
                         selectProject={this.props.selectProject}
                         showProject={this.props.showProject}
                         editProject={this.props.editProject}
                         addProject={this.props.addProject}
 
+                        updateProject={this.props.updateProjectDirect} //for active bids inline edit
+
                         addToBox={this.props.addToBox}
                         setActiveBid={this.props.setActiveBid}
-
+                        activeBid={this.props.appState.activeBid}
                     />;
                 break;
             case ViewTypes.PROJECT_DETAIL:

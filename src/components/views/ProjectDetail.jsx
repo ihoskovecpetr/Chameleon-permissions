@@ -47,7 +47,7 @@ export default class ProjectDetail extends React.PureComponent {
                         }
                     </div>
                     </div>
-                    <div className={'inner-container'}>
+                    <div className={'inner-container left-auto'}>
                         {this.props.selectedProject && this.props.projects[this.props.selectedProject] ? <div className={'toolbox-id'}>{this.props.projects[this.props.selectedProject].projectId}</div> : null}
                     </div>
                 </div>

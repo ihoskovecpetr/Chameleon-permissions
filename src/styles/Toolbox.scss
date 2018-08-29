@@ -56,7 +56,7 @@ $tool-button-color-disabled: #9b9b9b;
   align-items: center;
   flex-wrap: wrap-reverse;
   flex: 0 0 auto;
-  justify-content: space-between;
+  //justify-content: space-between;
   .toolbox-id {
     margin-left: auto;
     font-size: 0.8rem;
@@ -73,18 +73,27 @@ $tool-button-color-disabled: #9b9b9b;
     display: flex;
     align-items: center;
     flex-wrap: wrap-reverse;
-    justify-content: space-between;
-    flex: 1 1 auto;
+    //justify-content: space-between;
+    //flex: 1 1 auto;
+    margin-right: 0.5rem;
+    &.space {margin-right: 2rem};
+    &:last-child {margin-right: 0;}
+    &.flex {flex: 1 1 auto;}
+    &.left-auto {margin-left: auto;}
   }
   .toolbox-group {
+    //flex: 0 0 auto;
     white-space: nowrap;
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
     margin-bottom: 0.6rem;
     margin-right: 0.5rem;
+    &.right-auto {margin-right: auto}
     &:last-child {margin-right: 0;}
-
+    .active-bid-icon {
+      cursor: pointer;
+    }
     .tool-box-button {
       display: flex;
       justify-content: center;
@@ -115,6 +124,9 @@ $tool-button-color-disabled: #9b9b9b;
       }
       &.remove {
         margin: 0 0.5rem;
+      }
+      &.active-bid {
+        min-width: 3.8rem;
       }
       &.icon {
         font-size: 0.7rem;

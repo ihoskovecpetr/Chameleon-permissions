@@ -117,6 +117,16 @@ function AppStateReducer(state = null, action = null) {
                     return {...state, projectsSearch: action.search}
                 } else return state;
 
+            case ActionTypes.SET_ACTIVE_BID_SORT:
+                if(typeof action.sort !== 'undefined' && action.sort !== state.activeBidSort) {
+                    return {...state, activeBidSort: action.sort}
+                } else return state;
+
+            case ActionTypes.SET_ACTIVE_BID_SEARCH:
+                if(typeof action.search !== 'undefined' && action.search !== state.activeBidSearch) {
+                    return {...state, activeBidSearch: action.search}
+                } else return state;
+
             case ActionTypes.CREATE_PROJECT:
                 if(action.project && action.project._id) {
                     return {...state, selectedProject: action.project._id};

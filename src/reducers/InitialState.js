@@ -13,6 +13,8 @@ export default {
         projectsSearch: '',
         projectsSort: '',
         activeBid: false,
+        activeBidSearch: '',
+        activeBidSort: '',
 
         selectedPerson: null,
         peopleFilter: [],

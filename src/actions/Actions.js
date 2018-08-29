@@ -135,6 +135,26 @@ export function updateProject() {
     }
 }
 
+export function updateProjectDirect(id, projectUpdate) {
+    return async (dispatch, getState) => {
+        dispatch(setFetching(true));
+        dispatch(setMessage(null));
+        try {
+            const updatedProject = await server.updateProject(id, projectUpdate);
+            dispatch({type: ActionTypes.UPDATE_PROJECT, project: updatedProject});
+            if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
+                type: 'info',
+                text: 'Update project done successfully!',
+                timeout: Constants.DEFAULT_MESSAGE_TIMEOUT_MS
+            }));
+        } catch(e) {
+            logger.error(e);
+            dispatch(setMessage({type: 'error', text: `Update project error: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
+        }
+        dispatch(setFetching(false));
+    }
+}
+
 export function createProject() {
     return async (dispatch, getState) => {
         const project = getState().appState.editedData;
@@ -183,12 +203,20 @@ export function setProjectsFilter(filter, remove) {
     return {type: ActionTypes.SET_PROJECTS_FILTER, filter: filter, state: remove};
 }
 
-export function setProjectsSerach(search) {
+export function setProjectsSearch(search) {
     return {type: ActionTypes.SET_PROJECTS_SEARCH, search: search};
 }
 
 export function setProjectsSort(sort) {
     return {type: ActionTypes.SET_PROJECTS_SORT, sort: sort};
+}
+
+export function setActiveBidSearch(search) {
+    return {type: ActionTypes.SET_ACTIVE_BID_SEARCH, search: search};
+}
+
+export function setActiveBidSort(sort) {
+    return {type: ActionTypes.SET_ACTIVE_BID_SORT, sort: sort};
 }
 // *********************************************************************************************************************
 // PEOPLE

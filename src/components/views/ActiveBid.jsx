@@ -29,7 +29,7 @@ export default class ActiveBid extends React.PureComponent {
     }
 
     render() {
-        //console.log('RENDER PROJECTS LIST');
+        //console.log('RENDER ACTIVE BIDS');
         const {selectedProject, projects, users, filter, sort, search} = this.props;
 
         const filteredProjectIds = this.filterList(projects, filter);
@@ -37,15 +37,11 @@ export default class ActiveBid extends React.PureComponent {
         const sortedProjectIds = this.sortList(projects, searchedProjectIds, sort);
 
         const userFilter = filter.indexOf(FilterTypes.USER_FILTER) >= 0;
-        const activeFilter = filter.indexOf(FilterTypes.ACTIVE_PROJECTS_FILTER) >= 0 || filter.indexOf(FilterTypes.NON_ACTIVE_PROJECTS_FILTER) >= 0;
-        const activeFilterReversed = filter.indexOf(FilterTypes.NON_ACTIVE_PROJECTS_FILTER) >= 0;
-        const awardedFilter = filter.indexOf(FilterTypes.AWARDED_PROJECTS_FILTER) >= 0 || filter.indexOf(FilterTypes.NOT_AWARDED_PROJECTS_FILTER) >= 0;
-        const awardFilterReversed = filter.indexOf(FilterTypes.NOT_AWARDED_PROJECTS_FILTER) >= 0;
 
         return (
             <div className={'app-body'}>
                 <div className={'app-toolbox'}>
-                    <div className={'inner-container'}>
+                    <div className={'inner-container space'}>
                         <div className={'toolbox-group'}>
                             <div onClick={this.addProject} className={'tool-box-button green'}>{'New'}</div>
                             <div onClick={this.props.selectedProject ? () => this.showProject() : undefined} className={`tool-box-button${this.props.selectedProject ? '' : ' disabled'}`}>{'Show'}</div>
@@ -53,8 +49,8 @@ export default class ActiveBid extends React.PureComponent {
                             <div onClick={this.props.selectedProject ? this.addToBox : undefined} className={`tool-box-button icon box blue${this.props.selectedProject ? '' : ' disabled'}`}><FontAwesomeIcon icon={ICON_BOX}/></div>
                         </div>
                     </div>
-                    <div className={'inner-container'}>
-                        <div className={'toolbox-group'}>
+                    <div className={'inner-container flex'}>
+                        <div className={'toolbox-group right-auto'}>
                             <div className={'tool-box-search-container'}>
                                 <div className={'icon search'}><FontAwesomeIcon icon={ICON_SEARCH}/></div>
                                 <Input value={search} onChange={this.searchInputHandler} className={`input-search`}/>
@@ -63,8 +59,6 @@ export default class ActiveBid extends React.PureComponent {
                         </div>
                         <div className={'toolbox-group'}>
                             <div onClick={this.userFilterHandler} className={`tool-box-button-switch`}><FontAwesomeIcon className={'check'} icon={userFilter ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/><span className={`text`}>{'My'}</span></div>
-                            <div className={`tool-box-button-switch${activeFilterReversed ? ' reversed' : ''}`}><FontAwesomeIcon onClick={this.activeFilterHandler} className={'check'} icon={activeFilter ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/><span onClick={this.activeFilterReverseHandler} className={`text${activeFilterReversed ? ' reversed' : ''}`}>{'Active'}</span></div>
-                            <div className={`tool-box-button-switch${awardFilterReversed ? ' reversed ' : ''}`}><FontAwesomeIcon onClick={this.awardedFilterHandler} className={'check'} icon={awardedFilter ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/><span onClick={this.awardedFilterReverseHandler} className={`text${awardFilterReversed ? ' reversed' : ''}`}>{'Awarded'}</span></div>
                             <div onClick={() => this.props.setActiveBid(false)}>{'X'}</div>
                         </div>
                     </div>
@@ -127,7 +121,6 @@ export default class ActiveBid extends React.PureComponent {
                             }
                         }
                         return false;
-
                 }
             }
             return true;
