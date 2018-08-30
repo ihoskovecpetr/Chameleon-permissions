@@ -49,7 +49,9 @@ const finalCreateStore = compose(
             selectedBoxItem: state[path].selectedBoxItem,
             nextDetailId: state[path].nextDetailId,
             editedData: state[path].editedData,
-            activeBid: state[path].activeBid
+            activeBid: state[path].activeBid,
+            activeBidSearch: state[path].activeBidSearch,
+            activeBidSort: state[path].activeBidSort,
         }),
         merge: (initialState, persistedState) => ({...initialState, [appStatePath]: {...initialState[appStatePath], ...persistedState}})
     }),
@@ -89,11 +91,10 @@ const rootElement = document.getElementById('app');
 
 if (module.hot) {
     logger.debug('Accepting Hot Module');
-    module.hot.accept();
-    /*module.hot.accept('./reducers', () => {
+    //module.hot.accept();
+    module.hot.accept('./reducers/Reducer', () => {
         const nextRootReducer = require('./reducers/Reducer');
         store.replaceReducer(nextRootReducer);
-    });*/
+    });
 }
-
 

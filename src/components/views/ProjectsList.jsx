@@ -23,6 +23,10 @@ const ICON_CLEAR = 'times';
 
 const ICON_BOX = 'box-open';
 
+const ICON_PRODUCER = 'user-circle';
+const ICON_MANAGER = 'user';
+const ICON_SUPERVISOR = ['far', 'eye'];
+
 import {columnDef, columnDefBids} from '../../constants/TableColumnsDef';
 const statusOptions = Object.keys(ProjectStatus).map(key => {return {value: key, label: ProjectStatus[key].label}});
 
@@ -117,10 +121,10 @@ export default class ProjectsList extends React.PureComponent {
         return (
             <Table className={`table-body${this.props.activeBid ? ' active-bid' : ''}`}>
                 <tbody style={{borderBottom: '1px solid #dee2e6'}}>
-                {sortedProjectIds.map(projectId => <tr className={`${this.props.selectedProject === projectId ? 'selected' : ''}${this.props.activeBid ? '' : ' selectable'}`} onClick = {this.props.activeBid ? undefined : () => this.selectProject(projectId)} onDoubleClick={this.props.activeBid ? undefined : event => event.altKey ? this.editProject(projectId) : this.showProject(projectId)} key={projectId}>
+                {sortedProjectIds.map(projectId => <tr className={this.props.selectedProject === projectId ? 'selected' : ''} onClick = {event => this.rowClickHandler(event, projectId)} onDoubleClick={event => this.rowDoubleClickHandler(event, projectId)} key={projectId}>
                     {columnDef.map((column, i) =>
                         <td key={i}
-                            className={`${column.className}${this.props.activeBid && i === 0 ? ' selectable' : ''}${this.props.selectedProject === projectId ? ' selected' : ''}${this.props.activeBid ? ' active-bid' : ''}`}
+                            className={`${column.className}${column.inline ? ' inline' : ''}${this.props.activeBid ? ' active-bid' : ''}`}
                             onClick={this.props.activeBid && i === 0 ? () => this.selectProject(projectId) : undefined}
                             onDoubleClick={!this.props.activeBid || i > 0 ? undefined : event => event.altKey ? this.editProject(projectId) : this.showProject(projectId)}
                         >
@@ -236,9 +240,18 @@ export default class ProjectsList extends React.PureComponent {
     addToBox = () => {
         if(this.props.selectedProject) this.props.addToBox(this.props.selectedProject);
     };
+
     // ***************************************************
     // HANDLERS
     // ***************************************************
+    rowClickHandler = (event, projectId) => {
+        if(typeof event.target.className === 'string' && event.target.className.indexOf('table-select') < 0 && event.target.className.indexOf('table-button') < 0) this.selectProject(projectId); //TODO better solution to avoud table-select and table-button only || td or class row-select and set it on special contents
+    };
+
+    rowDoubleClickHandler = (event, projectId) => {
+        if(typeof event.target.className === 'string' && event.target.className.indexOf('table-select') < 0 && event.target.className.indexOf('table-button') < 0) event.altKey ? this.editProject(projectId) : this.showProject(projectId);
+    };
+
     activeFilterHandler = () => {
         if(this.props.filter.indexOf(FilterTypes.ACTIVE_PROJECTS_FILTER) >= 0) this.props.setFilter(FilterTypes.ACTIVE_PROJECTS_FILTER, false);
         else if(this.props.filter.indexOf(FilterTypes.NON_ACTIVE_PROJECTS_FILTER) >= 0) this.props.setFilter(FilterTypes.NON_ACTIVE_PROJECTS_FILTER, false);
@@ -331,7 +344,25 @@ export default class ProjectsList extends React.PureComponent {
                         classNamePrefix={'table-select'}
                     /> : status;
 
-            case 'lastContact':
+            case 'client': //find main client in company field [{id, role, note, rating}]
+                return '---';
+
+            case 'team': //find producer, manager, supervisor in team field [{id, role}], icons + short names /not sortable anyway
+                return (
+                    <div className={'table-team'}>
+                        <div className={'team-member producer'}><FontAwesomeIcon icon={ICON_PRODUCER} fixedWidth/>{'M. Halamová'}</div>
+                        <div className={'team-member manager'}><FontAwesomeIcon icon={ICON_MANAGER} fixedWidth/>{'K. Kofránková'}</div>
+                        <div className={'team-member supervisor'}><FontAwesomeIcon icon={ICON_SUPERVISOR} fixedWidth/>{'M. Dubec'}</div>
+                    </div>
+                );
+
+            case 'budget': //find current budget in budget field {booking, client, sent, ballpark: {from, to}}, get discount %, normalize currency '10000 USD 10%' or '10000 - 20000 USD' etc
+                return '---';
+
+            case 'go-ahead': //find go ahead from timing [{date, text, category}] in days to go ahead /colors?/
+                return '---';
+
+            case 'last-contact': //last contact in days passed this - colors?
                 const lastContact = project && project.lastContact ? moment(project.lastContact).format('D.M.Y H:mm:ss') : 'Not Set';
                 return editable ? <div onClick={() => this.handleRestLastContact(project._id)} className={'table-button'}>{lastContact}</div> : lastContact;
 
