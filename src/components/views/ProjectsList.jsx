@@ -357,7 +357,7 @@ export default class ProjectsList extends React.PureComponent {
                 );
 
             case 'budget': //find current budget in budget field {booking, client, sent, ballpark: {from, to}}, get discount %, normalize currency '10000 USD 10%' or '10000 - 20000 USD' etc
-                return '---';
+                return '10.000 USD [10%]';
 
             case 'go-ahead': //find go ahead from timing [{date, text, category}] in days to go ahead /colors?/
                 return '---';

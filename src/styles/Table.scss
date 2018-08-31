@@ -4,10 +4,13 @@ $data-body-color: #0f0f0f;
 $data-body-hover: desaturate(lighten($app-header-background-color, 45%), 21%);
 $data-body-selected: desaturate(lighten($app-header-background-color, 40%), 10%);
 
-$table-control-height: 1.5rem;
-$table-control-padding-horizontal: 0.5rem;
+$table-control-height: 1.4rem;
+$table-control-padding-horizontal: 0.6rem;
 $table-control-padding-vertical: 0.1rem;
 $table-control-focus-color: $app-header-background-color;
+
+$table-header-font-size: 1rem;
+$table-row-font-size: 0.9rem;
 $table-control-font-size: 0.9rem;
 
 $last-contact-cursor-clock: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 580"><g><ellipse cx="290" cy="290" rx="290" ry="290" style="fill:#eeeeee;"/></g><g transform="translate(34,34)"><path d="M256,8C119,8 8,119 8,256C8,393 119,504 256,504C393,504 504,393 504,256C504,119 393,8 256,8ZM313.1,358.1L224.9,294C221.8,291.7 220,288.1 220,284.3L220,116C220,109.4 225.4,104 232,104L280,104C286.6,104 292,109.4 292,116L292,253.7L355.5,299.9C360.9,303.8 362,311.3 358.1,316.7L329.9,355.5C326,360.8 318.5,362 313.1,358.1Z" style="fill:#222222;"/></g></svg>';
@@ -90,12 +93,17 @@ $last-contact-cursor-clock: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 
 // TABLE CELLS
 // *********************************************************************************************************************
 .table th, .table td {
-  padding: 0.2rem 0.4rem;
+  padding: 0.3rem 0.5rem;
+  &.inline {
+    padding: 0 0.4rem;
+  }
   font-weight: normal;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   vertical-align: middle;
+  font-size: $table-header-font-size;
+  &:not(th) {font-size: $table-row-font-size};
   &:last-child {
     padding-right: $data-body-padding-horizontal;
   }
@@ -139,9 +147,9 @@ $last-contact-cursor-clock: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 
       min-height: $table-control-height;
       font-size: $table-control-font-size;
       font-style: normal;
-      height: $table-control-height;
+      //height: $table-control-height;
       padding: 0;
-
+      height: $table-control-height;
       background-color: #f0f0f0;
       border-color: #9b9b9b;
       border-radius: 0.8rem;
@@ -154,14 +162,21 @@ $last-contact-cursor-clock: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 
       }
       .table-select__value-container {
         padding: $table-control-padding-vertical ($table-control-padding-horizontal - 0.15rem);
+        height: $table-control-height;
       }
       .table-select__indicators {
+        height: $table-control-height;
         .table-select__indicator-separator {
           margin: 0.3rem 0;
         }
         .table-select__indicator {
           &.table-select__dropdown-indicator {
-            padding: 0.15rem;
+            padding: 0;
+            width: 1.4rem;
+            svg {
+              width: 1.1rem;
+              height: 1.1rem;
+            }
           }
         }
       }
@@ -190,13 +205,13 @@ $last-contact-cursor-clock: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 
   // TABLE COLUMN FIELDS
   // *******************************************************************************************************************
   &.projects-name {
-    width: 18%;
+    width: 20%;
   }
   &.projects-client {
-    width: 18%;
+    width: 20%;
   }
   &.projects-manager {
-    width: 15%;
+    width: 12%;
     @include media("<=phone") {
       display: none;
     }
@@ -208,22 +223,23 @@ $last-contact-cursor-clock: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 
     }
   }
   &.projects-last-contact {
-    width: 10%;
-    //min-width: 7rem;
+    width: 8rem;
+    min-width: 8rem;
     @include media("<=tablet") {
       display: none;
     }
   }
   .projects-budget {
-    width: 8%;
+    width: 8rem;
+    min-width: 8rem;
   }
   .projects-go-ahead {
-    width: 8%;
+    width: 8rem;
+    min-width: 8rem;
   }
   &.projects-team {
-    width: 30%;
+    width: 25%;
     .table-team {
-      font-size: 0.9rem;
       display: flex;
       flex-wrap: wrap;
       //flex-direction: column;

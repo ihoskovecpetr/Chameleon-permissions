@@ -59,7 +59,7 @@ export const columnDefBids = [
     },
     {
         field: 'last-contact',
-        label: 'Last Contact',
+        label: 'Contacted',
         className: 'projects-last-contact',
         sort: 'last-contact',
         inline: true
