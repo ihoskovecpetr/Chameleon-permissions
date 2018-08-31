@@ -1,4 +1,4 @@
-export const columnDef = [
+export const ProjectsColumnDef = [
     {
         field: 'name',
         label: 'Project Name',
@@ -19,7 +19,7 @@ export const columnDef = [
     }
 ];
 
-export const columnDefBids = [
+export const ActiveBidsColumnDef = [
     {
         field: 'name',
         label: 'Project Name',
@@ -63,5 +63,23 @@ export const columnDefBids = [
         className: 'projects-last-contact',
         sort: 'last-contact',
         inline: true
+    }
+];
+
+export const CompaniesColumnDef = [
+    {
+        field: 'name',
+        label: 'Company Name',
+        className: 'companies-name',
+        sort: 'name'
+    }
+];
+
+export const PeopleColumnDef = [
+    {
+        field: 'name',
+        label: 'Person Name',
+        className: 'people-name',
+        sort: 'name'
     }
 ];

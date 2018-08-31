@@ -48,7 +48,7 @@ export default class ProjectDetail extends React.PureComponent {
                     </div>
                     </div>
                     <div className={'inner-container left-auto'}>
-                        {this.props.selectedProject && this.props.projects[this.props.selectedProject] ? <div className={'toolbox-id'}>{this.props.projects[this.props.selectedProject].projectId}</div> : null}
+                        {selectedProject && projects[selectedProject] ? <div className={'toolbox-id'}>{projects[selectedProject].projectId}</div> : null}
                     </div>
                 </div>
                 <Scrollbars autoHide={true} autoHideTimeout={800} autoHideDuration={200}>
@@ -71,10 +71,13 @@ export default class ProjectDetail extends React.PureComponent {
                         </div>
                         <div className={'detail-spacer'}/>
                         <div className={'detail-row'}>
-                            <div className={'detail-group size-6'}>
+                            <div className={'detail-group size-4'}>
+                                <div className={`detail-label`}>{'Team:'}</div>
+                            </div>
+                            <div className={'detail-group size-4'}>
                                 <div className={`detail-label`}>{'Client Company:'}</div>
                             </div>
-                            <div className={'detail-group size-6'}>
+                            <div className={'detail-group size-4'}>
                                 <div className={`detail-label`}>{'Client People:'}</div>
                             </div>
                         </div>

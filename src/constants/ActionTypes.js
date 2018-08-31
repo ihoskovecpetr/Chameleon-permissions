@@ -37,8 +37,10 @@ export const SET_ACTIVE_BID_SORT = 'SET_ACTIVE_BID_SORT';
 
 //people
 export const SELECT_PERSON = 'SELECT_PERSON';
-export const SELECT_PERSON_NEXT = 'SELECT_PERSON_NEXT';
+export const SHOW_PERSON = 'SHOW_PERSON';
+export const SHOW_PERSON_NEXT = 'SHOW_PERSON_NEXT';
 export const EDIT_PERSON = 'EDIT_PERSON';
+export const ADD_PERSON = 'ADD_PERSON';
 export const CREATE_PERSON = 'CREATE_PERSON';
 export const UPDATE_PERSON = 'UPDATE_PERSON';
 export const REMOVE_PERSON = 'REMOVE_PERSON';
@@ -49,8 +51,10 @@ export const SET_PEOPLE_SORT = 'SET_PEOPLE_SORT';
 
 //companies
 export const SELECT_COMPANY = 'SELECT_COMPANY';
-export const SELECT_COMPANY_NEXT = 'SELECT_COMPANY_NEXT';
+export const SHOW_COMPANY = 'SHOW_COMPANY';
+export const SHOW_COMPANY_NEXT = 'SHOW_COMPANY_NEXT';
 export const EDIT_COMPANY = 'EDIT_COMPANY';
+export const ADD_COMPANY = 'ADD_COMPANY';
 export const CREATE_COMPANY = 'CREATE_COMPANY';
 export const UPDATE_COMPANY = 'UPDATE_COMPANY';
 export const REMOVE_COMPANY = 'REMOVE_COMPANY';

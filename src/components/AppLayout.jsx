@@ -5,9 +5,14 @@ import MessageBox from './MessageBox';
 import FetchingIndicator from './FetchingIndicator';
 
 import ProjectsList from './views/ProjectsList';
-import ActiveBid from './views/ActiveBid';
 import ProjectEdit from './views/ProjectEdit';
 import ProjectDetail from './views/ProjectDetail';
+
+import CompaniesList from './views/CompaniesList';
+import CompanyEdit from './views/CompanyEdit';
+
+import PeopleList from './views/PeopleList';
+import PersonEdit from './views/PersonEdit';
 
 import Box from './views/Box';
 
@@ -112,7 +117,102 @@ export default class AppLayout extends React.PureComponent {
                         removeFromBox={this.props.removeFromBox}
                         emptyBox={this.props.emptyBox}
 
-                    />
+                    />;
+                break;
+            case ViewTypes.COMPANIES_LIST:
+                AppBody =
+                    <CompaniesList
+                        projects={this.props.projects}
+                        people={this.props.people}
+                        companies={this.props.companies}
+                        users={this.props.users}
+                        user={this.props.user}
+
+                        selectedCompany={this.props.appState.selectedCompany}
+
+                        filter={this.props.appState.companiesFilter}
+                        search={this.props.appState.companiesSearch}
+                        sort={this.props.appState.companiesSort}
+
+                        setFilter={this.props.setCompaniesFilter}
+                        setSearch={this.props.setCompaniesSearch}
+                        setSort={this.props.setCompaniesSort}
+
+                        selectCompany={this.props.selectCompany}
+                        showCompany={this.props.showCompany}
+                        editCompany={this.props.editCompany}
+                        addCompany={this.props.addCompany}
+
+                        addToBox={this.props.addToBox}
+                    />;
+                break;
+            case ViewTypes.COMPANY_EDIT:
+                AppBody =
+                    <CompanyEdit
+                        projects={this.props.projects}
+                        people={this.props.people}
+                        companies={this.props.companies}
+                        users={this.props.users}
+                        user={this.props.user}
+
+                        selectedCompany={this.props.appState.selectedCompany}
+                        editedData={this.props.appState.editedData}
+
+                        returnToPreviousView={this.props.returnToPreviousView}
+                        editItem={this.props.editItem}
+
+                        updateCompany={this.props.updateCompany}
+                        createCompany={this.props.createCompany}
+                        removeCompany={this.props.removeCompany}
+                    />;
+                break;
+            case ViewTypes.PEOPLE_LIST:
+                AppBody =
+                    <PeopleList
+                        projects={this.props.projects}
+                        people={this.props.people}
+                        companies={this.props.companies}
+                        users={this.props.users}
+                        user={this.props.user}
+
+                        selectedPerson={this.props.appState.selectedPerson}
+
+                        filter={this.props.appState.peopleFilter}
+                        search={this.props.appState.peopleSearch}
+                        sort={this.props.appState.peopleSort}
+
+                        setFilter={this.props.setPeopleFilter}
+                        setSearch={this.props.setPeopleSearch}
+                        setSort={this.props.setPeopleSort}
+
+                        selectPerson={this.props.selectPerson}
+                        showPerson={this.props.showPerson}
+                        editPerson={this.props.editPerson}
+                        addPerson={this.props.addPerson}
+
+                        addToBox={this.props.addToBox}
+                    />;
+                break;
+            case ViewTypes.PERSON_EDIT:
+                AppBody =
+                    <PersonEdit
+                        projects={this.props.projects}
+                        people={this.props.people}
+                        companies={this.props.companies}
+                        users={this.props.users}
+                        user={this.props.user}
+
+                        selectedPerson={this.props.appState.selectedPerson}
+                        editedData={this.props.appState.editedData}
+
+                        returnToPreviousView={this.props.returnToPreviousView}
+                        editItem={this.props.editItem}
+
+                        updatePerson={this.props.updatePerson}
+                        createPerson={this.props.createPerson}
+                        removePerson={this.props.removePerson}
+                    />;
+                break;
         }
         return (
             <div className={'app-layout'}>

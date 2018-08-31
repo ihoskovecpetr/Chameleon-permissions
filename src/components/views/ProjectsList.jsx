@@ -27,7 +27,7 @@ const ICON_PRODUCER = 'user-circle';
 const ICON_MANAGER = 'user';
 const ICON_SUPERVISOR = ['far', 'eye'];
 
-import {columnDef, columnDefBids} from '../../constants/TableColumnsDef';
+import {ProjectsColumnDef, ActiveBidsColumnDef} from '../../constants/TableColumnsDef';
 const statusOptions = Object.keys(ProjectStatus).map(key => {return {value: key, label: ProjectStatus[key].label}});
 
 export default class ProjectsList extends React.PureComponent {
@@ -38,7 +38,7 @@ export default class ProjectsList extends React.PureComponent {
 
     render() {
         //console.log('RENDER PROJECTS LIST');
-        const {selectedProject, projects, users, filter, sort, search} = this.props;
+        const {selectedProject, projects, activeBid, filter, sort, search} = this.props;
 
         const filteredProjectIds = this.filterList(projects, filter);
         const searchedProjectIds = this.searchList(projects, filteredProjectIds, search);
@@ -56,9 +56,9 @@ export default class ProjectsList extends React.PureComponent {
                     <div className={'inner-container space'}>
                         <div className={'toolbox-group'}>
                             <div onClick={this.addProject} className={'tool-box-button green'}>{'New'}</div>
-                            <div onClick={this.props.selectedProject ? () => this.showProject() : undefined} className={`tool-box-button${this.props.selectedProject ? '' : ' disabled'}`}>{'Show'}</div>
-                            <div onClick={this.props.selectedProject ? () => this.editProject() : undefined} className={`tool-box-button${this.props.selectedProject ? '' : ' disabled'}`}>{'Edit'}</div>
-                            <div onClick={this.props.selectedProject ? this.addToBox : undefined} className={`tool-box-button icon box blue${this.props.selectedProject ? '' : ' disabled'}`}><FontAwesomeIcon icon={ICON_BOX}/></div>
+                            <div onClick={selectedProject ? () => this.showProject() : undefined} className={`tool-box-button${selectedProject ? '' : ' disabled'}`}>{'Show'}</div>
+                            <div onClick={selectedProject ? () => this.editProject() : undefined} className={`tool-box-button${selectedProject ? '' : ' disabled'}`}>{'Edit'}</div>
+                            <div onClick={selectedProject ? this.addToBox : undefined} className={`tool-box-button icon box blue${selectedProject ? '' : ' disabled'}`}><FontAwesomeIcon icon={ICON_BOX}/></div>
                         </div>
                     </div>
                     <div className={'inner-container flex'}>
@@ -66,28 +66,28 @@ export default class ProjectsList extends React.PureComponent {
                             <div className={'tool-box-search-container'}>
                                 <div className={'icon search'}><FontAwesomeIcon icon={ICON_SEARCH}/></div>
                                 <Input value={search} onChange={this.searchInputHandler} className={`input-search`}/>
-                                <div className={'icon clear'} onClick={this.clearSerachInputHanler}><FontAwesomeIcon icon={ICON_CLEAR}/></div>
+                                <div className={'icon clear'} onClick={this.clearSearchInputHanler}><FontAwesomeIcon icon={ICON_CLEAR}/></div>
                             </div>
                         </div>
                         <div className={'toolbox-group'}>
                             <div onClick={this.userFilterHandler} className={`tool-box-button-switch`}><FontAwesomeIcon className={'check'} icon={userFilter ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/><span className={`text`}>{'My'}</span></div>
 
-                            {this.props.activeBid ? null :
+                            {activeBid ? null :
                                 <Fragment>
                                     <div className={`tool-box-button-switch${activeFilterReversed ? ' reversed' : ''}`}><FontAwesomeIcon onClick={this.activeFilterHandler} className={'check'} icon={activeFilter ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/><span onClick={this.activeFilterReverseHandler} className={`text${activeFilterReversed ? ' reversed' : ''}`}>{'Active'}</span></div>
                                     <div className={`tool-box-button-switch${awardFilterReversed ? ' reversed ' : ''}`}><FontAwesomeIcon onClick={this.awardedFilterHandler} className={'check'} icon={awardedFilter ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/><span onClick={this.awardedFilterReverseHandler} className={`text${awardFilterReversed ? ' reversed' : ''}`}>{'Awarded'}</span></div>
                                 </Fragment>
                             }
-                            <div onClick={() => this.props.setActiveBid(!this.props.activeBid)} className={'tool-box-button blue active-bid'}>
-                                {this.props.activeBid ? 'All' : 'Bids'}
+                            <div onClick={this.toggleActiveBidMode} className={'tool-box-button blue active-bid'}>
+                                {activeBid ? 'All' : 'Bids'}
                             </div>
                         </div>
                     </div>
                 </div>
                 <Fragment>
-                    {this.getHeader(this.props.activeBid ? columnDefBids : columnDef)}
+                    {this.getHeader(activeBid ? ActiveBidsColumnDef : ProjectsColumnDef)}
                     <Scrollbars autoHide={true} autoHideTimeout={800} autoHideDuration={200}>
-                        {this.getTable(this.props.activeBid ? columnDefBids : columnDef, sortedProjectIds)}
+                        {this.getTable(activeBid ? ActiveBidsColumnDef : ProjectsColumnDef, sortedProjectIds)}
                     </Scrollbars>
                 </Fragment>
             </div>
@@ -123,11 +123,7 @@ export default class ProjectsList extends React.PureComponent {
                 <tbody style={{borderBottom: '1px solid #dee2e6'}}>
                 {sortedProjectIds.map(projectId => <tr className={this.props.selectedProject === projectId ? 'selected' : ''} onClick = {event => this.rowClickHandler(event, projectId)} onDoubleClick={event => this.rowDoubleClickHandler(event, projectId)} key={projectId}>
                     {columnDef.map((column, i) =>
-                        <td key={i}
-                            className={`${column.className}${column.inline ? ' inline' : ''}${this.props.activeBid ? ' active-bid' : ''}`}
-                            onClick={this.props.activeBid && i === 0 ? () => this.selectProject(projectId) : undefined}
-                            onDoubleClick={!this.props.activeBid || i > 0 ? undefined : event => event.altKey ? this.editProject(projectId) : this.showProject(projectId)}
-                        >
+                        <td key={i} className={`${column.className}${column.inline ? ' inline' : ''}${this.props.activeBid ? ' active-bid' : ''}`}>
                             {this.getComputedField(column.field, this.props.projects[projectId], this.props.activeBid)}
                         </td>
                     )}
@@ -244,8 +240,12 @@ export default class ProjectsList extends React.PureComponent {
     // ***************************************************
     // HANDLERS
     // ***************************************************
+    toggleActiveBidMode = () => {
+        this.props.setActiveBid(!this.props.activeBid)
+    };
+
     rowClickHandler = (event, projectId) => {
-        if(typeof event.target.className === 'string' && event.target.className.indexOf('table-select') < 0 && event.target.className.indexOf('table-button') < 0) this.selectProject(projectId); //TODO better solution to avoud table-select and table-button only || td or class row-select and set it on special contents
+        if(typeof event.target.className === 'string' && event.target.className.indexOf('table-select') < 0 && event.target.className.indexOf('table-button') < 0) this.selectProject(projectId);
     };
 
     rowDoubleClickHandler = (event, projectId) => {
@@ -297,7 +297,7 @@ export default class ProjectsList extends React.PureComponent {
        this.props.setSearch(event.target.value);
     };
 
-    clearSerachInputHanler = () => {
+    clearSearchInputHanler = () => {
        this.props.setSearch('');
     };
 

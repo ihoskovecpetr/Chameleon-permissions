@@ -32,7 +32,7 @@ export default class AppHeader extends React.PureComponent {
         } else userNameShort = userName;
 
         const projectsSwitchActive = this.props.view === ViewTypes.PROJECTS_LIST || this.props.view === ViewTypes.PROJECT_DETAIL || this.props.view === ViewTypes.PROJECT_DETAIL_NEXT || this.props.view === ViewTypes.PROJECT_EDIT;
-        const peopleSwitchActive = this.props.view === ViewTypes.PEOPLE_LIST || this.props.view === ViewTypes.PERSON_DETAIL || this.props.view === ViewTypes.PERSON_DETAI_NEXT || this.props.view === ViewTypes.PERSON_EDIT;
+        const peopleSwitchActive = this.props.view === ViewTypes.PEOPLE_LIST || this.props.view === ViewTypes.PERSON_DETAIL || this.props.view === ViewTypes.PERSON_DETAIL_NEXT || this.props.view === ViewTypes.PERSON_EDIT;
         const companySwitchActive = this.props.view === ViewTypes.COMPANIES_LIST || this.props.view === ViewTypes.COMPANY_DETAIL || this.props.view === ViewTypes.COMPANY_DETAIL_NEXT || this.props.view === ViewTypes.COMPANY_EDIT;
         const boxActive = this.props.view === ViewTypes.BOX;
 

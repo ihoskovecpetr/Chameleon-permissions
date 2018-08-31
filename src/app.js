@@ -23,6 +23,8 @@ import { far } from '@fortawesome/free-regular-svg-icons';
 library.add(fas, far);
 //window.FontAwesomeConfig.searchPseudoElements= true;
 
+//import {SCHEDULED_DATA_REFRESH_TIME_MS} from './constants/Constatnts';
+
 import './app.scss';
 
 const appStatePath = 'appState';
@@ -88,6 +90,9 @@ const rootElement = document.getElementById('app');
     }
 
 })();
+
+//if(SCHEDULED_DATA_REFRESH_TIME_MS) setInterval(() => store.dispatch(Actions.getData(true)), SCHEDULED_DATA_REFRESH_TIME_MS);
+
 
 if (module.hot) {
     logger.debug('Accepting Hot Module');

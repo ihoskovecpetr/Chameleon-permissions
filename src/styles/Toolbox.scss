@@ -18,6 +18,10 @@ $tool-button-color-disabled: #9b9b9b;
   $focus-step: 3%;
 
   border: 1px solid darken($app-toolbox-background-color, 5%);
+  svg {
+    font-size: 0.8em;
+    margin-right: 0.3rem;
+  }
   @if $disabled {
     @if $fg-dark {color: darken($bg, 15%);} @else {color: lighten($bg, 15%);}
     text-shadow: none;
@@ -105,6 +109,7 @@ $tool-button-color-disabled: #9b9b9b;
       text-align: center;
       border-radius: $tool-height / 2;
       height: $tool-height;
+      min-height: $tool-height;
       min-width: 4.5rem;
       @include tool-button($tool-button-color-default);
       &.green {
@@ -129,13 +134,15 @@ $tool-button-color-disabled: #9b9b9b;
         min-width: 3.8rem;
       }
       &.icon {
-        font-size: 0.7rem;
-        min-width: 0;
-        padding: 0.1rem 0.5rem;
-        //padding: 0;
-        //width: $tool-height;
+        font-size: 0.9rem;
+        width: $tool-height;
+        min-width: $tool-height;
+        padding: 0;
+        svg {
+          margin-right: 0;
+        }
         &.box {
-          padding: 0.1rem 0.4rem;
+          //padding-right: 0.1rem;
         }
       }
 

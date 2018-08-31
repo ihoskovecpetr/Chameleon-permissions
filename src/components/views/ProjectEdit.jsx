@@ -1,14 +1,13 @@
 import React, {Fragment} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Scrollbars } from 'react-custom-scrollbars';
-import { Input, Col,  Row, Label, FormGroup } from 'reactstrap';
+import { Input } from 'reactstrap';
 import Select from 'react-select';
-//import * as ViewTypes from '../../constants/ViewTypes';
+
 import * as ProjectStatus from '../../constants/ProjectStatus';
 
 const statusOptions = Object.keys(ProjectStatus).map(key => {return {value: key, label: ProjectStatus[key].label}});
 
-//const ICON_REMOVE = 'trash';
 const ICON_CHECKBOX_CHECKED = ['far','check-square'];
 const ICON_CHECKBOX_UNCHECKED = ['far', 'square'];
 const ICON_VALIDATION = 'exclamation-circle';
@@ -44,14 +43,14 @@ export default class ProjectEdit extends React.PureComponent {
                     <div className={'inner-container'}>
                         <div className={'toolbox-group'}>
                             <div onClick={this.close} className={'tool-box-button'}>{'Cancel'}</div>
-                            <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button green${this.state.saveDisabled ? ' disabled' : ''}`}>{this.props.selectedProject ? 'Save' : 'Create'}</div>
+                            <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button green${this.state.saveDisabled ? ' disabled' : ''}`}>{selectedProject ? 'Save' : 'Create'}</div>
                             <div className={'tool-box-validation'}>
                                 <FontAwesomeIcon className={`tool-box-validation-icon${Object.keys(this.state.validation).length > 0 ? ' active' : ''}`} icon={ICON_VALIDATION}/>
                                 <div className={'tool-box-validation-container'}>
                                     {Object.keys(this.state.validation).map(validationField => <div key={validationField}>{`${this.state.validation[validationField].field}: ${this.state.validation[validationField].status}`}</div>)}
                                 </div>
                             </div>
-                            {!this.props.selectedProject ? null :
+                            {!selectedProject ? null :
                                 <Fragment>
                                     <div onClick={!this.state.removeArmed ? undefined : this.remove} className={`tool-box-button remove red${!this.state.removeArmed ? ' disabled' : ''}`}>{'Remove Project'}</div>
                                     <FontAwesomeIcon className={`tool-box-checkbox`} onClick={this.handleRemoveArmed} icon={this.state.removeArmed ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED} style={{cursor: 'pointer'}}/>
@@ -60,18 +59,18 @@ export default class ProjectEdit extends React.PureComponent {
                         </div>
                     </div>
                     <div className={'inner-container left-auto'}>
-                    {this.props.selectedProject && this.props.projects[this.props.selectedProject] ? <div className={'toolbox-id'}>{this.props.projects[this.props.selectedProject].projectId}</div> : null}
+                    {selectedProject && projects[selectedProject] ? <div className={'toolbox-id'}>{projects[selectedProject].projectId}</div> : null}
                     </div>
                 </div>
                 <Scrollbars autoHide={true} autoHideTimeout={800} autoHideDuration={200}>
                     <div className={'detail-body'}>
                         <div className={'detail-row'}>
                             <div className={'detail-group size-7'}>
-                                <div className={`detail-label${this.props.editedData.name !== undefined && this.props.selectedProject  ? ' value-changed' : ''}`}>{'Project name:'}</div>
+                                <div className={`detail-label${editedData.name !== undefined && selectedProject  ? ' value-changed' : ''}`}>{'Project name:'}</div>
                                 <Input className={`detail-input${this.state.validation.name ? ' invalid' : ''}`} onChange={this.handleNameChange} value={name}/>
                             </div>
                             <div className={'detail-group size-5'}>
-                                <div className={`detail-label${this.props.editedData.status !== undefined && this.props.selectedProject ? ' value-changed' : ''}`}>{'Project status:'}</div>
+                                <div className={`detail-label${editedData.status !== undefined && selectedProject ? ' value-changed' : ''}`}>{'Project status:'}</div>
                                 <Select
                                     options={statusOptions}
                                     value={{value: status, label: ProjectStatus[status] ? ProjectStatus[status].label : ''}}
@@ -84,17 +83,17 @@ export default class ProjectEdit extends React.PureComponent {
                         </div>
                         <div className={'detail-row'}>
                             <div className={'detail-group size-12'}>
-                                <div className={`detail-label${this.props.editedData.statusNote !== undefined && this.props.selectedProject ? ' value-changed' : ''}`}>{'Status note:'}</div>
+                                <div className={`detail-label${editedData.statusNote !== undefined && selectedProject ? ' value-changed' : ''}`}>{'Status note:'}</div>
                                 <Input className={`detail-input`} onChange={this.handleStatusNoteChange} value={statusNote}/>
                             </div>
                         </div>
                         <div className={'detail-spacer'}/>
                         <div className={'detail-row'}>
                             <div className={'detail-group size-6'}>
-                                <div className={`detail-label${this.props.editedData.statusNote !== undefined && this.props.selectedProject ? ' value-changed' : ''}`}>{'Client Company:'}</div>
+                                <div className={`detail-label${editedData.statusNote !== undefined && selectedProject ? ' value-changed' : ''}`}>{'Client Company:'}</div>
                             </div>
                             <div className={'detail-group size-6'}>
-                                <div className={`detail-label${this.props.editedData.statusNote !== undefined && this.props.selectedProject ? ' value-changed' : ''}`}>{'Client People:'}</div>
+                                <div className={`detail-label${editedData.statusNote !== undefined && selectedProject ? ' value-changed' : ''}`}>{'Client People:'}</div>
                             </div>
                         </div>
                     </div>

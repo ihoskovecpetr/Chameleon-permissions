@@ -4,6 +4,9 @@ import * as Constants from '../constants/Constatnts';
 import * as logger from 'loglevel';
 
 import * as server from '../lib/serverData';
+
+let refreshTimer = null;
+
 // *********************************************************************************************************************
 // lLOGGED IN USER
 // *********************************************************************************************************************
@@ -47,10 +50,12 @@ export function resetData() {
     return {type: ActionTypes.RESET_STORE};
 }
 
-export function getData() {
+export function getData(scheduled) {
+    if(scheduled) logger.info('Refresh data - scheduled');
+    if(refreshTimer) clearTimeout(refreshTimer);
     return async (dispatch, getState) => {
-        dispatch(setFetching(true));
-        dispatch(setMessage(null));
+        if(!scheduled) dispatch(setFetching(true));
+        if(!scheduled) dispatch(setMessage(null));
         try {
             const projects = await server.getProjects();
             const people = await server.getPeople();
@@ -58,18 +63,21 @@ export function getData() {
             const users = await server.getUsers();
 
             dispatch(setData({projects, people, companies, users}));
-            if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
+            if (!scheduled && Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
                 type: 'info',
                 text: 'Fetching done successfully!',
                 timeout: Constants.DEFAULT_MESSAGE_TIMEOUT_MS
             }));
+            if(Constants.SCHEDULED_DATA_REFRESH_TIME_MS) refreshTimer = setTimeout(() => dispatch(getData(true)), Constants.SCHEDULED_DATA_REFRESH_TIME_MS);
         } catch(e) {
-            logger.error(e);
-            dispatch(setMessage({type: 'error', text: `Error occurred while fetching data from the server: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
+            if(scheduled && Constants.SCHEDULED_DATA_REFRESH_TIME_MS) refreshTimer = setTimeout(() => dispatch(getData(true)), Constants.SCHEDULED_DATA_REFRESH_TIME_MS);
+            if(!scheduled) logger.error(e);
+            if(!scheduled) dispatch(setMessage({type: 'error', text: `Error occurred while fetching data from the server: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
         }
-        dispatch(setFetching(false));
+        if(!scheduled) dispatch(setFetching(false));
     }
 }
+
 // *********************************************************************************************************************
 // BOX
 // *********************************************************************************************************************
@@ -109,6 +117,26 @@ export function addProject() {
 
 export function editProject(id) {
     return {type: ActionTypes.EDIT_PROJECT, id: id}
+}
+
+export function setProjectsFilter(filter, remove) {
+    return {type: ActionTypes.SET_PROJECTS_FILTER, filter: filter, state: remove};
+}
+
+export function setProjectsSearch(search) {
+    return {type: ActionTypes.SET_PROJECTS_SEARCH, search: search};
+}
+
+export function setProjectsSort(sort) {
+    return {type: ActionTypes.SET_PROJECTS_SORT, sort: sort};
+}
+
+export function setActiveBidSearch(search) {
+    return {type: ActionTypes.SET_ACTIVE_BID_SEARCH, search: search};
+}
+
+export function setActiveBidSort(sort) {
+    return {type: ActionTypes.SET_ACTIVE_BID_SORT, sort: sort};
 }
 
 // remote db opp
@@ -199,25 +227,208 @@ export function removeProject() {
     }
 }
 
-export function setProjectsFilter(filter, remove) {
-    return {type: ActionTypes.SET_PROJECTS_FILTER, filter: filter, state: remove};
+// *********************************************************************************************************************
+// COMPANIES
+// *********************************************************************************************************************
+export function selectCompany(id) {
+    return {type: ActionTypes.SELECT_COMPANY, id: id}
 }
 
-export function setProjectsSearch(search) {
-    return {type: ActionTypes.SET_PROJECTS_SEARCH, search: search};
+export function showCompany(id) {
+    return {type: ActionTypes.SHOW_COMPANY, id: id}
 }
 
-export function setProjectsSort(sort) {
-    return {type: ActionTypes.SET_PROJECTS_SORT, sort: sort};
+export function showCompanyNext(id) {
+    return {type: ActionTypes.SHOW_COMPANY_NEXT, id: id}
 }
 
-export function setActiveBidSearch(search) {
-    return {type: ActionTypes.SET_ACTIVE_BID_SEARCH, search: search};
+export function addCompany() {
+    return {type: ActionTypes.ADD_COMPANY}
 }
 
-export function setActiveBidSort(sort) {
-    return {type: ActionTypes.SET_ACTIVE_BID_SORT, sort: sort};
+export function editCompany(id) {
+    return {type: ActionTypes.EDIT_COMPANY, id: id}
 }
+
+export function setCompaniesFilter(filter, remove) {
+    return {type: ActionTypes.SET_COMPANIES_FILTER, filter: filter, state: remove};
+}
+
+export function setCompaniesSearch(search) {
+    return {type: ActionTypes.SET_COMPANIES_SEARCH, search: search};
+}
+
+export function setCompaniesSort(sort) {
+    return {type: ActionTypes.SET_COMPANIES_SORT, sort: sort};
+}
+
+// remote db opp
+export function updateCompany() {
+    return async (dispatch, getState) => {
+        const companyUpdate = getState().appState.editedData;
+        const id = getState().appState.selectedCompany;
+        if(!id || !companyUpdate || Object.keys(companyUpdate).length === 0) return;
+        dispatch(setFetching(true));
+        dispatch(setMessage(null));
+        try {
+            const updatedCompany = await server.updateCompany(id, companyUpdate);
+            dispatch({type: ActionTypes.UPDATE_COMPANY, company: updatedCompany});
+            if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
+                type: 'info',
+                text: 'Update company done successfully!',
+                timeout: Constants.DEFAULT_MESSAGE_TIMEOUT_MS
+            }));
+        } catch(e) {
+            logger.error(e);
+            dispatch(setMessage({type: 'error', text: `Update company error: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
+        }
+        dispatch(setFetching(false));
+    }
+}
+
+export function createCompany() {
+    return async (dispatch, getState) => {
+        const company = getState().appState.editedData;
+        if(!company || Object.keys(company).length === 0) return;
+        dispatch(setFetching(true));
+        dispatch(setMessage(null));
+        try {
+            const newCompany = await server.createCompany(company);
+            dispatch({type: ActionTypes.CREATE_COMPANY, company: newCompany});
+            if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
+                type: 'info',
+                text: 'Create company done successfully!',
+                timeout: Constants.DEFAULT_MESSAGE_TIMEOUT_MS
+            }));
+        } catch(e) {
+            logger.error(e);
+            dispatch(setMessage({type: 'error', text: `Create company error: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
+        }
+        dispatch(setFetching(false));
+    }
+}
+
+export function removeCompany() {
+    return async (dispatch, getState) => {
+        const id = getState().appState.selectedCompany;
+        if(!id) return;
+        dispatch(setFetching(true));
+        dispatch(setMessage(null));
+        try {
+            await server.removeCompany(id);
+            dispatch({type: ActionTypes.REMOVE_COMPANY, company: id});
+            if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
+                type: 'info',
+                text: 'Remove company done successfully!',
+                timeout: Constants.DEFAULT_MESSAGE_TIMEOUT_MS
+            }));
+        } catch(e) {
+            logger.error(e);
+            dispatch(setMessage({type: 'error', text: `Remove company error: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
+        }
+        dispatch(setFetching(false));
+    }
+}
+
 // *********************************************************************************************************************
 // PEOPLE
 // *********************************************************************************************************************
+export function selectPerson(id) {
+    return {type: ActionTypes.SELECT_PERSON, id: id}
+}
+
+export function showPerson(id) {
+    return {type: ActionTypes.SHOW_PERSON, id: id}
+}
+
+export function showPersonNext(id) {
+    return {type: ActionTypes.SHOW_PERSON_NEXT, id: id}
+}
+
+export function addPerson() {
+    return {type: ActionTypes.ADD_PERSON}
+}
+
+export function editPerson(id) {
+    return {type: ActionTypes.EDIT_PERSON, id: id}
+}
+
+export function setPeopleFilter(filter, remove) {
+    return {type: ActionTypes.SET_PEOPLE_FILTER, filter: filter, state: remove};
+}
+
+export function setPeopleSearch(search) {
+    return {type: ActionTypes.SET_PEOPLE_SEARCH, search: search};
+}
+
+export function setPeopleSort(sort) {
+    return {type: ActionTypes.SET_PEOPLE_SORT, sort: sort};
+}
+
+// remote db opp
+export function updatePerson() {
+    return async (dispatch, getState) => {
+        const personUpdate = getState().appState.editedData;
+        const id = getState().appState.selectedPerson;
+        if(!id || !personUpdate || Object.keys(personUpdate).length === 0) return;
+        dispatch(setFetching(true));
+        dispatch(setMessage(null));
+        try {
+            const updatedPerson = await server.updatePerson(id, personUpdate);
+            dispatch({type: ActionTypes.UPDATE_PERSON, person: updatedPerson});
+            if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
+                type: 'info',
+                text: 'Update person done successfully!',
+                timeout: Constants.DEFAULT_MESSAGE_TIMEOUT_MS
+            }));
+        } catch(e) {
+            logger.error(e);
+            dispatch(setMessage({type: 'error', text: `Update person error: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
+        }
+        dispatch(setFetching(false));
+    }
+}
+
+export function createPerson() {
+    return async (dispatch, getState) => {
+        const person = getState().appState.editedData;
+        if(!person || Object.keys(person).length === 0) return;
+        dispatch(setFetching(true));
+        dispatch(setMessage(null));
+        try {
+            const newPerson = await server.createPerson(person);
+            dispatch({type: ActionTypes.CREATE_PERSON, person: newPerson});
+            if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
+                type: 'info',
+                text: 'Create person done successfully!',
+                timeout: Constants.DEFAULT_MESSAGE_TIMEOUT_MS
+            }));
+        } catch(e) {
+            logger.error(e);
+            dispatch(setMessage({type: 'error', text: `Create person error: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
+        }
+        dispatch(setFetching(false));
+    }
+}
+
+export function removePerson() {
+    return async (dispatch, getState) => {
+        const id = getState().appState.selectedPerson;
+        if(!id) return;
+        dispatch(setFetching(true));
+        dispatch(setMessage(null));
+        try {
+            await server.removePerson(id);
+            dispatch({type: ActionTypes.REMOVE_PERSON, person: id});
+            if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
+                type: 'info',
+                text: 'Remove person done successfully!',
+                timeout: Constants.DEFAULT_MESSAGE_TIMEOUT_MS
+            }));
+        } catch(e) {
+            logger.error(e);
+            dispatch(setMessage({type: 'error', text: `Remove person error: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
+        }
+        dispatch(setFetching(false));
+    }
+}
