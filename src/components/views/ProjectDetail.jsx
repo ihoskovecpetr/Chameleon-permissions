@@ -75,10 +75,10 @@ export default class ProjectDetail extends React.PureComponent {
                                 <div className={`detail-label`}>{'Team:'}</div>
                             </div>
                             <div className={'detail-group size-4'}>
-                                <div className={`detail-label`}>{'Client Company:'}</div>
+                                <div className={`detail-label`}>{'Client Companies:'}</div>
                             </div>
                             <div className={'detail-group size-4'}>
-                                <div className={`detail-label`}>{'Client People:'}</div>
+                                <div className={`detail-label`}>{'Client Persons:'}</div>
                             </div>
                         </div>
                     </div>

@@ -23,13 +23,13 @@ export default class PersonEdit extends React.PureComponent {
     }
 
     componentDidUpdate(prevProps) {
-        if(this.props.editedData !== prevProps.editedData || this.props.people !== prevProps.people) this.checkPerson();
+        if(this.props.editedData !== prevProps.editedData || this.props.persons !== prevProps.persons) this.checkPerson();
     }
 
     render() {
-        const {selectedPerson, editedData, people} = this.props;
+        const {selectedPerson, editedData, persons} = this.props;
 
-        const name = editedData.name !== undefined ? editedData.name : !selectedPerson ? '' : people[selectedPerson] ? people[selectedPerson].name : '';
+        const name = editedData.name !== undefined ? editedData.name : !selectedPerson ? '' : persons[selectedPerson] ? persons[selectedPerson].name : '';
 
         return (
             <div className={'app-body'}>
@@ -94,7 +94,7 @@ export default class PersonEdit extends React.PureComponent {
 
     isPersonNameUsed = name => {
         if(!name) return false;
-        return Object.keys(this.props.people).filter(personId => personId !== this.props.selectedPerson).map(personId => this.props.people[personId].name.toLowerCase()).indexOf(name.toLowerCase()) >= 0;
+        return Object.keys(this.props.persons).filter(personId => personId !== this.props.selectedPerson).map(personId => this.props.persons[personId].name.toLowerCase()).indexOf(name.toLowerCase()) >= 0;
     };
 
     handleRemoveArmed = () => {
@@ -103,7 +103,7 @@ export default class PersonEdit extends React.PureComponent {
 
     updateEditedData = updateData => {
         const newData = {...this.props.editedData, ...updateData};
-        const person = this.props.selectedPerson ? this.props.people[this.props.selectedPerson] : undefined;
+        const person = this.props.selectedPerson ? this.props.persons[this.props.selectedPerson] : undefined;
         for(const key of Object.keys(newData)) {
             if(person && person[key] === newData[key])  delete newData[key];
         }
@@ -114,7 +114,7 @@ export default class PersonEdit extends React.PureComponent {
     // VALIDATION
     // *****************************************************************************************************************
     isCurrentPersonValid = () => {
-        const origPerson = this.props.selectedPerson && this.props.people && this.props.people[this.props.selectedPerson] ? this.props.people[this.props.selectedPerson] : {};
+        const origPerson = this.props.selectedPerson && this.props.persons && this.props.persons[this.props.selectedPerson] ? this.props.persons[this.props.selectedPerson] : {};
         if(!origPerson._id && this.props.selectedPerson) return true; // when refresh, no data fetched yet
         const person = Object.assign({}, origPerson, this.props.editedData);
         const validation = {};

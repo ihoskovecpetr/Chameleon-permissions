@@ -17,9 +17,9 @@ export default {
         activeBidSort: '',
 
         selectedPerson: null,
-        peopleFilter: [],
-        peopleSearch: '',
-        peopleSort: '',
+        personsFilter: [],
+        personsSearch: '',
+        personsSort: '',
 
         selectedCompany: null,
         companiesFilter: [],
@@ -36,7 +36,7 @@ export default {
         nextDetailId: null
     },
     projects: {},
-    people: {},
+    persons: {},
     companies: {},
     users: {},
     user: null

@@ -10,9 +10,11 @@ import ProjectDetail from './views/ProjectDetail';
 
 import CompaniesList from './views/CompaniesList';
 import CompanyEdit from './views/CompanyEdit';
+import CompanyDetail from './views/CompanyDetail';
 
-import PeopleList from './views/PeopleList';
+import PersonsList from './views/PersonsList';
 import PersonEdit from './views/PersonEdit';
+import PersonDetail from './views/PersonDetail';
 
 import Box from './views/Box';
 
@@ -32,7 +34,7 @@ export default class AppLayout extends React.PureComponent {
                 AppBody =
                     <ProjectsList
                         projects={this.props.projects}
-                        people={this.props.people}
+                        persons={this.props.persons}
                         companies={this.props.companies}
                         users={this.props.users}
                         user={this.props.user}
@@ -60,12 +62,11 @@ export default class AppLayout extends React.PureComponent {
                     />;
                 break;
             case ViewTypes.PROJECT_DETAIL:
-            case ViewTypes.BOX_PROJECT_DETAIL:
             case ViewTypes.PROJECT_DETAIL_NEXT:
                 AppBody =
                     <ProjectDetail
                         projects={this.props.projects}
-                        people={this.props.people}
+                        persons={this.props.persons}
                         companies={this.props.companies}
                         users={this.props.users}
                         user={this.props.user}
@@ -74,8 +75,9 @@ export default class AppLayout extends React.PureComponent {
 
                         returnToPreviousView={this.props.returnToPreviousView}
 
-                        selectProjectNext={this.props.selectProjectNext}
-                        //TODO person, company
+                        showProjectNext={this.props.showProjectNext}
+                        showPersonNext={this.props.showPersonNext}
+                        showCompanyNext={this.props.showCompanyNext}
 
                         editProject={this.props.appState.view === ViewTypes.PROJECT_DETAIL ? this.props.editProject : undefined}
                         removeProject={this.props.appState.view === ViewTypes.PROJECT_DETAIL ? this.props.removeProject : undefined}
@@ -86,7 +88,7 @@ export default class AppLayout extends React.PureComponent {
                 AppBody =
                     <ProjectEdit
                         projects={this.props.projects}
-                        people={this.props.people}
+                        persons={this.props.persons}
                         companies={this.props.companies}
                         users={this.props.users}
                         user={this.props.user}
@@ -108,7 +110,7 @@ export default class AppLayout extends React.PureComponent {
                         box = {this.props.appState.box}
 
                         projects={this.props.projects}
-                        people={this.props.people}
+                        persons={this.props.persons}
                         companies={this.props.companies}
 
                         setView={this.props.setView}
@@ -123,7 +125,7 @@ export default class AppLayout extends React.PureComponent {
                 AppBody =
                     <CompaniesList
                         projects={this.props.projects}
-                        people={this.props.people}
+                        persons={this.props.persons}
                         companies={this.props.companies}
                         users={this.props.users}
                         user={this.props.user}
@@ -150,7 +152,7 @@ export default class AppLayout extends React.PureComponent {
                 AppBody =
                     <CompanyEdit
                         projects={this.props.projects}
-                        people={this.props.people}
+                        persons={this.props.persons}
                         companies={this.props.companies}
                         users={this.props.users}
                         user={this.props.user}
@@ -166,24 +168,47 @@ export default class AppLayout extends React.PureComponent {
                         removeCompany={this.props.removeCompany}
                     />;
                 break;
-            case ViewTypes.PEOPLE_LIST:
+            case ViewTypes.COMPANY_DETAIL:
+            case ViewTypes.COMPANY_DETAIL_NEXT:
                 AppBody =
-                    <PeopleList
+                    <CompanyDetail
                         projects={this.props.projects}
-                        people={this.props.people}
+                        persons={this.props.persons}
+                        companies={this.props.companies}
+                        users={this.props.users}
+                        user={this.props.user}
+
+                        selectedCompany={this.props.appState.view === ViewTypes.COMPANY_DETAIL ? this.props.appState.selectedCompany : this.props.appState.view === ViewTypes.COMPANY_DETAIL_NEXT ? this.props.appState.nextDetailId : this.props.appState.view === ViewTypes.BOX_COMPANY_DETAIL ? this.props.appState.selectedBoxItem : null}
+
+                        returnToPreviousView={this.props.returnToPreviousView}
+
+                        showProjectNext={this.props.showProjectNext}
+                        showPersonNext={this.props.showPersonNext}
+                        showCompanyNext={this.props.showCompanyNext}
+
+                        editCompany={this.props.appState.view === ViewTypes.COMPANY_DETAIL ? this.props.editCompany : undefined}
+                        removeCompany={this.props.appState.view === ViewTypes.COMPANY_DETAIL ? this.props.removeCompany : undefined}
+                        addToBox={this.props.addToBox}
+                    />;
+                break;
+            case ViewTypes.PERSONS_LIST:
+                AppBody =
+                    <PersonsList
+                        projects={this.props.projects}
+                        persons={this.props.persons}
                         companies={this.props.companies}
                         users={this.props.users}
                         user={this.props.user}
 
                         selectedPerson={this.props.appState.selectedPerson}
 
-                        filter={this.props.appState.peopleFilter}
-                        search={this.props.appState.peopleSearch}
-                        sort={this.props.appState.peopleSort}
+                        filter={this.props.appState.personsFilter}
+                        search={this.props.appState.personsSearch}
+                        sort={this.props.appState.personsSort}
 
-                        setFilter={this.props.setPeopleFilter}
-                        setSearch={this.props.setPeopleSearch}
-                        setSort={this.props.setPeopleSort}
+                        setFilter={this.props.setPersonsFilter}
+                        setSearch={this.props.setPersonsSearch}
+                        setSort={this.props.setPersonsSort}
 
                         selectPerson={this.props.selectPerson}
                         showPerson={this.props.showPerson}
@@ -197,7 +222,7 @@ export default class AppLayout extends React.PureComponent {
                 AppBody =
                     <PersonEdit
                         projects={this.props.projects}
-                        people={this.props.people}
+                        persons={this.props.persons}
                         companies={this.props.companies}
                         users={this.props.users}
                         user={this.props.user}
@@ -211,6 +236,29 @@ export default class AppLayout extends React.PureComponent {
                         updatePerson={this.props.updatePerson}
                         createPerson={this.props.createPerson}
                         removePerson={this.props.removePerson}
+                    />;
+                break;
+            case ViewTypes.PERSON_DETAIL:
+            case ViewTypes.PERSON_DETAIL_NEXT:
+                AppBody =
+                    <PersonDetail
+                        projects={this.props.projects}
+                        persons={this.props.persons}
+                        companies={this.props.companies}
+                        users={this.props.users}
+                        user={this.props.user}
+
+                        selectedPerson={this.props.appState.view === ViewTypes.PERSON_DETAIL ? this.props.appState.selectedPerson : this.props.appState.view === ViewTypes.PERSON_DETAIL_NEXT ? this.props.appState.nextDetailId : this.props.appState.view === ViewTypes.BOX_PERSON_DETAIL ? this.props.appState.selectedBoxItem : null}
+
+                        returnToPreviousView={this.props.returnToPreviousView}
+
+                        showProjectNext={this.props.showProjectNext}
+                        showPersonNext={this.props.showPersonNext}
+                        showCompanyNext={this.props.showCompanyNext}
+
+                        editPerson={this.props.appState.view === ViewTypes.PERSON_DETAIL ? this.props.editPerson : undefined}
+                        removePerson={this.props.appState.view === ViewTypes.PERSON_DETAIL ? this.props.removePerson : undefined}
+                        addToBox={this.props.addToBox}
                     />;
                 break;
         }

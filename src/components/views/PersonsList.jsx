@@ -17,21 +17,21 @@ const ICON_CLEAR = 'times';
 const ICON_BOX = 'box-open';
 
 
-import {PeopleColumnDef} from '../../constants/TableColumnsDef';
+import {PersonsColumnDef} from '../../constants/TableColumnsDef';
 
-export default class PeopleList extends React.PureComponent {
+export default class PersonsList extends React.PureComponent {
 
     componentDidUpdate(prevProps) { //remove selected person if doesn't exist in filtered set
-        if(this.props.selectedPerson && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.searchList(this.props.people, this.filterList(this.props.people, this.props.filter), this.props.search).indexOf(this.props.selectedPerson) < 0) this.props.selectPerson(null);
+        if(this.props.selectedPerson && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.searchList(this.props.persons, this.filterList(this.props.persons, this.props.filter), this.props.search).indexOf(this.props.selectedPerson) < 0) this.props.selectPerson(null);
     }
 
     render() {
-        //console.log('RENDER PEOPLE LIST');
-        const {selectedPerson, people, filter, sort, search} = this.props;
+        //console.log('RENDER PERSONS LIST');
+        const {selectedPerson, persons, filter, sort, search} = this.props;
 
-        const filteredPersonIds = this.filterList(people, filter);
-        const searchedPersonIds = this.searchList(people, filteredPersonIds, search);
-        const sortedPersonIds = this.sortList(people, searchedPersonIds, sort);
+        const filteredPersonIds = this.filterList(persons, filter);
+        const searchedPersonIds = this.searchList(persons, filteredPersonIds, search);
+        const sortedPersonIds = this.sortList(persons, searchedPersonIds, sort);
 
         return (
             <div className={'app-body'}>
@@ -55,9 +55,9 @@ export default class PeopleList extends React.PureComponent {
                     </div>
                 </div>
                 <Fragment>
-                    {this.getHeader(PeopleColumnDef)}
+                    {this.getHeader(PersonsColumnDef)}
                     <Scrollbars autoHide={true} autoHideTimeout={800} autoHideDuration={200}>
-                        {this.getTable(PeopleColumnDef, sortedPersonIds)}
+                        {this.getTable(PersonsColumnDef, sortedPersonIds)}
                     </Scrollbars>
                 </Fragment>
             </div>
@@ -94,7 +94,7 @@ export default class PeopleList extends React.PureComponent {
                 {sortedPersonIds.map(personId => <tr className={this.props.selectedPerson === personId ? 'selected' : ''} onClick = {event => this.rowClickHandler(event, personId)} onDoubleClick={event => this.rowDoubleClickHandler(event, personId)} key={personId}>
                     {columnDef.map((column, i) =>
                         <td key={i} className={`${column.className}`}>
-                            {this.getComputedField(column.field, this.props.people[personId])}
+                            {this.getComputedField(column.field, this.props.persons[personId])}
                         </td>
                     )}
                 </tr>)}
@@ -106,10 +106,10 @@ export default class PeopleList extends React.PureComponent {
     // ***************************************************
     // FILTER AND SORT SOURCE LIST - MEMOIZE
     // ***************************************************
-    filterList = memoize((people, filter) => {
+    filterList = memoize((persons, filter) => {
         //console.log('FILTER');
-        return Object.keys(people).map(id => id).filter(id => {
-            const person = people[id];
+        return Object.keys(persons).map(id => id).filter(id => {
+            const person = persons[id];
             //filter
             for(const f of filter) {
                 switch (f) {
@@ -119,17 +119,17 @@ export default class PeopleList extends React.PureComponent {
         });
     });
 
-    sortList = memoize((people, ids, sort) => {
+    sortList = memoize((persons, ids, sort) => {
         //console.log('SORT');
         if(!sort) {
-            return ids.sort((a, b) => people[b].created.localeCompare(people[a].created)); //default sort - latest created first
+            return ids.sort((a, b) => persons[b].created.localeCompare(persons[a].created)); //default sort - latest created first
         } else {
             return ids.sort((a, b) => {
                 const down = sort.indexOf('-') === 0;
                 let field = down ? sort.substr(1) : sort;
                 //if (field === 'status') field = 'status-order';
-                let dataA = down ? this.getComputedField(field, people[a]) : this.getComputedField(field, people[b]);
-                let dataB = down ? this.getComputedField(field, people[b]) : this.getComputedField(field, people[a]);
+                let dataA = down ? this.getComputedField(field, persons[a]) : this.getComputedField(field, persons[b]);
+                let dataB = down ? this.getComputedField(field, persons[b]) : this.getComputedField(field, persons[a]);
                 if (typeof dataA === 'undefined' && typeof dataB === 'undefined') return 0;
                 if (typeof dataA === 'undefined') return 1;
                 if (typeof dataB === 'undefined') return 0;
@@ -140,14 +140,14 @@ export default class PeopleList extends React.PureComponent {
         }
     });
 
-    searchList = memoize((people, ids, search) => {
+    searchList = memoize((persons, ids, search) => {
         //console.log('SEARCH');
         if(search && search.trim()) {
             const data = ids.map(id => {
                 return {
-                    _id: people[id]._id,
-                    name: people[id].name,
-                    $name: people[id].$name,
+                    _id: persons[id]._id,
+                    name: persons[id].name,
+                    $name: persons[id].$name,
                 }
             });
             const fuse = new Fuse(data, {

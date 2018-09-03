@@ -75,11 +75,11 @@ export const CompaniesColumnDef = [
     }
 ];
 
-export const PeopleColumnDef = [
+export const PersonsColumnDef = [
     {
         field: 'name',
         label: 'Person Name',
-        className: 'people-name',
+        className: 'person-name',
         sort: 'name'
     }
 ];

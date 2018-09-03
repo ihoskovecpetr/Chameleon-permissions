@@ -9,7 +9,7 @@ const ICON_RELOAD = 'sync-alt';
 const ICON_LOGOUT = 'sign-out-alt';
 const ICON_HOME = 'home';
 
-const ICON_PEOPLE = 'users';
+const ICON_PERSONS = 'users';
 const ICON_COMPANIES = 'building';
 const ICON_PROJECTS = 'tasks';
 
@@ -32,7 +32,7 @@ export default class AppHeader extends React.PureComponent {
         } else userNameShort = userName;
 
         const projectsSwitchActive = this.props.view === ViewTypes.PROJECTS_LIST || this.props.view === ViewTypes.PROJECT_DETAIL || this.props.view === ViewTypes.PROJECT_DETAIL_NEXT || this.props.view === ViewTypes.PROJECT_EDIT;
-        const peopleSwitchActive = this.props.view === ViewTypes.PEOPLE_LIST || this.props.view === ViewTypes.PERSON_DETAIL || this.props.view === ViewTypes.PERSON_DETAIL_NEXT || this.props.view === ViewTypes.PERSON_EDIT;
+        const personsSwitchActive = this.props.view === ViewTypes.PERSONS_LIST || this.props.view === ViewTypes.PERSON_DETAIL || this.props.view === ViewTypes.PERSON_DETAIL_NEXT || this.props.view === ViewTypes.PERSON_EDIT;
         const companySwitchActive = this.props.view === ViewTypes.COMPANIES_LIST || this.props.view === ViewTypes.COMPANY_DETAIL || this.props.view === ViewTypes.COMPANY_DETAIL_NEXT || this.props.view === ViewTypes.COMPANY_EDIT;
         const boxActive = this.props.view === ViewTypes.BOX;
 
@@ -57,8 +57,8 @@ export default class AppHeader extends React.PureComponent {
                             <span className={'switch-text'}>{'Projects'}</span>
                             {this.props.activeBid ? <FontAwesomeIcon className={'dot'} icon={'circle'}/> : null}
                         </div>
-                        <div onClick={() => this.props.switchesEnabled && this.props.view !== ViewTypes.PEOPLE_LIST ? this.props.setView(ViewTypes.PEOPLE_LIST) : undefined} className={`switch${peopleSwitchActive ? ' active' : ''}${this.props.switchesEnabled && this.props.view !== ViewTypes.PEOPLE_LIST ? ' clickable' : ''}`}>
-                            <FontAwesomeIcon icon={ICON_PEOPLE}/>
+                        <div onClick={() => this.props.switchesEnabled && this.props.view !== ViewTypes.PERSONS_LIST ? this.props.setView(ViewTypes.PERSONS_LIST) : undefined} className={`switch${personsSwitchActive ? ' active' : ''}${this.props.switchesEnabled && this.props.view !== ViewTypes.PERSONS_LIST ? ' clickable' : ''}`}>
+                            <FontAwesomeIcon icon={ICON_PERSONS}/>
                             <span className={'switch-text'}>{'People'}</span>
                         </div>
                         <div onClick={() => this.props.switchesEnabled && this.props.view !== ViewTypes.COMPANIES_LIST ? this.props.setView(ViewTypes.COMPANIES_LIST) : undefined} className={`switch${companySwitchActive ? ' active' : ''}${this.props.switchesEnabled && this.props.view !== ViewTypes.COMPANIES_LIST ? ' clickable' : ''}`}>

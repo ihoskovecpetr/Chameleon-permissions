@@ -129,16 +129,16 @@ export async function getUsers() {
 }
 
 //**********************************************************************************************************************
-// PEOPLE
+// PERSONS
 //**********************************************************************************************************************
-export async function getPeople() {
+export async function getPersons() {
     let error;
     try {
         const options = {
             credentials: 'same-origin',
             headers: {'cache-control': 'no-cache', 'pragma': 'no-cache'}
         };
-        const response = await fetch(`/api/project/people`, options);
+        const response = await fetch(`/api/project/persons`, options);
         const contentType = response.headers.get("content-type");
         const data = contentType && contentType.indexOf("application/json") !== -1 ? await response.json() : null;
         if (response.ok) {
@@ -165,7 +165,7 @@ export async function createPerson(person) {
             headers: {'Content-Type': 'application/json', 'cache-control': 'no-cache', 'pragma': 'no-cache'},
             body: JSON.stringify(person)
         };
-        const response = await fetch(`/api/project/people`, options);
+        const response = await fetch(`/api/project/persons`, options);
         const contentType = response.headers.get("content-type");
         const data = contentType && contentType.indexOf("application/json") !== -1 ? await response.json() : null;
         if (response.ok) {
@@ -191,7 +191,7 @@ export async function updatePerson(id, person) {
             headers: {'Content-Type': 'application/json', 'cache-control': 'no-cache', 'pragma': 'no-cache'},
             body: JSON.stringify(person)
         };
-        const response = await fetch(`/api/project/people/${id}`, options);
+        const response = await fetch(`/api/project/persons/${id}`, options);
         const contentType = response.headers.get("content-type");
         const data = contentType && contentType.indexOf("application/json") !== -1 ? await response.json() : null;
         if (response.ok) {
@@ -216,7 +216,7 @@ export async function removePerson(id) {
             credentials: 'same-origin',
             headers: {'cache-control': 'no-cache', 'pragma': 'no-cache'}
         };
-        const response = await fetch(`/api/project/people/${id}`, options);
+        const response = await fetch(`/api/project/persons/${id}`, options);
         const contentType = response.headers.get("content-type");
         const data = contentType && contentType.indexOf("application/json") !== -1 ? await response.json() : null;
         if (response.ok) {

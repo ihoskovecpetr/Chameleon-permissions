@@ -90,10 +90,10 @@ export default class ProjectEdit extends React.PureComponent {
                         <div className={'detail-spacer'}/>
                         <div className={'detail-row'}>
                             <div className={'detail-group size-6'}>
-                                <div className={`detail-label${editedData.statusNote !== undefined && selectedProject ? ' value-changed' : ''}`}>{'Client Company:'}</div>
+                                <div className={`detail-label${editedData.statusNote !== undefined && selectedProject ? ' value-changed' : ''}`}>{'Client Companies:'}</div>
                             </div>
                             <div className={'detail-group size-6'}>
-                                <div className={`detail-label${editedData.statusNote !== undefined && selectedProject ? ' value-changed' : ''}`}>{'Client People:'}</div>
+                                <div className={`detail-label${editedData.statusNote !== undefined && selectedProject ? ' value-changed' : ''}`}>{'Client Persons:'}</div>
                             </div>
                         </div>
                     </div>

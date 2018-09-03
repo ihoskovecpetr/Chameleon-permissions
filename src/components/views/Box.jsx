@@ -1,7 +1,6 @@
 import React, {Fragment} from 'react';
 import { Table } from 'reactstrap';
 import { Scrollbars } from 'react-custom-scrollbars';
-import * as ViewTypes from '../../constants/ViewTypes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const ICON_TRASH = 'trash-alt';
@@ -9,7 +8,7 @@ const ICON_TRASH = 'trash-alt';
 export default class Box extends React.PureComponent {
 
     render() {
-        const {projects, people, companies, box} = this.props;
+        const {projects, persons, companies, box} = this.props;
 
         return (
             <div className={'app-body'}>
@@ -24,13 +23,23 @@ export default class Box extends React.PureComponent {
                     <Table className={'table-body'}>
                         <tbody style={{borderBottom: '1px solid #dee2e6'}}>
                         {box.map(id => {
-                            let type = 'unknown';
-                            if(projects[id]) type = 'project';
-                            else if(people[id]) type = 'person';
-                            else if(companies[id]) type = 'company';
+                            let type = 'Unknown';
+                            let object = {};
+                            if(projects[id]) {
+                                type = 'Project';
+                                object = projects[id];
+                            }
+                            else if(persons[id]) {
+                                type = 'Person';
+                                object = persons[id];
+                            }
+                            else if(companies[id]) {
+                                type = 'Company';
+                                object = companies[id];
+                            }
                             return (
                             <tr key={id} style={{cursor: 'default'}}>
-                                <td className={'projects-name'}><FontAwesomeIcon style={{cursor: 'pointer', marginRight: '0.5rem'}} onClick={() => this.removeFromBox(id)} icon={ICON_TRASH}/>{`${type} id: ${id}`}</td>
+                                <td className={'projects-name'}><FontAwesomeIcon style={{cursor: 'pointer', marginRight: '0.5rem'}} onClick={() => this.removeFromBox(id)} icon={ICON_TRASH}/>{`${type} | Name: ${object.name}`}</td>
                             </tr>)
                         })}
                         </tbody>
@@ -41,10 +50,6 @@ export default class Box extends React.PureComponent {
     }
 
     detail = id => {
-
-    };
-
-    close = () => {
 
     };
 

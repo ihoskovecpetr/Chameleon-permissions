@@ -10,7 +10,7 @@ function AppStateReducer(state = null, action = null) {
                     let ids = [];
                     if(action.data.projects) ids = ids.concat(action.data.projects.map(item => item._id));
                     if(action.data.companies) ids = ids.concat(action.data.companies.map(item => item._id));
-                    if(action.data.people) ids = ids.concat(action.data.people.map(item => item._id));
+                    if(action.data.persons) ids = ids.concat(action.data.persons.map(item => item._id));
                     const newBox = [...state.box].filter(boxId => ids.indexOf(boxId) >= 0);
                     if(newBox.length < state.box.length) return {...state, box: newBox}; //TODO set to null selectedObjects if they are missing in new update
                     else return state;
@@ -24,22 +24,24 @@ function AppStateReducer(state = null, action = null) {
                 } else return state;
 
             case ActionTypes.RETURN_TO_PREVIOUS_VIEW:
-                    switch(state.view) {
-                        case ViewTypes.PROJECT_EDIT:
-                        case ViewTypes.PROJECT_DETAIL:
-                            return {...state, view: ViewTypes.PROJECTS_LIST, previousView: null};
-                        case ViewTypes.COMPANY_EDIT:
-                        case ViewTypes.COMPANY_DETAIL:
-                            return {...state, view: ViewTypes.COMPANIES_LIST, previousView: null};
-                        case ViewTypes.PERSON_EDIT:
-                        case ViewTypes.PERSON_DETAIL:
-                            return {...state, view: ViewTypes.PEOPLE_LIST, previousView: null};
-                        case ViewTypes.PROJECT_DETAIL_NEXT:
-                        case ViewTypes.COMPANY_DETAIL_NEXT:
-                        case ViewTypes.PERSON_DETAIL_NEXT:
-                            return {...state, view: state.previousView ? state.previousView : state.view, previousView: null};
-                        default: return state;
-                    }
+                    if(state.previousView) {
+                        let previousView = null;
+                        switch(state.previousView) {
+                            case ViewTypes.PROJECT_EDIT:
+                            case ViewTypes.PROJECT_DETAIL:
+                                previousView = ViewTypes.PROJECTS_LIST;
+                                break;
+                            case ViewTypes.COMPANY_EDIT:
+                            case ViewTypes.COMPANY_DETAIL:
+                                previousView = ViewTypes.COMPANIES_LIST;
+                                break;
+                            case ViewTypes.PERSON_EDIT:
+                            case ViewTypes.PERSON_DETAIL:
+                                previousView = ViewTypes.PERSONS_LIST;
+                                break;
+                        }
+                        return {...state, view: state.previousView, previousView: previousView};
+                    } else return {...state, view: ViewTypes.PROJECTS_LIST, previousView: null};
 
             case ActionTypes.SET_FETCHING:
                 if(action.isFetching !== state.fetching) {
@@ -73,36 +75,36 @@ function AppStateReducer(state = null, action = null) {
             case ActionTypes.SHOW_PROJECT:
                 if(action.id) {
                     if(action.id !== state.selectedProject) {
-                        return {...state, selectedProject: action.id, view: ViewTypes.PROJECT_DETAIL};
+                        return {...state, selectedProject: action.id, view: ViewTypes.PROJECT_DETAIL, previousView: ViewTypes.PROJECTS_LIST};
                     } else {
-                        return {...state, view: ViewTypes.PROJECT_DETAIL};
+                        return {...state, view: ViewTypes.PROJECT_DETAIL, previousView: ViewTypes.PROJECTS_LIST};
                     }
                 } else {
                     if(state.selectedProject) {
-                        return {...state, view: ViewTypes.PROJECT_DETAIL};
+                        return {...state, view: ViewTypes.PROJECT_DETAIL, previousView: ViewTypes.PROJECTS_LIST};
                     } else return state;
                 }
 
             case ActionTypes.SHOW_PROJECT_NEXT:
                 if(action.id && action.id !== state.nextDetailId) {
-                    return {...state, nextDetailId: action.id, view: ViewTypes.PROJECT_DETAIL_NEXT, previousView: state.view === ViewTypes.PROJECT_DETAIL || state.view === ViewTypes.PERSON_DETAIL || state.view === ViewTypes.COMPANY_DETAIL ? state.view : state.previousView};
+                    return {...state, nextDetailId: action.id, view: ViewTypes.PROJECT_DETAIL_NEXT, previousView: state.view === ViewTypes.PROJECT_DETAIL || state.view === ViewTypes.PERSON_DETAIL || state.view === ViewTypes.COMPANY_DETAIL || state.view === ViewTypes.BOX ? state.view : state.previousView};
                 } else return state;
 
             case ActionTypes.EDIT_PROJECT:
                 if(action.id) {
                     if(action.id !== state.selectedProject) {
-                        return {...state, selectedProject: action.id, view: ViewTypes.PROJECT_EDIT, editedData: {}};
+                        return {...state, selectedProject: action.id, view: ViewTypes.PROJECT_EDIT, editedData: {}, previousView: ViewTypes.PROJECTS_LIST};
                     } else {
-                        return {...state, view: ViewTypes.PROJECT_EDIT, editedData: {}};
+                        return {...state, view: ViewTypes.PROJECT_EDIT, editedData: {}, previousView: ViewTypes.PROJECTS_LIST};
                     }
                 } else {
                     if(state.selectedProject) {
-                        return {...state, view: ViewTypes.PROJECT_EDIT, editedData: {}};
+                        return {...state, view: ViewTypes.PROJECT_EDIT, editedData: {}, previousView: ViewTypes.PROJECTS_LIST};
                     } else return state;
                 }
 
             case ActionTypes.ADD_PROJECT:
-                return {...state, editedData: {status: 'PREBID'}, selectedProject: null, view: ViewTypes.PROJECT_EDIT};
+                return {...state, editedData: {status: 'PREBID'}, selectedProject: null, view: ViewTypes.PROJECT_EDIT, previousView: ViewTypes.PROJECTS_LIST};
 
             case ActionTypes.SET_PROJECTS_FILTER:
                 if(action.filter) {
@@ -175,13 +177,13 @@ function AppStateReducer(state = null, action = null) {
             case ActionTypes.SHOW_COMPANY:
                 if(action.id) {
                     if(action.id !== state.selectedCompany) {
-                        return {...state, selectedCompany: action.id, view: ViewTypes.COMPANY_DETAIL};
+                        return {...state, selectedCompany: action.id, view: ViewTypes.COMPANY_DETAIL, previousView: ViewTypes.COMPANIES_LIST};
                     } else {
-                        return {...state, view: ViewTypes.COMPANY_DETAIL};
+                        return {...state, view: ViewTypes.COMPANY_DETAIL, previousView: ViewTypes.COMPANIES_LIST};
                     }
                 } else {
                     if(state.selectedCompany) {
-                        return {...state, view: ViewTypes.COMPANY_DETAIL};
+                        return {...state, view: ViewTypes.COMPANY_DETAIL, previousView: ViewTypes.COMPANIES_LIST};
                     } else return state;
                 }
 
@@ -193,18 +195,18 @@ function AppStateReducer(state = null, action = null) {
             case ActionTypes.EDIT_COMPANY:
                 if(action.id) {
                     if(action.id !== state.selectedCompany) {
-                        return {...state, selectedCompany: action.id, view: ViewTypes.COMPANY_EDIT, editedData: {}};
+                        return {...state, selectedCompany: action.id, view: ViewTypes.COMPANY_EDIT, editedData: {}, previousView: ViewTypes.COMPANIES_LIST};
                     } else {
-                        return {...state, view: ViewTypes.COMPANY_EDIT, editedData: {}};
+                        return {...state, view: ViewTypes.COMPANY_EDIT, editedData: {}, previousView: ViewTypes.COMPANIES_LIST};
                     }
                 } else {
                     if(state.selectedCompany) {
-                        return {...state, view: ViewTypes.COMPANY_EDIT, editedData: {}};
+                        return {...state, view: ViewTypes.COMPANY_EDIT, editedData: {}, previousView: ViewTypes.COMPANIES_LIST};
                     } else return state;
                 }
 
             case ActionTypes.ADD_COMPANY:
-                return {...state, editedData: {}, selectedCompany: null, view: ViewTypes.COMPANY_EDIT};
+                return {...state, editedData: {}, selectedCompany: null, view: ViewTypes.COMPANY_EDIT, previousView: ViewTypes.COMPANIES_LIST};
 
             case ActionTypes.SET_COMPANIES_FILTER:
                 if(action.filter) {
@@ -258,7 +260,7 @@ function AppStateReducer(state = null, action = null) {
                 } else return state;
 
             // *********************************************************************************************************
-            // PEOPLE
+            // PERSONS
             // *********************************************************************************************************
             case ActionTypes.SELECT_PERSON:
                 if((action.id || action.id === null) && action.id !== state.selectedPerson) {
@@ -268,13 +270,13 @@ function AppStateReducer(state = null, action = null) {
             case ActionTypes.SHOW_PERSON:
                 if(action.id) {
                     if(action.id !== state.selectedPerson) {
-                        return {...state, selectedPerson: action.id, view: ViewTypes.PERSON_DETAIL};
+                        return {...state, selectedPerson: action.id, view: ViewTypes.PERSON_DETAIL, previousView: ViewTypes.PERSONS_LIST};
                     } else {
-                        return {...state, view: ViewTypes.PERSON_DETAIL};
+                        return {...state, view: ViewTypes.PERSON_DETAIL, previousView: ViewTypes.PERSONS_LIST};
                     }
                 } else {
                     if(state.selectedPerson) {
-                        return {...state, view: ViewTypes.PERSON_DETAIL};
+                        return {...state, view: ViewTypes.PERSON_DETAIL, previousView: ViewTypes.PERSONS_LIST};
                     } else return state;
                 }
 
@@ -286,50 +288,50 @@ function AppStateReducer(state = null, action = null) {
             case ActionTypes.EDIT_PERSON:
                 if(action.id) {
                     if(action.id !== state.selectedPerson) {
-                        return {...state, selectedPerson: action.id, view: ViewTypes.PERSON_EDIT, editedData: {}};
+                        return {...state, selectedPerson: action.id, view: ViewTypes.PERSON_EDIT, editedData: {}, previousView: ViewTypes.PERSONS_LIST};
                     } else {
-                        return {...state, view: ViewTypes.PERSON_EDIT, editedData: {}};
+                        return {...state, view: ViewTypes.PERSON_EDIT, editedData: {}, previousView: ViewTypes.PERSONS_LIST};
                     }
                 } else {
                     if(state.selectedPerson) {
-                        return {...state, view: ViewTypes.PERSON_EDIT, editedData: {}};
+                        return {...state, view: ViewTypes.PERSON_EDIT, editedData: {}, previousView: ViewTypes.PERSONS_LIST};
                     } else return state;
                 }
 
             case ActionTypes.ADD_PERSON:
-                return {...state, editedData: {}, selectedPerson: null, view: ViewTypes.PERSON_EDIT};
+                return {...state, editedData: {}, selectedPerson: null, view: ViewTypes.PERSON_EDIT, previousView: ViewTypes.PERSONS_LIST};
 
-            case ActionTypes.SET_PEOPLE_FILTER:
+            case ActionTypes.SET_PERSONS_FILTER:
                 if(action.filter) {
                     if(Array.isArray(action.filter)) {
-                        if(state.peopleFilter.length !== action.filter.length) return {...state, peopleFilter: action.filter};
+                        if(state.personsFilter.length !== action.filter.length) return {...state, personsFilter: action.filter};
                         for(const filter of action.filter) {
-                            if(state.peopleFilter.indexOf(filter) < 0) return {...state, peopleFilter: action.filter};
+                            if(state.personsFilter.indexOf(filter) < 0) return {...state, personsFilter: action.filter};
                         }
                         return state;
                     } else {
-                        const index = state.peopleFilter.indexOf(action.filter);
+                        const index = state.personsFilter.indexOf(action.filter);
                         if(action.state) {
-                            if(index < 0) return {...state, peopleFilter: [...state.peopleFilter, action.filter]};
+                            if(index < 0) return {...state, personsFilter: [...state.personsFilter, action.filter]};
                             else return state;
                         } else {
                             if(index >= 0) {
-                                const filter = [...state.peopleFilter];
+                                const filter = [...state.personsFilter];
                                 filter.splice(index, 1);
-                                return {...state, peopleFilter: filter};
+                                return {...state, personsFilter: filter};
                             } else return state;
                         }
                     }
                 } else return state;
 
-            case ActionTypes.SET_PEOPLE_SORT:
-                if(typeof action.sort !== 'undefined' && action.sort !== state.peopleSort) {
-                    return {...state, peopleSort: action.sort}
+            case ActionTypes.SET_PERSONS_SORT:
+                if(typeof action.sort !== 'undefined' && action.sort !== state.personsSort) {
+                    return {...state, personsSort: action.sort}
                 } else return state;
 
-            case ActionTypes.SET_PEOPLE_SEARCH:
-                if(typeof action.search !== 'undefined' && action.search !== state.peopleSearch) {
-                    return {...state, peopleSearch: action.search}
+            case ActionTypes.SET_PERSONS_SEARCH:
+                if(typeof action.search !== 'undefined' && action.search !== state.personsSearch) {
+                    return {...state, personsSearch: action.search}
                 } else return state;
 
 
@@ -373,7 +375,7 @@ function AppStateReducer(state = null, action = null) {
                 } else return state;
 
             case ActionTypes.EMPTY_BOX:
-                if(state.box.length > 0) return {...state, box: []}
+                if(state.box.length > 0) return {...state, box: []};
                 else return state;
 
             default:

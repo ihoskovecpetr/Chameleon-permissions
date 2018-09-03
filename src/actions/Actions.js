@@ -58,11 +58,11 @@ export function getData(scheduled) {
         if(!scheduled) dispatch(setMessage(null));
         try {
             const projects = await server.getProjects();
-            const people = await server.getPeople();
+            const persons = await server.getPersons();
             const companies = await server.getCompanies();
             const users = await server.getUsers();
 
-            dispatch(setData({projects, people, companies, users}));
+            dispatch(setData({projects, persons, companies, users}));
             if (!scheduled && Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
                 type: 'info',
                 text: 'Fetching done successfully!',
@@ -331,7 +331,7 @@ export function removeCompany() {
 }
 
 // *********************************************************************************************************************
-// PEOPLE
+// PERSONS
 // *********************************************************************************************************************
 export function selectPerson(id) {
     return {type: ActionTypes.SELECT_PERSON, id: id}
@@ -353,16 +353,16 @@ export function editPerson(id) {
     return {type: ActionTypes.EDIT_PERSON, id: id}
 }
 
-export function setPeopleFilter(filter, remove) {
-    return {type: ActionTypes.SET_PEOPLE_FILTER, filter: filter, state: remove};
+export function setPersonsFilter(filter, remove) {
+    return {type: ActionTypes.SET_PERSONS_FILTER, filter: filter, state: remove};
 }
 
-export function setPeopleSearch(search) {
-    return {type: ActionTypes.SET_PEOPLE_SEARCH, search: search};
+export function setPersonsSearch(search) {
+    return {type: ActionTypes.SET_PERSONS_SEARCH, search: search};
 }
 
-export function setPeopleSort(sort) {
-    return {type: ActionTypes.SET_PEOPLE_SORT, sort: sort};
+export function setPersonsSort(sort) {
+    return {type: ActionTypes.SET_PERSONS_SORT, sort: sort};
 }
 
 // remote db opp
