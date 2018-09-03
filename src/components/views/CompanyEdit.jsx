@@ -57,7 +57,7 @@ export default class CompanyEdit extends React.PureComponent {
                     <div className={'detail-body'}>
                         <div className={'detail-row'}>
                             <div className={'detail-group size-7'}>
-                                <div className={`detail-label${editedData.name !== undefined && selectedCompany  ? ' value-changed' : ''}`}>{'Company name:'}</div>
+                                <div className={`detail-label${typeof editedData.name !== 'undefined' && selectedCompany  ? ' value-changed' : ''}`}>{'Company name:'}</div>
                                 <Input className={`detail-input${this.state.validation.name ? ' invalid' : ''}`} onChange={this.handleNameChange} value={name}/>
                             </div>
                         </div>

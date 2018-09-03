@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Input } from 'reactstrap';
 import Select from 'react-select';
+import memoize from 'memoize-one';
 
 import * as ProjectStatus from '../../constants/ProjectStatus';
 
@@ -31,12 +32,16 @@ export default class ProjectEdit extends React.PureComponent {
     }
 
     render() {
-        const {selectedProject, editedData, projects} = this.props;
+        const {selectedProject, editedData, projects, users} = this.props;
 
         const name = editedData.name !== undefined ? editedData.name : !selectedProject ? '' : projects[selectedProject] ? projects[selectedProject].name : '';
         const status = editedData.status !== undefined ? editedData.status : projects[selectedProject] ? projects[selectedProject].status : null;
         const statusNote = editedData.statusNote !== undefined ? editedData.statusNote : projects[selectedProject] ? projects[selectedProject].statusNote : '';
-
+        const team = editedData.team !== undefined ? editedData.team : projects[selectedProject] ? projects[selectedProject].team : [];
+        const usersOptions = memoize(users => {
+            return Object.keys(users).map(user => {return {value: user, label: users[user].name}});
+        })(users);
+        console.log(usersOptions)
         return (
             <div className={'app-body'}>
                 <div className={'app-toolbox'}>
@@ -66,11 +71,11 @@ export default class ProjectEdit extends React.PureComponent {
                     <div className={'detail-body'}>
                         <div className={'detail-row'}>
                             <div className={'detail-group size-7'}>
-                                <div className={`detail-label${editedData.name !== undefined && selectedProject  ? ' value-changed' : ''}`}>{'Project name:'}</div>
+                                <div className={`detail-label${typeof editedData.name !== 'undefined' && selectedProject  ? ' value-changed' : ''}`}>{'Project name:'}</div>
                                 <Input className={`detail-input${this.state.validation.name ? ' invalid' : ''}`} onChange={this.handleNameChange} value={name}/>
                             </div>
                             <div className={'detail-group size-5'}>
-                                <div className={`detail-label${editedData.status !== undefined && selectedProject ? ' value-changed' : ''}`}>{'Project status:'}</div>
+                                <div className={`detail-label${typeof editedData.status !== 'undefined' && selectedProject ? ' value-changed' : ''}`}>{'Project status:'}</div>
                                 <Select
                                     options={statusOptions}
                                     value={{value: status, label: ProjectStatus[status] ? ProjectStatus[status].label : ''}}
@@ -89,11 +94,40 @@ export default class ProjectEdit extends React.PureComponent {
                         </div>
                         <div className={'detail-spacer'}/>
                         <div className={'detail-row'}>
-                            <div className={'detail-group size-6'}>
-                                <div className={`detail-label${editedData.statusNote !== undefined && selectedProject ? ' value-changed' : ''}`}>{'Client Companies:'}</div>
+                            <div className={'detail-group column size-6'}>
+                                <div className={`detail-label${editedData.team !== undefined && selectedProject ? ' value-changed' : ''}`}>
+                                    <span>{'Team'}</span>
+                                    <FontAwesomeIcon icon={'plus'}/>
+                                </div>
+                                {team.map((teamMember, i) => <div className={'team-member-line'} key={i}>
+                                    <FontAwesomeIcon className={'remove-line-icon'} icon={'trash-alt'}/>
+                                    <Select
+                                        options={usersOptions}
+                                        value={{value: teamMember.id, label: users[teamMember.id] ? users[teamMember.id].name : teamMember.id }}
+                                        isSearchable={true}
+                                        isMulti={false}
+                                        className={`detail-select`}
+                                        classNamePrefix={'detail-select'}
+                                    />
+                                    <Select
+                                        className={`detail-select`}
+                                        classNamePrefix={'detail-select'}
+                                    />
+                                </div>)}
                             </div>
-                            <div className={'detail-group size-6'}>
-                                <div className={`detail-label${editedData.statusNote !== undefined && selectedProject ? ' value-changed' : ''}`}>{'Client Persons:'}</div>
+                            <div className={'detail-group column size-6'}>
+                                <div className={`detail-label${editedData.team !== undefined && selectedProject ? ' value-changed' : ''}`}>
+                                    <span>{'Related projects'}</span>
+                                    <FontAwesomeIcon icon={'plus'}/>
+                                </div>
+                                <div>AAA</div>
+                                <div>{'A notes about relation'}</div>
+                            </div>
+                        </div>
+                        <div className={'detail-spacer'}/>
+                        <div className={'detail-row'}>
+                            <div className={'detail-group size-12'}>
+                                <div>{'AAAAAA'}</div>
                             </div>
                         </div>
                     </div>
