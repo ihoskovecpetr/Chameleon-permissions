@@ -9,6 +9,8 @@ import Fuse from 'fuse.js';
 import moment from 'moment';
 import Select from 'react-select';
 
+import {daysToString} from '../../lib/dateHelper';
+
 import memoize from 'memoize-one';
 
 const ICON_SORT = 'arrows-alt-v'; //sort
@@ -27,21 +29,28 @@ const ICON_PRODUCER = 'user-circle';
 const ICON_MANAGER = 'user';
 const ICON_SUPERVISOR = ['far', 'eye'];
 
+const DEBUG_TODAY = null; //+new Date(2018, 8, 1);
+
 import {ProjectsColumnDef, ActiveBidsColumnDef} from '../../constants/TableColumnsDef';
 const statusOptions = Object.keys(ProjectStatus).map(key => {return {value: key, label: ProjectStatus[key].label}});
+const serachKeysProjects = ['name', '$name', 'producer', 'manager', 'status'];
+const serachKeysBids = ['name', '$name', 'producer', 'manager', 'status'];
 
 export default class ProjectsList extends React.PureComponent {
 
     componentDidUpdate(prevProps) { //remove selected project if doesn't exist in filtered set
-        if(this.props.selectedProject && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.searchList(this.props.projects, this.filterList(this.props.projects, this.props.filter), this.props.search).indexOf(this.props.selectedProject) < 0) this.props.selectProject(null);
+        const searchKeys = this.props.activeBid ? serachKeysBids : serachKeysProjects;
+        if(this.props.selectedProject && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.searchList(this.props.projects, this.filterList(this.props.projects, this.props.filter), this.props.search, searchKeys).indexOf(this.props.selectedProject) < 0) this.props.selectProject(null);
     }
 
     render() {
         //console.log('RENDER PROJECTS LIST');
         const {selectedProject, projects, activeBid, filter, sort, search} = this.props;
 
+        const searchKeys = this.props.activeBid ? serachKeysBids : serachKeysProjects;
+
         const filteredProjectIds = this.filterList(projects, filter);
-        const searchedProjectIds = this.searchList(projects, filteredProjectIds, search);
+        const searchedProjectIds = this.searchList(projects, filteredProjectIds, search, searchKeys);
         const sortedProjectIds = this.sortList(projects, searchedProjectIds, sort);
 
         const userFilter = filter.indexOf(FilterTypes.USER_FILTER) >= 0;
@@ -119,11 +128,11 @@ export default class ProjectsList extends React.PureComponent {
 
     getTable = (columnDef, sortedProjectIds) => {
         return (
-            <Table className={`table-body${this.props.activeBid ? ' active-bid' : ''}`}>
+            <Table className={`table-body`}>
                 <tbody style={{borderBottom: '1px solid #dee2e6'}}>
                 {sortedProjectIds.map(projectId => <tr className={this.props.selectedProject === projectId ? 'selected' : ''} onClick = {event => this.rowClickHandler(event, projectId)} onDoubleClick={event => this.rowDoubleClickHandler(event, projectId)} key={projectId}>
                     {columnDef.map((column, i) =>
-                        <td key={i} className={`${column.className}${column.inline ? ' inline' : ''}${this.props.activeBid ? ' active-bid' : ''}`}>
+                        <td key={i} className={`${column.className}${column.inline ? ' inline' : ''}`}>
                             {this.getComputedField(column.field, this.props.projects[projectId], this.props.activeBid)}
                         </td>
                     )}
@@ -193,22 +202,15 @@ export default class ProjectsList extends React.PureComponent {
         }
     });
 
-    searchList = memoize((projects, ids, search) => {
+    searchList = memoize((projects, ids, search, keys) => {
         //console.log('SEARCH');
         if(search && search.trim()) {
-            const data = ids.map(id => {
-                return {
-                    _id: projects[id]._id,
-                    name: projects[id].name,
-                    $name: projects[id].$name,
-                    team: projects[id].team.map(member => this.props.users[member.id])
-                }
-            });
+            const data = ids.map(id => keys.reduce((mod, key) => ({...mod, [key]: this.getComputedField(key, projects[id])}) , {_id: id}));
             const fuse = new Fuse(data, {
                 verbose: false,
                 id: '_id',
                 findAllMatches: true,
-                keys: ['name', '$name', 'team.name']
+                keys: keys
             });
             return fuse.search(search.trim());
         } else return ids;
@@ -245,11 +247,11 @@ export default class ProjectsList extends React.PureComponent {
     };
 
     rowClickHandler = (event, projectId) => {
-        if(typeof event.target.className === 'string' && event.target.className.indexOf('table-select') < 0 && event.target.className.indexOf('table-button') < 0) this.selectProject(projectId);
+        if(typeof event.target.className === 'string' && event.target.className.indexOf('control-select') < 0 && event.target.className.indexOf('table-button') < 0) this.selectProject(projectId);
     };
 
     rowDoubleClickHandler = (event, projectId) => {
-        if(typeof event.target.className === 'string' && event.target.className.indexOf('table-select') < 0 && event.target.className.indexOf('table-button') < 0) event.altKey ? this.editProject(projectId) : this.showProject(projectId);
+        if(typeof event.target.className === 'string' && event.target.className.indexOf('control-select') < 0 && event.target.className.indexOf('table-button') < 0) event.altKey ? this.editProject(projectId) : this.showProject(projectId);
     };
 
     activeFilterHandler = () => {
@@ -323,11 +325,14 @@ export default class ProjectsList extends React.PureComponent {
     // ***************************************************
     getComputedField(field, project, editable) {
         switch(field) {
+            case 'producer':
+                if(!project || !project.producer) return '---';
+                if(this.props.users[project.producer]) return this.props.users[project.producer].name;
+                else return `id: ${project.producer}`;
             case 'manager':
-                if(!project || !project.team) return '---';
-                const manager = project.team.find(person => this.props.users[person.id] && this.props.users[person.id].role.indexOf('manager') <= 0);
-                if(manager) return this.props.users[manager.id].name;
-                else return '---';
+                if(!project || !project.manager) return '---';
+                if(this.props.users[project.manager]) return this.props.users[project.manager].name;
+                else return `id: ${project.manager}`;
 
             case 'status-order':
                 return ProjectStatus[project['status']] && ProjectStatus[project['status']].sortOrder ? ProjectStatus[project['status']].sortOrder.toString() : '0';
@@ -336,34 +341,43 @@ export default class ProjectsList extends React.PureComponent {
                 const status = ProjectStatus[project['status']] ? ProjectStatus[project['status']].label : '---';
                 return editable ?
                     <Select
-                        className={'table-select'}
+                        className={'control-select inline'}
                         options={statusOptions}
                         value={{value: project['status'], label: ProjectStatus[project['status']] ? ProjectStatus[project['status']].label : ''}}
                         onChange={option => this.handleStatusChange(project._id, option.value)}
                         isSearchable={false}
-                        classNamePrefix={'table-select'}
+                        classNamePrefix={'control-select'}
                     /> : status;
 
             case 'client': //find main client in company field [{id, role, note, rating}]
                 return '---';
 
             case 'team': //find producer, manager, supervisor in team field [{id, role}], icons + short names /not sortable anyway
-                return (
-                    <div className={'table-team'}>
-                        <div className={'team-member producer'}><FontAwesomeIcon icon={ICON_PRODUCER} fixedWidth/>{'M. Halamová'}</div>
-                        <div className={'team-member manager'}><FontAwesomeIcon icon={ICON_MANAGER} fixedWidth/>{'K. Kofránková'}</div>
-                        <div className={'team-member supervisor'}><FontAwesomeIcon icon={ICON_SUPERVISOR} fixedWidth/>{'M. Dubec'}</div>
-                    </div>
-                );
+                let producer = null;
+                let manager = null;
+                let supervisor = null;
+                if(project && project.producer) producer = this.props.users[project.producer] ? this.props.users[project.producer].name : `id: ${project.producer}`;
+                if(project && project.manager) manager = this.props.users[project.manager] ? this.props.users[project.manager].name : `id: ${project.manager}`;
+                if(project && project.supervisor) supervisor = this.props.users[project.supervisor] ? this.props.users[project.supervisor].name : `id: ${project.supervisor}`;
+                if(producer || manager || supervisor) {
+                    return (
+                        <div className={'table-team'}>
+                            {producer ? <div className={'team-member producer'}><FontAwesomeIcon icon={ICON_PRODUCER} fixedWidth/>{producer}</div> : null}
+                            {manager ? <div className={'team-member manager'}><FontAwesomeIcon icon={ICON_MANAGER} fixedWidth/>{manager}</div> : null}
+                            {supervisor ? <div className={'team-member supervisor'}><FontAwesomeIcon icon={ICON_SUPERVISOR} fixedWidth/>{supervisor}</div> : null}
+                        </div>
+                    );
+                } else return '---';
 
             case 'budget': //find current budget in budget field {booking, client, sent, ballpark: {from, to}}, get discount %, normalize currency '10000 USD 10%' or '10000 - 20000 USD' etc
                 return '10.000 USD [10%]';
 
             case 'go-ahead': //find go ahead from timing [{date, text, category}] in days to go ahead /colors?/
-                return '---';
+                const goAhead = daysToString(-300);//daysToString(project ? project.goAhead : null, DEBUG_TODAY, false); //TODO synthesize goAhead from timing
+                return goAhead;
 
             case 'last-contact': //last contact in days passed this - colors?
-                const lastContact = project && project.lastContact ? moment(project.lastContact).format('D.M.Y H:mm:ss') : 'Not Set';
+                const lastContact = daysToString(project ? project.lastContact : null, DEBUG_TODAY, true);
                 return editable ? <div onClick={() => this.handleRestLastContact(project._id)} className={'table-button'}>{lastContact}</div> : lastContact;
 
             default: return project && project[field] ? project[field] : '---';

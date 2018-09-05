@@ -1,21 +1,17 @@
+$detail-font-size: 1rem;
+
 $detail-body-padding-horizontal: $app-padding-horizontal;
 $detail-body-background-color: #c3c3c3;
 $detail-body-color: #0f0f0f;
 
-$detail-control-height: 1.8rem;
-$detail-control-padding-horizontal: 0.5rem;
-$detail-control-padding-vertical: 0.1rem;
-$detail-control-focus-color: $app-header-background-color;
-
-$detail-label-width: 8rem;
 $detail-group-padding-horizontal: 0.8rem;
-$detail-group-padding-vertical: 0.2rem;
+$detail-group-padding-vertical: 0.3rem;
 
 .detail-body {
   color: $detail-body-color;
   background-color: $detail-body-background-color;
   padding: $detail-body-padding-horizontal;
-  font-size: 1rem;
+  font-size: $detail-font-size;
   width: 100%;
   margin-bottom: 0;
   .detail-spacer {
@@ -51,6 +47,13 @@ $detail-group-padding-vertical: 0.2rem;
       &.size-11 {flex: 0 0 91.6667%; max-width: 91.6661%}
       &.size-12 {flex: 0 0 100%; max-width: 100%}
       @include media("<=tablet") {
+        &.size-1 {flex: 0 0 16.6666%; max-width: 16.6666%}
+        &.size-2 {flex: 0 0 25%; max-width: 25%}
+        &.size-3 {flex: 0 0 33.3333%; max-width: 33.3333%}
+        &.size-4 {flex: 0 0 50%; max-width: 50%}
+        &.size-5, &.size-6, &.size-7, &.size-8, &.size-9, &.size-10, &.size-11, &.size-12 {flex: 0 0 100%; max-width: 100%}
+      }
+      @include media("<=phone") {
         flex: 0 0 100%;
         max-width: 100%;
         min-width: 100%;
@@ -58,24 +61,12 @@ $detail-group-padding-vertical: 0.2rem;
       @include media("<=small-phone") {
         flex-wrap: wrap;
       }
-      .detail-label {
-        display: flex;
-        flex-direction: row;
-        flex: 0 0 $detail-label-width;
-        max-width: $detail-label-width;
-        min-width: $detail-label-width;
-        white-space: nowrap;
-        &.value-changed {
-          color: lighten($app-header-background-color, 15%);
-        }
-      }
-      &.column {
-        flex-direction: column;
-        align-items: flex-start;
-        .detail-label {
-          flex: 0 0 auto;
-          max-width: none;
-          min-width: 0;
+      .column-wrapper {
+        width: 100%;
+        & > * {
+          &:not(:last-child) {
+            margin-bottom: 0.1rem;
+          }
         }
       }
       .team-member-line {
@@ -95,102 +86,7 @@ $detail-group-padding-vertical: 0.2rem;
   }
 }
 
-.detail-input {
-  font-size: 1rem;
-  font-style: normal;
-  height: $detail-control-height;
-  padding: $detail-control-padding-vertical $detail-control-padding-horizontal;
-  background-color: #f0f0f0;
-  border-color: #9b9b9b;
-  border-radius: 0.2rem;
-  //margin-bottom: 0.5rem;
-  //&::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-  //  color: #a0a0a0;
-  //  opacity: 1; /* Firefox */
-  //  font-style: italic;
-  //}
-  //&:-ms-input-placeholder { /* Internet Explorer 10-11 */
-  //  color: #555555;
-  //}
-  //&::-ms-input-placeholder { /* Microsoft Edge */
-  //  color: #555555;
-  //}
-
-  &.invalid {
-    background-color: #f5d3d7;
-  }
-  &:focus {
-    color: #495057;
-    border-color: lighten($detail-control-focus-color, 50%);
-    outline: 0;
-    box-shadow: 0 0 0 0.06rem lighten($detail-control-focus-color, 30%);
-  }
-
-  &:disabled {
-    background-color: #e6e6e6;
-  }
-
-  &.readonly {
-    background-color: $detail-body-background-color;
-  }
-}
-.detail-select {
-  //margin-bottom: 0.5rem;
-  width: 100%;
-  &:not(:last-child) {margin-right: 0.5rem;}
-  .detail-select__control {
-    min-height: $detail-control-height;
-    font-size: 1rem;
-    font-style: normal;
-    height: $detail-control-height;
-    padding: 0;
-
-    background-color: #f0f0f0;
-    border-color: #9b9b9b;
-    border-radius: 0.2rem;
 
 
-    &.detail-select__control--is-focused {
-      color: #495057;
-      border-color: lighten($detail-control-focus-color, 50%);
-      outline: 0;
-      box-shadow: 0 0 0 0.06rem lighten($detail-control-focus-color, 30%);
-    }
-    .detail-select__value-container {
-      padding: $detail-control-padding-vertical ($detail-control-padding-horizontal - 0.15rem);
-    }
-    .detail-select__indicators {
-      .detail-select__indicator-separator {
-        margin: 0.3rem 0;
-      }
-      .detail-select__indicator {
-        &.detail-select__dropdown-indicator {
-          padding: 0.15rem;
-        }
-      }
-    }
-  }
-  &.invalid .detail-select__control {
-    background-color: #f5d3d7;
-  }
-  .detail-select__menu {
-    margin-top: 0.15rem;
-    .detail-select__menu-list {
-      border-radius: 0.2rem;
-      padding: 0.2rem 0;
-      .detail-select__option {
-        margin: 0;
-        padding: $detail-control-padding-vertical $detail-control-padding-horizontal;
-
-        &.detail-select__option--is-focused {
-          background-color: rgba(lighten($app-header-background-color, 50%), 0.4);
-        }
-        &.detail-select__option--is-selected {
-          background-color: lighten($app-header-background-color, 10%);
-        }
-      }
-    }
-  }
-}
 
 

@@ -187,11 +187,11 @@ export default class CompaniesList extends React.PureComponent {
     // HANDLERS
     // ***************************************************
     rowClickHandler = (event, companyId) => {
-        if(typeof event.target.className === 'string' && event.target.className.indexOf('table-select') < 0 && event.target.className.indexOf('table-button') < 0) this.selectCompany(companyId);
+        if(typeof event.target.className === 'string' && event.target.className.indexOf('control-select') < 0 && event.target.className.indexOf('table-button') < 0) this.selectCompany(companyId);
     };
 
     rowDoubleClickHandler = (event, companyId) => {
-        if(typeof event.target.className === 'string' && event.target.className.indexOf('table-select') < 0 && event.target.className.indexOf('table-button') < 0) event.altKey ? this.editCompany(companyId) : this.showCompany(companyId);
+        if(typeof event.target.className === 'string' && event.target.className.indexOf('control-select') < 0 && event.target.className.indexOf('table-button') < 0) event.altKey ? this.editCompany(companyId) : this.showCompany(companyId);
     };
 
     searchInputHandler = (event) => {

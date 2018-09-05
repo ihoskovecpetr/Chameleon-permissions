@@ -1,0 +1,41 @@
+
+$last-contact-cursor-clock: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 580"><g><ellipse cx="290" cy="290" rx="290" ry="290" style="fill:#eeeeee;"/></g><g transform="translate(34,34)"><path d="M256,8C119,8 8,119 8,256C8,393 119,504 256,504C393,504 504,393 504,256C504,119 393,8 256,8ZM313.1,358.1L224.9,294C221.8,291.7 220,288.1 220,284.3L220,116C220,109.4 225.4,104 232,104L280,104C286.6,104 292,109.4 292,116L292,253.7L355.5,299.9C360.9,303.8 362,311.3 358.1,316.7L329.9,355.5C326,360.8 318.5,362 313.1,358.1Z" style="fill:#222222;"/></g></svg>';
+
+//  Helper function to replace characters in a string
+@function str-replace($string, $search, $replace: '') {
+  $index: str-index($string, $search);
+  @return if($index, str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace), $string);
+}
+
+@function svg-url($svg, $size){
+  @if not str-index($svg,xmlns) {
+    $svg: str-replace($svg, '<svg','<svg xmlns="http://www.w3.org/2000/svg"');
+  }
+  @if not str-index($svg, width) {
+    $svg: str-replace($svg, 'viewBox','width="#{$size}px" height="#{$size}px" viewBox');
+  }
+  $encoded:'';
+  $slice: 2000;
+  $index: 0;
+  $loops: ceil(str-length($svg)/$slice);
+  @for $i from 1 through $loops {
+    $chunk: str-slice($svg, $index, $index + $slice - 1);
+
+    $chunk: str-replace($chunk,'"', '\'');
+    $chunk: str-replace($chunk,'%', '%25');
+    $chunk: str-replace($chunk,'&', '%26');
+    $chunk: str-replace($chunk,'#', '%23');
+    $chunk: str-replace($chunk,'{', '%7B');
+    $chunk: str-replace($chunk,'}', '%7D');
+    $chunk: str-replace($chunk,'<', '%3C');
+    $chunk: str-replace($chunk,'>', '%3E');
+
+    $encoded: #{$encoded}#{$chunk};
+    $index: $index + $slice;
+  }
+  @return url("data:image/svg+xml,#{$encoded}")
+}
+
+@mixin cursor-svg($svg, $size, $fallback){
+  cursor: svg-url($svg, $size) ceil($size/2) ceil($size/2), $fallback;
+}

@@ -2,19 +2,25 @@ export const ProjectsColumnDef = [
     {
         field: 'name',
         label: 'Project Name',
-        className: 'projects-name',
+        className: 'project-name',
         sort: 'name'
+    },
+    {
+        field: 'producer',
+        label: 'Project Producer',
+        className: 'project-producer',
+        sort: 'producer'
     },
     {
         field: 'manager',
         label: 'Project Manager',
-        className: 'projects-manager',
+        className: 'project-manager',
         sort: 'manager'
     },
     {
         field: 'status',
         label: 'Status',
-        className: 'projects-status',
+        className: 'project-status',
         sort: 'status'
     }
 ];
@@ -23,44 +29,44 @@ export const ActiveBidsColumnDef = [
     {
         field: 'name',
         label: 'Project Name',
-        className: 'projects-name',
+        className: 'bid-name',
         sort: 'name'
     },
     {
         field: 'client',
         label: 'Client',
-        className: 'projects-client',
+        className: 'bid-client',
         sort: 'client'
     },
     {
         field: 'team',
         label: 'Team',
-        className: 'projects-team',
+        className: 'bid-team',
         sort: null
     },
     {
         field: 'status',
         label: 'Status',
-        className: 'projects-status',
+        className: 'bid-status',
         sort: 'status',
         inline: true
     },
     {
         field: 'budget',
         label: 'Budget',
-        className: 'projects-budget',
+        className: 'bid-budget',
         sort: null
     },
     {
         field: 'go-ahead',
         label: 'Go Ahead',
-        className: 'projects-go-ahead',
+        className: 'bid-go-ahead',
         sort: 'go-ahead'
     },
     {
         field: 'last-contact',
         label: 'Contacted',
-        className: 'projects-last-contact',
+        className: 'bid-last-contact',
         sort: 'last-contact',
         inline: true
     }
@@ -70,7 +76,7 @@ export const CompaniesColumnDef = [
     {
         field: 'name',
         label: 'Company Name',
-        className: 'companies-name',
+        className: 'company-name',
         sort: 'name'
     }
 ];
