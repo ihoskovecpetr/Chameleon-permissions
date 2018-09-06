@@ -1,4 +1,14 @@
 import moment from 'moment';
+/*
+moment.updateLocale('en', {
+    relativeTime : {
+        future: '> %s',
+        past: '%s <'
+    }
+});
+*/
+
+//moment.now = () => +new Date(2025, 10, 7);
 
 export function daysToString(date, today, before) {
     if(!date) return '---';

@@ -14,13 +14,14 @@ $detail-group-padding-vertical: 0.3rem;
   font-size: $detail-font-size;
   width: 100%;
   margin-bottom: 0;
-  .detail-spacer {
-    width: 100%;
-    margin: 0.5rem 0;
-    height: 1px;
-    background-color: #9c9c9c;
-  }
   .detail-row {
+    &.spacer::before {
+      content: '';
+      width: 100%;
+      margin: 0.5rem $detail-group-padding-horizontal;
+      height: 1px;
+      background-color: #9c9c9c;
+    }
     display: flex;
     flex: 0 0 100%;
     min-width: 100%;
@@ -28,12 +29,25 @@ $detail-group-padding-vertical: 0.3rem;
     flex-wrap: wrap;
     margin: 0 -1* $detail-group-padding-horizontal;
     .detail-group {
+      &.spacer::before {
+        content: '';
+        width: 100%;
+        margin: 0.5rem 0;
+        height: 1px;
+        background-color: #9c9c9c;
+      }
       display: flex;
       flex-direction: row;
       align-items: center;
       padding: $detail-group-padding-vertical $detail-group-padding-horizontal;
       flex: 0 0 100%;
       max-width: 100%;
+      &.column {
+        flex-direction: column;
+        align-items: flex-start;
+        justify-items: flex-start;
+      }
+
       &.size-1 {flex: 0 0 8.3333%; max-width: 8.3333%}
       &.size-2 {flex: 0 0 16.6666%; max-width: 16.6667%}
       &.size-3 {flex: 0 0 25%; max-width: 25%}
@@ -61,7 +75,7 @@ $detail-group-padding-vertical: 0.3rem;
       @include media("<=small-phone") {
         flex-wrap: wrap;
       }
-      .column-wrapper {
+      .column-wrapper { //supervisor2.....
         width: 100%;
         & > * {
           &:not(:last-child) {
@@ -69,18 +83,53 @@ $detail-group-padding-vertical: 0.3rem;
           }
         }
       }
-      .team-member-line {
-        width: 100%;
+      .detail-array-line {
         display: flex;
-        flex-direction: row;
-        .remove-line-icon {
-          margin-right: 0.5rem;
-          margin-top: 0.4rem;
+        width: 100%;
+        margin-bottom: 0.1em;
+        flex-wrap: nowrap;
+        align-items: flex-start;
+        &:not(:last-child) {
+          margin-bottom: 0.3em;
+        }
+        .remove-icon {
+          margin-right: 0.5em;
           cursor: pointer;
-          &:hover {
-            color: darkred;
+          color: #4b4b4b;
+          margin-top: 0.4em;
+        }
+        .line-content {
+          display: flex;
+          flex: 1 1 auto;
+          flex-wrap: wrap;
+          margin-right: -0.3em;
+          & > * {
+            flex-basis: auto;
+            flex-grow: 1;
+            //&:not(:last-child) {
+              margin-right: 0.3em;
+            //}
+          }
+          .name {
+            width: 30%;
+            @include media("<=tablet") {width: 45%}
+            @include media("<=phone") {width: 100%}
+          }
+          .role {
+            width: 30%;
+            @include media("<=tablet") {width: 45%}
+            @include media("<=phone") {width: 100%}
+          }
+          .rating {
+            width: 30%;
+            @include media("<=tablet") {width: 45%}
+            @include media("<=phone") {width: 100%}
+          }
+          .note {
+            width: 25%;
           }
         }
+
       }
     }
   }

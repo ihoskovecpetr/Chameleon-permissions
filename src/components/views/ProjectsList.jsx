@@ -29,12 +29,10 @@ const ICON_PRODUCER = 'user-circle';
 const ICON_MANAGER = 'user';
 const ICON_SUPERVISOR = ['far', 'eye'];
 
-const DEBUG_TODAY = null; //+new Date(2018, 8, 1);
-
 import {ProjectsColumnDef, ActiveBidsColumnDef} from '../../constants/TableColumnsDef';
 const statusOptions = Object.keys(ProjectStatus).map(key => {return {value: key, label: ProjectStatus[key].label}});
 const serachKeysProjects = ['name', '$name', 'producer', 'manager', 'status'];
-const serachKeysBids = ['name', '$name', 'producer', 'manager', 'status'];
+const serachKeysBids = serachKeysProjects;
 
 export default class ProjectsList extends React.PureComponent {
 
@@ -373,11 +371,11 @@ export default class ProjectsList extends React.PureComponent {
                 return '10.000 USD [10%]';
 
             case 'go-ahead': //find go ahead from timing [{date, text, category}] in days to go ahead /colors?/
-                const goAhead = daysToString(-300);//daysToString(project ? project.goAhead : null, DEBUG_TODAY, false); //TODO synthesize goAhead from timing
+                const goAhead = daysToString(-300);//daysToString(project ? project.goAhead : null, null, false); //TODO synthesize goAhead from timing
                 return goAhead;
 
             case 'last-contact': //last contact in days passed this - colors?
-                const lastContact = daysToString(project ? project.lastContact : null, DEBUG_TODAY, true);
+                const lastContact = daysToString(project ? project.lastContact : null, null, true);
                 return editable ? <div onClick={() => this.handleRestLastContact(project._id)} className={'table-button'}>{lastContact}</div> : lastContact;
 
             default: return project && project[field] ? project[field] : '---';

@@ -26,7 +26,7 @@ $table-header-font-size: $table-row-font-size;
 }
 
 .table-body {
-  overflow: hidden;
+  //overflow: hidden;
   color: $data-body-color;
   background-color: $data-body-background-color;
   font-size: 1rem;
@@ -167,7 +167,7 @@ $table-header-font-size: $table-row-font-size;
   &.bid-go-ahead {
     width: 8em;
     min-width: 8em;
-    &:not(th) {text-align: center;}
+    //&:not(th) {text-align: center;}
     @include media("<=phone") {
       display: none;
     }
