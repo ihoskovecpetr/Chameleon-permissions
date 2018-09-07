@@ -152,12 +152,15 @@ export default class ProjectsList extends React.PureComponent {
                         break;
 
                     case FilterTypes.USER_FILTER:
-                        if(project.team && Array.isArray(project.team) && project.team.length > 0) {
-                            for(const teamMember of project.team) {
-                                if(teamMember.id === this.props.user.id) return true;
-                            }
-                        }
-                        return false;
+                        const producer = project.producer ? project.producer === this.props.user.id : false;
+                        const manager = project.manager ? project.manager === this.props.user.id : false;
+                        const supervisor = project.supervisor ? project.supervisor === this.props.user.id : false;
+                        const supervisor2 = project.supervisor2 ? project.supervisor2 === this.props.user.id : false;
+                        const lead2D = project.lead2D ? project.lead2D === this.props.user.id : false;
+                        const lead3D = project.lead3D ? project.lead3D === this.props.user.id : false;
+                        const leadMP = project.leadMP ? project.leadMP === this.props.user.id : false;
+                        if(!(producer || manager || supervisor || supervisor2 || lead2D || lead3D || leadMP)) return false;
+                        break;
                 }
             }
             return true;
@@ -333,7 +336,10 @@ export default class ProjectsList extends React.PureComponent {
                     /> : status;
 
             case 'client': //find main client in company field [{id, role, note, rating}]
-                return '---';
+                if(!project || !project.company || project.company.length === 0) return '---';
+                let company = project.company.find(c => c.role.indexOf('MAIN') >= 0);
+                if(!company) company = project.company[0];
+                return this.props.companies[company.id] ? this.props.companies[company.id].name : '---';
 
             case 'team': //find producer, manager, supervisor in team field [{id, role}], icons + short names /not sortable anyway
                 let producer = null;
