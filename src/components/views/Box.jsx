@@ -3,7 +3,7 @@ import { Table } from 'reactstrap';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const ICON_TRASH = 'trash-alt';
+import * as Icons from '../../constants/Icons';
 
 export default class Box extends React.PureComponent {
 
@@ -15,7 +15,7 @@ export default class Box extends React.PureComponent {
                 <div className={'app-toolbox'}>
                     <div className={'inner-container'}>
                         <div className={'toolbox-group'}>
-                            <div onClick={box.length > 0 ? this.props.emptyBox : undefined} className={`tool-box-button red${box.length > 0 ? '' : ' disabled'}`}><FontAwesomeIcon icon={ICON_TRASH}/>{'Empty Box'}</div>
+                            <div onClick={box.length > 0 ? this.props.emptyBox : undefined} className={`tool-box-button red${box.length > 0 ? '' : ' disabled'}`}><FontAwesomeIcon icon={Icons.ICON_TRASH}/>{'Empty Box'}</div>
                         </div>
                     </div>
                 </div>
@@ -39,7 +39,7 @@ export default class Box extends React.PureComponent {
                             }
                             return (
                             <tr key={id} style={{cursor: 'default'}}>
-                                <td className={'projects-name'}><FontAwesomeIcon style={{cursor: 'pointer', marginRight: '0.5rem'}} onClick={() => this.removeFromBox(id)} icon={ICON_TRASH}/>{`${type} | Name: ${object.name}`}</td>
+                                <td className={'projects-name'}><FontAwesomeIcon style={{cursor: 'pointer', marginRight: '0.5rem'}} onClick={() => this.removeFromBox(id)} icon={Icons.ICON_TRASH}/>{`${type} | Name: ${object.name}`}</td>
                             </tr>)
                         })}
                         </tbody>

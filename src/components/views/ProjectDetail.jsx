@@ -1,18 +1,10 @@
 import React, {Fragment} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Scrollbars } from 'react-custom-scrollbars';
-import { Input, Col,  Row, Label, FormGroup } from 'reactstrap';
-import Select from 'react-select';
-import * as ViewTypes from '../../constants/ViewTypes';
+import { Input } from 'reactstrap';
+
 import * as ProjectStatus from '../../constants/ProjectStatus';
-
-const statusOptions = Object.keys(ProjectStatus).map(key => {return {value: ProjectStatus[key].key, label: ProjectStatus[key].label}});
-
-const ICON_REMOVE = 'trash';
-const ICON_CHECKBOX_CHECKED = ['far','check-square'];
-const ICON_CHECKBOX_UNCHECKED = ['far', 'square'];
-
-const ICON_BOX = 'box-open';
+import * as Icons from "../../constants/Icons";
 
 export default class ProjectDetail extends React.PureComponent {
     constructor(props) {
@@ -38,11 +30,11 @@ export default class ProjectDetail extends React.PureComponent {
                         {!this.props.editProject ? null :
                             <div onClick={this.edit} className={`tool-box-button`}>{'Edit'}</div>
                         }
-                        <div onClick={this.addToBox} className={`tool-box-button icon box blue`}><FontAwesomeIcon icon={ICON_BOX}/></div>
+                        <div onClick={this.addToBox} className={`tool-box-button blue`}><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW_RIGHT}/><FontAwesomeIcon icon={Icons.ICON_BOX}/></div>
                         {!this.props.removeProject ? null :
                             <Fragment>
                                 <div onClick={!this.state.removeArmed ? undefined : this.remove} className={`tool-box-button remove red${!this.state.removeArmed ? ' disabled' : ''}`}>{'Remove Project'}</div>
-                                <FontAwesomeIcon className={`tool-box-checkbox`} onClick={this.handleRemoveArmed} icon={this.state.removeArmed ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED} style={{cursor: 'pointer'}}/>
+                                <FontAwesomeIcon className={`tool-box-checkbox`} onClick={this.handleRemoveArmed} icon={this.state.removeArmed ? Icons.ICON_CHECKBOX_CHECKED : Icons.ICON_CHECKBOX_UNCHECKED} style={{cursor: 'pointer'}}/>
                             </Fragment>
                         }
                     </div>
@@ -60,7 +52,7 @@ export default class ProjectDetail extends React.PureComponent {
                             </div>
                             <div className={'detail-group size-5'}>
                                 <div className={`detail-label`}>{'Project status:'}</div>
-                                <Input disabled={true} className={'detail-input readonly'} value={ProjectStatus[project.status].label}/>
+                                <Input disabled={true} className={'detail-input readonly'} value={ProjectStatus[project.status] ? ProjectStatus[project.status].label : project.status}/>
                             </div>
                         </div>
                         <div className={'detail-row'}>

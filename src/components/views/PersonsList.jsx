@@ -5,16 +5,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Input } from 'reactstrap';
 import Fuse from 'fuse.js';
 
+import * as Icons from '../../constants/Icons';
+
 import memoize from 'memoize-one';
-
-const ICON_SORT = 'arrows-alt-v'; //sort
-const ICON_SORT_UP = 'long-arrow-alt-up'; //sort-up
-const ICON_SORT_DOWN = 'long-arrow-alt-down'; //sort-down
-
-const ICON_SEARCH = 'search';
-const ICON_CLEAR = 'times';
-
-const ICON_BOX = 'box-open';
 
 
 import {PersonsColumnDef} from '../../constants/TableColumnsDef';
@@ -41,15 +34,15 @@ export default class PersonsList extends React.PureComponent {
                             <div onClick={this.addPerson} className={'tool-box-button green'}>{'New'}</div>
                             <div onClick={selectedPerson ? () => this.showPerson() : undefined} className={`tool-box-button${selectedPerson ? '' : ' disabled'}`}>{'Show'}</div>
                             <div onClick={selectedPerson ? () => this.editPerson() : undefined} className={`tool-box-button${selectedPerson ? '' : ' disabled'}`}>{'Edit'}</div>
-                            <div onClick={selectedPerson ? this.addToBox : undefined} className={`tool-box-button icon box blue${selectedPerson ? '' : ' disabled'}`}><FontAwesomeIcon icon={ICON_BOX}/></div>
+                            <div onClick={selectedPerson ? this.addToBox : undefined} className={`tool-box-button blue${selectedPerson ? '' : ' disabled'}`}><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW_RIGHT}/><FontAwesomeIcon icon={Icons.ICON_BOX}/></div>
                         </div>
                     </div>
                     <div className={'inner-container flex'}>
                         <div className={'toolbox-group right-auto'}>
                             <div className={'tool-box-search-container'}>
-                                <div className={'icon search'}><FontAwesomeIcon icon={ICON_SEARCH}/></div>
+                                <div className={'icon search'}><FontAwesomeIcon icon={Icons.ICON_SEARCH}/></div>
                                 <Input value={search} onChange={this.searchInputHandler} className={`input-search`}/>
-                                <div className={'icon clear'} onClick={this.clearSearchInputHanler}><FontAwesomeIcon icon={ICON_CLEAR}/></div>
+                                <div className={'icon clear'} onClick={this.clearSearchInputHanler}><FontAwesomeIcon icon={Icons.ICON_CLEAR}/></div>
                             </div>
                         </div>
                     </div>
@@ -74,7 +67,7 @@ export default class PersonsList extends React.PureComponent {
                 {columnDef.map((column, i) =>
                     <th key={i} className={column.className}>
                         {column.sort ? <FontAwesomeIcon
-                            icon={this.props.sort === column.sort ? ICON_SORT_UP : this.props.sort === `-${column.sort}` ? ICON_SORT_DOWN : ICON_SORT}
+                            icon={this.props.sort === column.sort ? Icons.ICON_SORT_UP : this.props.sort === `-${column.sort}` ? Icons.ICON_SORT_DOWN : Icons.ICON_SORT}
                             onClick={() => this.handleSort(column.sort)}
                             className={`sort-icon${this.props.sort.indexOf(column.sort) < 0 ? ' not-set' : ''}`}
                         /> : null}

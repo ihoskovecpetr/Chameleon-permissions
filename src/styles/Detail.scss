@@ -1,4 +1,4 @@
-$detail-font-size: 1rem;
+$detail-font-size: 0.9rem;
 
 $detail-body-padding-horizontal: $app-padding-horizontal;
 $detail-body-background-color: #c3c3c3;
@@ -6,6 +6,8 @@ $detail-body-color: #0f0f0f;
 
 $detail-group-padding-horizontal: 0.8rem;
 $detail-group-padding-vertical: 0.3rem;
+
+$detail-array-line-control-space: 0.5em;
 
 .detail-body {
   color: $detail-body-color;
@@ -86,7 +88,7 @@ $detail-group-padding-vertical: 0.3rem;
       .detail-array-line {
         display: flex;
         width: 100%;
-        margin-bottom: 0.1em;
+        margin-bottom: 0.3em;
         flex-wrap: nowrap;
         align-items: flex-start;
         &:not(:last-child) {
@@ -94,39 +96,68 @@ $detail-group-padding-vertical: 0.3rem;
         }
         .remove-icon {
           margin-right: 0.5em;
+          width: 1em;
           cursor: pointer;
           color: #4b4b4b;
           margin-top: 0.4em;
         }
         .line-content {
           display: flex;
-          flex: 1 1 auto;
+          width: 100%;
+          //flex: 1 1 auto;
           flex-wrap: wrap;
-          margin-right: -0.3em;
+          margin-right: -$detail-array-line-control-space;
           & > * {
             flex-basis: auto;
             flex-grow: 1;
-            //&:not(:last-child) {
-              margin-right: 0.3em;
-            //}
+            margin-right: $detail-array-line-control-space;
+            margin-bottom: 1px;
           }
-          .name {
-            width: 30%;
-            @include media("<=tablet") {width: 45%}
+          .company-name {
+            width: calc(25% - #{$detail-array-line-control-space});
+            @include media("<=tablet") {width: calc(50% - #{$detail-array-line-control-space});}
             @include media("<=phone") {width: 100%}
           }
-          .role {
-            width: 30%;
-            @include media("<=tablet") {width: 45%}
+          .company-role {
+            width: calc(25% - #{$detail-array-line-control-space});
+            @include media("<=tablet") {width: calc(50% - #{$detail-array-line-control-space});}
             @include media("<=phone") {width: 100%}
           }
-          .rating {
-            width: 30%;
-            @include media("<=tablet") {width: 45%}
+          .company-rating {
+            width: calc(25% - #{$detail-array-line-control-space});
+            @include media("<=tablet") { width: calc(50% - #{$detail-array-line-control-space});}
             @include media("<=phone") {width: 100%}
           }
-          .note {
-            width: 25%;
+          .company-note {
+            width: calc(25% - #{$detail-array-line-control-space});
+            @include media("<=tablet") { width: calc(50% - #{$detail-array-line-control-space});}
+            @include media("<=phone") {width: 100%}
+          }
+
+          .person-name {
+            width: calc(25% - #{$detail-array-line-control-space});
+            @include media("<=tablet") {width: calc(50% - #{$detail-array-line-control-space});}
+            @include media("<=phone") {width: 100%}
+          }
+          .person-role {
+            width: calc(16.6% - #{$detail-array-line-control-space});
+            @include media("<=tablet") {width: calc(50% - #{$detail-array-line-control-space});}
+            @include media("<=phone") {width: 100%}
+          }
+          .person-rating {
+            width: calc(16.6% - #{$detail-array-line-control-space});
+            @include media("<=tablet") { width: calc(33.3% - #{$detail-array-line-control-space});}
+            @include media("<=phone") {width: 100%}
+          }
+          .person-profession {
+            width: calc(16.7% - #{$detail-array-line-control-space});
+            @include media("<=tablet") { width: calc(33.3% - #{$detail-array-line-control-space});}
+            @include media("<=phone") {width: 100%}
+          }
+          .person-note {
+            width: calc(25% - #{$detail-array-line-control-space});
+            @include media("<=tablet") { width: calc(33.4% - #{$detail-array-line-control-space});}
+            @include media("<=phone") {width: 100%}
           }
         }
 

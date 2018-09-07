@@ -102,6 +102,8 @@ export default class AppLayout extends React.PureComponent {
                         updateProject={this.props.updateProject}
                         createProject={this.props.createProject}
                         removeProject={this.props.removeProject}
+
+                        box = {this.props.appState.box}
                     />;
                 break;
             case ViewTypes.BOX:

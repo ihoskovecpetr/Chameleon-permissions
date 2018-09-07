@@ -10,24 +10,9 @@ import moment from 'moment';
 import Select from 'react-select';
 
 import {daysToString} from '../../lib/dateHelper';
+import * as Icons from '../../constants/Icons';
 
 import memoize from 'memoize-one';
-
-const ICON_SORT = 'arrows-alt-v'; //sort
-const ICON_SORT_UP = 'long-arrow-alt-up'; //sort-up
-const ICON_SORT_DOWN = 'long-arrow-alt-down'; //sort-down
-
-const ICON_CHECKBOX_CHECKED = ['far','check-circle'];
-const ICON_CHECKBOX_UNCHECKED = ['far', 'circle'];
-
-const ICON_SEARCH = 'search';
-const ICON_CLEAR = 'times';
-
-const ICON_BOX = 'box-open';
-
-const ICON_PRODUCER = 'user-circle';
-const ICON_MANAGER = 'user';
-const ICON_SUPERVISOR = ['far', 'eye'];
 
 import {ProjectsColumnDef, ActiveBidsColumnDef} from '../../constants/TableColumnsDef';
 const statusOptions = Object.keys(ProjectStatus).map(key => {return {value: key, label: ProjectStatus[key].label}});
@@ -65,24 +50,24 @@ export default class ProjectsList extends React.PureComponent {
                             <div onClick={this.addProject} className={'tool-box-button green'}>{'New'}</div>
                             <div onClick={selectedProject ? () => this.showProject() : undefined} className={`tool-box-button${selectedProject ? '' : ' disabled'}`}>{'Show'}</div>
                             <div onClick={selectedProject ? () => this.editProject() : undefined} className={`tool-box-button${selectedProject ? '' : ' disabled'}`}>{'Edit'}</div>
-                            <div onClick={selectedProject ? this.addToBox : undefined} className={`tool-box-button icon box blue${selectedProject ? '' : ' disabled'}`}><FontAwesomeIcon icon={ICON_BOX}/></div>
+                            <div onClick={selectedProject ? this.addToBox : undefined} className={`tool-box-button blue${selectedProject ? '' : ' disabled'}`}><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW_RIGHT}/><FontAwesomeIcon icon={Icons.ICON_BOX}/></div>
                         </div>
                     </div>
                     <div className={'inner-container flex'}>
                         <div className={'toolbox-group right-auto'}>
                             <div className={'tool-box-search-container'}>
-                                <div className={'icon search'}><FontAwesomeIcon icon={ICON_SEARCH}/></div>
+                                <div className={'icon search'}><FontAwesomeIcon icon={Icons.ICON_SEARCH}/></div>
                                 <Input value={search} onChange={this.searchInputHandler} className={`input-search`}/>
-                                <div className={'icon clear'} onClick={this.clearSearchInputHanler}><FontAwesomeIcon icon={ICON_CLEAR}/></div>
+                                <div className={'icon clear'} onClick={this.clearSearchInputHanler}><FontAwesomeIcon icon={Icons.ICON_CLEAR}/></div>
                             </div>
                         </div>
                         <div className={'toolbox-group'}>
-                            <div onClick={this.userFilterHandler} className={`tool-box-button-switch`}><FontAwesomeIcon className={'check'} icon={userFilter ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/><span className={`text`}>{'My'}</span></div>
+                            <div onClick={this.userFilterHandler} className={`tool-box-button-switch`}><FontAwesomeIcon className={'check'} icon={userFilter ? Icons.ICON_CHECKBOX_FILTER_CHECKED : Icons.ICON_CHECKBOX_FILTER_UNCHECKED}/><span className={`text`}>{'My'}</span></div>
 
                             {activeBid ? null :
                                 <Fragment>
-                                    <div className={`tool-box-button-switch${activeFilterReversed ? ' reversed' : ''}`}><FontAwesomeIcon onClick={this.activeFilterHandler} className={'check'} icon={activeFilter ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/><span onClick={this.activeFilterReverseHandler} className={`text${activeFilterReversed ? ' reversed' : ''}`}>{'Active'}</span></div>
-                                    <div className={`tool-box-button-switch${awardFilterReversed ? ' reversed ' : ''}`}><FontAwesomeIcon onClick={this.awardedFilterHandler} className={'check'} icon={awardedFilter ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED}/><span onClick={this.awardedFilterReverseHandler} className={`text${awardFilterReversed ? ' reversed' : ''}`}>{'Awarded'}</span></div>
+                                    <div className={`tool-box-button-switch${activeFilterReversed ? ' reversed' : ''}`}><FontAwesomeIcon onClick={this.activeFilterHandler} className={'check'} icon={activeFilter ? Icons.ICON_CHECKBOX_FILTER_CHECKED : Icons.ICON_CHECKBOX_FILTER_UNCHECKED}/><span onClick={this.activeFilterReverseHandler} className={`text${activeFilterReversed ? ' reversed' : ''}`}>{'Active'}</span></div>
+                                    <div className={`tool-box-button-switch${awardFilterReversed ? ' reversed ' : ''}`}><FontAwesomeIcon onClick={this.awardedFilterHandler} className={'check'} icon={awardedFilter ? Icons.ICON_CHECKBOX_FILTER_CHECKED : Icons.ICON_CHECKBOX_FILTER_UNCHECKED}/><span onClick={this.awardedFilterReverseHandler} className={`text${awardFilterReversed ? ' reversed' : ''}`}>{'Awarded'}</span></div>
                                 </Fragment>
                             }
                             <div onClick={this.toggleActiveBidMode} className={'tool-box-button blue active-bid'}>
@@ -111,7 +96,7 @@ export default class ProjectsList extends React.PureComponent {
                 {columnDef.map((column, i) =>
                     <th key={i} className={column.className}>
                         {column.sort ? <FontAwesomeIcon
-                            icon={this.props.sort === column.sort ? ICON_SORT_UP : this.props.sort === `-${column.sort}` ? ICON_SORT_DOWN : ICON_SORT}
+                            icon={this.props.sort === column.sort ? Icons.ICON_SORT_UP : this.props.sort === `-${column.sort}` ? Icons.ICON_SORT_DOWN : Icons.ICON_SORT}
                             onClick={() => this.handleSort(column.sort)}
                             className={`sort-icon${this.props.sort.indexOf(column.sort) < 0 ? ' not-set' : ''}`}
                         /> : null}
@@ -360,9 +345,9 @@ export default class ProjectsList extends React.PureComponent {
                 if(producer || manager || supervisor) {
                     return (
                         <div className={'table-team'}>
-                            {producer ? <div className={'team-member producer'}><FontAwesomeIcon icon={ICON_PRODUCER} fixedWidth/>{producer}</div> : null}
-                            {manager ? <div className={'team-member manager'}><FontAwesomeIcon icon={ICON_MANAGER} fixedWidth/>{manager}</div> : null}
-                            {supervisor ? <div className={'team-member supervisor'}><FontAwesomeIcon icon={ICON_SUPERVISOR} fixedWidth/>{supervisor}</div> : null}
+                            {producer ? <div className={'team-member producer'}><FontAwesomeIcon icon={Icons.ICON_PRODUCER} fixedWidth/>{producer}</div> : null}
+                            {manager ? <div className={'team-member manager'}><FontAwesomeIcon icon={Icons.ICON_MANAGER} fixedWidth/>{manager}</div> : null}
+                            {supervisor ? <div className={'team-member supervisor'}><FontAwesomeIcon icon={Icons.ICON_SUPERVISOR} fixedWidth/>{supervisor}</div> : null}
                         </div>
                     );
                 } else return '---';

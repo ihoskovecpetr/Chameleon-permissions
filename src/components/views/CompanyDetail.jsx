@@ -3,10 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Input } from 'reactstrap';
 
-const ICON_CHECKBOX_CHECKED = ['far','check-square'];
-const ICON_CHECKBOX_UNCHECKED = ['far', 'square'];
-
-const ICON_BOX = 'box-open';
+import * as Icons from '../../constants/Icons';
 
 export default class CompanyDetail extends React.PureComponent {
     constructor(props) {
@@ -32,11 +29,11 @@ export default class CompanyDetail extends React.PureComponent {
                             {!this.props.editCompany ? null :
                                 <div onClick={this.edit} className={`tool-box-button`}>{'Edit'}</div>
                             }
-                            <div onClick={this.addToBox} className={`tool-box-button icon box blue`}><FontAwesomeIcon icon={ICON_BOX}/></div>
+                            <div onClick={this.addToBox} className={`tool-box-button blue`}><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW_RIGHT}/><FontAwesomeIcon icon={Icons.ICON_BOX}/></div>
                             {!this.props.removeCompany ? null :
                                 <Fragment>
                                     <div onClick={!this.state.removeArmed ? undefined : this.remove} className={`tool-box-button remove red${!this.state.removeArmed ? ' disabled' : ''}`}>{'Remove Company'}</div>
-                                    <FontAwesomeIcon className={`tool-box-checkbox`} onClick={this.handleRemoveArmed} icon={this.state.removeArmed ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED} style={{cursor: 'pointer'}}/>
+                                    <FontAwesomeIcon className={`tool-box-checkbox`} onClick={this.handleRemoveArmed} icon={this.state.removeArmed ? Icons.ICON_CHECKBOX_CHECKED : Icons.ICON_CHECKBOX_UNCHECKED} style={{cursor: 'pointer'}}/>
                                 </Fragment>
                             }
                         </div>

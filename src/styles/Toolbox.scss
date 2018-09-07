@@ -20,7 +20,9 @@ $tool-button-color-disabled: #9b9b9b;
   border: 1px solid darken($app-toolbox-background-color, 5%);
   svg {
     font-size: 0.8em;
-    margin-right: 0.3rem;
+  }
+  svg:first-child {
+    margin-right: 0.3em;
   }
   @if $disabled {
     @if $fg-dark {color: darken($bg, 15%);} @else {color: lighten($bg, 15%);}
@@ -35,19 +37,13 @@ $tool-button-color-disabled: #9b9b9b;
   }
   @else {
     @if $fg-dark {color: lighten(#000, 15%);} @else {color: darken(#fff, 15%);}
-    //text-shadow: darken($bg, 20%) 0 0 0.01rem;
     cursor: pointer;
     background-color: $bg;
-    //background: linear-gradient(to bottom, lighten($bg, $gradient-step / 2), darken($bg, $gradient-step / 2));
     &:hover, &:focus {
       background-color: lighten($bg, $focus-step);
-      //background: linear-gradient(to bottom, lighten($bg, ($gradient-step / 2) + $focus-step), darken($bg, ($gradient-step / 2) - $focus-step));
-      //transition: all 0.3s ease;
     }
     &:active {
       background-color: $bg;
-      //background: linear-gradient(to bottom, $bg, $bg);
-      //transition: all 0.3s ease;
     }
   }
 }
@@ -133,6 +129,7 @@ $tool-button-color-disabled: #9b9b9b;
       &.active-bid {
         min-width: 3.8rem;
       }
+      /*
       &.icon {
         font-size: 0.9rem;
         width: $tool-height;
@@ -141,11 +138,8 @@ $tool-button-color-disabled: #9b9b9b;
         svg {
           margin-right: 0;
         }
-        &.box {
-          //padding-right: 0.1rem;
-        }
       }
-
+      */
     }
     .tool-box-validation {
       .tool-box-validation-container {

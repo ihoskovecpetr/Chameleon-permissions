@@ -1,5 +1,7 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import * as Icons from '../constants/Icons';
 
 export default class MessageBox extends React.PureComponent {
     constructor(props) {
@@ -22,7 +24,7 @@ export default class MessageBox extends React.PureComponent {
     render() {
         return (
             <div className={`app-message-box ${this.state.message ? this.state.message.type ? this.state.message.type : '' : 'hidden'}`}>
-                <FontAwesomeIcon onClick={() => this.props.setMessage(null)} className={'close-button'} icon={'times'} fixedWidth/>
+                <FontAwesomeIcon onClick={() => this.props.setMessage(null)} className={'close-button'} icon={Icons.ICON_MESSAGE_REMOVE} fixedWidth/>
                 <span>{this.state.message ? this.state.message.text ? this.state.message.text : this.state.message : '- - -'}</span>
             </div>
         )

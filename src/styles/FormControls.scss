@@ -1,23 +1,23 @@
-$table-control-font-size: 0.9rem;
-
 $detail-control-height: 2em;
-$detail-control-border-radius: 0.4em;
-$detail-control-padding-horizontal: 0.5em;
-$detail-control-padding-vertical: 0.1em;
+$detail-control-border-radius: 1em;
+$detail-control-padding-horizontal: 0.7em;
+$detail-control-padding-vertical: 0em;
+
 $detail-control-focus-color: $app-header-background-color;
 
 $detail-label-width: 8em;
 
 $detail-control-invalid-color: #f5d3d7;
 
-$detail-multiselect-radius: 0.3em;
+$detail-multi-select-radius: 0.6em;
 
 $table-control-height: 1.6em;
 $table-control-padding-horizontal: 0.6em;
 $table-control-padding-vertical: 0.1em;
 $table-control-focus-color: $app-header-background-color;
 
-
+$detail-control-background-color: #f5f5f5;
+$table-control-background-color: #f5f5f5;
 
 
 .detail-label {
@@ -52,14 +52,17 @@ $table-control-focus-color: $app-header-background-color;
   font-style: normal;
   height: $detail-control-height;
   padding: $detail-control-padding-vertical $detail-control-padding-horizontal;
-  background-color: #f0f0f0;
+  background-color: $detail-control-background-color;
   border-color: #9b9b9b;
   border-radius: $detail-control-border-radius;
   &.invalid {
     background-color: $detail-control-invalid-color;
+    &:focus {
+      background-color: $detail-control-invalid-color;
+    }
   }
   &:focus {
-    color: #495057;
+    background-color: $detail-control-background-color;
     border-color: lighten($detail-control-focus-color, 50%);
     outline: 0;
     box-shadow: 0 0 0 0.06em lighten($detail-control-focus-color, 30%);
@@ -72,14 +75,20 @@ $table-control-focus-color: $app-header-background-color;
   &.readonly {
     background-color: $detail-body-background-color;
   }
+  &::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: #afafaf;
+    opacity: 1; /* Firefox */
+  }
+  &:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: #afafaf;
+  }
+  &::-ms-input-placeholder { /* Microsoft Edge */
+    color: #afafaf;
+  }
 }
 
 .control-select {
-  //width: calc(100% - #{$detail-label-width});
   width: 100%;
-  //&.no-label {
-  //  width: 100%;
-  //}
   font-size: $detail-font-size;
   .control-select__placeholder {
     white-space: nowrap;
@@ -91,12 +100,11 @@ $table-control-focus-color: $app-header-background-color;
     font-style: normal;
     height: $detail-control-height;
     padding: 0;
-
-    background-color: #f0f0f0;
+    background-color: $detail-control-background-color;
     border-color: #9b9b9b;
     border-radius: $detail-control-border-radius;
     &.control-select__control--is-focused {
-      color: #495057;
+      background-color: $detail-control-background-color;
       border-color: lighten($detail-control-focus-color, 50%);
       outline: 0;
       box-shadow: 0 0 0 0.06em lighten($detail-control-focus-color, 30%);
@@ -107,17 +115,18 @@ $table-control-focus-color: $app-header-background-color;
       text-overflow: ellipsis;
       padding: $detail-control-padding-vertical ($detail-control-padding-horizontal - 0.15em);
       .control-select__multi-value {
-        border-radius: $detail-multiselect-radius;
+        border-radius: $detail-multi-select-radius;
         background-color: #ebebeb;
         margin: 0 0.1em;
-        border: 1px solid #9b9b9b;
+        border: 1px solid rgba(155, 155, 155, 0.71);
       }
       .control-select__multi-value__remove {
         width: 1em;
         padding: 0;
+        border-left: 1px solid #d8d8d8;
         &:hover {
-          border-top-right-radius: $detail-multiselect-radius;
-          border-bottom-right-radius: $detail-multiselect-radius;
+          border-top-right-radius: $detail-multi-select-radius;
+          border-bottom-right-radius: $detail-multi-select-radius;
           background-color: lighten($detail-control-focus-color, 35%);
           color: #f0f0f0;
         }
@@ -127,9 +136,8 @@ $table-control-focus-color: $app-header-background-color;
         font-size: 0.9 * $detail-font-size;
       }
       &.control-select__value-container--is-multi {
-        //padding: $detail-control-padding-vertical ($detail-control-padding-horizontal - 0.15em);
         color: #9b9b9b;
-        height: calc(100% - 0px);
+        height: 100%;
       }
     }
 
@@ -157,6 +165,9 @@ $table-control-focus-color: $app-header-background-color;
   }
   &.invalid .control-select__control {
     background-color: $detail-control-invalid-color;
+    &.control-select__control--is-focused {
+      background-color: $detail-control-invalid-color;
+    }
   }
   .control-select__menu {
     margin-top: 0.15em;
@@ -185,6 +196,7 @@ $table-control-focus-color: $app-header-background-color;
     min-height: $table-control-height;
     border-radius: $table-control-height / 2;
     font-size: $table-control-font-size;
+    background-color: $table-control-background-color;
     .control-select__single-value {
       //padding-top: 0.2em;
     }
@@ -202,7 +214,7 @@ $table-control-focus-color: $app-header-background-color;
   font-style: normal;
   height: $table-control-height;
   //line-height: $table-control-height;
-  background-color: #f0f0f0;
+  background-color: $table-control-background-color;
   border: 1px solid #9b9b9b;
   border-radius: 0.8em;
   padding: 0 0.5em;

@@ -4,9 +4,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
 import { Input } from 'reactstrap';
 import Select from 'react-select';
 
-const ICON_CHECKBOX_CHECKED = ['far','check-square'];
-const ICON_CHECKBOX_UNCHECKED = ['far', 'square'];
-const ICON_VALIDATION = 'exclamation-circle';
+import * as Icons from '../../constants/Icons';
 
 export default class CompanyEdit extends React.PureComponent {
     constructor(props) {
@@ -39,7 +37,7 @@ export default class CompanyEdit extends React.PureComponent {
                             <div onClick={this.close} className={'tool-box-button'}>{'Cancel'}</div>
                             <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button green${this.state.saveDisabled ? ' disabled' : ''}`}>{selectedCompany ? 'Save' : 'Create'}</div>
                             <div className={'tool-box-validation'}>
-                                <FontAwesomeIcon className={`tool-box-validation-icon${Object.keys(this.state.validation).length > 0 ? ' active' : ''}`} icon={ICON_VALIDATION}/>
+                                <FontAwesomeIcon className={`tool-box-validation-icon${Object.keys(this.state.validation).length > 0 ? ' active' : ''}`} icon={Icons.ICON_VALIDATION}/>
                                 <div className={'tool-box-validation-container'}>
                                     {Object.keys(this.state.validation).map(validationField => <div key={validationField}>{`${this.state.validation[validationField].field}: ${this.state.validation[validationField].status}`}</div>)}
                                 </div>
@@ -47,7 +45,7 @@ export default class CompanyEdit extends React.PureComponent {
                             {!selectedCompany ? null :
                                 <Fragment>
                                     <div onClick={!this.state.removeArmed ? undefined : this.remove} className={`tool-box-button remove red${!this.state.removeArmed ? ' disabled' : ''}`}>{'Remove Company'}</div>
-                                    <FontAwesomeIcon className={`tool-box-checkbox`} onClick={this.handleRemoveArmed} icon={this.state.removeArmed ? ICON_CHECKBOX_CHECKED : ICON_CHECKBOX_UNCHECKED} style={{cursor: 'pointer'}}/>
+                                    <FontAwesomeIcon className={`tool-box-checkbox`} onClick={this.handleRemoveArmed} icon={this.state.removeArmed ? Icons.ICON_CHECKBOX_CHECKED : Icons.ICON_CHECKBOX_UNCHECKED} style={{cursor: 'pointer'}}/>
                                 </Fragment>
                             }
                         </div>
