@@ -46,14 +46,17 @@ $table-control-background-color: #f5f5f5;
   }
 }
 
-.detail-input {
+
+
+.detail-input, .detail-date-picker {
   width: 100%;
   font-size: $detail-font-size;
   font-style: normal;
   height: $detail-control-height;
   padding: $detail-control-padding-vertical $detail-control-padding-horizontal;
   background-color: $detail-control-background-color;
-  border-color: #9b9b9b;
+  //border-color: #9b9b9b;
+  border: 1px solid #9b9b9b;
   border-radius: $detail-control-border-radius;
   &.invalid {
     background-color: $detail-control-invalid-color;
@@ -64,7 +67,7 @@ $table-control-background-color: #f5f5f5;
   &:focus {
     background-color: $detail-control-background-color;
     border-color: lighten($detail-control-focus-color, 50%);
-    outline: 0;
+    outline: none;
     box-shadow: 0 0 0 0.06em lighten($detail-control-focus-color, 30%);
   }
 
@@ -86,6 +89,25 @@ $table-control-background-color: #f5f5f5;
     color: #afafaf;
   }
 }
+.react-datepicker__close-icon::after {
+  background: none;
+  color: gray;
+  font-size: 1em;
+  margin-bottom: 0.1em;
+}
+
+.react-datepicker-popper {
+  top: -4px!important;
+  .react-datepicker {
+    border-radius: $detail-control-border-radius!important;
+    .react-datepicker__header {
+      border-top-left-radius: $detail-control-border-radius;
+      border-top-right-radius: $detail-control-border-radius;
+    }
+  }
+}
+
+
 
 .control-select {
   width: 100%;
@@ -114,10 +136,12 @@ $table-control-background-color: #f5f5f5;
       overflow: hidden;
       text-overflow: ellipsis;
       padding: $detail-control-padding-vertical ($detail-control-padding-horizontal - 0.15em);
+      &.control-select__value-container--is-multi {
+        padding: $detail-control-padding-vertical 0.18em;
+      }
       .control-select__multi-value {
         border-radius: $detail-multi-select-radius;
         background-color: #ebebeb;
-        margin: 0 0.1em;
         border: 1px solid rgba(155, 155, 155, 0.71);
       }
       .control-select__multi-value__remove {

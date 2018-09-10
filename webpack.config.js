@@ -13,6 +13,7 @@ module.exports = {
         'babel-polyfill',
         'react-hot-loader/patch',
         'bootstrap/dist/css/bootstrap.min.css',
+        'react-datepicker/dist/react-datepicker.css',
         './src/app.js'
     ],
     devServer: {

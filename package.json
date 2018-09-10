@@ -1,6 +1,6 @@
 {
   "name": "projects",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "src/app.js",
   "author": "~mirek",
   "scripts": {
@@ -22,6 +22,7 @@
     "moment": "^2.22.2",
     "react": "^16.4.0",
     "react-custom-scrollbars": "^4.2.1",
+    "react-datepicker": "^1.6.0",
     "react-dom": "^16.4.0",
     "react-redux": "^5.0.7",
     "react-select": "^2.0.0",

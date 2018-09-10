@@ -296,8 +296,8 @@ export default class ProjectsList extends React.PureComponent {
         this.props.setSort(result);
     };
 
-    handleRestLastContact = id => {
-        this.props.updateProject(id, {lastContact: moment()});
+    handleResetLastContact = id => {
+        this.props.updateProject(id, {lastContact: moment().startOf('day')});
     };
 
     handleStatusChange = (id, status) => {
@@ -367,7 +367,7 @@ export default class ProjectsList extends React.PureComponent {
 
             case 'last-contact': //last contact in days passed this - colors?
                 const lastContact = daysToString(project ? project.lastContact : null, null, true);
-                return editable ? <div onClick={() => this.handleRestLastContact(project._id)} className={'table-button'}>{lastContact}</div> : lastContact;
+                return editable ? <div onClick={() => this.handleResetLastContact(project._id)} className={'table-button'}>{lastContact}</div> : lastContact;
 
             default: return project && project[field] ? project[field] : '---';
         }

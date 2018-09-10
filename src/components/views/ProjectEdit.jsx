@@ -3,6 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Input } from 'reactstrap';
 import Select from 'react-select';
+import moment from 'moment';
+import DatePicker from 'react-datepicker';
 
 import * as Icons from '../../constants/Icons';
 
@@ -60,7 +62,7 @@ export default class ProjectEdit extends React.PureComponent {
         const leadMP = editedData.leadMP !== undefined ? editedData.leadMP : projects[selectedProject] ? projects[selectedProject].leadMP : null;
         const company = editedData.company !== undefined ? editedData.company : projects[selectedProject] ? projects[selectedProject].company : [];
         const person = editedData.person !== undefined ? editedData.person : projects[selectedProject] ? projects[selectedProject].person : [];
-
+        const lastContact = editedData.lastContact !== undefined ? editedData.lastContact ? moment(editedData.lastContact) : null : projects[selectedProject] && projects[selectedProject].lastContact ? moment(projects[selectedProject].lastContact) : null;
 
         let canSupervisorChangeNumber = 0;
         if(this.state.supervisor2) {
@@ -98,11 +100,26 @@ export default class ProjectEdit extends React.PureComponent {
                 <Scrollbars autoHide={true} autoHideTimeout={800} autoHideDuration={200}>
                     <div className={'detail-body'}>
                         <div className={'detail-row'}>
-                            <div className={'detail-group size-7'}>
+                            <div className={'detail-group size-8'}>
                                 <div className={`detail-label${typeof editedData.name !== 'undefined' && selectedProject  ? ' value-changed' : ''}`}>{'Project name:'}</div>
                                 <Input className={`detail-input${this.state.validation.name ? ' invalid' : ''}`} onChange={this.handleNameChange} value={name}/>
                             </div>
-                            <div className={'detail-group size-5'}>
+                            <div className={'detail-group size-4'}>
+                                <div className={`detail-label${typeof editedData.lastContact !== 'undefined' && selectedProject  ? ' value-changed' : ''}`}>{'Last Contact:'}</div>
+                                <DatePicker
+                                    selected={lastContact}
+                                    dateFormat={'D.M.YYYY'}
+                                    className={`detail-date-picker${this.state.validation.lastContact ? ' invalid' : ''}`}
+                                    onChange={this.handleLastContactChange}
+                                    maxDate={moment().startOf('day')}
+                                    placeholderText={'Last Contact...'}
+                                    isClearable
+                                    //popperModifiers={{offset: {enabled: true, offset: '4px, -1px'}}}
+                                />
+                            </div>
+                        </div>
+                        <div className={'detail-row'}>
+                            <div className={'detail-group size-4'}>
                                 <div className={`detail-label${typeof editedData.status !== 'undefined' && selectedProject ? ' value-changed' : ''}`}>{'Project status:'}</div>
                                 <Select
                                     options={statusOptions}
@@ -113,9 +130,7 @@ export default class ProjectEdit extends React.PureComponent {
                                     classNamePrefix={'control-select'}
                                 />
                             </div>
-                        </div>
-                        <div className={'detail-row'}>
-                            <div className={'detail-group size-12'}>
+                            <div className={'detail-group size-8'}>
                                 <div className={`detail-label${editedData.statusNote !== undefined && selectedProject ? ' value-changed' : ''}`}>{'Status note:'}</div>
                                 <Input className={`detail-input${this.state.validation.statusNote ? ' invalid' : ''}`} onChange={this.handleStatusNoteChange} value={statusNote}/>
                             </div>
@@ -229,7 +244,7 @@ export default class ProjectEdit extends React.PureComponent {
 
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group column size-12'}>
-                                <div onClick={() => this.handleCompanyChange()} className={`detail-label clickable column${editedData.statusNote !== undefined && selectedProject ? ' value-changed' : ''}`}>{'Companies'}<FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_LABEL_ITEM_ADD}/></div>
+                                <div onClick={() => this.handleCompanyChange()} className={`detail-label clickable column${editedData.company !== undefined && selectedProject ? ' value-changed' : ''}`}>{'Companies'}<FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_LABEL_ITEM_ADD}/></div>
                                 {company.map((companyLine, i) =>
                                     <div className={`detail-array-line`} key={i}>
                                         <FontAwesomeIcon className={'remove-icon'} onClick={() => this.handleCompanyChange(i)} icon={Icons.ICON_LINE_REMOVE}/>
@@ -279,7 +294,7 @@ export default class ProjectEdit extends React.PureComponent {
                         </div>
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group column size-12'}>
-                                <div onClick={() => this.handlePersonChange()} className={`detail-label clickable column${editedData.statusNote !== undefined && selectedProject ? ' value-changed' : ''}`}>{'People'}<FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_LABEL_ITEM_ADD}/></div>
+                                <div onClick={() => this.handlePersonChange()} className={`detail-label clickable column${editedData.person !== undefined && selectedProject ? ' value-changed' : ''}`}>{'People'}<FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_LABEL_ITEM_ADD}/></div>
                                 {person.map((personLine, i) =>
                                     <div className={`detail-array-line`} key={i}>
                                         <FontAwesomeIcon className={'remove-icon'} onClick={() => this.handlePersonChange(i)} icon={Icons.ICON_LINE_REMOVE}/>
@@ -499,6 +514,10 @@ export default class ProjectEdit extends React.PureComponent {
 
     handleLeadMPChange = option => {
         this.props.editItem(this.updateEditedData({leadMP: option ? option.value : null}));
+    };
+
+    handleLastContactChange = date => {
+        this.props.editItem(this.updateEditedData({lastContact: date ? date.startOf('day') : null}));
     };
 
     handleCompanyChange = (index, data) => {
