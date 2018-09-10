@@ -1,4 +1,4 @@
-import * as ActionTypes from '../constants/ActionTypes';
+import * as ActionTypes from '../actions/ActionTypes';
 import * as Constants from '../constants/Constatnts';
 
 import * as logger from 'loglevel';
@@ -30,10 +30,6 @@ export function setFetching(isFetching) {
 
 export function setMessage(message) {
     return {type: ActionTypes.SET_MESSAGE, message: message};
-}
-
-export function editItem(data) {
-    return {type: ActionTypes.EDIT_ITEM, data: data};
 }
 
 export function setActiveBid(activeBid) {
@@ -139,10 +135,14 @@ export function setActiveBidSort(sort) {
     return {type: ActionTypes.SET_ACTIVE_BID_SORT, sort: sort};
 }
 
+export function changeProjectEditedData(data) {
+    return {type: ActionTypes.CHANGE_PROJECT_EDIT_DATA, data: data};
+}
+
 // remote db opp
 export function updateProject() {
     return async (dispatch, getState) => {
-        const projectUpdate = getState().appState.editedData;
+        const projectUpdate = getState().appState.projectEditedData;
         const id = getState().appState.selectedProject;
         if(!id || !projectUpdate || Object.keys(projectUpdate).length === 0) return;
         dispatch(setFetching(true));
@@ -185,7 +185,7 @@ export function updateProjectDirect(id, projectUpdate) {
 
 export function createProject() {
     return async (dispatch, getState) => {
-        const project = getState().appState.editedData;
+        const project = getState().appState.projectEditedData;
         if(!project || Object.keys(project).length === 0) return;
         dispatch(setFetching(true));
         dispatch(setMessage(null));
@@ -262,10 +262,14 @@ export function setCompaniesSort(sort) {
     return {type: ActionTypes.SET_COMPANIES_SORT, sort: sort};
 }
 
+export function changeCompanyEditedData(data) {
+    return {type: ActionTypes.CHANGE_COMPANY_EDIT_DATA, data: data};
+}
+
 // remote db opp
 export function updateCompany() {
     return async (dispatch, getState) => {
-        const companyUpdate = getState().appState.editedData;
+        const companyUpdate = getState().appState.companyEditedData;
         const id = getState().appState.selectedCompany;
         if(!id || !companyUpdate || Object.keys(companyUpdate).length === 0) return;
         dispatch(setFetching(true));
@@ -288,7 +292,7 @@ export function updateCompany() {
 
 export function createCompany() {
     return async (dispatch, getState) => {
-        const company = getState().appState.editedData;
+        const company = getState().appState.companyEditedData;
         if(!company || Object.keys(company).length === 0) return;
         dispatch(setFetching(true));
         dispatch(setMessage(null));
@@ -365,10 +369,15 @@ export function setPersonsSort(sort) {
     return {type: ActionTypes.SET_PERSONS_SORT, sort: sort};
 }
 
+
+export function changePersonEditedData(data) {
+    return {type: ActionTypes.CHANGE_PERSON_EDIT_DATA, data: data};
+}
+
 // remote db opp
 export function updatePerson() {
     return async (dispatch, getState) => {
-        const personUpdate = getState().appState.editedData;
+        const personUpdate = getState().appState.personEditedData;
         const id = getState().appState.selectedPerson;
         if(!id || !personUpdate || Object.keys(personUpdate).length === 0) return;
         dispatch(setFetching(true));
@@ -391,7 +400,7 @@ export function updatePerson() {
 
 export function createPerson() {
     return async (dispatch, getState) => {
-        const person = getState().appState.editedData;
+        const person = getState().appState.personEditedData;
         if(!person || Object.keys(person).length === 0) return;
         dispatch(setFetching(true));
         dispatch(setMessage(null));

@@ -9,9 +9,10 @@ export default {
         dataTimeStamp: null,
 
         selectedProject: null,
-        projectsFilter: [],//[FilterTypes.USER_FILTER, FilterTypes.ACTIVE_PROJECTS_FILTER],
+        projectsFilter: [FilterTypes.USER_FILTER, FilterTypes.ACTIVE_PROJECTS_FILTER],
         projectsSearch: '',
         projectsSort: '',
+        projectEditedData: {},
         activeBid: false,
         activeBidSearch: '',
         activeBidSort: '',
@@ -20,18 +21,18 @@ export default {
         personsFilter: [],
         personsSearch: '',
         personsSort: '',
+        personEditedData: {},
 
         selectedCompany: null,
         companiesFilter: [],
         companiesSearch: '',
         companiesSort: '',
+        companyEditedData: {},
 
         box: [],
         selectedBoxItem: null,
 
-        previousView: null,
-
-        editedData: {},
+        previousView: [],
 
         nextDetailId: null
     },

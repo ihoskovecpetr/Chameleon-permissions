@@ -1,4 +1,4 @@
-import * as ActionTypes from '../constants/ActionTypes';
+import * as ActionTypes from '../actions/ActionTypes';
 
 function ProjectsReducer (state = null, action = null) {
     if(action && action.type) {

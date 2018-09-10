@@ -28,6 +28,7 @@ export default class AppLayout extends React.PureComponent {
 
     render() {
         //console.log(this.props.appState)
+        console.log(this.props.appState.previousView)
         let AppBody = null;
         switch(this.props.appState.view) {
             case ViewTypes.PROJECTS_LIST:
@@ -85,6 +86,7 @@ export default class AppLayout extends React.PureComponent {
                     />;
                 break;
             case ViewTypes.PROJECT_EDIT:
+            case ViewTypes.PROJECT_NEW:
                 AppBody =
                     <ProjectEdit
                         projects={this.props.projects}
@@ -93,11 +95,11 @@ export default class AppLayout extends React.PureComponent {
                         users={this.props.users}
                         user={this.props.user}
 
-                        selectedProject={this.props.appState.selectedProject}
-                        editedData={this.props.appState.editedData}
+                        selectedProject={this.props.appState.view === ViewTypes.PROJECT_NEW ? null : this.props.appState.selectedProject}
+                        editedData={this.props.appState.projectEditedData}
 
                         returnToPreviousView={this.props.returnToPreviousView}
-                        editItem={this.props.editItem}
+                        editItem={this.props.changeProjectEditedData}
 
                         updateProject={this.props.updateProject}
                         createProject={this.props.createProject}
@@ -151,6 +153,7 @@ export default class AppLayout extends React.PureComponent {
                     />;
                 break;
             case ViewTypes.COMPANY_EDIT:
+            case ViewTypes.COMPANY_NEW:
                 AppBody =
                     <CompanyEdit
                         projects={this.props.projects}
@@ -159,11 +162,11 @@ export default class AppLayout extends React.PureComponent {
                         users={this.props.users}
                         user={this.props.user}
 
-                        selectedCompany={this.props.appState.selectedCompany}
-                        editedData={this.props.appState.editedData}
+                        selectedCompany={this.props.appState.view === ViewTypes.COMPANY_NEW ? null : this.props.appState.selectedCompany}
+                        editedData={this.props.appState.companyEditedData}
 
                         returnToPreviousView={this.props.returnToPreviousView}
-                        editItem={this.props.editItem}
+                        editItem={this.props.changeCompanyEditedData}
 
                         updateCompany={this.props.updateCompany}
                         createCompany={this.props.createCompany}
@@ -221,6 +224,7 @@ export default class AppLayout extends React.PureComponent {
                     />;
                 break;
             case ViewTypes.PERSON_EDIT:
+            case ViewTypes.PERSON_NEW:
                 AppBody =
                     <PersonEdit
                         projects={this.props.projects}
@@ -229,11 +233,11 @@ export default class AppLayout extends React.PureComponent {
                         users={this.props.users}
                         user={this.props.user}
 
-                        selectedPerson={this.props.appState.selectedPerson}
-                        editedData={this.props.appState.editedData}
+                        selectedPerson={this.props.appState.view === ViewTypes.PERSON_NEW ? null : this.props.appState.selectedPerson}
+                        editedData={this.props.appState.personEditedData}
 
                         returnToPreviousView={this.props.returnToPreviousView}
-                        editItem={this.props.editItem}
+                        editItem={this.props.changePersonEditedData}
 
                         updatePerson={this.props.updatePerson}
                         createPerson={this.props.createPerson}
@@ -276,8 +280,12 @@ export default class AppLayout extends React.PureComponent {
                     view = {this.props.appState.view}
                     activeBid = {this.props.appState.activeBid}
                     setView = {this.props.setView}
+
+                    projectEditedData = {this.props.appState.projectEditedData}
+                    companyEditedData = {this.props.appState.companyEditedData}
+                    personEditedData = {this.props.appState.personEditedData}
+
                     box = {this.props.appState.box}
-                    switchesEnabled = {(this.props.appState.view !== ViewTypes.PROJECT_EDIT && this.props.appState.view !== ViewTypes.PERSON_EDIT && this.props.appState.view !== ViewTypes.COMPANY_EDIT) || Object.keys(this.props.appState.editedData).length === 0}
                 />
                 <MessageBox message = {this.props.appState.message} setMessage = {this.props.setMessage}/>
                 {AppBody}
