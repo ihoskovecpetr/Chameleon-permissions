@@ -30,7 +30,7 @@ export default class ProjectDetail extends React.PureComponent {
                         {!this.props.editProject ? null :
                             <div onClick={this.edit} className={`tool-box-button`}>{'Edit'}</div>
                         }
-                        <div onClick={this.addToBox} className={`tool-box-button blue`}><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW_RIGHT}/><FontAwesomeIcon icon={Icons.ICON_BOX}/></div>
+                        <div onClick={this.addToBox} className={`tool-box-button blue`}><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/><FontAwesomeIcon icon={Icons.ICON_BOX}/></div>
                         {!this.props.removeProject ? null :
                             <Fragment>
                                 <div onClick={!this.state.removeArmed ? undefined : this.remove} className={`tool-box-button remove red${!this.state.removeArmed ? ' disabled' : ''}`}>{'Remove Project'}</div>

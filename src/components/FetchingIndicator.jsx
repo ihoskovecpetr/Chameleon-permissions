@@ -7,7 +7,7 @@ export default class FetchingIndicator extends React.PureComponent {
     render() {
         return (
             <div className={`fetching-indicator${this.props.open ? '' : ' hidden'}`}>
-                <FontAwesomeIcon icon={Icons.ICON_LOADING} pulse/>
+                <FontAwesomeIcon icon={Icons.ICON_APP_LOADING} pulse/>
             </div>
         )
     }

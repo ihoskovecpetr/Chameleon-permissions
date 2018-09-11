@@ -37,7 +37,7 @@ export default class PersonEdit extends React.PureComponent {
                             <div onClick={this.close} className={'tool-box-button'}>{'Cancel'}</div>
                             <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button green${this.state.saveDisabled ? ' disabled' : ''}`}>{selectedPerson ? 'Save' : 'Create'}</div>
                             <div className={'tool-box-validation'}>
-                                <FontAwesomeIcon className={`tool-box-validation-icon${Object.keys(this.state.validation).length > 0 ? ' active' : ''}`} icon={Icons.ICON_VALIDATION}/>
+                                <FontAwesomeIcon className={`tool-box-validation-icon${Object.keys(this.state.validation).length > 0 ? ' active' : ''}`} icon={Icons.ICON_EDITOR_VALIDATION}/>
                                 <div className={'tool-box-validation-container'}>
                                     {Object.keys(this.state.validation).map(validationField => <div key={validationField}>{`${this.state.validation[validationField].field}: ${this.state.validation[validationField].status}`}</div>)}
                                 </div>

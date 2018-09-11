@@ -1,29 +1,29 @@
 // app
 export const ICON_MESSAGE_REMOVE = 'times';
-export const ICON_LOADING = 'spinner';
+export const ICON_APP_LOADING = 'spinner';
 
 // header
-export const ICON_USER = 'user';
-export const ICON_RELOAD = 'sync-alt';
-export const ICON_LOGOUT = 'sign-out-alt';
-export const ICON_HOME = 'home';
+export const ICON_HEADER_USER = 'user';
+export const ICON_HEADER_RELOAD = 'sync-alt';
+export const ICON_HEADER_LOGOUT = 'sign-out-alt';
+export const ICON_HEADER_HOME = 'home';
 
 export const ICON_PERSONS = 'users';
 export const ICON_COMPANIES = 'building';
 export const ICON_PROJECTS = 'tasks';
 
 // table - sort
-export const ICON_SORT = 'arrows-alt-v';
-export const ICON_SORT_UP = 'long-arrow-alt-up';
-export const ICON_SORT_DOWN = 'long-arrow-alt-down';
+export const ICON_TABLE_SORT = 'arrows-alt-v';
+export const ICON_TABLE_SORT_UP = 'long-arrow-alt-up';
+export const ICON_TABLE_SORT_DOWN = 'long-arrow-alt-down';
 
 //Search
 export const ICON_SEARCH = 'search';
-export const ICON_CLEAR = 'times';
+export const ICON_SEARCH_CLEAR = 'times';
 
 //box
 export const ICON_BOX = 'box-open';
-export const ICON_BOX_ARROW_RIGHT = 'arrow-right';
+export const ICON_BOX_ARROW = 'arrow-right';
 
 // checkbox
 export const ICON_CHECKBOX_FILTER_CHECKED = ['far','check-circle'];
@@ -32,15 +32,21 @@ export const ICON_CHECKBOX_CHECKED = ['far','check-square'];
 export const ICON_CHECKBOX_UNCHECKED = ['far', 'square'];
 
 // role icons
-export const ICON_PRODUCER = 'user-circle';
-export const ICON_MANAGER = 'user';
-export const ICON_SUPERVISOR = ['far', 'eye'];
+export const ICON_ROLE_PRODUCER = 'user-circle';
+export const ICON_ROLE_MANAGER = 'user';
+export const ICON_ROLE_SUPERVISOR = ['far', 'eye'];
+export const ICON_ROLE_COLORIST = 'palette';
+
 
 // detail editor
-export const ICON_VALIDATION = 'exclamation-circle';
-export const ICON_LABEL_ITEM_ADD = 'plus-circle';
-export const ICON_LABEL_ITEM_REMOVE = 'minus-circle';
-export const ICON_LINE_REMOVE = 'trash';
+export const ICON_EDITOR_VALIDATION = 'exclamation-circle';
+export const ICON_EDITOR_ITEM_ADD = 'plus-circle';
+export const ICON_EDITOR_ITEM_REMOVE = 'minus-circle';
+export const ICON_EDITOR_LINE_REMOVE = 'trash';
+
+export const ICON_EDITOR_FLAG_ACCOUNT = 'dollar-sign';
+export const ICON_EDITOR_FLAG_CREATIVITY = 'paint-brush';
+export const ICON_EDITOR_FLAG_ORGANIZE = 'sitemap';
 
 //box
-export const ICON_TRASH = 'trash-alt';
+export const ICON_BOX_REMOVE = 'trash';

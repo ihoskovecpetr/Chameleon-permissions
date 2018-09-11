@@ -10,16 +10,12 @@ import * as Icons from '../../constants/Icons';
 
 import * as ProjectStatus from '../../constants/ProjectStatus';
 import * as CompanyRole from '../../constants/CompanyRole';
-import * as CompanyRating from '../../constants/CompanyRating';
 import * as PersonRole from '../../constants/PersonRole';
-import * as PersonRating from '../../constants/PersonRating';
 import * as PersonProfession from '../../constants/PersonProfession';
 
 const statusOptions = Object.keys(ProjectStatus).map(key => ({value: key, label: ProjectStatus[key].label}));
 const companyRoleOptions = Object.keys(CompanyRole).map(key => ({value: key, label: CompanyRole[key].label}));
-const companyRatingOptions = Object.keys(CompanyRating).map(key => ({value: key, label: CompanyRating[key].label}));
 const personRoleOptions = Object.keys(PersonRole).map(key => ({value: key, label: PersonRole[key].label}));
-const personRatingOptions = Object.keys(PersonRating).map(key => ({value: key, label: PersonRating[key].label}));
 const personProfessionOptions = Object.keys(PersonProfession).map(key => ({value: key, label: PersonProfession[key].label}));
 
 const VALIDATION_DELAY_MS = 500;
@@ -78,9 +74,9 @@ export default class ProjectEdit extends React.PureComponent {
                         <div className={'toolbox-group'}>
                             <div onClick={this.close} className={'tool-box-button'}>{'Cancel'}</div>
                             <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button green${this.state.saveDisabled ? ' disabled' : ''}`}>{selectedProject ? 'Save' : 'Create'}</div>
-                            <div onClick={this.props.box && this.props.box.length > 0 ? this.addFromBox : undefined} className={`tool-box-button blue${!this.props.box || this.props.box.length === 0 ? ' disabled' : ''}`}><FontAwesomeIcon icon={Icons.ICON_BOX}/><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW_RIGHT}/></div>
+                            <div onClick={this.props.box && this.props.box.length > 0 ? this.addFromBox : undefined} className={`tool-box-button blue${!this.props.box || this.props.box.length === 0 ? ' disabled' : ''}`}><FontAwesomeIcon icon={Icons.ICON_BOX}/><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/></div>
                             <div className={'tool-box-validation'}>
-                                <FontAwesomeIcon className={`tool-box-validation-icon${Object.keys(this.state.validation).length > 0 ? ' active' : ''}`} icon={Icons.ICON_VALIDATION}/>
+                                <FontAwesomeIcon className={`tool-box-validation-icon${Object.keys(this.state.validation).length > 0 ? ' active' : ''}`} icon={Icons.ICON_EDITOR_VALIDATION}/>
                                 <div className={'tool-box-validation-container'}>
                                     {Object.keys(this.state.validation).map(validationField => <div key={validationField}>{`${this.state.validation[validationField].field}: ${this.state.validation[validationField].status}`}</div>)}
                                 </div>
@@ -171,7 +167,7 @@ export default class ProjectEdit extends React.PureComponent {
                                     className={`detail-label${(typeof editedData.supervisor !== 'undefined' || typeof editedData.supervisor2 !== 'undefined') && selectedProject ? ' value-changed' : ''}${canSupervisorChangeNumber !== 0 ? ' clickable' : ''}`}
                                 >
                                     {'Supervisor:'}
-                                    {canSupervisorChangeNumber === 1 ? <FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_LABEL_ITEM_ADD}/> : canSupervisorChangeNumber === -1 ? <FontAwesomeIcon className={'label-icon remove'} icon={Icons.ICON_LABEL_ITEM_REMOVE}/> : null}
+                                    {canSupervisorChangeNumber === 1 ? <FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/> : canSupervisorChangeNumber === -1 ? <FontAwesomeIcon className={'label-icon remove'} icon={Icons.ICON_EDITOR_ITEM_REMOVE}/> : null}
                                 </div>
                                 <div className={`column-wrapper`}>
                                     <Select
@@ -244,10 +240,10 @@ export default class ProjectEdit extends React.PureComponent {
 
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group column size-12'}>
-                                <div onClick={() => this.handleCompanyChange()} className={`detail-label clickable column${editedData.company !== undefined && selectedProject ? ' value-changed' : ''}`}>{'Companies'}<FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_LABEL_ITEM_ADD}/></div>
+                                <div onClick={() => this.handleCompanyChange()} className={`detail-label clickable column${editedData.company !== undefined && selectedProject ? ' value-changed' : ''}`}>{'Companies'}<FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/></div>
                                 {company.map((companyLine, i) =>
                                     <div className={`detail-array-line`} key={i}>
-                                        <FontAwesomeIcon className={'remove-icon'} onClick={() => this.handleCompanyChange(i)} icon={Icons.ICON_LINE_REMOVE}/>
+                                        <FontAwesomeIcon className={'remove-icon'} onClick={() => this.handleCompanyChange(i)} icon={Icons.ICON_EDITOR_LINE_REMOVE}/>
                                         <div className={'line-content'}>
                                             <Select
                                                 options={this.getCopmanyOptions(companies)}
@@ -271,17 +267,6 @@ export default class ProjectEdit extends React.PureComponent {
                                                 classNamePrefix={'control-select'}
                                                 placeholder={'Role...'}
                                             />
-                                            <Select
-                                                options={companyRatingOptions}
-                                                value={companyLine.rating.map(rating => ({value: rating, label: CompanyRating[rating] ? CompanyRating[rating].label : rating}))}
-                                                onChange={option => this.handleCompanyChange(i, {rating: !option ? [] : option.map(o => o.value)})}
-                                                isSearchable={false}
-                                                isMulti={true}
-                                                isClearable={true}
-                                                className={`control-select company-rating`}
-                                                classNamePrefix={'control-select'}
-                                                placeholder={'Rating...'}
-                                            />
                                             <Input
                                                 className={`detail-input company-note`}
                                                 onChange={event => this.handleCompanyChange(i, {note: event.target.value})} value={companyLine.note}
@@ -294,10 +279,10 @@ export default class ProjectEdit extends React.PureComponent {
                         </div>
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group column size-12'}>
-                                <div onClick={() => this.handlePersonChange()} className={`detail-label clickable column${editedData.person !== undefined && selectedProject ? ' value-changed' : ''}`}>{'People'}<FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_LABEL_ITEM_ADD}/></div>
+                                <div onClick={() => this.handlePersonChange()} className={`detail-label clickable column${editedData.person !== undefined && selectedProject ? ' value-changed' : ''}`}>{'People'}<FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/></div>
                                 {person.map((personLine, i) =>
                                     <div className={`detail-array-line`} key={i}>
-                                        <FontAwesomeIcon className={'remove-icon'} onClick={() => this.handlePersonChange(i)} icon={Icons.ICON_LINE_REMOVE}/>
+                                        <FontAwesomeIcon className={'remove-icon'} onClick={() => this.handlePersonChange(i)} icon={Icons.ICON_EDITOR_LINE_REMOVE}/>
                                         <div className={'line-content'}>
                                             <Select
                                                 options={this.getPersonOptions(persons)}
@@ -331,17 +316,6 @@ export default class ProjectEdit extends React.PureComponent {
                                                 className={`control-select person-profession`}
                                                 classNamePrefix={'control-select'}
                                                 placeholder={'Profession...'}
-                                            />
-                                            <Select
-                                                options={personRatingOptions}
-                                                value={personLine.rating.map(rating => ({value: rating, label: PersonRating[rating] ? PersonRating[rating].label : rating}))}
-                                                onChange={option => this.handlePersonChange(i, {rating: !option ? [] : option.map(o => o.value)})}
-                                                isSearchable={false}
-                                                isMulti={true}
-                                                isClearable={true}
-                                                className={`control-select person-rating`}
-                                                classNamePrefix={'control-select'}
-                                                placeholder={'Rating...'}
                                             />
                                             <Input
                                                 className={`detail-input person-note`}
@@ -525,9 +499,9 @@ export default class ProjectEdit extends React.PureComponent {
         const newCompany = this.props.editedData.company ? [...this.props.editedData.company] : project ? [...project.company] : [];
         if(typeof index === 'undefined' && typeof data === 'undefined') { //ADD
             if (this.props.editedData.company && this.props.editedData.company.some(company => company.id === null)) return;
-            newCompany.push({id: null, role: [], note: '', rating: []})
+            newCompany.push({id: null, role: [], note: ''})
         } else if(typeof index === 'undefined') { //ADD - fill id in data
-            newCompany.push({id: data, role: [], note: '', rating: []})
+            newCompany.push({id: data, role: [], note: ''})
         } else if(typeof data === 'undefined') {//REMOVE at index
             newCompany.splice(index, 1);
         } else { //data contains update for line index
@@ -543,9 +517,9 @@ export default class ProjectEdit extends React.PureComponent {
         const newPerson = this.props.editedData.person ? [...this.props.editedData.person] : project ? [...project.person] : [];
         if(typeof index === 'undefined' && typeof data === 'undefined') { //ADD
             if(this.props.editedData.person && this.props.editedData.person.some(person => person.id === null)) return;
-            newPerson.push({id: null, role: [], note: '', rating: [], profession: []})
+            newPerson.push({id: null, role: [], note: '', profession: []})
         } else if(typeof index === 'undefined') { //ADD - fill id in data
-            newPerson.push({id: data, role: [], note: '', rating: [], profession: []})
+            newPerson.push({id: data, role: [], note: '', profession: []})
         } else if(typeof data === 'undefined') {//REMOVE at index
             newPerson.splice(index, 1);
         } else { //data contains update for line index
@@ -564,9 +538,9 @@ export default class ProjectEdit extends React.PureComponent {
 
         for (const item of this.props.box) {
             if (this.props.companies[item]) {
-                if(!newCompany.some(company => company.id === item)) newCompany.push({id: item, role: [], note: '', rating: []});
+                if(!newCompany.some(company => company.id === item)) newCompany.push({id: item, role: [], note: ''});
             } else if (this.props.persons[item]) {
-                if(!newPerson.some(person => person.id === item)) newPerson.push({id: item, role: [], note: '', rating: [], profession: []});
+                if(!newPerson.some(person => person.id === item)) newPerson.push({id: item, role: [], note: '', profession: []});
             }
         }
 

@@ -61,15 +61,15 @@ export default class AppHeader extends React.PureComponent {
             <div className={'app-header-outer'}>
                 <div className={'app-header'}>
                     <div className={'header-group'}>
-                        <FontAwesomeIcon onClick={this.home} className={`fa-icon margin-right clickable`} icon={Icons.ICON_HOME} fixedWidth/>
-                        <FontAwesomeIcon onClick={this.refresh} className={'fa-icon margin-right clickable'} icon={Icons.ICON_RELOAD} fixedWidth/>
+                        <FontAwesomeIcon onClick={this.home} className={`fa-icon margin-right clickable`} icon={Icons.ICON_HEADER_HOME} fixedWidth/>
+                        <FontAwesomeIcon onClick={this.refresh} className={'fa-icon margin-right clickable'} icon={Icons.ICON_HEADER_RELOAD} fixedWidth/>
                         <span className={'app-name'}>{`${this.props.appName.charAt(0).toUpperCase()}${this.props.appName.substr(1)}`}</span>
                         <span className={'version'}>{` (${this.props.appVersion})`}</span>
                         <div className={'header-divider'}/>
-                        <FontAwesomeIcon className={'fa-icon margin-right'} icon={Icons.ICON_USER}/>
+                        <FontAwesomeIcon className={'fa-icon margin-right'} icon={Icons.ICON_HEADER_USER}/>
                         <span className={'header-name long'}>{userName}</span>
                         <span className={'header-name short'}>{userNameShort}</span>
-                        <FontAwesomeIcon onClick={this.logout} className={'fa-icon margin-left clickable'} icon={Icons.ICON_LOGOUT} fixedWidth/>
+                        <FontAwesomeIcon onClick={this.logout} className={'fa-icon margin-left clickable'} icon={Icons.ICON_HEADER_LOGOUT} fixedWidth/>
                     </div>
 
                     <div className={'header-group center header-switch'}>

@@ -50,7 +50,7 @@ export default class ProjectsList extends React.PureComponent {
                             <div onClick={this.addProject} className={'tool-box-button green'}>{'New'}</div>
                             <div onClick={selectedProject ? () => this.showProject() : undefined} className={`tool-box-button${selectedProject ? '' : ' disabled'}`}>{'Show'}</div>
                             <div onClick={selectedProject ? () => this.editProject() : undefined} className={`tool-box-button${selectedProject ? '' : ' disabled'}`}>{'Edit'}</div>
-                            <div onClick={selectedProject ? this.addToBox : undefined} className={`tool-box-button blue${selectedProject ? '' : ' disabled'}`}><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW_RIGHT}/><FontAwesomeIcon icon={Icons.ICON_BOX}/></div>
+                            <div onClick={selectedProject ? this.addToBox : undefined} className={`tool-box-button blue${selectedProject ? '' : ' disabled'}`}><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/><FontAwesomeIcon icon={Icons.ICON_BOX}/></div>
                         </div>
                     </div>
                     <div className={'inner-container flex'}>
@@ -58,7 +58,7 @@ export default class ProjectsList extends React.PureComponent {
                             <div className={'tool-box-search-container'}>
                                 <div className={'icon search'}><FontAwesomeIcon icon={Icons.ICON_SEARCH}/></div>
                                 <Input value={search} onChange={this.searchInputHandler} className={`input-search`}/>
-                                <div className={'icon clear'} onClick={this.clearSearchInputHanler}><FontAwesomeIcon icon={Icons.ICON_CLEAR}/></div>
+                                <div className={'icon clear'} onClick={this.clearSearchInputHanler}><FontAwesomeIcon icon={Icons.ICON_SEARCH_CLEAR}/></div>
                             </div>
                         </div>
                         <div className={'toolbox-group'}>
@@ -96,7 +96,7 @@ export default class ProjectsList extends React.PureComponent {
                 {columnDef.map((column, i) =>
                     <th key={i} className={column.className}>
                         {column.sort ? <FontAwesomeIcon
-                            icon={this.props.sort === column.sort ? Icons.ICON_SORT_UP : this.props.sort === `-${column.sort}` ? Icons.ICON_SORT_DOWN : Icons.ICON_SORT}
+                            icon={this.props.sort === column.sort ? Icons.ICON_TABLE_SORT_UP : this.props.sort === `-${column.sort}` ? Icons.ICON_TABLE_SORT_DOWN : Icons.ICON_TABLE_SORT}
                             onClick={() => this.handleSort(column.sort)}
                             className={`sort-icon${this.props.sort.indexOf(column.sort) < 0 ? ' not-set' : ''}`}
                         /> : null}
@@ -351,9 +351,9 @@ export default class ProjectsList extends React.PureComponent {
                 if(producer || manager || supervisor) {
                     return (
                         <div className={'table-team'}>
-                            {producer ? <div className={'team-member producer'}><FontAwesomeIcon icon={Icons.ICON_PRODUCER} fixedWidth/>{producer}</div> : null}
-                            {manager ? <div className={'team-member manager'}><FontAwesomeIcon icon={Icons.ICON_MANAGER} fixedWidth/>{manager}</div> : null}
-                            {supervisor ? <div className={'team-member supervisor'}><FontAwesomeIcon icon={Icons.ICON_SUPERVISOR} fixedWidth/>{supervisor}</div> : null}
+                            {producer ? <div className={'team-member producer'}><FontAwesomeIcon icon={Icons.ICON_ROLE_PRODUCER} fixedWidth/>{producer}</div> : null}
+                            {manager ? <div className={'team-member manager'}><FontAwesomeIcon icon={Icons.ICON_ROLE_MANAGER} fixedWidth/>{manager}</div> : null}
+                            {supervisor ? <div className={'team-member supervisor'}><FontAwesomeIcon icon={Icons.ICON_ROLE_SUPERVISOR} fixedWidth/>{supervisor}</div> : null}
                         </div>
                     );
                 } else return '---';
