@@ -11,6 +11,7 @@ import * as Icons from '../../constants/Icons';
 import * as ProjectStatus from '../../constants/ProjectStatus';
 import * as CompanyRole from '../../constants/CompanyRole';
 import * as PersonRole from '../../constants/PersonRole';
+import * as TeamRole from '../../constants/TeamRole';
 import * as PersonProfession from '../../constants/PersonProfession';
 
 const statusOptions = Object.keys(ProjectStatus).map(key => ({value: key, label: ProjectStatus[key].label}));
@@ -26,8 +27,7 @@ export default class ProjectEdit extends React.PureComponent {
         this.state = {
             saveDisabled: true,
             validation: {},
-            removeArmed: false,
-            supervisor2: false
+            removeArmed: false
         };
         this.validationTimer = null;
         this.lastValidation = +new Date();
@@ -49,24 +49,11 @@ export default class ProjectEdit extends React.PureComponent {
         const name = editedData.name !== undefined ? editedData.name : !selectedProject ? '' : projects[selectedProject] ? projects[selectedProject].name : '';
         const status = editedData.status !== undefined ? editedData.status : projects[selectedProject] ? projects[selectedProject].status : null;
         const statusNote = editedData.statusNote !== undefined ? editedData.statusNote : projects[selectedProject] ? projects[selectedProject].statusNote : '';
-        const producer = editedData.producer !== undefined ? editedData.producer : projects[selectedProject] ? projects[selectedProject].producer : null;
-        const manager = editedData.manager !== undefined ? editedData.manager : projects[selectedProject] ? projects[selectedProject].manager : null;
-        const supervisor = editedData.supervisor !== undefined ? editedData.supervisor : projects[selectedProject] ? projects[selectedProject].supervisor : null;
-        const supervisor2 = editedData.supervisor2 !== undefined ? editedData.supervisor2 : projects[selectedProject] ? projects[selectedProject].supervisor2 : null;
-        const lead2D = editedData.lead2D !== undefined ? editedData.lead2D : projects[selectedProject] ? projects[selectedProject].lead2D : null;
-        const lead3D = editedData.lead3D !== undefined ? editedData.lead3D : projects[selectedProject] ? projects[selectedProject].lead3D : null;
-        const leadMP = editedData.leadMP !== undefined ? editedData.leadMP : projects[selectedProject] ? projects[selectedProject].leadMP : null;
         const company = editedData.company !== undefined ? editedData.company : projects[selectedProject] ? projects[selectedProject].company : [];
         const person = editedData.person !== undefined ? editedData.person : projects[selectedProject] ? projects[selectedProject].person : [];
+        const team = editedData.team !== undefined ? editedData.team : projects[selectedProject] ? projects[selectedProject].team : [];
         const lastContact = editedData.lastContact !== undefined ? editedData.lastContact ? moment(editedData.lastContact) : null : projects[selectedProject] && projects[selectedProject].lastContact ? moment(projects[selectedProject].lastContact) : null;
-
-        let canSupervisorChangeNumber = 0;
-        if(this.state.supervisor2) {
-            if (typeof editedData.supervisor2 === 'undefined' && (!projects[selectedProject] || !projects[selectedProject].supervisor2)) canSupervisorChangeNumber = -1;
-        } else {
-            if((editedData.supervisor !== null && projects[selectedProject] && projects[selectedProject].supervisor) || editedData.supervisor) canSupervisorChangeNumber = 1;
-        }
-
+        console.log(this.state.validation)
         return (
             <div className={'app-body'}>
                 <div className={'app-toolbox'}>
@@ -110,7 +97,6 @@ export default class ProjectEdit extends React.PureComponent {
                                     maxDate={moment().startOf('day')}
                                     placeholderText={'Last Contact...'}
                                     isClearable
-                                    //popperModifiers={{offset: {enabled: true, offset: '4px, -1px'}}}
                                 />
                             </div>
                         </div>
@@ -132,111 +118,47 @@ export default class ProjectEdit extends React.PureComponent {
                             </div>
                         </div>
                         <div className={'detail-spacer'}/>
+
                         <div className={'detail-row spacer'}>
-                            <div className={'detail-group size-4'}>
-                                <div className={`detail-label${typeof editedData.producer !== 'undefined' && selectedProject ? ' value-changed' : ''}`}>{'Producer:'}</div>
-                                <Select
-                                    options={this.getUsersOptions(users, ['producer', 'manager'])}
-                                    value={producer ? {value: producer, label: users[producer] ? users[producer].name : producer} : null}
-                                    onChange={this.handleProducerChange}
-                                    isSearchable={true}
-                                    isMulti={false}
-                                    isClearable={true}
-                                    className={`control-select${this.state.validation.producer ? ' invalid' : ''}`}
-                                    classNamePrefix={'control-select'}
-                                    placeholder={'Producer...'}
-                                />
-                            </div>
-                            <div className={'detail-group size-4'}>
-                                <div className={`detail-label${typeof editedData.manager !== 'undefined' && selectedProject ? ' value-changed' : ''}`}>{'Manager:'}</div>
-                                <Select
-                                    options={this.getUsersOptions(users, 'manager')}
-                                    value={manager ? {value: manager, label: users[manager] ? users[manager].name : manager} : null}
-                                    onChange={this.handleManagerChange}
-                                    isSearchable={true}
-                                    isMulti={false}
-                                    isClearable={true}
-                                    className={`control-select${this.state.validation.manager ? ' invalid' : ''}`}
-                                    classNamePrefix={'control-select'}
-                                    placeholder={'Manager...'}
-                                />
-                            </div>
-                            <div className={'detail-group size-4'}>
-                                <div
-                                    onClick={canSupervisorChangeNumber === 1 ? () => this.setState({supervisor2: true}) : canSupervisorChangeNumber === -1 ? () => this.setState({supervisor2: false}) : undefined}
-                                    className={`detail-label${(typeof editedData.supervisor !== 'undefined' || typeof editedData.supervisor2 !== 'undefined') && selectedProject ? ' value-changed' : ''}${canSupervisorChangeNumber !== 0 ? ' clickable' : ''}`}
-                                >
-                                    {'Supervisor:'}
-                                    {canSupervisorChangeNumber === 1 ? <FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/> : canSupervisorChangeNumber === -1 ? <FontAwesomeIcon className={'label-icon remove'} icon={Icons.ICON_EDITOR_ITEM_REMOVE}/> : null}
+                            <div className={'detail-group column size-12'}>
+                                <div onClick={() => this.handleTeamChange()} className={`detail-label clickable column${editedData.team !== undefined && selectedProject ? ' value-changed' : ''}`}>
+                                    {'UPP Team'}<FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/>
                                 </div>
-                                <div className={`column-wrapper`}>
-                                    <Select
-                                        options={this.getUsersOptions(users, 'supervisor', supervisor2)}
-                                        value={supervisor ? {value: supervisor, label: users[supervisor] ? users[supervisor].name : supervisor} : null}
-                                        onChange={this.handleSupervisorChange}
-                                        isSearchable={true}
-                                        isMulti={false}
-                                        isClearable={true}
-                                        className={`control-select no-label${this.state.validation.supervisor ? ' invalid' : ''}`}
-                                        classNamePrefix={'control-select'}
-                                        placeholder={'Supervisor...'}
-                                    />
-                                    {supervisor2 || this.state.supervisor2 ? <Select
-                                        options={this.getUsersOptions(users, 'supervisor', supervisor)}
-                                        value={supervisor2 ? {value: supervisor2, label: users[supervisor2] ? users[supervisor2].name : supervisor2} : null}
-                                        onChange={this.handleSupervisor2Change}
-                                        isSearchable={true}
-                                        isMulti={false}
-                                        isClearable={true}
-                                        className={`control-select no-label${this.state.validation.supervisor2 ? ' invalid' : ''}`}
-                                        classNamePrefix={'control-select'}
-                                        placeholder={'Supervisor 2...'}
-                                    /> : null}
+                                <div className={'detail-group-wrapper'}>
+                                    {team.map((line, i) =>
+                                        <div className={`detail-array-line size-6 spacer`} key={i}>
+                                            <FontAwesomeIcon className={'remove-icon'} onClick={() => this.handleTeamChange(i)} icon={Icons.ICON_EDITOR_LINE_REMOVE}/>
+                                            <div className={'line-content'}>
+                                                <Select
+                                                    options={this.getTeamUsersOptions(team, i)}
+                                                    value={line.id ? {value: line.id, label: users[line.id] ? users[line.id].name : line.id  } : null}
+                                                    onChange={option => this.handleTeamChange(i, {id: !option || !option.value ? null : option.value})}
+                                                    isSearchable={true}
+                                                    isMulti={false}
+                                                    isClearable={true}
+                                                    className={`control-select team-name${line.id === null ? ' invalid' : ''}`}
+                                                    classNamePrefix={'control-select'}
+                                                    placeholder={'Team member...'}
+
+                                                />
+                                                <Select
+                                                    options={this.getTeamRoleOptions(team, i)}
+                                                    value={line.role.map(role => ({value: role, label: TeamRole[role] ? TeamRole[role].label : role}))}
+                                                    onChange={option => this.handleTeamChange(i, {role: !option ? [] : option.map(o => o.value)})}
+                                                    isSearchable={false}
+                                                    isMulti={true}
+                                                    isClearable={true}
+                                                    className={`control-select team-role${line.role.length === 0 ? ' invalid' : ''}`}
+                                                    classNamePrefix={'control-select'}
+                                                    placeholder={'Role...'}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
-                            </div>
-                            <div className={'detail-group size-4'}>
-                                <div className={`detail-label${typeof editedData.lead2D !== 'undefined' && selectedProject ? ' value-changed' : ''}`}>{'Lead 2D:'}</div>
-                                <Select
-                                    options={this.getUsersOptions(users, 'lead2D')}
-                                    value={lead2D ? {value: lead2D, label: users[lead2D] ? users[lead2D].name : lead2D} : null}
-                                    onChange={this.handleLead2DChange}
-                                    isSearchable={true}
-                                    isMulti={false}
-                                    isClearable={true}
-                                    className={`control-select${this.state.validation.lead2D ? ' invalid' : ''}`}
-                                    classNamePrefix={'control-select'}
-                                    placeholder={'Lead 2D...'}
-                                />
-                            </div>
-                            <div className={'detail-group size-4'}>
-                                <div className={`detail-label${typeof editedData.lead3D !== 'undefined' && selectedProject ? ' value-changed' : ''}`}>{'Lead 3D:'}</div>
-                                <Select
-                                    options={this.getUsersOptions(users, 'lead3D')}
-                                    value={lead3D ? {value: lead3D, label: users[lead3D] ? users[lead3D].name : lead3D} : null}
-                                    onChange={this.handleLead3DChange}
-                                    isSearchable={true}
-                                    isMulti={false}
-                                    isClearable={true}
-                                    className={`control-select${this.state.validation.lead3D ? ' invalid' : ''}`}
-                                    classNamePrefix={'control-select'}
-                                    placeholder={'Lead 3D...'}
-                                />
-                            </div>
-                            <div className={'detail-group size-4'}>
-                                <div className={`detail-label${typeof editedData.leadMP !== 'undefined' && selectedProject ? ' value-changed' : ''}`}>{'Lead MP:'}</div>
-                                <Select
-                                    options={this.getUsersOptions(users, 'leadMP')}
-                                    value={leadMP ? {value: leadMP, label: users[leadMP] ? users[leadMP].name : leadMP} : null}
-                                    onChange={this.handleLeadMPChange}
-                                    isSearchable={true}
-                                    isMulti={false}
-                                    isClearable={true}
-                                    className={`control-select${this.state.validation.leadMP ? ' invalid' : ''}`}
-                                    classNamePrefix={'control-select'}
-                                    placeholder={'Lead MP...'}
-                                />
                             </div>
                         </div>
+
 
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group column size-12'}>
@@ -246,7 +168,7 @@ export default class ProjectEdit extends React.PureComponent {
                                         <FontAwesomeIcon className={'remove-icon'} onClick={() => this.handleCompanyChange(i)} icon={Icons.ICON_EDITOR_LINE_REMOVE}/>
                                         <div className={'line-content'}>
                                             <Select
-                                                options={this.getCopmanyOptions(companies)}
+                                                options={this.getCompanyOptions(companies)}
                                                 value={companyLine.id ? {value: companyLine.id, label: companies[companyLine.id] ? companies[companyLine.id].name : companyLine.id  } : null}
                                                 onChange={option => this.handleCompanyChange(i, {id: !option || !option.value ? null : option.value})}
                                                 isSearchable={true}
@@ -327,8 +249,6 @@ export default class ProjectEdit extends React.PureComponent {
                                 )}
                             </div>
                         </div>
-                        <div className={'detail-row spacer'}/>
-
                     </div>
                 </Scrollbars>
             </div>
@@ -386,22 +306,69 @@ export default class ProjectEdit extends React.PureComponent {
         return JSON.stringify(a) === JSON.stringify(b);
     };
 
-    getUsersOptions = (users, role) => {
-        return Object.keys(users)
+    getTeamUsersOptions = (team, index) => {
+        const bookingRoles = Object.keys(TeamRole).reduce((roles, id) => roles.concat(TeamRole[id].role), []);
+        const requiredBookingRoles = team[index] && team[index].role && team[index].role.length > 0 ? team[index].role.map(id => TeamRole[id].role) : [];
+
+        return Object.keys(this.props.users)
             .filter(userId => {
-                if(!users[userId] || !users[userId].role || users[userId].role.length === 0) return false;
-                let hasRole = false;
-                if(!Array.isArray(role)) role = [role];
-                role.forEach(r => {
-                    if(!hasRole) hasRole = users[userId].role.indexOf(`booking:${r}`) >= 0
-                });
-                return hasRole;
+                if(!this.props.users[userId] || !this.props.users[userId].role || this.props.users[userId].role.filter(role => bookingRoles.indexOf(role) >= 0).length === 0) return false;
+                if(requiredBookingRoles.length === 0) {
+                    const alreadyUsedRoles = team.reduce((usedRoles, line, i) => {
+                        if(i !== index) {
+                            for(const role of line.role) {
+                                if(!TeamRole[role].multi && usedRoles.indexOf(role) < 0) usedRoles.push(role);
+                            }
+                        }
+                        return usedRoles;
+                    }, []);
+                    const freeBookingRoles = Object.keys(TeamRole).filter(id => alreadyUsedRoles.indexOf(id) < 0).reduce((roles, role) => roles.concat(TeamRole[role].role), []);
+                    let hasRole = false;
+                    for(const role of freeBookingRoles) {
+                        if (!hasRole && this.props.users[userId].role.indexOf(role) >= 0) hasRole = true;
+                    }
+                    return hasRole;
+                } else {
+                    let notPassed = false;
+                    for (const requiredRole of requiredBookingRoles) {
+                        if (Array.isArray(requiredRole)) {
+                            let hasRole = false;
+                            for (const role of requiredRole) {
+                                if (this.props.users[userId].role.indexOf(role) >= 0) hasRole = true;
+                            }
+                            if (!hasRole) notPassed = true;
+                        } else {
+                            if (this.props.users[userId].role.indexOf(requiredRole) < 0) notPassed = true;
+                        }
+                    }
+                    return !notPassed;
+                }
             })
-            .sort((a, b) => users[a].name.localeCompare(users[b].name))
-            .map(user => {return {value: user, label: users[user].name}});
+            .sort((a, b) => this.props.users[a].name.localeCompare(this.props.users[b].name))
+            .map(user => {return {value: user, label: this.props.users[user].name}});
     };
 
-    getCopmanyOptions = companies => {
+    getTeamRoleOptions = (team, index) => {
+        const currentUserRoles = team[index].id && this.props.users[team[index].id] ? this.props.users[team[index].id].role : [];
+        const alreadyUsedRoles = team.reduce((usedRoles, line, i) => {
+            //if(i !== index) {
+                for(const role of line.role) {
+                    if(!TeamRole[role].multi && usedRoles.indexOf(role) < 0) usedRoles.push(role);
+                }
+            //
+            return usedRoles;
+        }, []);
+        return Object.keys(TeamRole).filter(role => {
+            if(alreadyUsedRoles.indexOf(role) >= 0) return false;
+            if(!team[index].id) return true;
+            for(const userRole of currentUserRoles) {
+                if(TeamRole[role].role.indexOf(userRole) >= 0) return true;
+            }
+            return false;
+        }).map(role => ({value: role, label: TeamRole[role].label}));
+    };
+
+    getCompanyOptions = companies => {
       return Object.keys(companies).map(companyId => ({
           value: companyId,
           label: companies[companyId].name
@@ -428,18 +395,18 @@ export default class ProjectEdit extends React.PureComponent {
         const project = Object.assign({}, origProject, this.props.editedData);
         let validation = {};
 
-        if(!project.name || !project.name.trim()) validation['name'] = {field: 'Project name', status: 'Is empty'};
+        if(!project.name || !project.name.trim()) validation['name'] = {field: 'Project name', status: 'Must be set'};
         if(this.isProjectsNameUsed(project.name)) validation['name'] = {field: 'Project name', status: 'Is not unique'};
-        if(!project.status) validation['status'] = {field: 'Project status', status: 'Is not set'};
+        if(!project.status) validation['status'] = {field: 'Project status', status: 'Must be set'};
         if(!ProjectStatus[project.status]) validation['status'] = {field: 'Project status', status: 'Is invalid'};
 
-        if((project.status === 'LOST' || project.status === 'REFUSED') && (!project.statusNote || !project.statusNote.trim())) validation['statusNote'] = {field: 'Status note', status: `Must be set for status "${project.status}"`};
+        if((project.status === 'LOST' || project.status === 'REFUSED' || project.status === 'ONHOLD') && (!project.statusNote || !project.statusNote.trim())) validation['statusNote'] = {field: 'Status note', status: `Must be set for status "${ProjectStatus[project.status].label}"`};
 
-        if(project.supervisor2 && !project.supervisor) validation['supervisor'] = {field: 'Project supervisor', status: 'Must be set if supervisor2 is set'};
-        if(project.supervisor && project.supervisor === project.supervisor2) validation['supervisor2'] = {field: 'Project supervisor2', status: 'Must be different of supervisor'};
+        if(project.team && project.team.some(team => team.id === null)) validation['team-name'] = {field: 'Team', status: 'Some team member is not set'};
+        if(project.team && project.team.some(team => team.role.length === 0)) validation['team-role'] = {field: 'Team', status: 'Some team member has not set role'};
 
-        if(project.company && project.company.some(company => company.id === null)) validation['company'] = {field: 'Companies', status: 'A company is not set'};
-        if(project.person && project.person.some(person => person.id === null)) validation['person'] = {field: 'People', status: 'A person is not set'};
+        if(project.company && project.company.some(company => company.id === null)) validation['company'] = {field: 'Companies', status: 'Some company is not set'};
+        if(project.person && project.person.some(person => person.id === null)) validation['person'] = {field: 'People', status: 'Some person is not set'};
 
         const disableSave = Object.keys(validation).length > 0 || Object.keys(this.props.editedData).length === 0;
         if(this.areEquivalent(validation, this.state.validation)) validation = this.state.validation;
@@ -492,6 +459,39 @@ export default class ProjectEdit extends React.PureComponent {
 
     handleLastContactChange = date => {
         this.props.editItem(this.updateEditedData({lastContact: date ? date.startOf('day') : null}));
+    };
+
+    handleTeamChange = (index, data) => {
+        const field = 'team';
+        const emptyItem = {id: null, role: [], note: ''};
+        const project = this.props.projects[this.props.selectedProject];
+        const newData = this.props.editedData[field] ? [...this.props.editedData[field]] : project ? [...project[field]] : [];
+        if(typeof index === 'undefined' && typeof data === 'undefined') { //ADD
+            if (this.props.editedData[field] && this.props.editedData[field].some(item => item.id === null)) return;
+            newData.push({id: null, role: [], note: ''})
+        } else if(typeof index === 'undefined') { //ADD - fill id in data
+            newData.push({...emptyItem, id: data});
+        } else if(typeof data === 'undefined') {//REMOVE at index
+            newData.splice(index, 1);
+        } else { //data contains update for line index
+            newData[index] = {...newData[index], ...data}
+        }
+        const editedData = this.updateEditedData({[field]: newData});
+        if(data && data.id && editedData[field][index].role.length === 0) {
+            const userBookingRoles = this.props.users[data.id] ? this.props.users[data.id].role : [];
+            const projectUsedRoles = editedData[field].reduce((usedRoles, line) => usedRoles.concat(line.role), []);
+            const possibleRoles = Object.keys(TeamRole).reduce((roles, id) => {
+                const teamRole = Array.isArray(TeamRole[id].role) ? TeamRole[id].role : [TeamRole[id].role];
+                for(const role of teamRole) {
+                    if(userBookingRoles.indexOf(role) >= 0 && roles.indexOf(TeamRole[id].id) < 0 && (TeamRole[id].multi || projectUsedRoles.indexOf(TeamRole[id].id) < 0)) { //not used in others lines
+                        roles.push(TeamRole[id].id);
+                    }
+                }
+                return roles;
+            }, []);
+            editedData[field][index].role = possibleRoles;
+        }
+        this.props.editItem(editedData);
     };
 
     handleCompanyChange = (index, data) => {

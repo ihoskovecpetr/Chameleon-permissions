@@ -77,22 +77,36 @@ $detail-array-line-control-space: 0.5em;
       @include media("<=small-phone") {
         flex-wrap: wrap;
       }
-      .column-wrapper { //supervisor2.....
-        width: 100%;
-        & > * {
-          &:not(:last-child) {
-            margin-bottom: 0.1rem;
+      .detail-group-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -1em;
+        .detail-array-line {
+          padding: 0 1em;
+          &.spacer:nth-child(odd) {
+            border-right: 1px solid #9c9c9c;
+            @include media("<=tablet") {
+              border-right: none;
+            }
           }
         }
       }
       .detail-array-line {
         display: flex;
         width: 100%;
-        margin-bottom: 0.3em;
+        //margin-bottom: 0.3em;
+        //padding-bottom: 0.3em;
         flex-wrap: nowrap;
-        align-items: flex-start;
+        //align-items: flex-start;
         &:not(:last-child) {
-          margin-bottom: 0.3em;
+          //margin-bottom: 0.3em;
+          //padding-bottom: 0.3em;
+        }
+        &.size-6 {
+          width: 50%;
+          @include media("<=tablet") {
+            width: 100%;
+          }
         }
         .remove-icon {
           margin-right: 0.5em;
@@ -104,15 +118,19 @@ $detail-array-line-control-space: 0.5em;
         .line-content {
           display: flex;
           width: 100%;
+          //@include media("<=tablet") {width: 100%}
           //flex: 1 1 auto;
           flex-wrap: wrap;
           margin-right: -$detail-array-line-control-space;
+          padding-bottom: 0.3em;
           & > * {
             flex-basis: auto;
             flex-grow: 1;
             margin-right: $detail-array-line-control-space;
             margin-bottom: 1px;
           }
+
+          // company
           .company-name {
             width: calc(25% - #{$detail-array-line-control-space});
             @include media("<=tablet") {width: calc(50% - #{$detail-array-line-control-space});}
@@ -134,6 +152,7 @@ $detail-array-line-control-space: 0.5em;
             @include media("<=phone") {width: 100%}
           }
 
+          // person
           .person-name {
             width: calc(25% - #{$detail-array-line-control-space});
             @include media("<=tablet") {width: calc(50% - #{$detail-array-line-control-space});}
@@ -159,6 +178,24 @@ $detail-array-line-control-space: 0.5em;
             @include media("<=tablet") { width: calc(33.4% - #{$detail-array-line-control-space});}
             @include media("<=phone") {width: 100%}
           }
+
+          // team
+          .team-name {
+            width: calc(50% - #{$detail-array-line-control-space});
+            //@include media("<=tablet") {width: calc(50% - #{$detail-array-line-control-space});}
+            @include media("<=small-phone") {width: 100%}
+          }
+          .team-role {
+            width: calc(50% - #{$detail-array-line-control-space});
+            //@include media("<=tablet") {width: calc(50% - #{$detail-array-line-control-space});}
+            @include media("<=small-phone") {width: 100%}
+          }
+          .team-note {
+            width: calc(33% - #{$detail-array-line-control-space});
+            @include media("<=tablet") { width: calc(33.4% - #{$detail-array-line-control-space});}
+            @include media("<=phone") {width: 100%}
+          }
+
         }
 
       }

@@ -136,7 +136,7 @@ $table-control-background-color: #f5f5f5;
       overflow: hidden;
       text-overflow: ellipsis;
       padding: $detail-control-padding-vertical ($detail-control-padding-horizontal - 0.15em);
-      &.control-select__value-container--is-multi {
+      &.control-select__value-container--is-multi.control-select__value-container--has-value {
         padding: $detail-control-padding-vertical 0.18em;
       }
       .control-select__multi-value {
@@ -195,9 +195,11 @@ $table-control-background-color: #f5f5f5;
   }
   .control-select__menu {
     margin-top: 0.15em;
-    border-radius: $detail-control-border-radius;
+    border-radius: 0.2em;
+    background-color: $detail-control-background-color;
     .control-select__menu-list {
-      padding: $detail-control-border-radius / 2 0;
+      padding: 0;
+      max-height: 8 * (1.43em + ($detail-control-padding-vertical *2) );
       .control-select__option {
         margin: 0;
         padding: $detail-control-padding-vertical $detail-control-padding-horizontal;
