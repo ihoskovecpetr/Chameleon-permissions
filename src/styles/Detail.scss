@@ -106,8 +106,11 @@ $detail-array-line-control-space: 0.5em;
           margin-right: 0.5em;
           width: 1em;
           cursor: pointer;
-          color: #4b4b4b;
+          color: #868686;
           margin-top: 0.4em;
+          &:hover {
+            color: #9e4534;
+          }
         }
         .line-content {
           display: flex;

@@ -5,21 +5,20 @@ import { Input } from 'reactstrap';
 import Select from 'react-select';
 import moment from 'moment';
 import DatePicker from 'react-datepicker';
+import * as Constants from '../../constants/Constatnts';
 
 import * as Icons from '../../constants/Icons';
 
 import * as ProjectStatus from '../../constants/ProjectStatus';
-import * as CompanyRole from '../../constants/CompanyRole';
-import * as PersonRole from '../../constants/PersonRole';
+//import * as CompanyRole from '../../constants/CompanyProfession';
+//import * as PersonRole from '../../constants/PersonProfession';
 import * as TeamRole from '../../constants/TeamRole';
-import * as PersonProfession from '../../constants/PersonProfession';
+//import * as PersonProfession from '../../constants/PersonProfession';
 
-const statusOptions = Object.keys(ProjectStatus).map(key => ({value: key, label: ProjectStatus[key].label}));
-const companyRoleOptions = Object.keys(CompanyRole).map(key => ({value: key, label: CompanyRole[key].label}));
-const personRoleOptions = Object.keys(PersonRole).map(key => ({value: key, label: PersonRole[key].label}));
-const personProfessionOptions = Object.keys(PersonProfession).map(key => ({value: key, label: PersonProfession[key].label}));
-
-const VALIDATION_DELAY_MS = 500;
+const statusOptions = Object.keys(ProjectStatus).map(key => ({value: ProjectStatus[key].id, label: ProjectStatus[key].label}));
+//const companyRoleOptions = Object.keys(CompanyRole).map(key => ({value: key, label: CompanyRole[key].label}));
+//const personRoleOptions = Object.keys(PersonRole).map(key => ({value: key, label: PersonRole[key].label}));
+//const personProfessionOptions = Object.keys(PersonProfession).map(key => ({value: key, label: PersonProfession[key].label}));
 
 export default class ProjectEdit extends React.PureComponent {
     constructor(props) {
@@ -30,7 +29,7 @@ export default class ProjectEdit extends React.PureComponent {
             removeArmed: false
         };
         this.validationTimer = null;
-        this.lastValidation = +new Date();
+        this.lastValidation = 0;
     }
 
     componentDidMount() {
@@ -90,7 +89,13 @@ export default class ProjectEdit extends React.PureComponent {
                         <div className={'detail-row'}>
                             <div className={'detail-group size-8'}>
                                 <div className={`detail-label${typeof editedData.name !== 'undefined' && selectedProject  ? ' value-changed' : ''}`}>{'Project name:'}</div>
-                                <Input className={`detail-input${this.state.validation.name ? ' invalid' : ''}`} onChange={this.handleNameChange} value={name}/>
+                                <Input
+                                    placeholder={'Project name...'}
+                                    autoFocus={!selectedProject}
+                                    className={`detail-input${this.state.validation.name ? ' invalid' : ''}`}
+                                    onChange={this.handleNameChange}
+                                    value={name}
+                                />
                             </div>
                             <div className={'detail-group size-4'}>
                                 <div className={`detail-label${typeof editedData.lastContact !== 'undefined' && selectedProject  ? ' value-changed' : ''}`}>{'Last Contact:'}</div>
@@ -119,7 +124,12 @@ export default class ProjectEdit extends React.PureComponent {
                             </div>
                             <div className={'detail-group size-8'}>
                                 <div className={`detail-label${editedData.statusNote !== undefined && selectedProject ? ' value-changed' : ''}`}>{'Status note:'}</div>
-                                <Input className={`detail-input${this.state.validation.statusNote ? ' invalid' : ''}`} onChange={this.handleStatusNoteChange} value={statusNote}/>
+                                <Input
+                                    placeholder={'Status note...'}
+                                    className={`detail-input${this.state.validation.statusNote ? ' invalid' : ''}`}
+                                    onChange={this.handleStatusNoteChange}
+                                    value={statusNote}
+                                />
                             </div>
                         </div>
                         <div className={'detail-spacer'}/>
@@ -165,6 +175,11 @@ export default class ProjectEdit extends React.PureComponent {
                         </div>
 
 
+
+
+
+
+
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group column size-12'}>
                                 <div onClick={() => this.handleCompanyChange()} className={`detail-label clickable column${editedData.company !== undefined && selectedProject ? ' value-changed' : ''}`}>{'Companies'}<FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/></div>
@@ -184,8 +199,8 @@ export default class ProjectEdit extends React.PureComponent {
                                                 placeholder={'Company...'}
                                             />
                                             <Select
-                                                options={companyRoleOptions}
-                                                value={companyLine.role.map(role => ({value: role, label: CompanyRole[role] ? CompanyRole[role].label : role}))}
+                                                options={[]}
+                                                //value={companyLine.role.map(role => ({value: role, label: CompanyRole[role] ? CompanyRole[role].label : role}))}
                                                 onChange={option => this.handleCompanyChange(i, {role: !option ? [] : option.map(o => o.value)})}
                                                 isSearchable={false}
                                                 isMulti={true}
@@ -204,6 +219,12 @@ export default class ProjectEdit extends React.PureComponent {
                                 )}
                             </div>
                         </div>
+
+
+
+
+
+
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group column size-12'}>
                                 <div onClick={() => this.handlePersonChange()} className={`detail-label clickable column${editedData.person !== undefined && selectedProject ? ' value-changed' : ''}`}>{'People'}<FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/></div>
@@ -223,8 +244,8 @@ export default class ProjectEdit extends React.PureComponent {
                                                 placeholder={'Person...'}
                                             />
                                             <Select
-                                                options={personRoleOptions}
-                                                value={personLine.role.map(role => ({value: role, label: PersonRole[role] ? PersonRole[role].label : role}))}
+                                                options={[]}
+                                                //value={personLine.role.map(role => ({value: role, label: PersonRole[role] ? PersonRole[role].label : role}))}
                                                 onChange={option => this.handlePersonChange(i, {role: !option ? [] : option.map(o => o.value)})}
                                                 isSearchable={false}
                                                 isMulti={true}
@@ -232,17 +253,6 @@ export default class ProjectEdit extends React.PureComponent {
                                                 className={`control-select person-role`}
                                                 classNamePrefix={'control-select'}
                                                 placeholder={'Role...'}
-                                            />
-                                            <Select
-                                                options={personProfessionOptions}
-                                                value={personLine.profession.map(profession => ({value: profession, label: PersonProfession[profession] ? PersonProfession[profession].label : profession}))}
-                                                onChange={option => this.handlePersonChange(i, {profession: !option ? [] : option.map(o => o.value)})}
-                                                isSearchable={false}
-                                                isMulti={true}
-                                                isClearable={true}
-                                                className={`control-select person-profession`}
-                                                classNamePrefix={'control-select'}
-                                                placeholder={'Profession...'}
                                             />
                                             <Input
                                                 className={`detail-input person-note`}
@@ -254,6 +264,11 @@ export default class ProjectEdit extends React.PureComponent {
                                 )}
                             </div>
                         </div>
+
+
+
+
+
                     </div>
                 </Scrollbars>
             </div>
@@ -285,8 +300,8 @@ export default class ProjectEdit extends React.PureComponent {
     checkProject() {
         if(this.validationTimer) return;
         const time = +new Date() - this.lastValidation;
-        if(time > VALIDATION_DELAY_MS) this.setValidation();
-        else this.validationTimer = setTimeout(this.setValidation, VALIDATION_DELAY_MS - time);
+        if(time > Constants.VALIDATION_DELAY_MS) this.setValidation();
+        else this.validationTimer = setTimeout(this.setValidation, Constants.VALIDATION_DELAY_MS - time);
     }
 
     isProjectsNameUsed = name => {
@@ -302,7 +317,15 @@ export default class ProjectEdit extends React.PureComponent {
         const project = this.props.selectedProject ? this.props.projects[this.props.selectedProject] : {};
         const newData = {...this.props.editedData, ...updateData};
         for (const key of Object.keys(newData)) {
-            if (project && this.areEquivalent(project[key], newData[key])) delete newData[key];
+            if (project && this.areEquivalent(project[key], newData[key])) {
+                delete newData[key];
+                switch (key) {
+                    case 'status':
+                        delete newData['statusNote'];
+                        break;
+                }
+            }
+
         }
         return newData;
     };
@@ -358,11 +381,9 @@ export default class ProjectEdit extends React.PureComponent {
     getTeamRoleOptions = (team, index) => {
         const currentUserRoles = team[index].id && this.props.users[team[index].id] ? this.props.users[team[index].id].role : [];
         const alreadyUsedRoles = team.reduce((usedRoles, line, i) => {
-            //if(i !== index) {
-                for(const role of line.role) {
-                    if(!(TeamRole[role] && TeamRole[role].multi) && usedRoles.indexOf(role) < 0) usedRoles.push(role);
-                }
-            //
+            for(const role of line.role) {
+                if(!(TeamRole[role] && TeamRole[role].multi) && usedRoles.indexOf(role) < 0) usedRoles.push(role);
+            }
             return usedRoles;
         }, []);
         return Object.keys(TeamRole).filter(role => {
@@ -407,7 +428,7 @@ export default class ProjectEdit extends React.PureComponent {
         if(!project.status) validation['status'] = {field: 'Project status', status: 'Must be set'};
         if(!ProjectStatus[project.status]) validation['status'] = {field: 'Project status', status: 'Is invalid'};
 
-        if((project.status === 'LOST' || project.status === 'REFUSED' || project.status === 'ONHOLD') && (!project.statusNote || !project.statusNote.trim())) validation['statusNote'] = {field: 'Status note', status: `Must be set for status "${ProjectStatus[project.status].label}"`};
+        if((project.status === ProjectStatus.ON_HOLD.id || project.status === ProjectStatus.REFUSED.id || project.status === ProjectStatus.LOST.id) && (!project.statusNote || !project.statusNote.trim())) validation['statusNote'] = {field: 'Status note', status: `Must be set for status "${ProjectStatus[project.status].label}"`};
 
         if(project.team && project.team.some(team => team.id === null)) validation['team-name'] = {field: 'Team', status: 'Some team member is not set'};
         if(project.team && project.team.some(team => team.role.length === 0)) validation['team-role'] = {field: 'Team', status: 'Some team member has not set role'};
@@ -436,7 +457,11 @@ export default class ProjectEdit extends React.PureComponent {
     };
 
     handleStatusChange = option => {
-        this.props.editItem(this.updateEditedData({status: option.value}));
+        if(option.value === ProjectStatus.ON_HOLD.id || option.value === ProjectStatus.REFUSED.id || option.value === ProjectStatus.LOST.id) {
+            this.props.editItem(this.updateEditedData({status: option.value, statusNote: ''}));
+        } else {
+            this.props.editItem(this.updateEditedData({status: option.value}));
+        }
     };
 
     handleStatusNoteChange = event => {
@@ -509,7 +534,17 @@ export default class ProjectEdit extends React.PureComponent {
         this.props.editItem(editedData);
     };
 
+
+
+
+
     handleCompanyChange = (index, data) => {
+        const field = 'company';
+        const emptyItem = {id: null, role: [], flag: [], note: ''};
+        const project = this.props.projects[this.props.selectedProject];
+        const newData = this.props.editedData[field] ? [...this.props.editedData[field]] : project ? [...project[field]] : [];
+
+        /*
         const project = this.props.projects[this.props.selectedProject];
         const newCompany = this.props.editedData.company ? [...this.props.editedData.company] : project ? [...project.company] : [];
         if(typeof index === 'undefined' && typeof data === 'undefined') { //ADD
@@ -525,6 +560,7 @@ export default class ProjectEdit extends React.PureComponent {
         this.props.editItem(this.updateEditedData({
             company: newCompany
         }));
+        */
     };
 
     handlePersonChange = (index, data) => {
@@ -544,6 +580,9 @@ export default class ProjectEdit extends React.PureComponent {
             person: newPerson
         }));
     };
+
+
+
 
     addFromBox = () => {
         if(!this.props.box) return;

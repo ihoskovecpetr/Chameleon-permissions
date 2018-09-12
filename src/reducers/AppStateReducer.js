@@ -1,5 +1,6 @@
 import * as ViewTypes from '../constants/ViewTypes';
 import * as ActionTypes from '../actions/ActionTypes';
+import * as ProjectStatus from '../constants/ProjectStatus';
 
 function AppStateReducer(state = null, action = null) {
     if(action && action.type) {
@@ -29,7 +30,7 @@ function AppStateReducer(state = null, action = null) {
                     const previousView = [...state.previousView];
                     const view = previousView.pop();
                     return {...state, view: view, previousView: previousView};
-                } else return {...state, view: ViewTypes.PROJECTS_LIST, previousView: null};
+                } else return {...state, view: ViewTypes.PROJECT_LIST, previousView: null};
 
             case ActionTypes.SET_FETCHING:
                 if(action.isFetching !== state.fetching) {
@@ -92,7 +93,7 @@ function AppStateReducer(state = null, action = null) {
                 } else return state;
 
             case ActionTypes.ADD_PROJECT:
-                return {...state, projectEditedData: {status: 'PREBID'}, view: ViewTypes.PROJECT_NEW, previousView: [...state.previousView, state.view]};
+                return {...state, projectEditedData: {status: ProjectStatus.PRE_BID.id}, view: ViewTypes.PROJECT_NEW, previousView: [...state.previousView, state.view]};
 
             case ActionTypes.SET_PROJECTS_FILTER:
                 if(action.filter) {

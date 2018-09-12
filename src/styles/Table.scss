@@ -85,25 +85,31 @@ $table-control-font-size: $table-row-font-size;
 
   // *** project ***********************************
   &.project-name {
-    width: 15%;
+    width: 17%;
   }
   &.project-client {
-    width: 15%;
+    width: 17%;
   }
   &.project-producer {
-    width: 10%;
+    width: 12%;
     @include media("<=phone") {
       display: none;
     }
   }
   &.project-manager {
-    width: 10%;
+    width: 12%;
+    @include media("<=phone") {
+      display: none;
+    }
+  }
+  &.project-supervisor {
+    width: 12%;
     @include media("<=phone") {
       display: none;
     }
   }
   &.project-status {
-    width: 50%;
+    width: 30%;
     &.active-bid {
       overflow: visible;
     }

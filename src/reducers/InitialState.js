@@ -3,7 +3,7 @@ import * as FilterTypes from "../constants/FilterTypes";
 
 export default {
     appState: {
-        view: ViewTypes.PROJECTS_LIST,
+        view: ViewTypes.PROJECT_LIST,
         fetching: false,
         message: null,
         dataTimeStamp: null,

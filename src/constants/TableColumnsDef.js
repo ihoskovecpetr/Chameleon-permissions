@@ -6,6 +6,12 @@ export const ProjectsColumnDef = [
         sort: 'name'
     },
     {
+        field: 'client',
+        label: 'Client',
+        className: 'project-client',
+        sort: 'client'
+    },
+    {
         field: 'producer',
         label: 'Project Producer',
         className: 'project-producer',
@@ -15,6 +21,12 @@ export const ProjectsColumnDef = [
         field: 'manager',
         label: 'Project Manager',
         className: 'project-manager',
+        sort: 'manager'
+    },
+    {
+        field: 'supervisor',
+        label: 'Project Supervisor',
+        className: 'project-supervisor',
         sort: 'manager'
     },
     {

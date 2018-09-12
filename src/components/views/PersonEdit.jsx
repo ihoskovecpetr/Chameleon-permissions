@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Input } from 'reactstrap';
 import Select from 'react-select';
+import * as Constants from '../../constants/Constatnts';
 
 import * as Icons from '../../constants/Icons';
 
@@ -14,6 +15,8 @@ export default class PersonEdit extends React.PureComponent {
             validation: {},
             removeArmed: false
         };
+        this.validationTimer = null;
+        this.lastValidation = 0;
     }
 
     componentDidMount() {
@@ -56,7 +59,7 @@ export default class PersonEdit extends React.PureComponent {
                         <div className={'detail-row'}>
                             <div className={'detail-group size-7'}>
                                 <div className={`detail-label${typeof editedData.name !== 'undefined' && selectedPerson  ? ' value-changed' : ''}`}>{'Person name:'}</div>
-                                <Input className={`detail-input${this.state.validation.name ? ' invalid' : ''}`} onChange={this.handleNameChange} value={name}/>
+                                <Input autoFocus={!selectedPerson} className={`detail-input${this.state.validation.name ? ' invalid' : ''}`} onChange={this.handleNameChange} value={name}/>
                             </div>
                         </div>
                     </div>
@@ -86,8 +89,10 @@ export default class PersonEdit extends React.PureComponent {
     // HELPERS
     // *****************************************************************************************************************
     checkPerson() {
-        const disable = !this.isCurrentPersonValid() || Object.keys(this.props.editedData).length === 0;
-        if(this.state.saveDisabled !== disable) this.setState({saveDisabled: disable});
+        if(this.validationTimer) return;
+        const time = +new Date() - this.lastValidation;
+        if(time > Constants.VALIDATION_DELAY_MS) this.setValidation();
+        else this.validationTimer = setTimeout(this.setValidation, Constants.VALIDATION_DELAY_MS - time);
     }
 
     isPersonNameUsed = name => {
@@ -108,20 +113,25 @@ export default class PersonEdit extends React.PureComponent {
         return newData;
     };
 
+    areEquivalent = (a, b) => { //TODO do better check
+        return JSON.stringify(a) === JSON.stringify(b);
+    };
+
     // *****************************************************************************************************************
     // VALIDATION
     // *****************************************************************************************************************
-    isCurrentPersonValid = () => {
+    setValidation = () => {
         const origPerson = this.props.selectedPerson && this.props.persons && this.props.persons[this.props.selectedPerson] ? this.props.persons[this.props.selectedPerson] : {};
         if(!origPerson._id && this.props.selectedPerson) return true; // when refresh, no data fetched yet
         const person = Object.assign({}, origPerson, this.props.editedData);
-        const validation = {};
+        let validation = {};
 
         if(!person.name || !person.name.trim()) validation['name'] = {field: 'Person name', status: 'Is empty'};
         if(this.isPersonNameUsed(person.name)) validation['name'] = {field: 'Person name', status: 'Is not unique'};
 
-        this.setState({validation: validation});
-        return Object.keys(validation).length === 0;
+        const disableSave = Object.keys(validation).length > 0 || Object.keys(this.props.editedData).length === 0;
+        if(this.areEquivalent(validation, this.state.validation)) validation = this.state.validation;
+        this.setState({validation: validation, saveDisabled: disableSave});
     };
 
     // *****************************************************************************************************************

@@ -1,3 +1,3 @@
-export const PROFFESION1 = {sortOrder: 1, label: 'Profession 1'};
-export const PROFFESION2 = {sortOrder: 2, label: 'Profession 2'};
-export const PROFFESION3 = {sortOrder: 3, label: 'Profession 3'};
+export const CEO = {id: 'CEO', sort: 1, label: 'CEO'};
+export const DIRECTOR = {id: 'DIRECTOR', sort: 2, label: 'Director'};
+export const PRODUCER = {id: 'PRODUCER', sort: 3, label: 'Producer'};

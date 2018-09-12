@@ -1,0 +1,1 @@
+export const UPP_CLIENT = 'UPP_CLIENT';

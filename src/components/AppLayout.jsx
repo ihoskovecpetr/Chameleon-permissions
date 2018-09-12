@@ -31,7 +31,7 @@ export default class AppLayout extends React.PureComponent {
         console.log(this.props.appState.previousView)
         let AppBody = null;
         switch(this.props.appState.view) {
-            case ViewTypes.PROJECTS_LIST:
+            case ViewTypes.PROJECT_LIST:
                 AppBody =
                     <ProjectsList
                         projects={this.props.projects}
@@ -108,7 +108,7 @@ export default class AppLayout extends React.PureComponent {
                         box = {this.props.appState.box}
                     />;
                 break;
-            case ViewTypes.BOX:
+            case ViewTypes.BOX_LIST:
                 AppBody =
                     <Box
                         box = {this.props.appState.box}
@@ -125,7 +125,7 @@ export default class AppLayout extends React.PureComponent {
 
                     />;
                 break;
-            case ViewTypes.COMPANIES_LIST:
+            case ViewTypes.COMPANY_LIST:
                 AppBody =
                     <CompaniesList
                         projects={this.props.projects}
@@ -196,7 +196,7 @@ export default class AppLayout extends React.PureComponent {
                         addToBox={this.props.addToBox}
                     />;
                 break;
-            case ViewTypes.PERSONS_LIST:
+            case ViewTypes.PERSON_LIST:
                 AppBody =
                     <PersonsList
                         projects={this.props.projects}
