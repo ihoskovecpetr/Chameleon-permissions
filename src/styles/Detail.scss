@@ -81,6 +81,7 @@ $detail-array-line-control-space: 0.5em;
         display: flex;
         flex-wrap: wrap;
         margin: 0 -1em;
+        width: 100%;
         .detail-array-line {
           padding: 0 1em;
           &.spacer:nth-child(odd) {
@@ -94,14 +95,7 @@ $detail-array-line-control-space: 0.5em;
       .detail-array-line {
         display: flex;
         width: 100%;
-        //margin-bottom: 0.3em;
-        //padding-bottom: 0.3em;
         flex-wrap: nowrap;
-        //align-items: flex-start;
-        &:not(:last-child) {
-          //margin-bottom: 0.3em;
-          //padding-bottom: 0.3em;
-        }
         &.size-6 {
           width: 50%;
           @include media("<=tablet") {
@@ -118,8 +112,6 @@ $detail-array-line-control-space: 0.5em;
         .line-content {
           display: flex;
           width: 100%;
-          //@include media("<=tablet") {width: 100%}
-          //flex: 1 1 auto;
           flex-wrap: wrap;
           margin-right: -$detail-array-line-control-space;
           padding-bottom: 0.3em;
@@ -190,12 +182,6 @@ $detail-array-line-control-space: 0.5em;
             //@include media("<=tablet") {width: calc(50% - #{$detail-array-line-control-space});}
             @include media("<=small-phone") {width: 100%}
           }
-          .team-note {
-            width: calc(33% - #{$detail-array-line-control-space});
-            @include media("<=tablet") { width: calc(33.4% - #{$detail-array-line-control-space});}
-            @include media("<=phone") {width: 100%}
-          }
-
         }
 
       }

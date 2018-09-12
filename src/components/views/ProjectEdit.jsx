@@ -53,7 +53,12 @@ export default class ProjectEdit extends React.PureComponent {
         const person = editedData.person !== undefined ? editedData.person : projects[selectedProject] ? projects[selectedProject].person : [];
         const team = editedData.team !== undefined ? editedData.team : projects[selectedProject] ? projects[selectedProject].team : [];
         const lastContact = editedData.lastContact !== undefined ? editedData.lastContact ? moment(editedData.lastContact) : null : projects[selectedProject] && projects[selectedProject].lastContact ? moment(projects[selectedProject].lastContact) : null;
-        console.log(this.state.validation)
+
+        if(Object.keys(editedData).length === 0) team.sort((a, b) => {
+           const sa = a.role.map(role => TeamRole[role] ? TeamRole[role].sort : 0).reduce((a, b) => Math.min(a, b));
+           const sb = b.role.map(role => TeamRole[role] ? TeamRole[role].sort : 0).reduce((a, b) => Math.min(a, b));
+           return sa - sb;
+        });
         return (
             <div className={'app-body'}>
                 <div className={'app-toolbox'}>
@@ -136,7 +141,7 @@ export default class ProjectEdit extends React.PureComponent {
                                                     isSearchable={true}
                                                     isMulti={false}
                                                     isClearable={true}
-                                                    className={`control-select team-name${line.id === null ? ' invalid' : ''}`}
+                                                    className={`control-select team-name${line.id === null || (this.state.validation['team-name-duplicity'] && this.state.validation['team-name-duplicity'].index.indexOf(i) >= 0)  ? ' invalid' : ''}`}
                                                     classNamePrefix={'control-select'}
                                                     placeholder={'Team member...'}
 
@@ -307,22 +312,24 @@ export default class ProjectEdit extends React.PureComponent {
     };
 
     getTeamUsersOptions = (team, index) => {
-        const bookingRoles = Object.keys(TeamRole).reduce((roles, id) => roles.concat(TeamRole[id].role), []);
-        const requiredBookingRoles = team[index] && team[index].role && team[index].role.length > 0 ? team[index].role.map(id => TeamRole[id].role) : [];
+        const bookingRoles = Object.keys(TeamRole).reduce((roles, id) => roles.concat(TeamRole[id] ? TeamRole[id].role : ''), []);
+        const requiredBookingRoles = team[index] && team[index].role && team[index].role.length > 0 ? team[index].role.map(id => TeamRole[id] ? TeamRole[id].role : '') : [];
+        const usersAlreadyInTeam = team.filter((line, i) => i !== index && line.id).map(line => line.id);
 
         return Object.keys(this.props.users)
             .filter(userId => {
+                if(usersAlreadyInTeam.indexOf(userId) >= 0) return false;
                 if(!this.props.users[userId] || !this.props.users[userId].role || this.props.users[userId].role.filter(role => bookingRoles.indexOf(role) >= 0).length === 0) return false;
                 if(requiredBookingRoles.length === 0) {
                     const alreadyUsedRoles = team.reduce((usedRoles, line, i) => {
                         if(i !== index) {
                             for(const role of line.role) {
-                                if(!TeamRole[role].multi && usedRoles.indexOf(role) < 0) usedRoles.push(role);
+                                if(!(TeamRole[role] && TeamRole[role].multi) && usedRoles.indexOf(role) < 0) usedRoles.push(role);
                             }
                         }
                         return usedRoles;
                     }, []);
-                    const freeBookingRoles = Object.keys(TeamRole).filter(id => alreadyUsedRoles.indexOf(id) < 0).reduce((roles, role) => roles.concat(TeamRole[role].role), []);
+                    const freeBookingRoles = Object.keys(TeamRole).filter(id => alreadyUsedRoles.indexOf(id) < 0).reduce((roles, role) => roles.concat(TeamRole[role] ? TeamRole[role].role : ''), []);
                     let hasRole = false;
                     for(const role of freeBookingRoles) {
                         if (!hasRole && this.props.users[userId].role.indexOf(role) >= 0) hasRole = true;
@@ -353,7 +360,7 @@ export default class ProjectEdit extends React.PureComponent {
         const alreadyUsedRoles = team.reduce((usedRoles, line, i) => {
             //if(i !== index) {
                 for(const role of line.role) {
-                    if(!TeamRole[role].multi && usedRoles.indexOf(role) < 0) usedRoles.push(role);
+                    if(!(TeamRole[role] && TeamRole[role].multi) && usedRoles.indexOf(role) < 0) usedRoles.push(role);
                 }
             //
             return usedRoles;
@@ -365,7 +372,7 @@ export default class ProjectEdit extends React.PureComponent {
                 if(TeamRole[role].role.indexOf(userRole) >= 0) return true;
             }
             return false;
-        }).map(role => ({value: role, label: TeamRole[role].label}));
+        }).map(role => ({value: role, label: TeamRole[role] ? TeamRole[role].label : role}));
     };
 
     getCompanyOptions = companies => {
@@ -404,6 +411,14 @@ export default class ProjectEdit extends React.PureComponent {
 
         if(project.team && project.team.some(team => team.id === null)) validation['team-name'] = {field: 'Team', status: 'Some team member is not set'};
         if(project.team && project.team.some(team => team.role.length === 0)) validation['team-role'] = {field: 'Team', status: 'Some team member has not set role'};
+
+        const teamUsers = project.team ? project.team.filter(line => line.id).map(line => line.id) : [];
+        teamUsers.forEach((user, index) => {
+            if(teamUsers.indexOf(user) !== index) {
+                if(!validation['team-name-duplicity']) validation['team-name-duplicity'] = {field: 'Team', index: [index], status: `User is in team more than once`};
+                else validation['team-name-duplicity'].index.push(index);
+            }
+        });
 
         if(project.company && project.company.some(company => company.id === null)) validation['company'] = {field: 'Companies', status: 'Some company is not set'};
         if(project.person && project.person.some(person => person.id === null)) validation['person'] = {field: 'People', status: 'Some person is not set'};
