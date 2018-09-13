@@ -4,6 +4,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
 import { Input } from 'reactstrap';
 import Select from 'react-select';
 import moment from 'moment';
+import areEquivalent from '../../lib/compareObjects';
 import DatePicker from 'react-datepicker';
 import * as Constants from '../../constants/Constatnts';
 
@@ -174,6 +175,7 @@ export default class ProjectEdit extends React.PureComponent {
                                 </div>
                             </div>
                         </div>
+
                         {/* ------------------ COMPANY ------------------ */}
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group column size-12'}>
@@ -204,6 +206,9 @@ export default class ProjectEdit extends React.PureComponent {
                                                 classNamePrefix={'control-select'}
                                                 placeholder={'Role...'}
                                             />
+                                            <div className={`control-flag-box`}>
+                                                <FontAwesomeIcon className={`control-flag-icon${' disabled'}`} icon={Icons.ICON_EDITOR_FLAG_CLIENT} fixedWidth/>
+                                            </div>
                                             <Input
                                                 className={`detail-input company-note`}
                                                 onChange={event => this.handleCompanyChange(i, {note: event.target.value})} value={companyLine.note}
@@ -249,6 +254,11 @@ export default class ProjectEdit extends React.PureComponent {
                                                 classNamePrefix={'control-select'}
                                                 placeholder={'Role...'}
                                             />
+                                            <div className={`control-flag-box`}>
+                                                <FontAwesomeIcon className={`control-flag-icon${' disabled'}`} icon={Icons.ICON_EDITOR_FLAG_ACCOUNT} fixedWidth/>
+                                                <FontAwesomeIcon className={`control-flag-icon${' disabled'}`} icon={Icons.ICON_EDITOR_FLAG_CREATIVITY} fixedWidth/>
+                                                <FontAwesomeIcon className={`control-flag-icon${' disabled'}`} icon={Icons.ICON_EDITOR_FLAG_ORGANIZE} fixedWidth/>
+                                            </div>
                                             <Input
                                                 className={`detail-input person-note`}
                                                 onChange={event => this.handlePersonChange(i, {note: event.target.value})} value={personLine.note}
@@ -312,7 +322,7 @@ export default class ProjectEdit extends React.PureComponent {
         const object = this.props.selected ? this.props.projects[this.props.selected] : {};
         const newData = {...this.props.editedData, ...updateData};
         for (const key of Object.keys(newData)) {
-            if (object && this.areEquivalent(object[key], newData[key])) {
+            if (object && areEquivalent(object[key], newData[key])) {
                 delete newData[key];
                 switch (key) {
                     case 'status':
@@ -323,10 +333,6 @@ export default class ProjectEdit extends React.PureComponent {
 
         }
         return newData;
-    };
-
-    areEquivalent = (a, b) => { //TODO do better check
-        return JSON.stringify(a) === JSON.stringify(b);
     };
 
     getTeamUsersOptions = (team, index) => {
@@ -440,7 +446,7 @@ export default class ProjectEdit extends React.PureComponent {
         if(object.person && object.person.some(person => person.id === null)) validation['person'] = {field: 'People', status: 'Some person is not set'};
 
         const disableSave = Object.keys(validation).length > 0 || Object.keys(this.props.editedData).length === 0;
-        if(this.areEquivalent(validation, this.state.validation)) validation = this.state.validation;
+        if(areEquivalent(validation, this.state.validation)) validation = this.state.validation;
         this.setState({validation: validation, saveDisabled: disableSave});
     };
 
@@ -497,25 +503,24 @@ export default class ProjectEdit extends React.PureComponent {
     };
 
     handleTeamChange = (index, data) => {
-        const field = 'team';
         const emptyItem = {id: null, role: [], note: ''};
         const object = this.props.projects[this.props.selected];
-        const newData = this.props.editedData[field] ? [...this.props.editedData[field]] : object ? [...object[field]] : [];
+        const newData = this.props.editedData.team ? [...this.props.editedData.team] : object ? [...object.team] : [];
         if(typeof index === 'undefined' && typeof data === 'undefined') { //ADD
-            if (this.props.editedData[field] && this.props.editedData[field].some(item => item.id === null)) return;
-            newData.push({id: null, role: [], note: ''}) //TODO empty
+            if (this.props.editedData.team && this.props.editedData.team.some(item => item.id === null)) return;
+            newData.push(emptyItem)
         } else if(typeof index === 'undefined') { //ADD - fill id in data
             newData.push({...emptyItem, id: data});
-        } else if(typeof data === 'undefined') {//REMOVE at index
+        } else if(typeof data === 'undefined') { //REMOVE at index
             newData.splice(index, 1);
         } else { //data contains update for line index
             newData[index] = {...newData[index], ...data}
         }
-        const editedData = this.updateEditedData({[field]: newData});
-        if(data && data.id && editedData[field][index].role.length === 0) {
+        const editedData = this.updateEditedData({team: newData});
+        if(data && data.id && editedData.team[index].role.length === 0) {
             const userBookingRoles = this.props.users[data.id] ? this.props.users[data.id].role : [];
-            const projectUsedRoles = editedData[field].reduce((usedRoles, line) => usedRoles.concat(line.role), []);
-            const possibleRoles = Object.keys(TeamRole).reduce((roles, id) => {
+            const projectUsedRoles = editedData.team.reduce((usedRoles, line) => usedRoles.concat(line.role), []);
+            editedData.team[index].role = Object.keys(TeamRole).reduce((roles, id) => {
                 const teamRole = Array.isArray(TeamRole[id].role) ? TeamRole[id].role : [TeamRole[id].role];
                 for(const role of teamRole) {
                     if(userBookingRoles.indexOf(role) >= 0 && roles.indexOf(TeamRole[id].id) < 0 && (TeamRole[id].multi || projectUsedRoles.indexOf(TeamRole[id].id) < 0)) { //not used in others lines
@@ -524,56 +529,41 @@ export default class ProjectEdit extends React.PureComponent {
                 }
                 return roles;
             }, []);
-            editedData[field][index].role = possibleRoles;
         }
         this.props.editItem(editedData);
     };
 
-
-
-
-
     handleCompanyChange = (index, data) => {
-        const field = 'company';
         const emptyItem = {id: null, role: [], flag: [], note: ''};
         const project = this.props.projects[this.props.selected];
-        const newData = this.props.editedData[field] ? [...this.props.editedData[field]] : project ? [...project[field]] : [];
-
-        /*
-        const project = this.props.projects[this.props.selected];
-        const newCompany = this.props.editedData.company ? [...this.props.editedData.company] : project ? [...project.company] : [];
+        const newData = this.props.editedData.company ? [...this.props.editedData.company] : project ? [...project.company] : [];
         if(typeof index === 'undefined' && typeof data === 'undefined') { //ADD
             if (this.props.editedData.company && this.props.editedData.company.some(company => company.id === null)) return;
-            newCompany.push({id: null, role: [], note: ''})
+            newData.push(emptyItem)
         } else if(typeof index === 'undefined') { //ADD - fill id in data
-            newCompany.push({id: data, role: [], note: ''})
-        } else if(typeof data === 'undefined') {//REMOVE at index
-            newCompany.splice(index, 1);
+            newData.push({...emptyItem, id: data})
+        } else if(typeof data === 'undefined') { //REMOVE at index
+            newData.splice(index, 1);
         } else { //data contains update for line index
-            newCompany[index] = {...newCompany[index], ...data}
+            newData[index] = {...newData[index], ...data}
         }
-        this.props.editItem(this.updateEditedData({
-            company: newCompany
-        }));
-        */
+        this.props.editItem(this.updateEditedData({company: newData}));
     };
 
     handlePersonChange = (index, data) => {
         const project = this.props.projects[this.props.selected];
-        const newPerson = this.props.editedData.person ? [...this.props.editedData.person] : project ? [...project.person] : [];
+        const newData = this.props.editedData.person ? [...this.props.editedData.person] : project ? [...project.person] : [];
         if(typeof index === 'undefined' && typeof data === 'undefined') { //ADD
             if(this.props.editedData.person && this.props.editedData.person.some(person => person.id === null)) return;
-            newPerson.push({id: null, role: [], note: '', profession: []})
+            newData.push({id: null, role: [], note: '', profession: []})
         } else if(typeof index === 'undefined') { //ADD - fill id in data
-            newPerson.push({id: data, role: [], note: '', profession: []})
-        } else if(typeof data === 'undefined') {//REMOVE at index
-            newPerson.splice(index, 1);
+            newData.push({id: data, role: [], note: '', profession: []})
+        } else if(typeof data === 'undefined') { //REMOVE at index
+            newData.splice(index, 1);
         } else { //data contains update for line index
-            newPerson[index] = {...newPerson[index], ...data}
+            newData[index] = {...newData[index], ...data}
         }
-        this.props.editItem(this.updateEditedData({
-            person: newPerson
-        }));
+        this.props.editItem(this.updateEditedData({person: newData}));
     };
 
 

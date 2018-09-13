@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Input } from 'reactstrap';
 import Select from 'react-select';
+import areEquivalent from '../../lib/compareObjects';
 import * as Constants from '../../constants/Constatnts';
 
 import * as Icons from '../../constants/Icons';
@@ -169,10 +170,6 @@ export default class PersonEdit extends React.PureComponent {
         return newData;
     };
 
-    areEquivalent = (a, b) => { //TODO do better check
-        return JSON.stringify(a) === JSON.stringify(b);
-    };
-
     // *****************************************************************************************************************
     // VALIDATION
     // *****************************************************************************************************************
@@ -189,7 +186,7 @@ export default class PersonEdit extends React.PureComponent {
         if(object.contact && object.contact.some(contact => !contact.data || !contact.data.trim())) validation['contact-data'] = {field: 'Contact', status: 'Some contact is not set'};
 
         const disableSave = Object.keys(validation).length > 0 || Object.keys(this.props.editedData).length === 0;
-        if(this.areEquivalent(validation, this.state.validation)) validation = this.state.validation;
+        if(areEquivalent(validation, this.state.validation)) validation = this.state.validation;
         this.setState({validation: validation, saveDisabled: disableSave});
     };
 
