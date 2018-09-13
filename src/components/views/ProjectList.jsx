@@ -20,16 +20,16 @@ const statusOptions = Object.keys(ProjectStatus).filter(key => ProjectStatus[key
 const searchKeysProjects = ['name', '$name', 'client', 'team', 'status'];
 const searchKeysBids = searchKeysProjects;
 
-export default class ProjectsList extends React.PureComponent {
+export default class ProjectList extends React.PureComponent {
 
     componentDidUpdate(prevProps) { //remove selected project if doesn't exist in filtered set
         const searchKeys = this.props.activeBid ? searchKeysBids : searchKeysProjects;
-        if(this.props.selectedProject && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.searchList(this.props.projects, this.filterList(this.props.projects, this.props.filter), this.props.search, searchKeys).indexOf(this.props.selectedProject) < 0) this.props.selectProject(null);
+        if(this.props.selected && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.searchList(this.props.projects, this.filterList(this.props.projects, this.props.filter), this.props.search, searchKeys).indexOf(this.props.selected) < 0) this.props.select(null);
     }
 
     render() {
         //console.log('RENDER PROJECTS LIST');
-        const {selectedProject, projects, activeBid, filter, sort, search} = this.props;
+        const {selected, projects, activeBid, filter, sort, search} = this.props;
 
         const searchKeys = this.props.activeBid ? searchKeysBids : searchKeysProjects;
 
@@ -48,10 +48,10 @@ export default class ProjectsList extends React.PureComponent {
                 <div className={'app-toolbox'}>
                     <div className={'inner-container space'}>
                         <div className={'toolbox-group'}>
-                            <div onClick={this.addProject} className={'tool-box-button green'}>{'New'}</div>
-                            <div onClick={selectedProject ? () => this.showProject() : undefined} className={`tool-box-button${selectedProject ? '' : ' disabled'}`}>{'Show'}</div>
-                            <div onClick={selectedProject ? () => this.editProject() : undefined} className={`tool-box-button${selectedProject ? '' : ' disabled'}`}>{'Edit'}</div>
-                            <div onClick={selectedProject ? this.addToBox : undefined} className={`tool-box-button blue${selectedProject ? '' : ' disabled'}`}><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/><FontAwesomeIcon icon={Icons.ICON_BOX}/></div>
+                            <div onClick={this.add} className={'tool-box-button green'}>{'New'}</div>
+                            <div onClick={selected ? () => this.show() : undefined} className={`tool-box-button${selected ? '' : ' disabled'}`}>{'Show'}</div>
+                            <div onClick={selected ? () => this.edit() : undefined} className={`tool-box-button${selected ? '' : ' disabled'}`}>{'Edit'}</div>
+                            <div onClick={selected ? this.addToBox : undefined} className={`tool-box-button blue${selected ? '' : ' disabled'}`}><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/><FontAwesomeIcon icon={Icons.ICON_BOX}/></div>
                         </div>
                     </div>
                     <div className={'inner-container flex'}>
@@ -59,7 +59,7 @@ export default class ProjectsList extends React.PureComponent {
                             <div className={'tool-box-search-container'}>
                                 <div className={'icon search'}><FontAwesomeIcon icon={Icons.ICON_SEARCH}/></div>
                                 <Input value={search} onChange={this.searchInputHandler} className={`input-search`}/>
-                                <div className={'icon clear'} onClick={this.clearSearchInputHanler}><FontAwesomeIcon icon={Icons.ICON_SEARCH_CLEAR}/></div>
+                                <div className={'icon clear'} onClick={this.clearSearchInputHandler}><FontAwesomeIcon icon={Icons.ICON_SEARCH_CLEAR}/></div>
                             </div>
                         </div>
                         <div className={'toolbox-group'}>
@@ -114,7 +114,7 @@ export default class ProjectsList extends React.PureComponent {
         return (
             <Table className={`table-body`}>
                 <tbody style={{borderBottom: '1px solid #dee2e6'}}>
-                {sortedProjectIds.map(projectId => <tr className={this.props.selectedProject === projectId ? 'selected' : ''} onClick = {event => this.rowClickHandler(event, projectId)} onDoubleClick={event => this.rowDoubleClickHandler(event, projectId)} key={projectId}>
+                {sortedProjectIds.map(projectId => <tr className={this.props.selected === projectId ? 'selected' : ''} onClick = {event => this.rowClickHandler(event, projectId)} onDoubleClick={event => this.rowDoubleClickHandler(event, projectId)} key={projectId}>
                     {columnDef.map((column, i) =>
                         <td key={i} className={`${column.className}${column.inline ? ' inline' : ''}`}>
                             {this.getComputedField(column.field, this.props.projects[projectId], this.props.activeBid)}
@@ -198,24 +198,24 @@ export default class ProjectsList extends React.PureComponent {
     // ***************************************************
     // ROUTING
     // ***************************************************
-    selectProject = (id) => {
-        this.props.selectProject(id);
+    select = (id) => {
+        this.props.select(id);
     };
 
-    addProject = () => {
-        this.props.addProject();
+    add = () => {
+        this.props.add();
     };
 
-    showProject = (id) => {
-        this.props.showProject(id);
+    show = (id) => {
+        this.props.show(id);
     };
 
-    editProject = (id) => {
-        this.props.editProject(id);
+    edit = (id) => {
+        this.props.edit(id);
     };
 
     addToBox = () => {
-        if(this.props.selectedProject) this.props.addToBox(this.props.selectedProject);
+        if(this.props.selected) this.props.addToBox(this.props.selected);
     };
 
     // ***************************************************
@@ -226,11 +226,11 @@ export default class ProjectsList extends React.PureComponent {
     };
 
     rowClickHandler = (event, projectId) => {
-        if(typeof event.target.className === 'string' && event.target.className.indexOf('control-select') < 0 && event.target.className.indexOf('table-button') < 0) this.selectProject(projectId);
+        if(typeof event.target.className === 'string' && event.target.className.indexOf('control-select') < 0 && event.target.className.indexOf('table-button') < 0) this.select(projectId);
     };
 
     rowDoubleClickHandler = (event, projectId) => {
-        if(typeof event.target.className === 'string' && event.target.className.indexOf('control-select') < 0 && event.target.className.indexOf('table-button') < 0) event.altKey ? this.editProject(projectId) : this.showProject(projectId);
+        if(typeof event.target.className === 'string' && event.target.className.indexOf('control-select') < 0 && event.target.className.indexOf('table-button') < 0) event.altKey ? this.edit(projectId) : this.show(projectId);
     };
 
     activeFilterHandler = () => {
@@ -278,7 +278,7 @@ export default class ProjectsList extends React.PureComponent {
        this.props.setSearch(event.target.value);
     };
 
-    clearSearchInputHanler = () => {
+    clearSearchInputHandler = () => {
        this.props.setSearch('');
     };
 
@@ -290,12 +290,12 @@ export default class ProjectsList extends React.PureComponent {
     };
 
     handleResetLastContact = id => {
-        this.props.updateProject(id, {lastContact: moment().startOf('day')});
+        this.props.update(id, {lastContact: moment().startOf('day')});
     };
 
     handleStatusChange = (id, status) => {
         if(status !== this.props.projects[id].status) {
-            this.props.updateProject(id, {status: status});
+            this.props.update(id, {status: status});
         }
     };
 
@@ -367,12 +367,9 @@ export default class ProjectsList extends React.PureComponent {
                     if (teamProducer || teamManager || teamSupervisor) {
                         return (
                             <div className={'table-team'}>
-                                {teamProducer ? <div className={'team-member producer'}><FontAwesomeIcon
-                                    icon={Icons.ICON_ROLE_PRODUCER} fixedWidth/>{teamProducer}</div> : null}
-                                {teamManager ? <div className={'team-member manager'}><FontAwesomeIcon
-                                    icon={Icons.ICON_ROLE_MANAGER} fixedWidth/>{teamManager}</div> : null}
-                                {teamSupervisor ? <div className={'team-member supervisor'}><FontAwesomeIcon
-                                    icon={Icons.ICON_ROLE_SUPERVISOR} fixedWidth/>{teamSupervisor}</div> : null}
+                                {teamProducer ? <div className={'team-member producer'}><FontAwesomeIcon icon={Icons.ICON_ROLE_PRODUCER} fixedWidth/>{teamProducer}</div> : null}
+                                {teamManager ? <div className={'team-member manager'}><FontAwesomeIcon icon={Icons.ICON_ROLE_MANAGER} fixedWidth/>{teamManager}</div> : null}
+                                {teamSupervisor ? <div className={'team-member supervisor'}><FontAwesomeIcon icon={Icons.ICON_ROLE_SUPERVISOR} fixedWidth/>{teamSupervisor}</div> : null}
                             </div>
                         );
                     } else return '---';

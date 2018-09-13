@@ -16,9 +16,9 @@ export default class ProjectDetail extends React.PureComponent {
     }
 
     render() {
-        const {selectedProject, projects} = this.props;
+        const {selected, projects} = this.props;
 
-        const project = projects[selectedProject] ? projects[selectedProject] : {};
+        const project = projects[selected] ? projects[selected] : {};
 
 
         return (
@@ -27,11 +27,11 @@ export default class ProjectDetail extends React.PureComponent {
                     <div className={'inner-container'}>
                     <div className={'toolbox-group'}>
                         <div onClick={this.close} className={'tool-box-button'}>{'Close'}</div>
-                        {!this.props.editProject ? null :
+                        {!this.props.edit ? null :
                             <div onClick={this.edit} className={`tool-box-button`}>{'Edit'}</div>
                         }
                         <div onClick={this.addToBox} className={`tool-box-button blue`}><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/><FontAwesomeIcon icon={Icons.ICON_BOX}/></div>
-                        {!this.props.removeProject ? null :
+                        {!this.props.remove ? null :
                             <Fragment>
                                 <div onClick={!this.state.removeArmed ? undefined : this.remove} className={`tool-box-button remove red${!this.state.removeArmed ? ' disabled' : ''}`}>{'Remove Project'}</div>
                                 <FontAwesomeIcon className={`tool-box-checkbox`} onClick={this.handleRemoveArmed} icon={this.state.removeArmed ? Icons.ICON_CHECKBOX_CHECKED : Icons.ICON_CHECKBOX_UNCHECKED} style={{cursor: 'pointer'}}/>
@@ -40,7 +40,7 @@ export default class ProjectDetail extends React.PureComponent {
                     </div>
                     </div>
                     <div className={'inner-container left-auto'}>
-                        {selectedProject && projects[selectedProject] ? <div className={'toolbox-id'}>{projects[selectedProject].projectId}</div> : null}
+                        {selected && projects[selected] ? <div className={'toolbox-id'}>{projects[selected].projectId}</div> : null}
                     </div>
                 </div>
                 <Scrollbars autoHide={true} autoHideTimeout={800} autoHideDuration={200}>
@@ -86,11 +86,11 @@ export default class ProjectDetail extends React.PureComponent {
     };
 
     edit = () => {
-        this.props.editProject();
+        this.props.edit();
     };
 
     remove = () => {
-        this.props.removeProject();
+        this.props.remove();
         this.close();
     };
 
@@ -102,7 +102,7 @@ export default class ProjectDetail extends React.PureComponent {
     };
 
     addToBox = () => {
-        this.props.addToBox(this.props.selectedProject);
+        this.props.addToBox(this.props.selected);
     };
 
 }

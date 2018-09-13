@@ -31,6 +31,7 @@ $detail-array-line-control-space: 0.5em;
     flex-wrap: wrap;
     margin: 0 -1* $detail-group-padding-horizontal;
     .detail-group {
+      /*
       &.spacer::before {
         content: '';
         width: 100%;
@@ -38,6 +39,7 @@ $detail-array-line-control-space: 0.5em;
         height: 1px;
         background-color: #9c9c9c;
       }
+      */
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -80,14 +82,25 @@ $detail-array-line-control-space: 0.5em;
       .detail-group-wrapper {
         display: flex;
         flex-wrap: wrap;
-        margin: 0 -1em;
         width: 100%;
         .detail-array-line {
-          padding: 0 1em;
-          &.spacer:nth-child(odd) {
-            border-right: 1px solid #9c9c9c;
+          &.spacer:nth-child(odd):after {
+            content: '';
+            width: 1px;
+            background-color: #9c9c9c;
+            height: 100%;
+            margin-left: 0.8em;
             @include media("<=tablet") {
-              border-right: none;
+              display: none;
+            }
+          }
+          &.spacer:nth-child(even):before {
+            content: '';
+            width: 1px;
+            height: 100%;
+            margin-right: 0.8em;
+            @include media("<=tablet") {
+              display: none;
             }
           }
         }
@@ -185,6 +198,18 @@ $detail-array-line-control-space: 0.5em;
             //@include media("<=tablet") {width: calc(50% - #{$detail-array-line-control-space});}
             @include media("<=small-phone") {width: 100%}
           }
+          // contact
+          .contact-type {
+            width: calc(35% - #{$detail-array-line-control-space});
+            //@include media("<=tablet") {width: calc(50% - #{$detail-array-line-control-space});}
+            @include media("<=small-phone") {width: 100%}
+          }
+          .contact-data {
+            width: calc(65% - #{$detail-array-line-control-space});
+            //@include media("<=tablet") {width: calc(50% - #{$detail-array-line-control-space});}
+            @include media("<=small-phone") {width: 100%}
+          }
+
         }
 
       }

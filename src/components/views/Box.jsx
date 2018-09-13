@@ -39,7 +39,7 @@ export default class Box extends React.PureComponent {
                             }
                             return (
                             <tr key={id} style={{cursor: 'default'}}>
-                                <td className={'projects-name'}><FontAwesomeIcon style={{cursor: 'pointer', marginRight: '0.5rem'}} onClick={() => this.removeFromBox(id)} icon={Icons.ICON_BOX_REMOVE}/>{`${type} | Name: ${object.name}`}</td>
+                                <td className={'projects-name'}><FontAwesomeIcon style={{cursor: 'pointer', marginRight: '0.5rem'}} onClick={() => this.remove(id)} icon={Icons.ICON_BOX_REMOVE}/>{`${type} | Name: ${object.name}`}</td>
                             </tr>)
                         })}
                         </tbody>
@@ -53,7 +53,7 @@ export default class Box extends React.PureComponent {
 
     };
 
-    removeFromBox = id => {
-        this.props.removeFromBox(id);
+    remove = id => {
+        this.props.remove(id);
     };
 }

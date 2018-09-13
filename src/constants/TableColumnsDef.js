@@ -90,6 +90,18 @@ export const CompaniesColumnDef = [
         label: 'Company Name',
         className: 'company-name',
         sort: 'name'
+    },
+    {
+        field: 'business',
+        label: 'Business',
+        className: 'company-business',
+        sort: null
+    },
+    {
+        field: 'contact',
+        label: 'Contact',
+        className: 'company-contact',
+        sort: null
     }
 ];
 
@@ -99,5 +111,17 @@ export const PersonsColumnDef = [
         label: 'Person Name',
         className: 'person-name',
         sort: 'name'
+    },
+    {
+        field: 'profession',
+        label: 'Profession',
+        className: 'company-profession',
+        sort: null
+    },
+    {
+        field: 'contact',
+        label: 'Contact',
+        className: 'company-contact',
+        sort: null
     }
 ];

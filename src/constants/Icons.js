@@ -50,3 +50,14 @@ export const ICON_EDITOR_FLAG_ORGANIZE = 'sitemap';
 
 //box
 export const ICON_BOX_REMOVE = 'trash';
+
+//contacts
+export const ICON_CONTACT_PHONE = 'phone';
+export const ICON_CONTACT_MOBILE = 'mobile-alt';
+export const ICON_CONTACT_EMAIL = 'at';
+export const ICON_CONTACT_WWW = 'desktop';
+export const ICON_CONTACT_LINKEDIN = ['fab','linkedin'];
+export const ICON_CONTACT_FACEBOOK = ['fab', 'facebook'];
+export const ICON_CONTACT_TWITTER = ['fab','twitter'];
+export const ICON_CONTACT_SKYPE = ['fab','skype'];
+export const ICON_CONTACT_OTHER = 'address-card';

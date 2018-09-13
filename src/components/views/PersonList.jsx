@@ -7,23 +7,27 @@ import Fuse from 'fuse.js';
 
 import * as Icons from '../../constants/Icons';
 
-import memoize from 'memoize-one';
+import * as ContactType from '../../constants/ContactType';
+import * as PersonProfession from '../../constants/PersonProfession';
 
+import memoize from 'memoize-one';
 
 import {PersonsColumnDef} from '../../constants/TableColumnsDef';
 
-export default class PersonsList extends React.PureComponent {
+const searchKeys = ['name', '$name', 'contact', 'profession'];
+
+export default class PersonList extends React.PureComponent {
 
     componentDidUpdate(prevProps) { //remove selected person if doesn't exist in filtered set
-        if(this.props.selectedPerson && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.searchList(this.props.persons, this.filterList(this.props.persons, this.props.filter), this.props.search).indexOf(this.props.selectedPerson) < 0) this.props.selectPerson(null);
+        if(this.props.selected && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.searchList(this.props.persons, this.filterList(this.props.persons, this.props.filter), this.props.search, searchKeys).indexOf(this.props.selected) < 0) this.props.select(null);
     }
 
     render() {
         //console.log('RENDER PERSONS LIST');
-        const {selectedPerson, persons, filter, sort, search} = this.props;
+        const {selected, persons, filter, sort, search} = this.props;
 
         const filteredPersonIds = this.filterList(persons, filter);
-        const searchedPersonIds = this.searchList(persons, filteredPersonIds, search);
+        const searchedPersonIds = this.searchList(persons, filteredPersonIds, search, searchKeys);
         const sortedPersonIds = this.sortList(persons, searchedPersonIds, sort);
 
         return (
@@ -31,10 +35,10 @@ export default class PersonsList extends React.PureComponent {
                 <div className={'app-toolbox'}>
                     <div className={'inner-container space'}>
                         <div className={'toolbox-group'}>
-                            <div onClick={this.addPerson} className={'tool-box-button green'}>{'New'}</div>
-                            <div onClick={selectedPerson ? () => this.showPerson() : undefined} className={`tool-box-button${selectedPerson ? '' : ' disabled'}`}>{'Show'}</div>
-                            <div onClick={selectedPerson ? () => this.editPerson() : undefined} className={`tool-box-button${selectedPerson ? '' : ' disabled'}`}>{'Edit'}</div>
-                            <div onClick={selectedPerson ? this.addToBox : undefined} className={`tool-box-button blue${selectedPerson ? '' : ' disabled'}`}><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/><FontAwesomeIcon icon={Icons.ICON_BOX}/></div>
+                            <div onClick={this.add} className={'tool-box-button green'}>{'New'}</div>
+                            <div onClick={selected ? () => this.show() : undefined} className={`tool-box-button${selected ? '' : ' disabled'}`}>{'Show'}</div>
+                            <div onClick={selected ? () => this.edit() : undefined} className={`tool-box-button${selected ? '' : ' disabled'}`}>{'Edit'}</div>
+                            <div onClick={selected ? this.addToBox : undefined} className={`tool-box-button blue${selected ? '' : ' disabled'}`}><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/><FontAwesomeIcon icon={Icons.ICON_BOX}/></div>
                         </div>
                     </div>
                     <div className={'inner-container flex'}>
@@ -42,7 +46,7 @@ export default class PersonsList extends React.PureComponent {
                             <div className={'tool-box-search-container'}>
                                 <div className={'icon search'}><FontAwesomeIcon icon={Icons.ICON_SEARCH}/></div>
                                 <Input value={search} onChange={this.searchInputHandler} className={`input-search`}/>
-                                <div className={'icon clear'} onClick={this.clearSearchInputHanler}><FontAwesomeIcon icon={Icons.ICON_SEARCH_CLEAR}/></div>
+                                <div className={'icon clear'} onClick={this.clearSearchInputHandler}><FontAwesomeIcon icon={Icons.ICON_SEARCH_CLEAR}/></div>
                             </div>
                         </div>
                     </div>
@@ -84,7 +88,7 @@ export default class PersonsList extends React.PureComponent {
         return (
             <Table className={`table-body`}>
                 <tbody style={{borderBottom: '1px solid #dee2e6'}}>
-                {sortedPersonIds.map(personId => <tr className={this.props.selectedPerson === personId ? 'selected' : ''} onClick = {event => this.rowClickHandler(event, personId)} onDoubleClick={event => this.rowDoubleClickHandler(event, personId)} key={personId}>
+                {sortedPersonIds.map(personId => <tr className={this.props.selected === personId ? 'selected' : ''} onClick = {event => this.rowClickHandler(event, personId)} onDoubleClick={event => this.rowDoubleClickHandler(event, personId)} key={personId}>
                     {columnDef.map((column, i) =>
                         <td key={i} className={`${column.className}`}>
                             {this.getComputedField(column.field, this.props.persons[personId])}
@@ -121,8 +125,8 @@ export default class PersonsList extends React.PureComponent {
                 const down = sort.indexOf('-') === 0;
                 let field = down ? sort.substr(1) : sort;
                 //if (field === 'status') field = 'status-order';
-                let dataA = down ? this.getComputedField(field, persons[a]) : this.getComputedField(field, persons[b]);
-                let dataB = down ? this.getComputedField(field, persons[b]) : this.getComputedField(field, persons[a]);
+                let dataA = down ? this.getComputedField(field, persons[a], false, true) : this.getComputedField(field, persons[b], false, true);
+                let dataB = down ? this.getComputedField(field, persons[b], false, true) : this.getComputedField(field, persons[a], false, true);
                 if (typeof dataA === 'undefined' && typeof dataB === 'undefined') return 0;
                 if (typeof dataA === 'undefined') return 1;
                 if (typeof dataB === 'undefined') return 0;
@@ -133,21 +137,15 @@ export default class PersonsList extends React.PureComponent {
         }
     });
 
-    searchList = memoize((persons, ids, search) => {
+    searchList = memoize((projects, ids, search, keys) => {
         //console.log('SEARCH');
         if(search && search.trim()) {
-            const data = ids.map(id => {
-                return {
-                    _id: persons[id]._id,
-                    name: persons[id].name,
-                    $name: persons[id].$name,
-                }
-            });
+            const data = ids.map(id => keys.reduce((mod, key) => ({...mod, [key]: this.getComputedField(key, projects[id], false, true)}) , {_id: id}));
             const fuse = new Fuse(data, {
                 verbose: false,
                 id: '_id',
                 findAllMatches: true,
-                keys: ['name', '$name']
+                keys: keys
             });
             return fuse.search(search.trim());
         } else return ids;
@@ -156,42 +154,42 @@ export default class PersonsList extends React.PureComponent {
     // ***************************************************
     // ROUTING
     // ***************************************************
-    selectPerson = (id) => {
-        this.props.selectPerson(id);
+    select = (id) => {
+        this.props.select(id);
     };
 
-    addPerson = () => {
-        this.props.addPerson();
+    add = () => {
+        this.props.add();
     };
 
-    showPerson = (id) => {
-        this.props.showPerson(id);
+    show = (id) => {
+        this.props.show(id);
     };
 
-    editPerson = (id) => {
-        this.props.editPerson(id);
+    edit = (id) => {
+        this.props.edit(id);
     };
 
     addToBox = () => {
-        if(this.props.selectedPerson) this.props.addToBox(this.props.selectedPerson);
+        if(this.props.selected) this.props.addToBox(this.props.selected);
     };
 
     // ***************************************************
     // HANDLERS
     // ***************************************************
     rowClickHandler = (event, personId) => {
-        if(typeof event.target.className === 'string' && event.target.className.indexOf('table-select') < 0 && event.target.className.indexOf('table-button') < 0) this.selectPerson(personId);
+        if(typeof event.target.className === 'string' && event.target.className.indexOf('table-select') < 0 && event.target.className.indexOf('table-button') < 0) this.select(personId);
     };
 
     rowDoubleClickHandler = (event, personId) => {
-        if(typeof event.target.className === 'string' && event.target.className.indexOf('table-select') < 0 && event.target.className.indexOf('table-button') < 0) event.altKey ? this.editPerson(personId) : this.showPerson(personId);
+        if(typeof event.target.className === 'string' && event.target.className.indexOf('table-select') < 0 && event.target.className.indexOf('table-button') < 0) event.altKey ? this.edit(personId) : this.show(personId);
     };
 
     searchInputHandler = (event) => {
        this.props.setSearch(event.target.value);
     };
 
-    clearSearchInputHanler = () => {
+    clearSearchInputHandler = () => {
        this.props.setSearch('');
     };
 
@@ -205,9 +203,38 @@ export default class PersonsList extends React.PureComponent {
     // ***************************************************
     // COMPUTE FIELD
     // ***************************************************
-    getComputedField(field, person) {
+    getComputedField(field, person, editable, searchable) {
         switch(field) {
-
+            case 'contact':
+                const contactsToTable = ['EMAIL', 'PHONE', 'MOBILE'];
+                if(searchable) {
+                    if (person && person.contact && person.contact.length > 0) {
+                        return person.contact.map(contact => contact.data);
+                    } else return '';
+                } else {
+                    if (person && person.contact && person.contact.length > 0) {
+                        const contacts = person.contact
+                            .filter(contact => ContactType[contact.type] && contactsToTable.indexOf(contact.type) >= 0)
+                            .sort((a, b) => (ContactType[a.type] ? ContactType[a.type].sort : 1000) - (ContactType[b.type] ? ContactType[b.type].sort : 1000));
+                        if(contacts.length > 0) {
+                            return (
+                                <div className={'table-contact'}>
+                                    {contacts.map((contact, i) => <div key={i} className={'contact-item'}><FontAwesomeIcon icon={ContactType[contact.type].icon}/>{contact.data}</div>)}
+                                </div>
+                            )
+                        } else return '---';
+                    } else return '---';
+                }
+            case 'profession':
+                if(searchable) {
+                    if (person && person.profession && person.profession.length > 0) {
+                        return person.profession.map(profession => PersonProfession[profession] ? PersonProfession[profession].label : '');
+                    } else return '';
+                } else {
+                    if (person && person.profession && person.profession.length > 0) {
+                        return person.profession.map(profession => PersonProfession[profession] ? PersonProfession[profession].label : '').join(', ');
+                    } else return '---';
+                }
             default: return person && person[field] ? person[field] : '---';
         }
     }

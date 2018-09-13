@@ -11,7 +11,7 @@ import * as CompanyBusiness from '../../constants/CompanyBusiness';
 import * as ContactType from '../../constants/ContactType';
 
 const companyBusinessOptions = Object.keys(CompanyBusiness).map(key => ({value: CompanyBusiness[key].id, label: CompanyBusiness[key].label}));
-const contactTypeOptions = Object.keys(ContactType).map(key => ({value: ContactType[key].id, label: ContactType[key].label}));
+const contactTypeOptions = Object.keys(ContactType).map(key => ({value: ContactType[key].type, label: ContactType[key].label}));
 
 export default class CompanyEdit extends React.PureComponent {
     constructor(props) {
@@ -26,34 +26,35 @@ export default class CompanyEdit extends React.PureComponent {
     }
 
     componentDidMount() {
-        this.checkCompany();
+        this.checkValidity();
     }
 
     componentDidUpdate(prevProps) {
-        if(this.props.editedData !== prevProps.editedData || this.props.companies !== prevProps.companies) this.checkCompany();
+        if(this.props.editedData !== prevProps.editedData || this.props.companies !== prevProps.companies) this.checkValidity();
     }
 
     render() {
-        const {selectedCompany, editedData, companies} = this.props;
+        const {selected, editedData, companies} = this.props;
 
-        const name = editedData.name !== undefined ? editedData.name : !selectedCompany ? '' : companies[selectedCompany] ? companies[selectedCompany].name : '';
-        const business = editedData.business !== undefined ? editedData.business : !selectedCompany ? '' : companies[selectedCompany] ? companies[selectedCompany].business : [];
-        const contact = editedData.contact !== undefined ? editedData.contact : !selectedCompany ? '' : companies[selectedCompany] ? companies[selectedCompany].contact : [];
+        const name = editedData.name !== undefined ? editedData.name : !selected ? '' : companies[selected] ? companies[selected].name : '';
+        const business = editedData.business !== undefined ? editedData.business : !selected ? [] : companies[selected] ? companies[selected].business : [];
+        const contact = editedData.contact !== undefined ? editedData.contact : !selected ? [] : companies[selected] ? companies[selected].contact : [];
 
         return (
             <div className={'app-body'}>
+                {/* ------------------ TOOLBOX ------------------ */}
                 <div className={'app-toolbox'}>
                     <div className={'inner-container'}>
                         <div className={'toolbox-group'}>
                             <div onClick={this.close} className={'tool-box-button'}>{'Cancel'}</div>
-                            <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button green${this.state.saveDisabled ? ' disabled' : ''}`}>{selectedCompany ? 'Save' : 'Create'}</div>
+                            <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button green${this.state.saveDisabled ? ' disabled' : ''}`}>{selected ? 'Save' : 'Create'}</div>
                             <div className={'tool-box-validation'}>
                                 <FontAwesomeIcon className={`tool-box-validation-icon${Object.keys(this.state.validation).length > 0 ? ' active' : ''}`} icon={Icons.ICON_EDITOR_VALIDATION}/>
                                 <div className={'tool-box-validation-container'}>
                                     {Object.keys(this.state.validation).map(validationField => <div key={validationField}>{`${this.state.validation[validationField].field}: ${this.state.validation[validationField].status}`}</div>)}
                                 </div>
                             </div>
-                            {!selectedCompany ? null :
+                            {!selected ? null :
                                 <Fragment>
                                     <div onClick={!this.state.removeArmed ? undefined : this.remove} className={`tool-box-button remove red${!this.state.removeArmed ? ' disabled' : ''}`}>{'Remove Company'}</div>
                                     <FontAwesomeIcon className={`tool-box-checkbox`} onClick={this.handleRemoveArmed} icon={this.state.removeArmed ? Icons.ICON_CHECKBOX_CHECKED : Icons.ICON_CHECKBOX_UNCHECKED} style={{cursor: 'pointer'}}/>
@@ -62,15 +63,17 @@ export default class CompanyEdit extends React.PureComponent {
                         </div>
                     </div>
                 </div>
+                {/* ------------------ FORM ------------------ */}
                 <Scrollbars autoHide={true} autoHideTimeout={800} autoHideDuration={200}>
                     <div className={'detail-body'}>
+                        {/* ------------------ NAME, BUSINESS ------------------ */}
                         <div className={'detail-row'}>
-                            <div className={'detail-group size-6'}>
-                                <div className={`detail-label${typeof editedData.name !== 'undefined' && selectedCompany  ? ' value-changed' : ''}`}>{'Company name:'}</div>
-                                <Input placeholder={'Company name...'} autoFocus={!selectedCompany} className={`detail-input${this.state.validation.name ? ' invalid' : ''}`} onChange={this.handleNameChange} value={name}/>
+                            <div className={'detail-group size-5'}>
+                                <div className={`detail-label${typeof editedData.name !== 'undefined' && selected  ? ' value-changed' : ''}`}>{'Company name:'}</div>
+                                <Input placeholder={'Company name...'} autoFocus={!selected} className={`detail-input${this.state.validation.name ? ' invalid' : ''}`} onChange={this.handleNameChange} value={name}/>
                             </div>
-                            <div className={'detail-group size-6'}>
-                                <div className={`detail-label${typeof editedData.business !== 'undefined' && selectedCompany  ? ' value-changed' : ''}`}>{'Business:'}</div>
+                            <div className={'detail-group size-7'}>
+                                <div className={`detail-label${typeof editedData.business !== 'undefined' && selected  ? ' value-changed' : ''}`}>{'Business:'}</div>
                                 <Select
                                     options={companyBusinessOptions}
                                     value={business.map(business => ({value: business, label: CompanyBusiness[business] ? CompanyBusiness[business].label : ''}))}
@@ -84,32 +87,35 @@ export default class CompanyEdit extends React.PureComponent {
                                 />
                             </div>
                         </div>
+                        {/* ------------------ CONTACTS ------------------ */}
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group column size-12'}>
-                                <div onClick={() => this.handleContactChange()} className={`detail-label clickable column${editedData.contact !== undefined && selectedCompany ? ' value-changed' : ''}`}>{'Contacts'}<FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/></div>
-                                {contact.map((contactLine, i) =>
-                                    <div className={`detail-array-line`} key={i}>
-                                        <FontAwesomeIcon className={'remove-icon'} onClick={() => this.handleContactChange(i)} icon={Icons.ICON_EDITOR_LINE_REMOVE}/>
-                                        <div className={'line-content'}>
-                                            <Select
-                                                options={contactTypeOptions}
-                                                value={contactLine.type ? {value: contactLine.type, label: ContactType[contactLine.type] ? ContactType[contactLine.type].label : contactLine.type  } : null}
-                                                onChange={option => this.handleContactChange(i, {id: !option || !option.value ? null : option.value})}
-                                                isSearchable={true}
-                                                isMulti={false}
-                                                isClearable={true}
-                                                className={`control-select company-contact-type${contactLine.type === null ? ' invalid' : ''}`}
-                                                classNamePrefix={'control-select'}
-                                                placeholder={'Contact type...'}
-                                            />
-                                            <Input
-                                                className={`detail-input company-contact-data`}
-                                                onChange={event => this.handleContactChange(i, {note: event.target.value})} value={contactLine.data}
-                                                placeholder={'Contact...'}
-                                            />
+                                <div onClick={() => this.handleContactChange()} className={`detail-label clickable column${editedData.contact !== undefined && selected ? ' value-changed' : ''}`}>{'Contacts'}<FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/></div>
+                                <div className={'detail-group-wrapper'}>
+                                    {contact.map((contactLine, i) =>
+                                        <div className={`detail-array-line size-6 spacer`} key={i}>
+                                            <FontAwesomeIcon className={'remove-icon'} onClick={() => this.handleContactChange(i)} icon={Icons.ICON_EDITOR_LINE_REMOVE}/>
+                                            <div className={'line-content'}>
+                                                <Select
+                                                    options={contactTypeOptions}
+                                                    value={contactLine.type ? {value: contactLine.type, label: ContactType[contactLine.type] ? ContactType[contactLine.type].label : contactLine.type  } : null}
+                                                    onChange={option => this.handleContactChange(i, {type: !option || !option.value ? null : option.value})}
+                                                    isSearchable={true}
+                                                    isMulti={false}
+                                                    isClearable={true}
+                                                    className={`control-select contact-type${contactLine.type === null ? ' invalid' : ''}`}
+                                                    classNamePrefix={'control-select'}
+                                                    placeholder={'Contact type...'}
+                                                />
+                                                <Input
+                                                    className={`detail-input contact-data${!contactLine.data || !contactLine.data.trim() ? ' invalid' : ''}`}
+                                                    onChange={event => this.handleContactChange(i, {data: event.target.value})} value={contactLine.data}
+                                                    placeholder={'Contact...'}
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
-                                )}
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -125,29 +131,29 @@ export default class CompanyEdit extends React.PureComponent {
     };
 
     save = () => {
-        if(this.props.selectedCompany) this.props.updateCompany();
-        else this.props.createCompany();
+        if(this.props.selected) this.props.update();
+        else this.props.create();
         this.close();
     };
 
     remove = () => {
-        this.props.removeCompany();
+        this.props.remove();
         this.close();
     };
 
     // *****************************************************************************************************************
     // HELPERS
     // *****************************************************************************************************************
-    checkCompany() {
+    checkValidity() {
         if(this.validationTimer) return;
         const time = +new Date() - this.lastValidation;
         if(time > Constants.VALIDATION_DELAY_MS) this.setValidation();
         else this.validationTimer = setTimeout(this.setValidation, Constants.VALIDATION_DELAY_MS - time);
     }
 
-    isCompanyNameUsed = name => {
+    isNameUsed = name => {
         if(!name) return false;
-        return Object.keys(this.props.companies).filter(companyId => companyId !== this.props.selectedCompany).map(companyId => this.props.companies[companyId].name.toLowerCase()).indexOf(name.toLowerCase()) >= 0;
+        return Object.keys(this.props.companies).filter(id => id !== this.props.selected).map(id => this.props.companies[id].name.toLowerCase()).indexOf(name.toLowerCase()) >= 0;
     };
 
     handleRemoveArmed = () => {
@@ -156,14 +162,14 @@ export default class CompanyEdit extends React.PureComponent {
 
     updateEditedData = updateData => {
         const newData = {...this.props.editedData, ...updateData};
-        const company = this.props.selectedCompany ? this.props.companies[this.props.selectedCompany] : undefined;
+        const object = this.props.selected ? this.props.companies[this.props.selected] : undefined;
         for(const key of Object.keys(newData)) {
-            if(company && company[key] === newData[key])  delete newData[key];
+            if(object && object[key] === newData[key])  delete newData[key];
         }
         return newData;
     };
 
-    areEquivalent = (a, b) => { //TODO do better check
+    areEquivalent = (a, b) => { //TODO do better check - to library ?????
         return JSON.stringify(a) === JSON.stringify(b);
     };
 
@@ -171,13 +177,16 @@ export default class CompanyEdit extends React.PureComponent {
     // VALIDATION
     // *****************************************************************************************************************
     setValidation = () => {
-        const origCompany = this.props.selectedCompany && this.props.companies && this.props.companies[this.props.selectedCompany] ? this.props.companies[this.props.selectedCompany] : {};
-        if(!origCompany._id && this.props.selectedCompany) return true; // when refresh, no data fetched yet
-        const company = Object.assign({}, origCompany, this.props.editedData);
+        const originalObject = this.props.selected && this.props.companies && this.props.companies[this.props.selected] ? this.props.companies[this.props.selected] : {};
+        if(!originalObject._id && this.props.selected) return true; // when refresh, no data fetched yet
+        const object = Object.assign({}, originalObject, this.props.editedData);
         let validation = {};
 
-        if(!company.name || !company.name.trim()) validation['name'] = {field: 'Company name', status: 'Is empty'};
-        if(this.isCompanyNameUsed(company.name)) validation['name'] = {field: 'Company name', status: 'Is not unique'};
+        if(!object.name || !object.name.trim()) validation['name'] = {field: 'Company name', status: 'Is empty'};
+        if(this.isNameUsed(object.name)) validation['name'] = {field: 'Company name', status: 'Is not unique'};
+
+        if(object.contact && object.contact.some(contact => contact.type === null)) validation['contact-type'] = {field: 'Contact', status: 'Some contact has not set type'};
+        if(object.contact && object.contact.some(contact => !contact.data || !contact.data.trim())) validation['contact-data'] = {field: 'Contact', status: 'Some contact is not set'};
 
         const disableSave = Object.keys(validation).length > 0 || Object.keys(this.props.editedData).length === 0;
         if(this.areEquivalent(validation, this.state.validation)) validation = this.state.validation;
@@ -196,6 +205,20 @@ export default class CompanyEdit extends React.PureComponent {
     };
 
     handleContactChange = (index, data) => {
-
+        const emptyItem = {type: null, data: ''};
+        const object = this.props.companies[this.props.selected];
+        const newData = this.props.editedData.contact ? [...this.props.editedData.contact] : object ? [...object.contact] : [];
+        if(typeof index === 'undefined' && typeof data === 'undefined') { //ADD
+            if (this.props.editedData.contact && this.props.editedData.contact.some(item => item.type === null)) return;
+            newData.push(emptyItem)
+        } else if(typeof index === 'undefined') { //ADD - fill type in data
+            newData.push({...emptyItem, type: data});
+        } else if(typeof data === 'undefined') {//REMOVE at index
+            newData.splice(index, 1);
+        } else { //data contains update for line index
+            newData[index] = {...newData[index], ...data}
+        }
+        const editedData = this.updateEditedData({contact: newData});
+        this.props.editItem(editedData);
     }
 }

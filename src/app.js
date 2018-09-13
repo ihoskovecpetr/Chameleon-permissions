@@ -20,10 +20,8 @@ logger.setLevel('debug');
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
-library.add(fas, far);
-//window.FontAwesomeConfig.searchPseudoElements= true;
-
-//import {SCHEDULED_DATA_REFRESH_TIME_MS} from './constants/Constatnts';
+import { fab } from '@fortawesome/free-brands-svg-icons';
+library.add(fas, far, fab);
 
 import './app.scss';
 

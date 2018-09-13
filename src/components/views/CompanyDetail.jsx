@@ -15,9 +15,9 @@ export default class CompanyDetail extends React.PureComponent {
     }
 
     render() {
-        const {selectedCompany, companies} = this.props;
+        const {selected, companies} = this.props;
 
-        const company = companies[selectedCompany] ? companies[selectedCompany] : {};
+        const company = companies[selected] ? companies[selected] : {};
 
 
         return (
@@ -26,11 +26,11 @@ export default class CompanyDetail extends React.PureComponent {
                     <div className={'inner-container'}>
                         <div className={'toolbox-group'}>
                             <div onClick={this.close} className={'tool-box-button'}>{'Close'}</div>
-                            {!this.props.editCompany ? null :
+                            {!this.props.edit ? null :
                                 <div onClick={this.edit} className={`tool-box-button`}>{'Edit'}</div>
                             }
                             <div onClick={this.addToBox} className={`tool-box-button blue`}><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/><FontAwesomeIcon icon={Icons.ICON_BOX}/></div>
-                            {!this.props.removeCompany ? null :
+                            {!this.props.remove ? null :
                                 <Fragment>
                                     <div onClick={!this.state.removeArmed ? undefined : this.remove} className={`tool-box-button remove red${!this.state.removeArmed ? ' disabled' : ''}`}>{'Remove Company'}</div>
                                     <FontAwesomeIcon className={`tool-box-checkbox`} onClick={this.handleRemoveArmed} icon={this.state.removeArmed ? Icons.ICON_CHECKBOX_CHECKED : Icons.ICON_CHECKBOX_UNCHECKED} style={{cursor: 'pointer'}}/>
@@ -60,11 +60,11 @@ export default class CompanyDetail extends React.PureComponent {
     };
 
     edit = () => {
-        this.props.editCompany();
+        this.props.edit();
     };
 
     remove = () => {
-        this.props.removeCompany();
+        this.props.remove();
         this.close();
     };
 
@@ -76,7 +76,7 @@ export default class CompanyDetail extends React.PureComponent {
     };
 
     addToBox = () => {
-        this.props.addToBox(this.props.selectedCompany);
+        this.props.addToBox(this.props.selected);
     };
 
 }

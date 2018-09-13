@@ -185,4 +185,100 @@ $table-control-font-size: $table-row-font-size;
       display: none;
     }
   }
+
+  // company
+  &.company-name {
+    width: 20%;
+    @include media("<=tablet") {
+      width: 30%;
+    }
+    @include media("<=phone") {
+      width: 40%;
+    }
+    @include media("<=small-phone") {
+      width: 50%;
+    }
+  }
+  &.company-business {
+    width: 40%;
+    @include media("<=tablet") {
+      width: 30%;
+    }
+    @include media("<=phone") {
+      display: none;
+    }
+  }
+  &.company-contact {
+    width: 40%;
+    @include media("<=phone") {
+      width: 60%;
+    }
+    @include media("<=small-phone") {
+      width: 50%;
+    }
+    .table-contact {
+      display: flex;
+      flex-wrap: wrap;
+      //flex-direction: column;
+      .contact-item {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        &:not(:last-child) {
+          margin-right: 0.8em;
+        }
+        svg {
+          font-size: 1em;
+          margin-right: 0.4em;
+        }
+      }
+    }
+  }
+
+  // person
+  &.person-name {
+    width: 20%;
+    @include media("<=tablet") {
+      width: 30%;
+    }
+    @include media("<=phone") {
+      width: 40%;
+    }
+    @include media("<=small-phone") {
+      width: 50%;
+    }
+  }
+  &.person-profession {
+    width: 40%;
+    @include media("<=tablet") {
+      width: 30%;
+    }
+    @include media("<=phone") {
+      display: none;
+    }
+  }
+  &.person-contact {
+    width: 40%;
+    @include media("<=phone") {
+      width: 60%;
+    }
+    @include media("<=small-phone") {
+      width: 50%;
+    }
+    .table-contact {
+      display: flex;
+      flex-wrap: wrap;
+      //flex-direction: column;
+      .contact-item {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        &:not(:last-child) {
+          margin-right: 0.8em;
+        }
+        svg {
+          font-size: 1em;
+          margin-right: 0.4em;
+        }
+      }
+    }
+  }
 }
