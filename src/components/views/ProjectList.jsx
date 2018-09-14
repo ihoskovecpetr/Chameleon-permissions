@@ -12,6 +12,7 @@ import Select from 'react-select';
 
 import {daysToString} from '../../lib/dateHelper';
 import * as Icons from '../../constants/Icons';
+import * as CompanyFlag from '../../constants/CompanyFlag';
 
 import memoize from 'memoize-one';
 
@@ -342,8 +343,8 @@ export default class ProjectList extends React.PureComponent {
 
             case 'client': //find main client in company field [{id, role, note, rating}]
                 if(!project || !project.company || project.company.length === 0) return '---';
-                let company = project.company.find(c => c.role.indexOf('MAIN') >= 0);
-                if(!company) company = project.company[0];
+                let company = project.company.find(company => company.flag.indexOf(CompanyFlag.UPP_CLIENT) >= 0);
+                if(!company) return '---';
                 return this.props.companies[company.id] ? this.props.companies[company.id].name : '---';
 
             case 'team': //find producer, manager, supervisor in team field [{id, role}], icons + short names /not sortable anyway

@@ -44,7 +44,7 @@ export const ICON_EDITOR_ITEM_ADD = 'plus-circle';
 export const ICON_EDITOR_ITEM_REMOVE = 'minus-circle';
 export const ICON_EDITOR_LINE_REMOVE = 'trash';
 
-export const ICON_EDITOR_FLAG_ACCOUNT = 'dollar-sign';
+export const ICON_EDITOR_FLAG_BUSINESS = 'dollar-sign';
 export const ICON_EDITOR_FLAG_CREATIVITY = 'paint-brush';
 export const ICON_EDITOR_FLAG_ORGANIZE = 'tasks';
 export const ICON_EDITOR_FLAG_CLIENT = 'hand-holding-usd';

@@ -125,7 +125,12 @@ $detail-array-line-control-space: 0.5em;
             color: #9e4534;
           }
         }
+
         .line-content {
+          .wrapper {
+            display: flex;
+            flex-wrap: nowrap;
+          }
           display: flex;
           width: 100%;
           flex-wrap: wrap;
@@ -144,19 +149,14 @@ $detail-array-line-control-space: 0.5em;
             @include media("<=tablet") {width: calc(50% - #{$detail-array-line-control-space});}
             @include media("<=phone") {width: 100%}
           }
-          .company-role {
-            width: calc(25% - #{$detail-array-line-control-space});
+          .company-business {
+            width: calc(35% - #{$detail-array-line-control-space});
             @include media("<=tablet") {width: calc(50% - #{$detail-array-line-control-space});}
             @include media("<=phone") {width: 100%}
           }
-          .company-rating {
-            width: calc(25% - #{$detail-array-line-control-space});
-            @include media("<=tablet") { width: calc(50% - #{$detail-array-line-control-space});}
-            @include media("<=phone") {width: 100%}
-          }
           .company-note {
-            width: calc(25% - #{$detail-array-line-control-space});
-            @include media("<=tablet") { width: calc(50% - #{$detail-array-line-control-space});}
+            width: calc(40% - #{$detail-array-line-control-space});
+            @include media("<=tablet") { width: calc(10% - #{$detail-array-line-control-space});}
             @include media("<=phone") {width: 100%}
           }
 
@@ -166,47 +166,38 @@ $detail-array-line-control-space: 0.5em;
             @include media("<=tablet") {width: calc(50% - #{$detail-array-line-control-space});}
             @include media("<=phone") {width: 100%}
           }
-          .person-role {
-            width: calc(16.6% - #{$detail-array-line-control-space});
-            @include media("<=tablet") {width: calc(50% - #{$detail-array-line-control-space});}
-            @include media("<=phone") {width: 100%}
-          }
-          .person-rating {
-            width: calc(16.6% - #{$detail-array-line-control-space});
-            @include media("<=tablet") { width: calc(33.3% - #{$detail-array-line-control-space});}
-            @include media("<=phone") {width: 100%}
-          }
           .person-profession {
-            width: calc(16.7% - #{$detail-array-line-control-space});
-            @include media("<=tablet") { width: calc(33.3% - #{$detail-array-line-control-space});}
+            width: calc(35% - #{$detail-array-line-control-space});
+            @include media("<=tablet") { width: calc(50% - #{$detail-array-line-control-space});}
+            @include media("<=phone") {width: 100%}
+          }
+          .person-company {
+            width: calc(15% - #{$detail-array-line-control-space});
+            @include media("<=tablet") { width: calc(50% - #{$detail-array-line-control-space});}
             @include media("<=phone") {width: 100%}
           }
           .person-note {
             width: calc(25% - #{$detail-array-line-control-space});
-            @include media("<=tablet") { width: calc(33.4% - #{$detail-array-line-control-space});}
+            @include media("<=tablet") { width: calc(50% - #{$detail-array-line-control-space});}
             @include media("<=phone") {width: 100%}
           }
 
           // team
           .team-name {
             width: calc(50% - #{$detail-array-line-control-space});
-            //@include media("<=tablet") {width: calc(50% - #{$detail-array-line-control-space});}
             @include media("<=small-phone") {width: 100%}
           }
           .team-role {
             width: calc(50% - #{$detail-array-line-control-space});
-            //@include media("<=tablet") {width: calc(50% - #{$detail-array-line-control-space});}
             @include media("<=small-phone") {width: 100%}
           }
           // contact
           .contact-type {
             width: calc(35% - #{$detail-array-line-control-space});
-            //@include media("<=tablet") {width: calc(50% - #{$detail-array-line-control-space});}
             @include media("<=small-phone") {width: 100%}
           }
           .contact-data {
             width: calc(65% - #{$detail-array-line-control-space});
-            //@include media("<=tablet") {width: calc(50% - #{$detail-array-line-control-space});}
             @include media("<=small-phone") {width: 100%}
           }
 

@@ -1,3 +1,3 @@
-export const BUSSINESS = 'BUSSINESS';
+export const BUSINESS = 'BUSINESS';
 export const CREATIVITY = 'CREATIVITY';
 export const ORGANIZATION = 'ORGANIZATION';

@@ -250,3 +250,74 @@ $table-control-background-color: #f5f5f5;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.control-flags {
+  height: $detail-control-height;
+  padding: $detail-control-padding-vertical 0.5em;
+  background-color: lighten($detail-body-background-color, 5%);
+  border: 1px solid darken($detail-body-background-color, 1%);
+  border-radius: $detail-control-border-radius;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  flex-wrap: nowrap;
+  margin-left: 0.4em;
+  .control-flag-icon {
+    cursor: pointer;
+    color: darken($detail-body-background-color, 5%);
+    margin: 0 0.2em;
+    &.active {
+      color: #0083d5;//lighten($app-header-background-color, 18%);
+    }
+  }
+}
+
+$tooltip-arrow-size: 0.3rem;
+
+[data-tooltip] {
+  position: relative;
+  z-index: 2;
+}
+
+[data-tooltip]:before,
+[data-tooltip]:after {
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0s;
+}
+
+[data-tooltip]:before {
+  position: absolute;
+  bottom: 150%;
+  left: 50%;
+  margin-bottom: $tooltip-arrow-size;
+  padding: 0.3em 0.8em;
+  border-radius: 1em;
+  background-color: #696969;
+  color: #e1e1e1;
+  content: attr(data-tooltip);
+  transform: translateY(0.3rem) translateX(-50%);
+  white-space: nowrap;
+}
+
+[data-tooltip]:after {
+  position: absolute;
+  bottom: 150%;
+  left: 50%;
+  margin-left: -$tooltip-arrow-size;
+  width: 0;
+  border-top: $tooltip-arrow-size solid #696969;
+  border-right: $tooltip-arrow-size solid transparent;
+  border-left: $tooltip-arrow-size solid transparent;
+  content: " ";
+  font-size: 0;
+  line-height: 0;
+  transform: translateY(0.3rem);
+}
+
+[data-tooltip]:hover:before,
+[data-tooltip]:hover:after {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity ease 0.2s;
+}

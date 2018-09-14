@@ -8,6 +8,11 @@ import areEquivalent from '../../lib/compareObjects';
 import DatePicker from 'react-datepicker';
 import * as Constants from '../../constants/Constatnts';
 
+import * as CompanyFlag from '../../constants/CompanyFlag';
+import * as PersonFlag from '../../constants/PersonFlag';
+import * as CompanyBusiness from '../../constants/CompanyBusiness';
+import * as PersonProfession from '../../constants/PersonProfession';
+
 import * as Icons from '../../constants/Icons';
 
 import * as ProjectStatus from '../../constants/ProjectStatus';
@@ -48,11 +53,12 @@ export default class ProjectEdit extends React.PureComponent {
         const team = editedData.team !== undefined ? editedData.team : projects[selected] ? projects[selected].team : [];
         const lastContact = editedData.lastContact !== undefined ? editedData.lastContact ? moment(editedData.lastContact) : null : projects[selected] && projects[selected].lastContact ? moment(projects[selected].lastContact) : null;
 
-        if(Object.keys(editedData).length === 0) team.sort((a, b) => {
-           const sa = a.role.map(role => TeamRole[role] ? TeamRole[role].sort : 0).reduce((a, b) => Math.min(a, b));
-           const sb = b.role.map(role => TeamRole[role] ? TeamRole[role].sort : 0).reduce((a, b) => Math.min(a, b));
-           return sa - sb;
-        });
+        if(Object.keys(editedData).length === 0) {
+            team.sort((a, b) => (a.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)) - (b.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)));
+            company.sort((a, b) => (a.flag.map(flag => CompanyFlag[flag] ? Object.keys(CompanyFlag).indexOf(flag) : 100).reduce((a, b) => Math.min(a, b), 100)) - (b.flag.map(flag => CompanyFlag[flag] ? Object.keys(CompanyFlag).indexOf(flag) : 100).reduce((a, b) => Math.min(a, b), 100)));
+            person.sort((a, b) => (a.flag.map(flag => PersonFlag[flag] ? Object.keys(PersonFlag).indexOf(flag) : 100).reduce((a, b) => Math.min(a, b), 100)) - (b.flag.map(flag => PersonFlag[flag] ? Object.keys(PersonFlag).indexOf(flag) : 100).reduce((a, b) => Math.min(a, b), 100)));
+        }
+
         return (
             <div className={'app-body'}>
                 {/* ------------------ TOOLBOX ------------------ */}
@@ -184,31 +190,40 @@ export default class ProjectEdit extends React.PureComponent {
                                     <div className={`detail-array-line`} key={i}>
                                         <FontAwesomeIcon className={'remove-icon'} onClick={() => this.handleCompanyChange(i)} icon={Icons.ICON_EDITOR_LINE_REMOVE}/>
                                         <div className={'line-content'}>
+                                            <div className={'wrapper company-name'}>
+                                                <Select
+                                                    options={this.getCompanyOptions(companies)}
+                                                    value={companyLine.id ? {value: companyLine.id, label: companies[companyLine.id] ? companies[companyLine.id].name : companyLine.id  } : null}
+                                                    onChange={option => this.handleCompanyChange(i, {id: !option || !option.value ? null : option.value})}
+                                                    isSearchable={true}
+                                                    isMulti={false}
+                                                    isClearable={true}
+                                                    className={`control-select${companyLine.id === null || (this.state.validation['company-name-duplicity'] && this.state.validation['company-name-duplicity'].index.indexOf(i) >= 0) ? ' invalid' : ''}`}
+                                                    classNamePrefix={'control-select'}
+                                                    placeholder={'Company...'}
+                                                />
+                                                <div className={`control-flags`}>
+                                                    <div data-tooltip={'UPP Client'}>
+                                                        <FontAwesomeIcon
+                                                            onClick={() => this.companyFlagClicked(i, companyLine.flag, CompanyFlag.UPP_CLIENT)}
+                                                            className={`control-flag-icon${companyLine.flag.indexOf(CompanyFlag.UPP_CLIENT) >= 0 ? ' active' : ''}`}
+                                                            icon={Icons.ICON_EDITOR_FLAG_CLIENT}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <Select
-                                                options={this.getCompanyOptions(companies)}
-                                                value={companyLine.id ? {value: companyLine.id, label: companies[companyLine.id] ? companies[companyLine.id].name : companyLine.id  } : null}
-                                                onChange={option => this.handleCompanyChange(i, {id: !option || !option.value ? null : option.value})}
-                                                isSearchable={true}
-                                                isMulti={false}
-                                                isClearable={true}
-                                                className={`control-select company-name${companyLine.id === null ? ' invalid' : ''}`}
-                                                classNamePrefix={'control-select'}
-                                                placeholder={'Company...'}
-                                            />
-                                            <Select
-                                                options={[]}
-                                                //value={companyLine.role.map(role => ({value: role, label: CompanyRole[role] ? CompanyRole[role].label : role}))}
-                                                onChange={option => this.handleCompanyChange(i, {role: !option ? [] : option.map(o => o.value)})}
+                                                options={this.getCompanyBusinessOptions(companyLine.id)}
+                                                value={companyLine.business.map(business => ({value: business, label: CompanyBusiness[business] ? CompanyBusiness[business].label : business}))}
+                                                onChange={option => this.handleCompanyChange(i, {business: !option ? [] : option.map(o => o.value)})}
                                                 isSearchable={false}
                                                 isMulti={true}
                                                 isClearable={true}
-                                                className={`control-select company-role`}
+                                                className={`control-select company-business`}
                                                 classNamePrefix={'control-select'}
-                                                placeholder={'Role...'}
+                                                placeholder={'Business..'}
                                             />
-                                            <div className={`control-flag-box`}>
-                                                <FontAwesomeIcon className={`control-flag-icon${' disabled'}`} icon={Icons.ICON_EDITOR_FLAG_CLIENT} fixedWidth/>
-                                            </div>
+
                                             <Input
                                                 className={`detail-input company-note`}
                                                 onChange={event => this.handleCompanyChange(i, {note: event.target.value})} value={companyLine.note}
@@ -220,10 +235,6 @@ export default class ProjectEdit extends React.PureComponent {
                             </div>
                         </div>
 
-
-
-
-
                         {/* ------------------ PERSON ------------------ */}
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group column size-12'}>
@@ -232,33 +243,64 @@ export default class ProjectEdit extends React.PureComponent {
                                     <div className={`detail-array-line`} key={i}>
                                         <FontAwesomeIcon className={'remove-icon'} onClick={() => this.handlePersonChange(i)} icon={Icons.ICON_EDITOR_LINE_REMOVE}/>
                                         <div className={'line-content'}>
+                                            <div className={'wrapper person-name'}>
+                                                <Select
+                                                    options={this.getPersonOptions(persons)}
+                                                    value={personLine.id ? {value: personLine.id, label: persons[personLine.id] ? persons[personLine.id].name : personLine.id  } : null}
+                                                    onChange={option => this.handlePersonChange(i, {id: !option || !option.value ? null : option.value})}
+                                                    isSearchable={true}
+                                                    isMulti={false}
+                                                    isClearable={true}
+                                                    className={`control-select${personLine.id === null || (this.state.validation['person-name-duplicity'] && this.state.validation['person-name-duplicity'].index.indexOf(i) >= 0)? ' invalid' : ''}`}
+                                                    classNamePrefix={'control-select'}
+                                                    placeholder={'Person...'}
+                                                />
+                                                <div className={`control-flags`}>
+                                                    <div data-tooltip={'Business'}>
+                                                        <FontAwesomeIcon
+                                                            onClick={() => this.personFlagClicked(i, personLine.flag, PersonFlag.BUSINESS)}
+                                                            className={`control-flag-icon${personLine.flag.indexOf(PersonFlag.BUSINESS) >= 0 ? ' active' : ''}`}
+                                                            icon={Icons.ICON_EDITOR_FLAG_BUSINESS}
+                                                        />
+                                                    </div>
+                                                    <div data-tooltip={'Creativity'}>
+                                                        <FontAwesomeIcon
+                                                            onClick={() => this.personFlagClicked(i, personLine.flag, PersonFlag.CREATIVITY)}
+                                                            className={`control-flag-icon${personLine.flag.indexOf(PersonFlag.CREATIVITY) >= 0 ? ' active' : ''}`}
+                                                            icon={Icons.ICON_EDITOR_FLAG_CREATIVITY}
+                                                        />
+                                                    </div>
+                                                    <div data-tooltip={'Organization'}>
+                                                        <FontAwesomeIcon
+                                                            onClick={() => this.personFlagClicked(i, personLine.flag, PersonFlag.ORGANIZATION)}
+                                                            className={`control-flag-icon${personLine.flag.indexOf(PersonFlag.ORGANIZATION) >= 0 ? ' active' : ''}`}
+                                                            icon={Icons.ICON_EDITOR_FLAG_ORGANIZE}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <Select
-                                                options={this.getPersonOptions(persons)}
-                                                value={personLine.id ? {value: personLine.id, label: persons[personLine.id] ? persons[personLine.id].name : personLine.id  } : null}
-                                                onChange={option => this.handlePersonChange(i, {id: !option || !option.value ? null : option.value})}
-                                                isSearchable={true}
-                                                isMulti={false}
-                                                isClearable={true}
-                                                className={`control-select person-name${personLine.id === null ? ' invalid' : ''}`}
-                                                classNamePrefix={'control-select'}
-                                                placeholder={'Person...'}
-                                            />
-                                            <Select
-                                                options={[]}
-                                                //value={personLine.role.map(role => ({value: role, label: PersonRole[role] ? PersonRole[role].label : role}))}
-                                                onChange={option => this.handlePersonChange(i, {role: !option ? [] : option.map(o => o.value)})}
+                                                options={this.getPersonProfessionOptions(personLine.id)}
+                                                value={personLine.profession.map(profession => ({value: profession, label: PersonProfession[profession] ? PersonProfession[profession].label : profession}))}
+                                                onChange={option => this.handlePersonChange(i, {profession: !option ? [] : option.map(o => o.value)})}
                                                 isSearchable={false}
                                                 isMulti={true}
                                                 isClearable={true}
-                                                className={`control-select person-role`}
+                                                className={`control-select person-profession`}
                                                 classNamePrefix={'control-select'}
-                                                placeholder={'Role...'}
+                                                placeholder={'Profession...'}
                                             />
-                                            <div className={`control-flag-box`}>
-                                                <FontAwesomeIcon className={`control-flag-icon${' disabled'}`} icon={Icons.ICON_EDITOR_FLAG_ACCOUNT} fixedWidth/>
-                                                <FontAwesomeIcon className={`control-flag-icon${' disabled'}`} icon={Icons.ICON_EDITOR_FLAG_CREATIVITY} fixedWidth/>
-                                                <FontAwesomeIcon className={`control-flag-icon${' disabled'}`} icon={Icons.ICON_EDITOR_FLAG_ORGANIZE} fixedWidth/>
-                                            </div>
+                                            <Select
+                                                options={this.getProjectCompaniesOptions(company)}
+                                                value={personLine.company ? {value: personLine.company, label: companies[personLine.company] ? companies[personLine.company].name : personLine.company  } : null}
+                                                onChange={option => this.handlePersonChange(i, {company: !option || !option.value ? null : option.value})}
+                                                isSearchable={false}
+                                                isMulti={false}
+                                                isClearable={true}
+                                                className={`control-select person-company${this.state.validation['person-company'] && this.state.validation['person-company'].index.indexOf(i) >= 0 ? ' invalid' : ''}`}
+                                                classNamePrefix={'control-select'}
+                                                placeholder={'Company...'}
+                                            />
                                             <Input
                                                 className={`detail-input person-note`}
                                                 onChange={event => this.handlePersonChange(i, {note: event.target.value})} value={personLine.note}
@@ -269,17 +311,11 @@ export default class ProjectEdit extends React.PureComponent {
                                 )}
                             </div>
                         </div>
-
-
-
-
-
                     </div>
                 </Scrollbars>
             </div>
         )
     }
-
 
     // *****************************************************************************************************************
     // CLOSE, SAVE, REMOVE, BOX
@@ -379,6 +415,20 @@ export default class ProjectEdit extends React.PureComponent {
             .map(user => {return {value: user, label: this.props.users[user].name}});
     };
 
+    getCompanyBusinessOptions = id => {
+        if(!id) return [];
+        const company = this.props.companies[id];
+        if(company) return company.business.map(business => ({value: business, label: CompanyBusiness[business] ? CompanyBusiness[business].label : business}));
+        else return [];
+    };
+
+    getPersonProfessionOptions = id => {
+        if(!id) return [];
+        const person = this.props.persons[id];
+        if(person) return person.profession.map(profession => ({value: profession, label: PersonProfession[profession] ? PersonProfession[profession].label : profession}));
+        else return [];
+    };
+
     getTeamRoleOptions = (team, index) => {
         const currentUserRoles = team[index].id && this.props.users[team[index].id] ? this.props.users[team[index].id].role : [];
         const alreadyUsedRoles = team.reduce((usedRoles, line, i) => {
@@ -402,6 +452,14 @@ export default class ProjectEdit extends React.PureComponent {
           value: companyId,
           label: companies[companyId].name
       }));
+    };
+
+    getProjectCompaniesOptions = company => {
+        const companies = company.filter(company => company.id).map(company => company.id).filter((companyId, index, self) => self.indexOf(companyId) === index).map(companyId => ({
+            value: companyId,
+            label: this.props.companies[companyId] ? this.props.companies[companyId].name : companyId
+        }));
+        return companies;
     };
 
     getPersonOptions = persons => {
@@ -443,7 +501,31 @@ export default class ProjectEdit extends React.PureComponent {
         });
 
         if(object.company && object.company.some(company => company.id === null)) validation['company'] = {field: 'Companies', status: 'Some company is not set'};
+        const companies = object.company ? object.company.filter(line => line.id).map(line => line.id) : [];
+        companies.forEach((company, index) => {
+            if(companies.indexOf(company) !== index) {
+                if(!validation['company-name-duplicity']) validation['company-name-duplicity'] = {field: 'Company', index: [index], status: `Some company is duplicated`};
+                else validation['company-name-duplicity'].index.push(index);
+            }
+        });
+
         if(object.person && object.person.some(person => person.id === null)) validation['person'] = {field: 'People', status: 'Some person is not set'};
+        const persons = object.person ? object.person.filter(line => line.id).map(line => line.id) : [];
+        persons.forEach((person, index) => {
+            if(persons.indexOf(person) !== index) {
+                if(!validation['person-name-duplicity']) validation['person-name-duplicity'] = {field: 'Person', index: [index], status: `Some person is duplicated`};
+                else validation['person-name-duplicity'].index.push(index);
+            }
+        });
+
+        if(object.person && object.person.length > 0) {
+            object.person.forEach((personLine, index) => {
+                if(personLine.company && companies.indexOf(personLine.company) < 0) {
+                    if(!validation['person-company']) validation['person-company'] = {field: 'Person', index: [index], status: `Some selected company is not set in the project`};
+                    else validation['person-company'].index.push(index);
+                }
+            });
+        }
 
         const disableSave = Object.keys(validation).length > 0 || Object.keys(this.props.editedData).length === 0;
         if(areEquivalent(validation, this.state.validation)) validation = this.state.validation;
@@ -467,35 +549,6 @@ export default class ProjectEdit extends React.PureComponent {
 
     handleStatusNoteChange = event => {
         this.props.editItem(this.updateEditedData({statusNote: event.target.value}));
-    };
-
-    handleProducerChange = option => {
-        this.props.editItem(this.updateEditedData({producer: option ? option.value : null}));
-    };
-
-    handleManagerChange = option => {
-        this.props.editItem(this.updateEditedData({manager: option ? option.value : null}));
-    };
-
-    handleSupervisorChange = option => {
-        this.props.editItem(this.updateEditedData({supervisor: option ? option.value : null}));
-    };
-
-    handleSupervisor2Change = (option, meta) => {
-        this.props.editItem(this.updateEditedData({supervisor2: option ? option.value : null}));
-        if(meta.action === 'clear') this.setState({supervisor2: false});
-    };
-
-    handleLead2DChange = option => {
-        this.props.editItem(this.updateEditedData({lead2D: option ? option.value : null}));
-    };
-
-    handleLead3DChange = option => {
-        this.props.editItem(this.updateEditedData({lead3D: option ? option.value : null}));
-    };
-
-    handleLeadMPChange = option => {
-        this.props.editItem(this.updateEditedData({leadMP: option ? option.value : null}));
     };
 
     handleLastContactChange = date => {
@@ -534,7 +587,7 @@ export default class ProjectEdit extends React.PureComponent {
     };
 
     handleCompanyChange = (index, data) => {
-        const emptyItem = {id: null, role: [], flag: [], note: ''};
+        const emptyItem = {id: null, business: [], flag: [], note: ''};
         const project = this.props.projects[this.props.selected];
         const newData = this.props.editedData.company ? [...this.props.editedData.company] : project ? [...project.company] : [];
         if(typeof index === 'undefined' && typeof data === 'undefined') { //ADD
@@ -545,29 +598,48 @@ export default class ProjectEdit extends React.PureComponent {
         } else if(typeof data === 'undefined') { //REMOVE at index
             newData.splice(index, 1);
         } else { //data contains update for line index
-            newData[index] = {...newData[index], ...data}
+            newData[index] = {...newData[index], ...data};
+            if(data && typeof data.id !== "undefined") newData[index].business = data.id && this.props.companies[data.id] ? this.props.companies[data.id].business : [];
         }
         this.props.editItem(this.updateEditedData({company: newData}));
     };
 
+    companyFlagClicked = (index, flags, flag) => {
+        const newFlags = [...flags];
+        const i = newFlags.indexOf(flag);
+        if(i < 0) newFlags.push(flag);
+        else newFlags.splice(i, 1);
+        this.handleCompanyChange(index, {flag: newFlags})
+    };
+
     handlePersonChange = (index, data) => {
+        const emptyItem = {id: null, profession: [], flag: [], note: ''};
         const project = this.props.projects[this.props.selected];
         const newData = this.props.editedData.person ? [...this.props.editedData.person] : project ? [...project.person] : [];
         if(typeof index === 'undefined' && typeof data === 'undefined') { //ADD
             if(this.props.editedData.person && this.props.editedData.person.some(person => person.id === null)) return;
-            newData.push({id: null, role: [], note: '', profession: []})
+            newData.push(emptyItem)
         } else if(typeof index === 'undefined') { //ADD - fill id in data
-            newData.push({id: data, role: [], note: '', profession: []})
+            newData.push({...emptyItem, id: data})
         } else if(typeof data === 'undefined') { //REMOVE at index
             newData.splice(index, 1);
         } else { //data contains update for line index
-            newData[index] = {...newData[index], ...data}
+            newData[index] = {...newData[index], ...data};
+            if(data && typeof data.id !== "undefined") {
+                newData[index].profession = data.id && this.props.persons[data.id] ? this.props.persons[data.id].profession : [];
+                newData[index].company = null;
+            }
         }
         this.props.editItem(this.updateEditedData({person: newData}));
     };
 
-
-
+    personFlagClicked = (index, flags, flag) => {
+        const newFlags = [...flags];
+        const i = newFlags.indexOf(flag);
+        if(i < 0) newFlags.push(flag);
+        else newFlags.splice(i, 1);
+        this.handlePersonChange(index, {flag: newFlags})
+    };
 
     addFromBox = () => {
         if(!this.props.box) return;
