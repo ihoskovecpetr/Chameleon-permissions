@@ -105,6 +105,9 @@ export default class AppLayout extends React.PureComponent {
                         remove={this.props.removeProject}
 
                         box = {this.props.appState.box}
+
+                        addPerson = {this.props.addPerson}
+                        addCompany = {this.props.addCompany}
                     />;
                 break;
             case ViewTypes.BOX_LIST:
@@ -170,6 +173,8 @@ export default class AppLayout extends React.PureComponent {
                         update={this.props.updateCompany}
                         create={this.props.createCompany}
                         remove={this.props.removeCompany}
+
+                        setJustAddedObject={this.props.setJustAddedObject}
                     />;
                 break;
             case ViewTypes.COMPANY_DETAIL:
@@ -241,6 +246,8 @@ export default class AppLayout extends React.PureComponent {
                         update={this.props.updatePerson}
                         create={this.props.createPerson}
                         remove={this.props.removePerson}
+
+                        setJustAddedObject={this.props.setJustAddedObject}
                     />;
                 break;
             case ViewTypes.PERSON_DETAIL:

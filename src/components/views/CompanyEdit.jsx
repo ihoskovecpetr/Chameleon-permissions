@@ -24,6 +24,7 @@ export default class CompanyEdit extends React.PureComponent {
         };
         this.validationTimer = null;
         this.lastValidation = 0;
+        this.returnNew = props.editedData && typeof props.editedData.name !== 'undefined';
     }
 
     componentDidMount() {
@@ -128,12 +129,18 @@ export default class CompanyEdit extends React.PureComponent {
     // CLOSE, SAVE, REMOVE
     // *****************************************************************************************************************
     close = () => {
+        if(this.returnNew) this.props.setJustAddedObject(null);
         this.props.returnToPreviousView();
     };
 
-    save = () => {
+    save = async () => {
         if(this.props.selected) this.props.update();
-        else this.props.create();
+        else {
+            if(this.returnNew) {
+                const object = await this.props.create();
+                this.props.setJustAddedObject(object);
+            } else this.props.create();
+        }
         this.close();
     };
 

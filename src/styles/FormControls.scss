@@ -276,7 +276,7 @@ $tooltip-arrow-size: 0.3rem;
 
 [data-tooltip] {
   position: relative;
-  z-index: 2;
+  //z-index: 1;
 }
 
 [data-tooltip]:before,

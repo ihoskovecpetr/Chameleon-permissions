@@ -7,6 +7,7 @@ export const RETURN_TO_PREVIOUS_VIEW = 'RETURN_TO_PREVIOUS_VIEW';
 export const SET_MESSAGE = 'SET_MESSAGE';
 export const SET_FETCHING = 'SET_FETCHING';
 export const SET_ACTIVE_BID = 'SET_ACTIVE_BID';
+export const SET_JUST_ADDED_OBJECT = 'SET_JUST_ADDED_OBJECT';
 
 // data store
 export const RESET_STORE = 'RESET_STORE';

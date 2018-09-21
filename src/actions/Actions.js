@@ -35,6 +35,11 @@ export function setMessage(message) {
 export function setActiveBid(activeBid) {
     return {type: ActionTypes.SET_ACTIVE_BID, activeBid: activeBid};
 }
+
+export function setJustAddedObject(data) {
+    return {type: ActionTypes.SET_JUST_ADDED_OBJECT, data: data};
+}
+
 // *********************************************************************************************************************
 // DATA STORE
 // *********************************************************************************************************************
@@ -242,8 +247,8 @@ export function showCompanyNext(id) {
     return {type: ActionTypes.SHOW_COMPANY_NEXT, id: id}
 }
 
-export function addCompany() {
-    return {type: ActionTypes.ADD_COMPANY}
+export function addCompany(name) {
+    return {type: ActionTypes.ADD_COMPANY, name: name}
 }
 
 export function editCompany(id) {
@@ -293,11 +298,12 @@ export function updateCompany() {
 export function createCompany() {
     return async (dispatch, getState) => {
         const company = getState().appState.companyEditedData;
+        let newCompany;
         if(!company || Object.keys(company).length === 0) return;
         dispatch(setFetching(true));
         dispatch(setMessage(null));
         try {
-            const newCompany = await server.createCompany(company);
+            newCompany = await server.createCompany(company);
             dispatch({type: ActionTypes.CREATE_COMPANY, company: newCompany});
             if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
                 type: 'info',
@@ -309,6 +315,7 @@ export function createCompany() {
             dispatch(setMessage({type: 'error', text: `Create company error: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
         }
         dispatch(setFetching(false));
+        if(newCompany && newCompany._id) return newCompany;
     }
 }
 
@@ -349,8 +356,8 @@ export function showPersonNext(id) {
     return {type: ActionTypes.SHOW_PERSON_NEXT, id: id}
 }
 
-export function addPerson() {
-    return {type: ActionTypes.ADD_PERSON}
+export function addPerson(name) {
+    return {type: ActionTypes.ADD_PERSON, name: name}
 }
 
 export function editPerson(id) {
@@ -368,7 +375,6 @@ export function setPersonsSearch(search) {
 export function setPersonsSort(sort) {
     return {type: ActionTypes.SET_PERSONS_SORT, sort: sort};
 }
-
 
 export function changePersonEditedData(data) {
     return {type: ActionTypes.CHANGE_PERSON_EDIT_DATA, data: data};
@@ -401,11 +407,12 @@ export function updatePerson() {
 export function createPerson() {
     return async (dispatch, getState) => {
         const person = getState().appState.personEditedData;
+        let newPerson;
         if(!person || Object.keys(person).length === 0) return;
         dispatch(setFetching(true));
         dispatch(setMessage(null));
         try {
-            const newPerson = await server.createPerson(person);
+            newPerson = await server.createPerson(person);
             dispatch({type: ActionTypes.CREATE_PERSON, person: newPerson});
             if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
                 type: 'info',
@@ -417,6 +424,7 @@ export function createPerson() {
             dispatch(setMessage({type: 'error', text: `Create person error: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
         }
         dispatch(setFetching(false));
+        if(newPerson && newPerson._id) return newPerson;
     }
 }
 

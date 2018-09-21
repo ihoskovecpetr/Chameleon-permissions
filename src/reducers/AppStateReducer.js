@@ -25,7 +25,6 @@ function AppStateReducer(state = null, action = null) {
                 } else return state;
 
             case ActionTypes.RETURN_TO_PREVIOUS_VIEW:
-                console.log(state.previousView)
                 if(state.previousView && state.previousView.length > 0) {
                     const previousView = [...state.previousView];
                     const view = previousView.pop();
@@ -47,6 +46,25 @@ function AppStateReducer(state = null, action = null) {
                 if(typeof action.activeBid !== 'undefined' && action.activeBid !== state.activeBid) {
                     return {...state, activeBid: action.activeBid};
                 } else return state;
+
+            case ActionTypes.SET_JUST_ADDED_OBJECT:
+                if(typeof action.data === 'undefined') return state;
+                else {
+                    const personIndex = state.projectEditedData && state.projectEditedData.person && state.projectEditedData.person.length > 0 ? state.projectEditedData.person.findIndex(person => person.waiting) : -1;
+                    const companyIndex = state.projectEditedData && state.projectEditedData.company && state.projectEditedData.company.length > 0 ? state.projectEditedData.company.findIndex(company => company.waiting) : -1;
+                    if(personIndex >= 0) {
+                        const newPerson = [...state.projectEditedData.person];
+                        delete newPerson[personIndex].waiting;
+                        if(action.data && action.data._id) newPerson[personIndex] = {id: action.data._id, profession: action.data.profession ? action.data.profession : [], flag: [], note: ''};
+                        return {...state, projectEditedData: {...state.projectEditedData, person: newPerson}}
+                    }
+                    if (companyIndex >= 0) {
+                        const newCompany = [...state.projectEditedData.company];
+                        delete newCompany[companyIndex].waiting;
+                        if(action.data && action.data._id) newCompany[companyIndex] = {id: action.data._id, business: action.data.business ? action.data.business : [], flag: [], note: ''};
+                        return {...state, projectEditedData: {...state.projectEditedData, company: newCompany}}
+                    } else return state;
+                }
 
             // *********************************************************************************************************
             // PROJECTS
@@ -200,7 +218,8 @@ function AppStateReducer(state = null, action = null) {
                 } else return state;
 
             case ActionTypes.ADD_COMPANY:
-                return {...state, companyEditedData: {}, view: ViewTypes.COMPANY_NEW, previousView: [...state.previousView, state.view]};
+                if(typeof action.name === 'undefined') return {...state, companyEditedData: {}, view: ViewTypes.COMPANY_NEW, previousView: [...state.previousView, state.view]};
+                else return {...state, companyEditedData: {name: action.name}, view: ViewTypes.COMPANY_NEW, previousView: [...state.previousView, state.view]};
 
             case ActionTypes.SET_COMPANIES_FILTER:
                 if(action.filter) {
@@ -298,7 +317,8 @@ function AppStateReducer(state = null, action = null) {
                 } else return state;
 
             case ActionTypes.ADD_PERSON:
-                return {...state, personEditedData: {}, view: ViewTypes.PERSON_NEW, previousView: [...state.previousView, state.view]};
+                if(typeof action.name === 'undefined') return {...state, personEditedData: {}, view: ViewTypes.PERSON_NEW, previousView: [...state.previousView, state.view]};
+                else return {...state, personEditedData: {name: action.name}, view: ViewTypes.PERSON_NEW, previousView: [...state.previousView, state.view]};
 
             case ActionTypes.SET_PERSONS_FILTER:
                 if(action.filter) {

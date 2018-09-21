@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Input } from 'reactstrap';
 import Select from 'react-select';
+import CreatableSelect from 'react-select/lib/Creatable';
 import moment from 'moment';
 import areEquivalent from '../../lib/compareObjects';
 import DatePicker from 'react-datepicker';
@@ -191,10 +192,12 @@ export default class ProjectEdit extends React.PureComponent {
                                         <FontAwesomeIcon className={'remove-icon'} onClick={() => this.handleCompanyChange(i)} icon={Icons.ICON_EDITOR_LINE_REMOVE}/>
                                         <div className={'line-content'}>
                                             <div className={'wrapper company-name'}>
-                                                <Select
+                                                <CreatableSelect
                                                     options={this.getCompanyOptions(companies)}
                                                     value={companyLine.id ? {value: companyLine.id, label: companies[companyLine.id] ? companies[companyLine.id].name : companyLine.id  } : null}
                                                     onChange={option => this.handleCompanyChange(i, {id: !option || !option.value ? null : option.value})}
+                                                    onCreateOption={name => this.createNewCompany(i, name)}
+                                                    formatCreateLabel={value => `Create: "${value}"`}
                                                     isSearchable={true}
                                                     isMulti={false}
                                                     isClearable={true}
@@ -244,10 +247,12 @@ export default class ProjectEdit extends React.PureComponent {
                                         <FontAwesomeIcon className={'remove-icon'} onClick={() => this.handlePersonChange(i)} icon={Icons.ICON_EDITOR_LINE_REMOVE}/>
                                         <div className={'line-content'}>
                                             <div className={'wrapper person-name'}>
-                                                <Select
+                                                <CreatableSelect
                                                     options={this.getPersonOptions(persons)}
                                                     value={personLine.id ? {value: personLine.id, label: persons[personLine.id] ? persons[personLine.id].name : personLine.id  } : null}
                                                     onChange={option => this.handlePersonChange(i, {id: !option || !option.value ? null : option.value})}
+                                                    onCreateOption={name => this.createNewPerson(i, name)}
+                                                    formatCreateLabel={value => `Create: "${value}"`}
                                                     isSearchable={true}
                                                     isMulti={false}
                                                     isClearable={true}
@@ -311,11 +316,13 @@ export default class ProjectEdit extends React.PureComponent {
                                 )}
                             </div>
                         </div>
+                        {/* -------------------------------------------- */}
                     </div>
                 </Scrollbars>
             </div>
         )
     }
+
 
     // *****************************************************************************************************************
     // CLOSE, SAVE, REMOVE, BOX
@@ -448,10 +455,17 @@ export default class ProjectEdit extends React.PureComponent {
     };
 
     getCompanyOptions = companies => {
-      return Object.keys(companies).map(companyId => ({
+      return Object.keys(companies).sort((a, b) => companies[a].name.localeCompare(companies[b].name)).map(companyId => ({
           value: companyId,
           label: companies[companyId].name
       }));
+    };
+
+    getPersonOptions = persons => {
+        return Object.keys(persons).sort((a, b) => persons[a].name.localeCompare(persons[b].name)).map(personId => ({
+            value: personId,
+            label: persons[personId].name
+        }));
     };
 
     getProjectCompaniesOptions = company => {
@@ -460,13 +474,6 @@ export default class ProjectEdit extends React.PureComponent {
             label: this.props.companies[companyId] ? this.props.companies[companyId].name : companyId
         }));
         return companies;
-    };
-
-    getPersonOptions = persons => {
-        return Object.keys(persons).map(personId => ({
-            value: personId,
-            label: persons[personId].name
-        }));
     };
     // *****************************************************************************************************************
     // VALIDATION
@@ -659,5 +666,15 @@ export default class ProjectEdit extends React.PureComponent {
             company: newCompany,
             person: newPerson
         }));
+    };
+
+    createNewPerson = (index, name) => {
+        this.handlePersonChange(index, {waiting: true});
+        this.props.addPerson(name);
+    };
+
+    createNewCompany = (index, name) => {
+        this.handleCompanyChange(index, {waiting: true});
+        this.props.addCompany(name);
     };
 };
