@@ -620,7 +620,7 @@ export default class ProjectEdit extends React.PureComponent {
     };
 
     handlePersonChange = (index, data) => {
-        const emptyItem = {id: null, profession: [], flag: [], note: ''};
+        const emptyItem = {id: null, profession: [], flag: [], note: '', company: null};
         const project = this.props.projects[this.props.selected];
         const newData = this.props.editedData.person ? [...this.props.editedData.person] : project ? [...project.person] : [];
         if(typeof index === 'undefined' && typeof data === 'undefined') { //ADD
@@ -654,11 +654,11 @@ export default class ProjectEdit extends React.PureComponent {
         const newCompany = this.props.editedData.company ? [...this.props.editedData.company] : project ? [...project.company] : [];
         const newPerson = this.props.editedData.person ? [...this.props.editedData.person] : project ? [...project.person] : [];
 
-        for (const item of this.props.box) {
-            if (this.props.companies[item]) {
-                if(!newCompany.some(company => company.id === item)) newCompany.push({id: item, role: [], note: ''});
-            } else if (this.props.persons[item]) {
-                if(!newPerson.some(person => person.id === item)) newPerson.push({id: item, role: [], note: '', profession: []});
+        for (const id of this.props.box) {
+            if (this.props.companies[id]) {
+                if(!newCompany.some(company => company.id === id)) newCompany.push({id: id, flag: [], business: this.props.companies[id].business ? this.props.companies[id].business : [], note: ''});
+            } else if (this.props.persons[id]) {
+                if(!newPerson.some(person => person.id === id)) newPerson.push({id: id, flag: [], profession: this.props.persons[id].profession ? this.props.persons[id].profession : [], company: null, note: ''});
             }
         }
 
