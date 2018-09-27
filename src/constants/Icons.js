@@ -35,6 +35,9 @@ export const ICON_CHECKBOX_UNCHECKED = ['far', 'square'];
 export const ICON_ROLE_PRODUCER = 'user-circle';
 export const ICON_ROLE_MANAGER = 'user';
 export const ICON_ROLE_SUPERVISOR = ['far', 'eye'];
+export const ICON_ROLE_LEAD_2D = ['far', 'square'];
+export const ICON_ROLE_LEAD_3D = 'cube';
+export const ICON_ROLE_LEAD_MP = 'paint-brush';
 export const ICON_ROLE_COLORIST = 'palette';
 
 

@@ -21,7 +21,7 @@ export default function getContactElement(props) {
 
     return (
         <Fragment>
-            {icon ? <FontAwesomeIcon icon={ContactType[contact.type].icon}/> : null}
+            {icon ? <span data-tooltip={ContactType[contact.type].label}><FontAwesomeIcon icon={ContactType[contact.type].icon}/></span> : null}
             {element}
         </Fragment>
     )

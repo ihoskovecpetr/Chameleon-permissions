@@ -70,10 +70,10 @@ $detail-array-line-control-space: 0.5em;
       &.size-11 {flex: 0 0 91.6667%; max-width: 91.6661%}
       &.size-12 {flex: 0 0 100%; max-width: 100%}
       @include media("<=tablet") {
-        &.size-1 {flex: 0 0 16.6666%; max-width: 16.6666%}
+        //&.size-1 {flex: 0 0 16.6666%; max-width: 16.6666%}
         &.size-2 {flex: 0 0 25%; max-width: 25%}
-        &.size-3 {flex: 0 0 33.3333%; max-width: 33.3333%}
-        &.size-4 {flex: 0 0 50%; max-width: 50%}
+        &.size-3, &.size-4 {flex: 0 0 50%; max-width: 50%}
+        //&.size-4 {flex: 0 0 50%; max-width: 50%}
         &.size-5, &.size-6, &.size-7, &.size-8, &.size-9, &.size-10, &.size-11, &.size-12 {flex: 0 0 100%; max-width: 100%}
       }
       @include media("<=phone") {
@@ -231,17 +231,15 @@ $detail-array-line-control-space: 0.5em;
       &.group {
         display: flex;
         flex-wrap: nowrap;
-        &.wrap {
-          flex-wrap: wrap;
-          height: auto;
-          min-height: $detail-control-height;
-        }
         .value-item {
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
           align-items: center;
           padding-right: 1em;
+          &.highlighted {
+            color: lighten($app-header-background-color, 20%);
+          }
           &.selectable {
             -moz-user-select: text;
             -webkit-user-select: text;
@@ -269,6 +267,15 @@ $detail-array-line-control-space: 0.5em;
             &:visited {
               color: inherit;
             }
+          }
+        }
+        &.wrap {
+          flex-wrap: wrap;
+          height: auto;
+          min-height: $detail-control-height;
+          overflow: visible;
+          .value-item {
+            overflow: visible;
           }
         }
       }
