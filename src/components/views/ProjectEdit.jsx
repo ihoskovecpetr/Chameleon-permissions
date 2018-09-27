@@ -89,7 +89,7 @@ export default class ProjectEdit extends React.PureComponent {
                 </div>
 
                 {/* ------------------ FORM ------------------ */}
-                <Scrollbars autoHide={true} autoHideTimeout={800} autoHideDuration={200}>
+                <Scrollbars autoHide={true} autoHideTimeout={Constants.TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={Constants.TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                     <div className={'detail-body'}>
 
                         {/* ------------------ NAME, CONTACT ------------------ */}

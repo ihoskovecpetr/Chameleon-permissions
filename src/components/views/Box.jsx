@@ -2,6 +2,7 @@ import React, {Fragment} from 'react';
 import { Table } from 'reactstrap';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT, TABLE_SCROLLBARS_AUTO_HIDE_DURATION} from '../../constants/Constatnts';
 
 import * as Icons from '../../constants/Icons';
 
@@ -19,7 +20,7 @@ export default class Box extends React.PureComponent {
                         </div>
                     </div>
                 </div>
-                <Scrollbars autoHide={true} autoHideTimeout={800} autoHideDuration={200}>
+                <Scrollbars autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                     <Table className={'table-body'}>
                         <tbody style={{borderBottom: '1px solid #dee2e6'}}>
                         {box.map(id => {

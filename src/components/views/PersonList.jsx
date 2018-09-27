@@ -10,6 +10,8 @@ import * as Icons from '../../constants/Icons';
 import * as ContactType from '../../constants/ContactType';
 import * as PersonProfession from '../../constants/PersonProfession';
 
+import {TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT, TABLE_SCROLLBARS_AUTO_HIDE_DURATION} from '../../constants/Constatnts';
+
 import memoize from 'memoize-one';
 
 import {PersonsColumnDef} from '../../constants/TableColumnsDef';
@@ -53,7 +55,7 @@ export default class PersonList extends React.PureComponent {
                 </div>
                 <Fragment>
                     {this.getHeader(PersonsColumnDef)}
-                    <Scrollbars autoHide={true} autoHideTimeout={800} autoHideDuration={200}>
+                    <Scrollbars autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                         {this.getTable(PersonsColumnDef, sortedPersonIds)}
                     </Scrollbars>
                 </Fragment>

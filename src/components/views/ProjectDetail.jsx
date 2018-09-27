@@ -1,49 +1,30 @@
-import React, {Fragment} from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import React from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Input } from 'reactstrap';
+import Toolbox from '../toolbox/DetailToolbox';
+
+import {TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT, TABLE_SCROLLBARS_AUTO_HIDE_DURATION} from '../../constants/Constatnts';
 
 import * as ProjectStatus from '../../constants/ProjectStatus';
-import * as Icons from "../../constants/Icons";
 
 export default class ProjectDetail extends React.PureComponent {
-    constructor(props) {
-        super(props);
-        this.state = {
-            removeArmed: false,
-        };
-        this.editable = false;
-    }
-
     render() {
         const {selected, projects} = this.props;
-
         const project = projects[selected] ? projects[selected] : {};
-
 
         return (
             <div className={'app-body'}>
-                <div className={'app-toolbox'}>
-                    <div className={'inner-container'}>
-                    <div className={'toolbox-group'}>
-                        <div onClick={this.close} className={'tool-box-button'}>{'Close'}</div>
-                        {!this.props.edit ? null :
-                            <div onClick={this.edit} className={`tool-box-button`}>{'Edit'}</div>
-                        }
-                        <div onClick={this.addToBox} className={`tool-box-button blue`}><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/><FontAwesomeIcon icon={Icons.ICON_BOX}/></div>
-                        {!this.props.remove ? null :
-                            <Fragment>
-                                <div onClick={!this.state.removeArmed ? undefined : this.remove} className={`tool-box-button remove red${!this.state.removeArmed ? ' disabled' : ''}`}>{'Remove Project'}</div>
-                                <FontAwesomeIcon className={`tool-box-checkbox`} onClick={this.handleRemoveArmed} icon={this.state.removeArmed ? Icons.ICON_CHECKBOX_CHECKED : Icons.ICON_CHECKBOX_UNCHECKED} style={{cursor: 'pointer'}}/>
-                            </Fragment>
-                        }
-                    </div>
-                    </div>
-                    <div className={'inner-container left-auto'}>
-                        {selected && projects[selected] ? <div className={'toolbox-id'}>{projects[selected].projectId}</div> : null}
-                    </div>
-                </div>
-                <Scrollbars autoHide={true} autoHideTimeout={800} autoHideDuration={200}>
+                <Toolbox
+                    returnToPreviousView = {this.props.returnToPreviousView}
+                    edit = {this.props.edit}
+                    remove = {this.props.remove}
+                    addToBox = {this.props.addToBox}
+                    selected = {this.props.selected}
+                    label = {'Project'}
+                    id = {selected && projects[selected] ? projects[selected].projectId : null}
+                />
+
+                <Scrollbars autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                     <div className={'detail-body'}>
                         <div className={'detail-row'}>
                             <div className={'detail-group size-7'}>
@@ -78,31 +59,4 @@ export default class ProjectDetail extends React.PureComponent {
             </div>
         )
     }
-    // *****************************************************************************************************************
-    // CLOSE, EDIT,  REMOVE
-    // *****************************************************************************************************************
-    close = () => {
-        this.props.returnToPreviousView();
-    };
-
-    edit = () => {
-        this.props.edit();
-    };
-
-    remove = () => {
-        this.props.remove();
-        this.close();
-    };
-
-    // *****************************************************************************************************************
-    // HELPERS
-    // *****************************************************************************************************************
-    handleRemoveArmed = () => {
-        this.setState({removeArmed: !this.state.removeArmed})
-    };
-
-    addToBox = () => {
-        this.props.addToBox(this.props.selected);
-    };
-
 }

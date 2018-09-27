@@ -1,5 +1,10 @@
 $detail-font-size: 0.9rem;
 
+$detail-control-height: 2em;
+$detail-control-border-radius: 0.3em; //1em
+$detail-control-padding-horizontal: 0.7em;
+$detail-control-padding-vertical: 0em;
+
 $detail-body-padding-horizontal: $app-padding-horizontal;
 $detail-body-background-color: #c3c3c3;
 $detail-body-color: #0f0f0f;
@@ -120,7 +125,7 @@ $detail-array-line-control-space: 0.5em;
           width: 1em;
           cursor: pointer;
           color: #868686;
-          margin-top: 0.4em;
+          margin-top: 0.5em;
           &:hover {
             color: #9e4534;
           }
@@ -200,9 +205,72 @@ $detail-array-line-control-space: 0.5em;
             width: calc(65% - #{$detail-array-line-control-space});
             @include media("<=small-phone") {width: 100%}
           }
-
         }
+      }
+    }
 
+    .detail-value {
+      width: 100%;
+      font-size: $detail-font-size;
+      font-style: normal;
+      height: $detail-control-height;
+      padding: 0.2em $detail-control-padding-horizontal;
+      background-color: #d7d7d7;
+      align-items: center;
+      border: 1px solid #9b9b9b;
+      border-radius: $detail-control-border-radius;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      &.selectable {
+        -moz-user-select: text;
+        -webkit-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
+      }
+      &.group {
+        display: flex;
+        flex-wrap: nowrap;
+        &.wrap {
+          flex-wrap: wrap;
+          height: auto;
+          min-height: $detail-control-height;
+        }
+        .value-item {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          align-items: center;
+          padding-right: 1em;
+          &.selectable {
+            -moz-user-select: text;
+            -webkit-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+          }
+          &.clickable {
+            cursor: pointer;
+          }
+          &:not(:last-child) {
+            &.comma {
+              padding-right: 0.5em;
+              &::after {
+                content: ',';
+              }
+            }
+          }
+          .svg-inline--fa {
+            margin-right: 0.3em;
+          }
+          a {
+            &:link {
+              color: inherit;
+            }
+            &:visited {
+              color: inherit;
+            }
+          }
+        }
       }
     }
   }

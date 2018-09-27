@@ -10,6 +10,8 @@ import Fuse from 'fuse.js';
 import moment from 'moment';
 import Select from 'react-select';
 
+import {TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT, TABLE_SCROLLBARS_AUTO_HIDE_DURATION} from '../../constants/Constatnts';
+
 import {daysToString} from '../../lib/dateHelper';
 import * as Icons from '../../constants/Icons';
 import * as CompanyFlag from '../../constants/CompanyFlag';
@@ -80,7 +82,7 @@ export default class ProjectList extends React.PureComponent {
                 </div>
                 <Fragment>
                     {this.getHeader(activeBid ? ActiveBidsColumnDef : ProjectsColumnDef)}
-                    <Scrollbars autoHide={true} autoHideTimeout={800} autoHideDuration={200}>
+                    <Scrollbars autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                         {this.getTable(activeBid ? ActiveBidsColumnDef : ProjectsColumnDef, sortedProjectIds)}
                     </Scrollbars>
                 </Fragment>

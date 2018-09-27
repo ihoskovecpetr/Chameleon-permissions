@@ -66,7 +66,7 @@ export default class CompanyEdit extends React.PureComponent {
                     </div>
                 </div>
                 {/* ------------------ FORM ------------------ */}
-                <Scrollbars autoHide={true} autoHideTimeout={800} autoHideDuration={200}>
+                <Scrollbars autoHide={true} autoHideTimeout={Constants.TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={Constants.TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                     <div className={'detail-body'}>
                         {/* ------------------ NAME, BUSINESS ------------------ */}
                         <div className={'detail-row'}>
@@ -83,7 +83,7 @@ export default class CompanyEdit extends React.PureComponent {
                                     isSearchable={true}
                                     isMulti={true}
                                     isClearable={true}
-                                    className={`control-select${this.state.validation.status ? ' invalid' : ''}`}
+                                    className={`control-select wrap${this.state.validation.status ? ' invalid' : ''}`}
                                     classNamePrefix={'control-select'}
                                     placeholder={'Company business...'}
                                 />

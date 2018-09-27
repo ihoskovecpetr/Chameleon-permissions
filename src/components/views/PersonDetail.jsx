@@ -1,50 +1,50 @@
-import React, {Fragment} from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import React from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
-import { Input } from 'reactstrap';
-
-import * as Icons from '../../constants/Icons';
+import Toolbox from '../toolbox/DetailToolbox';
+import {TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT, TABLE_SCROLLBARS_AUTO_HIDE_DURATION} from '../../constants/Constatnts';
+import * as PersonProfession from '../../constants/PersonProfession';
+import ContactElement from '../element/ContactElement';
 
 export default class PersonDetail extends React.PureComponent {
-    constructor(props) {
-        super(props);
-        this.state = {
-            removeArmed: false,
-        };
-        this.editable = false;
-    }
-
     render() {
         const {selected, persons} = this.props;
-
         const person = persons[selected] ? persons[selected] : {};
 
+        const name = person.name ? person.name : '';
+        const profession = person.profession ? person.profession.map(profession => PersonProfession[profession] ? PersonProfession[profession].label : `<${profession()}>`)  : [];
+        const contact = person.contact ? person.contact : [];
 
         return (
             <div className={'app-body'}>
-                <div className={'app-toolbox'}>
-                    <div className={'inner-container'}>
-                        <div className={'toolbox-group'}>
-                            <div onClick={this.close} className={'tool-box-button'}>{'Close'}</div>
-                            {!this.props.edit ? null :
-                                <div onClick={this.edit} className={`tool-box-button`}>{'Edit'}</div>
-                            }
-                            <div onClick={this.addToBox} className={`tool-box-button blue`}><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/><FontAwesomeIcon icon={Icons.ICON_BOX}/></div>
-                            {!this.props.remove ? null :
-                                <Fragment>
-                                    <div onClick={!this.state.removeArmed ? undefined : this.remove} className={`tool-box-button remove red${!this.state.removeArmed ? ' disabled' : ''}`}>{'Remove Person'}</div>
-                                    <FontAwesomeIcon className={`tool-box-checkbox`} onClick={this.handleRemoveArmed} icon={this.state.removeArmed ? Icons.ICON_CHECKBOX_CHECKED : Icons.ICON_CHECKBOX_UNCHECKED} style={{cursor: 'pointer'}}/>
-                                </Fragment>
-                            }
-                        </div>
-                    </div>
-                </div>
-                <Scrollbars autoHide={true} autoHideTimeout={800} autoHideDuration={200}>
+                <Toolbox
+                    returnToPreviousView = {this.props.returnToPreviousView}
+                    edit = {this.props.edit}
+                    remove = {this.props.remove}
+                    addToBox = {this.props.addToBox}
+                    selected = {this.props.selected}
+                    label = {'Person'}
+                />
+
+                <Scrollbars autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                     <div className={'detail-body'}>
                         <div className={'detail-row'}>
-                            <div className={'detail-group size-7'}>
+                            <div className={'detail-group size-5'}>
                                 <div className={`detail-label`}>{'Person name:'}</div>
-                                <Input disabled={true} className={`detail-input readonly`} value={person.name}/>
+                                <div className={`detail-value selectable`}>{name}</div>
+                            </div>
+                            <div className={'detail-group size-7'}>
+                                <div className={`detail-label`}>{'Profession:'}</div>
+                                <div className={`detail-value group wrap`}>
+                                    {profession.map((profession, i) => <div key={i} className={'value-item comma'}>{profession}</div> )}
+                                </div>
+                            </div>
+                        </div>
+                        <div className={'detail-row spacer'}>
+                            <div className={'detail-group size-12'}>
+                                <div className={`detail-label`}>{'Contacts:'}</div>
+                                <div className={'detail-value group wrap'}>
+                                    {contact.map((contactItem, i) => <div key={i} className={'value-item selectable'}><ContactElement contact={contactItem}/></div>)}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -52,31 +52,4 @@ export default class PersonDetail extends React.PureComponent {
             </div>
         )
     }
-    // *****************************************************************************************************************
-    // CLOSE, EDIT,  REMOVE
-    // *****************************************************************************************************************
-    close = () => {
-        this.props.returnToPreviousView();
-    };
-
-    edit = () => {
-        this.props.edit();
-    };
-
-    remove = () => {
-        this.props.remove();
-        this.close();
-    };
-
-    // *****************************************************************************************************************
-    // HELPERS
-    // *****************************************************************************************************************
-    handleRemoveArmed = () => {
-        this.setState({removeArmed: !this.state.removeArmed})
-    };
-
-    addToBox = () => {
-        this.props.addToBox(this.props.selected);
-    };
-
 }

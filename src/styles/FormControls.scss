@@ -1,15 +1,10 @@
-$detail-control-height: 2em;
-$detail-control-border-radius: 1em;
-$detail-control-padding-horizontal: 0.7em;
-$detail-control-padding-vertical: 0em;
-
 $detail-control-focus-color: $app-header-background-color;
 
 $detail-label-width: 8em;
 
 $detail-control-invalid-color: #f5d3d7;
 
-$detail-multi-select-radius: 0.6em;
+$detail-multi-select-radius: 0.1em;//0.6em;
 
 $table-control-height: 1.6em;
 $table-control-padding-horizontal: 0.6em;
@@ -29,6 +24,8 @@ $table-control-background-color: #f5f5f5;
   min-width: $detail-label-width;
   white-space: nowrap;
   align-items: center;
+  //padding-right: 0.5em;
+  //justify-content: flex-end;
   &.value-changed {
     color: lighten($app-header-background-color, 15%);
   }
@@ -45,6 +42,7 @@ $table-control-background-color: #f5f5f5;
     margin-left: 0.2em;
   }
   &.column {
+    justify-content: flex-start;
     margin-bottom: 0.4em;
   }
 }
@@ -145,7 +143,7 @@ $table-control-background-color: #f5f5f5;
       .control-select__multi-value {
         border-radius: $detail-multi-select-radius;
         background-color: #ebebeb;
-        border: 1px solid rgba(155, 155, 155, 0.71);
+        border: 1px solid rgba(155, 155, 155, 0.51);
       }
       .control-select__multi-value__remove {
         width: 1em;
@@ -190,6 +188,12 @@ $table-control-background-color: #f5f5f5;
       }
     }
   }
+  &.wrap .control-select__control {
+    height: auto;
+    .control-select__value-container {
+      flex-wrap: wrap;
+    }
+}
   &.invalid .control-select__control {
     background-color: $detail-control-invalid-color;
     &.control-select__control--is-focused {
