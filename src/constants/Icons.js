@@ -52,6 +52,8 @@ export const ICON_EDITOR_FLAG_CREATIVITY = 'paint-brush';
 export const ICON_EDITOR_FLAG_ORGANIZE = 'tasks';
 export const ICON_EDITOR_FLAG_CLIENT = 'hand-holding-usd';
 
+export const ICON_EDITOR_NO_COMPANY = 'ellipsis-h';
+
 //box
 export const ICON_BOX_REMOVE = 'trash';
 

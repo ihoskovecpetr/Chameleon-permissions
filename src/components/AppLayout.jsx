@@ -78,7 +78,7 @@ export default class AppLayout extends React.PureComponent {
                         showProjectNext={this.props.showProjectNext}
                         showPersonNext={this.props.showPersonNext}
                         showCompanyNext={this.props.showCompanyNext}
-
+                        isNext={this.props.appState.view === ViewTypes.PROJECT_DETAIL_NEXT}
                         edit={this.props.appState.view === ViewTypes.PROJECT_DETAIL ? this.props.editProject : undefined}
                         remove={this.props.appState.view === ViewTypes.PROJECT_DETAIL ? this.props.removeProject : undefined}
                         addToBox={this.props.addToBox}
@@ -194,7 +194,7 @@ export default class AppLayout extends React.PureComponent {
                         showProjectNext={this.props.showProjectNext}
                         showPersonNext={this.props.showPersonNext}
                         showCompanyNext={this.props.showCompanyNext}
-
+                        isNext={this.props.appState.view === ViewTypes.COMPANY_DETAIL_NEXT}
                         edit={this.props.appState.view === ViewTypes.COMPANY_DETAIL ? this.props.editCompany : undefined}
                         remove={this.props.appState.view === ViewTypes.COMPANY_DETAIL ? this.props.removeCompany : undefined}
                         addToBox={this.props.addToBox}
@@ -267,6 +267,7 @@ export default class AppLayout extends React.PureComponent {
                         showProjectNext={this.props.showProjectNext}
                         showPersonNext={this.props.showPersonNext}
                         showCompanyNext={this.props.showCompanyNext}
+                        isNext={this.props.appState.view === ViewTypes.PERSON_DETAIL_NEXT}
 
                         edit={this.props.appState.view === ViewTypes.PERSON_DETAIL ? this.props.editPerson : undefined}
                         remove={this.props.appState.view === ViewTypes.PERSON_DETAIL ? this.props.removePerson : undefined}

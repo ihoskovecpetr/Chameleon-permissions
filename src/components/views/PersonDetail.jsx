@@ -23,8 +23,8 @@ export default class PersonDetail extends React.PureComponent {
                     addToBox = {this.props.addToBox}
                     selected = {this.props.selected}
                     label = {'Person'}
+                    isNext={this.props.isNext}
                 />
-
                 <Scrollbars autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                     <div className={'detail-body'}>
                         <div className={'detail-row'}>

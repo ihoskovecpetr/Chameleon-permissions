@@ -1,0 +1,59 @@
+$tooltip-font-size: 0.9rem;
+$tooltip-padding-h: 0.8 * $tooltip-font-size;
+$tooltip-padding-v: 0.4 * $tooltip-font-size;
+$tooltip-border-radius: 0.8 * $tooltip-font-size;
+
+$tooltip-color: #ebebeb;
+$tooltip-background-color: #505050;
+
+$tooltip-arrow-size: 0.4rem;
+$tooltip-x-pos: 50%;
+
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]:before,
+[data-tooltip]:after {
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0s;
+}
+
+[data-tooltip]:before {
+  position: absolute;
+  left: $tooltip-x-pos;
+  top: -2 * $tooltip-padding-v - $tooltip-font-size - $tooltip-arrow-size;
+  padding: $tooltip-padding-v $tooltip-padding-h;
+  border-radius: $tooltip-border-radius;
+  background-color: $tooltip-background-color;
+  color: $tooltip-color;
+  content: attr(data-tooltip);
+  transform: translateX(-$tooltip-x-pos);
+  white-space: nowrap;
+  font-size: $tooltip-font-size;
+  line-height: $tooltip-font-size;
+}
+
+[data-tooltip]:after {
+  position: absolute;
+  left: $tooltip-x-pos;
+  top: calc(-#{$tooltip-arrow-size} - 1px);
+  margin-left: -$tooltip-arrow-size;
+  width: 0;
+  height: 0;
+  border-top: $tooltip-arrow-size solid $tooltip-background-color;
+  border-right: $tooltip-arrow-size solid transparent;
+  border-left: $tooltip-arrow-size solid transparent;
+  content: "";
+  font-size: 0;
+  line-height: 0;
+  //transform: translateY($tooltip-arrow-size);
+}
+
+[data-tooltip]:hover:before,
+[data-tooltip]:hover:after {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity ease 0.1s;
+}

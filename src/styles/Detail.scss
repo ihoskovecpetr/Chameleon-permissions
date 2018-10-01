@@ -1,7 +1,7 @@
 $detail-font-size: 0.9rem;
 
 $detail-control-height: 2em;
-$detail-control-border-radius: 0.3em; //1em
+$detail-control-border-radius: 0.4em; //1em
 $detail-control-padding-horizontal: 0.7em;
 $detail-control-padding-vertical: 0em;
 
@@ -13,6 +13,12 @@ $detail-group-padding-horizontal: 0.8rem;
 $detail-group-padding-vertical: 0.3rem;
 
 $detail-array-line-control-space: 0.5em;
+
+$detail-value-background-color: #e6e6e6;
+$detail-value-background-color-2: #d7d7d7;
+$detail-value-border-color: #9b9b9b;
+
+$detail-client-person-padding-left: 1em;
 
 .detail-body {
   color: $detail-body-color;
@@ -36,15 +42,6 @@ $detail-array-line-control-space: 0.5em;
     flex-wrap: wrap;
     margin: 0 -1* $detail-group-padding-horizontal;
     .detail-group {
-      /*
-      &.spacer::before {
-        content: '';
-        width: 100%;
-        margin: 0.5rem 0;
-        height: 1px;
-        background-color: #9c9c9c;
-      }
-      */
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -109,6 +106,111 @@ $detail-array-line-control-space: 0.5em;
             }
           }
         }
+      }
+      .detail-project-client {
+        display: flex;
+        width: 100%;
+        font-size: $detail-font-size;
+        font-style: normal;
+        border: 1px solid $detail-value-border-color;
+        border-radius: $detail-control-border-radius;
+        flex-direction: column;
+        &:not(:last-child) {
+          margin-bottom: 0.4em;
+        }
+        .company {
+          background-color: $detail-value-background-color-2;
+          border-bottom: 1px solid $detail-value-border-color;
+          border-top-left-radius: $detail-control-border-radius;
+          border-top-right-radius: $detail-control-border-radius;
+          &.empty {
+            border-bottom: none;
+            border-bottom-left-radius: $detail-control-border-radius;
+            border-bottom-right-radius: $detail-control-border-radius;
+          }
+        }
+        .person {
+          background-color: $detail-value-background-color;
+          &:not(:last-child) {
+            border-bottom: 1px solid $detail-value-border-color;
+          }
+          &:last-child {
+            border-bottom-left-radius: $detail-control-border-radius;
+            border-bottom-right-radius: $detail-control-border-radius;
+          }
+        }
+        .company, .person {
+          padding: 0.2em $detail-control-padding-horizontal;
+          display: flex;
+          flex-wrap: wrap;
+          .role-icon {
+            margin-left: 0.3em;
+            font-size: 0.8em;
+            margin-top: 0.1em;
+            &.first {
+              margin-left: 1em;
+            }
+          }
+          .clickable:hover {
+            text-decoration: underline;
+            cursor: pointer;
+          }
+          .field {
+            padding-right: 0.7em;
+            &.name {
+              flex-wrap: nowrap;
+              display: flex;
+              flex: 0 0 25%;
+              max-width: 25%;
+              @include media("<=tablet") {
+                flex: 0 0 30%;
+                max-width: 30%;
+              }
+            }
+            &.profession-business {
+              display: flex;
+              flex-wrap: wrap;
+              flex: 0 0 45%;
+              max-width: 45%;
+              @include media("<=tablet") {
+                flex: 0 0 70%;
+                max-width: 70%;
+              }
+              &.wide {
+                flex: 0 0 75%;
+                max-width: 75%;
+                @include media("<=tablet") {
+                  flex: 0 0 75%;
+                  max-width: 75%;
+                }
+              }
+              .item {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                &:not(:last-child):after {
+                  content: ', ';
+                  margin-right: 0.4em;
+                }
+                &.disabled {
+                  color: lighten($detail-body-color, 50%);
+                }
+              }
+            }
+            &.note {
+              flex: 0 0 30%;
+              max-width: 30%;
+              @include media("<=tablet") {
+                flex: 0 0 100%;
+                max-width: 100%;
+              }
+            }
+          }
+        }
+        .person .field.name {
+          padding-left: $detail-client-person-padding-left;
+        }
+
       }
       .detail-array-line {
         display: flex;
@@ -215,9 +317,9 @@ $detail-array-line-control-space: 0.5em;
       font-style: normal;
       height: $detail-control-height;
       padding: 0.2em $detail-control-padding-horizontal;
-      background-color: #d7d7d7;
+      background-color: $detail-value-background-color;
       align-items: center;
-      border: 1px solid #9b9b9b;
+      border: 1px solid $detail-value-border-color;
       border-radius: $detail-control-border-radius;
       white-space: nowrap;
       overflow: hidden;

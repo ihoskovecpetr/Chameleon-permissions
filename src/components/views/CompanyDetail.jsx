@@ -23,6 +23,7 @@ export default class CompanyDetail extends React.PureComponent {
                     addToBox = {this.props.addToBox}
                     selected = {this.props.selected}
                     label = {'Company'}
+                    isNext={this.props.isNext}
                 />
                 <Scrollbars autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                     <div className={'detail-body'}>

@@ -21,14 +21,14 @@ function AppStateReducer(state = null, action = null) {
             // routing, info
             case ActionTypes.SET_VIEW: //Only from header
                 if(action.view && action.view !== state.view) {
-                    return {...state, view: action.view, previousView : []};
+                    return {...state, view: action.view, previousView : [], nextDetailId: null};
                 } else return state;
 
             case ActionTypes.RETURN_TO_PREVIOUS_VIEW:
                 if(state.previousView && state.previousView.length > 0) {
                     const previousView = [...state.previousView];
                     const view = previousView.pop();
-                    return {...state, view: view, previousView: previousView};
+                    return {...state, view: view, previousView: previousView, nextDetailId: null};
                 } else return {...state, view: ViewTypes.PROJECT_LIST, previousView: null};
 
             case ActionTypes.SET_FETCHING:
