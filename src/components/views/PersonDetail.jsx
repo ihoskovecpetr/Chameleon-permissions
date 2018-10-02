@@ -4,11 +4,11 @@ import Toolbox from '../toolbox/DetailToolbox';
 import {TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT, TABLE_SCROLLBARS_AUTO_HIDE_DURATION} from '../../constants/Constatnts';
 import * as PersonProfession from '../../constants/PersonProfession';
 import ContactElement from '../element/ContactElement';
+import ProjectsForSubject from '../element/ProjectsForSubject';
 
 export default class PersonDetail extends React.PureComponent {
     render() {
-        const {selected, persons} = this.props;
-        const person = persons[selected] ? persons[selected] : {};
+        const {projects, person} = this.props;
 
         const name = person.name ? person.name : '';
         const profession = person.profession ? person.profession.map(profession => PersonProfession[profession] ? PersonProfession[profession].label : `<${profession()}>`)  : [];
@@ -47,6 +47,11 @@ export default class PersonDetail extends React.PureComponent {
                                 </div>
                             </div>
                         </div>
+                        <ProjectsForSubject
+                            projects={projects}
+                            id={person.id}
+                            type={'person'}
+                        />
                     </div>
                 </Scrollbars>
             </div>

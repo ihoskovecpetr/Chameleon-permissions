@@ -36,11 +36,11 @@ export default class PersonEdit extends React.PureComponent {
     }
 
     render() {
-        const {selected, editedData, persons} = this.props;
+        const {person, editedData} = this.props;
 
-        const name = editedData.name !== undefined ? editedData.name : !selected ? '' : persons[selected] ? persons[selected].name : '';
-        const profession = editedData.profession !== undefined ? editedData.profession : !selected ? [] : persons[selected] ? persons[selected].profession : [];
-        const contact = editedData.contact !== undefined ? editedData.contact : !selected ? [] : persons[selected] ? persons[selected].contact : [];
+        const name = editedData.name !== undefined ? editedData.name : person && person.name ? person.name : '';
+        const profession = editedData.profession !== undefined ? editedData.profession : person && person.profession ? person.profession : [];
+        const contact = editedData.contact !== undefined ? editedData.contact : person && person.contact ? person.contact : [];
 
         return (
             <div className={'app-body'}>
@@ -49,14 +49,14 @@ export default class PersonEdit extends React.PureComponent {
                     <div className={'inner-container'}>
                         <div className={'toolbox-group'}>
                             <div onClick={this.close} className={'tool-box-button'}>{'Cancel'}</div>
-                            <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button green${this.state.saveDisabled ? ' disabled' : ''}`}>{selected ? 'Save' : 'Create'}</div>
+                            <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button green${this.state.saveDisabled ? ' disabled' : ''}`}>{person ? 'Save' : 'Create'}</div>
                             <div className={'tool-box-validation'}>
                                 <FontAwesomeIcon className={`tool-box-validation-icon${Object.keys(this.state.validation).length > 0 ? ' active' : ''}`} icon={Icons.ICON_EDITOR_VALIDATION}/>
                                 <div className={'tool-box-validation-container'}>
                                     {Object.keys(this.state.validation).map(validationField => <div key={validationField}>{`${this.state.validation[validationField].field}: ${this.state.validation[validationField].status}`}</div>)}
                                 </div>
                             </div>
-                            {!selected ? null :
+                            {!person ? null :
                                 <Fragment>
                                     <div onClick={!this.state.removeArmed ? undefined : this.remove} className={`tool-box-button remove red${!this.state.removeArmed ? ' disabled' : ''}`}>{'Remove Person'}</div>
                                     <FontAwesomeIcon className={`tool-box-checkbox`} onClick={this.handleRemoveArmed} icon={this.state.removeArmed ? Icons.ICON_CHECKBOX_CHECKED : Icons.ICON_CHECKBOX_UNCHECKED} style={{cursor: 'pointer'}}/>
@@ -71,11 +71,11 @@ export default class PersonEdit extends React.PureComponent {
                         {/* ------------------ NAME, PROFESSION ------------------ */}
                         <div className={'detail-row'}>
                             <div className={'detail-group size-5'}>
-                                <div className={`detail-label${typeof editedData.name !== 'undefined' && selected  ? ' value-changed' : ''}`}>{'Person name:'}</div>
-                                <Input placeholder={'Company name...'} autoFocus={!selected} className={`detail-input${this.state.validation.name ? ' invalid' : ''}`} onChange={this.handleNameChange} value={name}/>
+                                <div className={`detail-label${typeof editedData.name !== 'undefined' && person  ? ' value-changed' : ''}`}>{'Person name:'}</div>
+                                <Input placeholder={'Company name...'} autoFocus={!person} className={`detail-input${this.state.validation.name ? ' invalid' : ''}`} onChange={this.handleNameChange} value={name}/>
                             </div>
                             <div className={'detail-group size-7'}>
-                                <div className={`detail-label${typeof editedData.profession !== 'undefined' && selected  ? ' value-changed' : ''}`}>{'Profession:'}</div>
+                                <div className={`detail-label${typeof editedData.profession !== 'undefined' && person  ? ' value-changed' : ''}`}>{'Profession:'}</div>
                                 <Select
                                     options={personProfessionOptions}
                                     value={profession.map(profession => ({value: profession, label: PersonProfession[profession] ? PersonProfession[profession].label : ''}))}
@@ -92,7 +92,7 @@ export default class PersonEdit extends React.PureComponent {
                         {/* ------------------ CONTACTS ------------------ */}
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group column size-12'}>
-                                <div onClick={() => this.handleContactChange()} className={`detail-label clickable column${editedData.contact !== undefined && selected ? ' value-changed' : ''}`}>{'Contacts'}<FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/></div>
+                                <div onClick={() => this.handleContactChange()} className={`detail-label clickable column${editedData.contact !== undefined && person ? ' value-changed' : ''}`}>{'Contacts'}<FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/></div>
                                 <div className={'detail-group-wrapper'}>
                                     {contact.map((contactLine, i) =>
                                         <div className={`detail-array-line size-6 spacer`} key={i}>
@@ -134,7 +134,7 @@ export default class PersonEdit extends React.PureComponent {
     };
 
     save = async () => {
-        if(this.props.selected) this.props.update();
+        if(this.props.person) this.props.update();
         else {
             if(this.returnNew) {
                 const object = await this.props.create();
@@ -161,7 +161,7 @@ export default class PersonEdit extends React.PureComponent {
 
     isNameUsed = name => {
         if(!name) return false;
-        return Object.keys(this.props.persons).filter(id => id !== this.props.selected).map(id => this.props.persons[id].name.toLowerCase()).indexOf(name.toLowerCase()) >= 0;
+        return Object.keys(this.props.persons).filter(personId => !this.props.person || !this.props.person._id || !personId !== this.props.person._id).map(id => this.props.persons[id].name.toLowerCase()).indexOf(name.toLowerCase()) >= 0;
     };
 
     handleRemoveArmed = () => {
@@ -170,7 +170,7 @@ export default class PersonEdit extends React.PureComponent {
 
     updateEditedData = updateData => {
         const newData = {...this.props.editedData, ...updateData};
-        const object = this.props.selected ? this.props.persons[this.props.selected] : undefined;
+        const object = this.props.person ? this.props.person : undefined;
         for(const key of Object.keys(newData)) {
             if(object && object[key] === newData[key])  delete newData[key];
         }
@@ -181,8 +181,8 @@ export default class PersonEdit extends React.PureComponent {
     // VALIDATION
     // *****************************************************************************************************************
     setValidation = () => {
-        const originalObject = this.props.selected && this.props.persons && this.props.persons[this.props.selected] ? this.props.persons[this.props.selected] : {};
-        if(!originalObject._id && this.props.selected) return true; // when refresh, no data fetched yet
+        const originalObject = this.props.person;
+        if(originalObject && !originalObject._id) return true; // when refresh, no data fetched yet
         const object = Object.assign({}, originalObject, this.props.editedData);
         let validation = {};
 
@@ -210,7 +210,7 @@ export default class PersonEdit extends React.PureComponent {
 
     handleContactChange = (index, data) => {
         const emptyItem = {type: null, data: ''};
-        const object = this.props.persons[this.props.selected];
+        const object = this.props.person;
         const newData = this.props.editedData.contact ? [...this.props.editedData.contact] : object ? [...object.contact] : [];
         if(typeof index === 'undefined' && typeof data === 'undefined') { //ADD
             if (this.props.editedData.contact && this.props.editedData.contact.some(item => item.type === null)) return;

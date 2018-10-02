@@ -4,11 +4,11 @@ import Toolbox from '../toolbox/DetailToolbox';
 import {TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT, TABLE_SCROLLBARS_AUTO_HIDE_DURATION} from '../../constants/Constatnts';
 import * as CompanyBusiness from '../../constants/CompanyBusiness';
 import ContactElement from '../element/ContactElement';
+import ProjectsForSubject from '../element/ProjectsForSubject';
 
 export default class CompanyDetail extends React.PureComponent {
     render() {
-        const {selected, companies} = this.props;
-        const company = companies[selected] ? companies[selected] : {};
+        const {projects, company} = this.props;
 
         const name = company.name ? company.name : '';
         const business = company.business ? company.business.map(business => CompanyBusiness[business] ? CompanyBusiness[business].label : `<${business()}>`)  : [];
@@ -47,6 +47,11 @@ export default class CompanyDetail extends React.PureComponent {
                                 </div>
                             </div>
                         </div>
+                        <ProjectsForSubject
+                            projects={projects}
+                            id={company.id}
+                            type={'company'}
+                        />
                     </div>
                 </Scrollbars>
             </div>

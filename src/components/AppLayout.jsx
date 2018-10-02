@@ -29,8 +29,10 @@ export default class AppLayout extends React.PureComponent {
     render() {
         //console.log(this.props.appState)
         let AppBody = null;
+        let selected = null;
         switch(this.props.appState.view) {
             case ViewTypes.PROJECT_LIST:
+                selected = this.props.appState.selectedProject;
                 AppBody =
                     <ProjectList
                         projects={this.props.projects}
@@ -39,7 +41,7 @@ export default class AppLayout extends React.PureComponent {
                         users={this.props.users}
                         user={this.props.user}
 
-                        selected={this.props.appState.selectedProject}
+                        selected={selected}
 
                         filter={this.props.appState.activeBid ? this.props.appState.projectsFilter.filter(filter => filter === FilterTypes.USER_FILTER).concat([FilterTypes.ACTIVE_PROJECTS_FILTER, FilterTypes.NOT_AWARDED_PROJECTS_FILTER]) : this.props.appState.projectsFilter}
                         search={this.props.appState.activeBid ? this.props.appState.activeBidSearch : this.props.appState.projectsSearch}
@@ -63,6 +65,7 @@ export default class AppLayout extends React.PureComponent {
                 break;
             case ViewTypes.PROJECT_DETAIL:
             case ViewTypes.PROJECT_DETAIL_NEXT:
+                selected = this.props.appState.view === ViewTypes.PROJECT_DETAIL ? this.props.appState.selectedProject : this.props.appState.nextDetailId;
                 AppBody =
                     <ProjectDetail
                         projects={this.props.projects}
@@ -71,7 +74,7 @@ export default class AppLayout extends React.PureComponent {
                         users={this.props.users}
                         user={this.props.user}
 
-                        selected={this.props.appState.view === ViewTypes.PROJECT_DETAIL ? this.props.appState.selectedProject : this.props.appState.view === ViewTypes.PROJECT_DETAIL_NEXT ? this.props.appState.nextDetailId : this.props.appState.view === ViewTypes.BOX_PROJECT_DETAIL ? this.props.appState.selectedBoxItem : null}
+                        selected={selected}
 
                         returnToPreviousView={this.props.returnToPreviousView}
 
@@ -85,6 +88,7 @@ export default class AppLayout extends React.PureComponent {
                     />;
                 break;
             case ViewTypes.PROJECT_EDIT:
+                selected = this.props.appState.selectedProject;
             case ViewTypes.PROJECT_NEW:
                 AppBody =
                     <ProjectEdit
@@ -94,7 +98,7 @@ export default class AppLayout extends React.PureComponent {
                         users={this.props.users}
                         user={this.props.user}
 
-                        selected={this.props.appState.view === ViewTypes.PROJECT_NEW ? null : this.props.appState.selectedProject}
+                        selected={selected}
                         editedData={this.props.appState.projectEditedData}
 
                         returnToPreviousView={this.props.returnToPreviousView}
@@ -128,6 +132,7 @@ export default class AppLayout extends React.PureComponent {
                     />;
                 break;
             case ViewTypes.COMPANY_LIST:
+                selected = this.props.appState.selectedCompany;
                 AppBody =
                     <CompanyList
                         projects={this.props.projects}
@@ -136,7 +141,7 @@ export default class AppLayout extends React.PureComponent {
                         users={this.props.users}
                         user={this.props.user}
 
-                        selected={this.props.appState.selectedCompany}
+                        selected={selected}
 
                         filter={this.props.appState.companiesFilter}
                         search={this.props.appState.companiesSearch}
@@ -155,16 +160,17 @@ export default class AppLayout extends React.PureComponent {
                     />;
                 break;
             case ViewTypes.COMPANY_EDIT:
+                selected = this.props.appState.selectedCompany;
             case ViewTypes.COMPANY_NEW:
                 AppBody =
                     <CompanyEdit
-                        projects={this.props.projects}
+                        //projects={this.props.projects}
                         persons={this.props.persons}
                         companies={this.props.companies}
-                        users={this.props.users}
+                        //users={this.props.users}
                         user={this.props.user}
 
-                        selected={this.props.appState.view === ViewTypes.COMPANY_NEW ? null : this.props.appState.selectedCompany}
+                        company={selected ? this.props.companies[selected] ? this.props.companies[selected] : {} : null}
                         editedData={this.props.appState.companyEditedData}
 
                         returnToPreviousView={this.props.returnToPreviousView}
@@ -175,19 +181,21 @@ export default class AppLayout extends React.PureComponent {
                         remove={this.props.removeCompany}
 
                         setJustAddedObject={this.props.setJustAddedObject}
+                        addPerson = {this.props.addPerson}
                     />;
                 break;
             case ViewTypes.COMPANY_DETAIL:
             case ViewTypes.COMPANY_DETAIL_NEXT:
+                selected = this.props.appState.view === ViewTypes.COMPANY_DETAIL ? this.props.appState.selectedCompany : this.props.appState.nextDetailId;
                 AppBody =
                     <CompanyDetail
                         projects={this.props.projects}
-                        persons={this.props.persons}
-                        companies={this.props.companies}
-                        users={this.props.users}
+                        //persons={this.props.persons}
+                        //companies={this.props.companies}
+                        //users={this.props.users}
                         user={this.props.user}
 
-                        selected={this.props.appState.view === ViewTypes.COMPANY_DETAIL ? this.props.appState.selectedCompany : this.props.appState.view === ViewTypes.COMPANY_DETAIL_NEXT ? this.props.appState.nextDetailId : this.props.appState.view === ViewTypes.BOX_COMPANY_DETAIL ? this.props.appState.selectedBoxItem : null}
+                        company={this.props.companies[selected] ? this.props.companies[selected] : {}}
 
                         returnToPreviousView={this.props.returnToPreviousView}
 
@@ -201,6 +209,7 @@ export default class AppLayout extends React.PureComponent {
                     />;
                 break;
             case ViewTypes.PERSON_LIST:
+                selected = this.props.appState.selectedPerson;
                 AppBody =
                     <PersonList
                         projects={this.props.projects}
@@ -209,7 +218,7 @@ export default class AppLayout extends React.PureComponent {
                         users={this.props.users}
                         user={this.props.user}
 
-                        selected={this.props.appState.selectedPerson}
+                        selected={selected}
 
                         filter={this.props.appState.personsFilter}
                         search={this.props.appState.personsSearch}
@@ -228,16 +237,17 @@ export default class AppLayout extends React.PureComponent {
                     />;
                 break;
             case ViewTypes.PERSON_EDIT:
+                selected = this.props.appState.selectedPerson;
             case ViewTypes.PERSON_NEW:
                 AppBody =
                     <PersonEdit
-                        projects={this.props.projects}
+                        //projects={this.props.projects}
                         persons={this.props.persons}
                         companies={this.props.companies}
-                        users={this.props.users}
+                        //users={this.props.users}
                         user={this.props.user}
 
-                        selected={this.props.appState.view === ViewTypes.PERSON_NEW ? null : this.props.appState.selectedPerson}
+                        person={selected ? this.props.persons[selected] ? this.props.persons[selected] : {} : null}
                         editedData={this.props.appState.personEditedData}
 
                         returnToPreviousView={this.props.returnToPreviousView}
@@ -248,19 +258,21 @@ export default class AppLayout extends React.PureComponent {
                         remove={this.props.removePerson}
 
                         setJustAddedObject={this.props.setJustAddedObject}
+                        addCompany = {this.props.addCompany}
                     />;
                 break;
             case ViewTypes.PERSON_DETAIL:
             case ViewTypes.PERSON_DETAIL_NEXT:
+                selected = this.props.appState.view === ViewTypes.PERSON_DETAIL ? this.props.appState.selectedPerson : this.props.appState.nextDetailId;
                 AppBody =
                     <PersonDetail
                         projects={this.props.projects}
-                        persons={this.props.persons}
-                        companies={this.props.companies}
-                        users={this.props.users}
+                        //persons={this.props.persons}
+                        //companies={this.props.companies}
+                        //users={this.props.users}
                         user={this.props.user}
 
-                        selected={this.props.appState.view === ViewTypes.PERSON_DETAIL ? this.props.appState.selectedPerson : this.props.appState.view === ViewTypes.PERSON_DETAIL_NEXT ? this.props.appState.nextDetailId : this.props.appState.view === ViewTypes.BOX_PERSON_DETAIL ? this.props.appState.selectedBoxItem : null}
+                        person={this.props.persons[selected] ? this.props.persons[selected] : {}}
 
                         returnToPreviousView={this.props.returnToPreviousView}
 

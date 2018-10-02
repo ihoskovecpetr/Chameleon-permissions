@@ -49,21 +49,34 @@ function AppStateReducer(state = null, action = null) {
 
             case ActionTypes.SET_JUST_ADDED_OBJECT:
                 if(typeof action.data === 'undefined') return state;
-                else {
-                    const personIndex = state.projectEditedData && state.projectEditedData.person && state.projectEditedData.person.length > 0 ? state.projectEditedData.person.findIndex(person => person.waiting) : -1;
-                    const companyIndex = state.projectEditedData && state.projectEditedData.company && state.projectEditedData.company.length > 0 ? state.projectEditedData.company.findIndex(company => company.waiting) : -1;
-                    if(personIndex >= 0) {
-                        const newPerson = [...state.projectEditedData.person];
-                        delete newPerson[personIndex].waiting;
-                        if(action.data && action.data._id) newPerson[personIndex] = {id: action.data._id, profession: action.data.profession ? action.data.profession : [], flag: [], note: ''};
-                        return {...state, projectEditedData: {...state.projectEditedData, person: newPerson}}
-                    }
-                    if (companyIndex >= 0) {
-                        const newCompany = [...state.projectEditedData.company];
-                        delete newCompany[companyIndex].waiting;
-                        if(action.data && action.data._id) newCompany[companyIndex] = {id: action.data._id, business: action.data.business ? action.data.business : [], flag: [], note: ''};
-                        return {...state, projectEditedData: {...state.projectEditedData, company: newCompany}}
-                    } else return state;
+                const rootView = state.previousView.length > 0 ? state.previousView[0] : null;
+                switch (rootView) {
+                    case ViewTypes.PROJECT_LIST:
+                        const personIndex = state.projectEditedData && state.projectEditedData.person && state.projectEditedData.person.length > 0 ? state.projectEditedData.person.findIndex(person => person.waiting) : -1;
+                        const companyIndex = state.projectEditedData && state.projectEditedData.company && state.projectEditedData.company.length > 0 ? state.projectEditedData.company.findIndex(company => company.waiting) : -1;
+                        if(personIndex >= 0) {
+                            const newPerson = [...state.projectEditedData.person];
+                            delete newPerson[personIndex].waiting;
+                            if(action.data && action.data._id) newPerson[personIndex] = {id: action.data._id, profession: action.data.profession ? action.data.profession : [], flag: [], note: ''};
+                            return {...state, projectEditedData: {...state.projectEditedData, person: newPerson}}
+                        }
+                        if (companyIndex >= 0) {
+                            const newCompany = [...state.projectEditedData.company];
+                            delete newCompany[companyIndex].waiting;
+                            if(action.data && action.data._id) newCompany[companyIndex] = {id: action.data._id, business: action.data.business ? action.data.business : [], flag: [], note: ''};
+                            return {...state, projectEditedData: {...state.projectEditedData, company: newCompany}}
+                        } else return state;
+                    case ViewTypes.PERSON_LIST:
+                        if(action.data) {
+                            console.log('Add company to person');
+                            return state
+                        } else return state;
+                    case ViewTypes.COMPANY_LIST:
+                        if(action.data) {
+                            return {...state, companyEditedData: {...state.companyEditedData, person: [...state.companyEditedData.person, action.data._id]}}
+                            return state;
+                        } else return state;
+                    default: return state;
                 }
 
             // *********************************************************************************************************

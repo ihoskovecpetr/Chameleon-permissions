@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Input } from 'reactstrap';
 import Select from 'react-select';
+import CreatableSelect from 'react-select/lib/Creatable';
 import areEquivalent from '../../lib/compareObjects';
 import * as Constants from '../../constants/Constatnts';
 
@@ -36,11 +37,12 @@ export default class CompanyEdit extends React.PureComponent {
     }
 
     render() {
-        const {selected, editedData, companies} = this.props;
+        const {company, persons, editedData} = this.props;
 
-        const name = editedData.name !== undefined ? editedData.name : !selected ? '' : companies[selected] ? companies[selected].name : '';
-        const business = editedData.business !== undefined ? editedData.business : !selected ? [] : companies[selected] ? companies[selected].business : [];
-        const contact = editedData.contact !== undefined ? editedData.contact : !selected ? [] : companies[selected] ? companies[selected].contact : [];
+        const name = editedData.name !== undefined ? editedData.name : company && company.name ? company.name : '';
+        const business = editedData.business !== undefined ? editedData.business : company && company.business ? company.business : [];
+        const contact = editedData.contact !== undefined ? editedData.contact :  company && company.contact ? company.contact : [];
+        const person = editedData.person !== undefined ? editedData.person :  company && company.person ? company.person : [];
 
         return (
             <div className={'app-body'}>
@@ -49,14 +51,14 @@ export default class CompanyEdit extends React.PureComponent {
                     <div className={'inner-container'}>
                         <div className={'toolbox-group'}>
                             <div onClick={this.close} className={'tool-box-button'}>{'Cancel'}</div>
-                            <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button green${this.state.saveDisabled ? ' disabled' : ''}`}>{selected ? 'Save' : 'Create'}</div>
+                            <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button green${this.state.saveDisabled ? ' disabled' : ''}`}>{company ? 'Save' : 'Create'}</div>
                             <div className={'tool-box-validation'}>
                                 <FontAwesomeIcon className={`tool-box-validation-icon${Object.keys(this.state.validation).length > 0 ? ' active' : ''}`} icon={Icons.ICON_EDITOR_VALIDATION}/>
                                 <div className={'tool-box-validation-container'}>
                                     {Object.keys(this.state.validation).map(validationField => <div key={validationField}>{`${this.state.validation[validationField].field}: ${this.state.validation[validationField].status}`}</div>)}
                                 </div>
                             </div>
-                            {!selected ? null :
+                            {!company ? null :
                                 <Fragment>
                                     <div onClick={!this.state.removeArmed ? undefined : this.remove} className={`tool-box-button remove red${!this.state.removeArmed ? ' disabled' : ''}`}>{'Remove Company'}</div>
                                     <FontAwesomeIcon className={`tool-box-checkbox`} onClick={this.handleRemoveArmed} icon={this.state.removeArmed ? Icons.ICON_CHECKBOX_CHECKED : Icons.ICON_CHECKBOX_UNCHECKED} style={{cursor: 'pointer'}}/>
@@ -71,11 +73,11 @@ export default class CompanyEdit extends React.PureComponent {
                         {/* ------------------ NAME, BUSINESS ------------------ */}
                         <div className={'detail-row'}>
                             <div className={'detail-group size-5'}>
-                                <div className={`detail-label${typeof editedData.name !== 'undefined' && selected  ? ' value-changed' : ''}`}>{'Company name:'}</div>
-                                <Input placeholder={'Company name...'} autoFocus={!selected} className={`detail-input${this.state.validation.name ? ' invalid' : ''}`} onChange={this.handleNameChange} value={name}/>
+                                <div className={`detail-label${typeof editedData.name !== 'undefined' && company  ? ' value-changed' : ''}`}>{'Company name:'}</div>
+                                <Input placeholder={'Company name...'} autoFocus={!company} className={`detail-input${this.state.validation.name ? ' invalid' : ''}`} onChange={this.handleNameChange} value={name}/>
                             </div>
                             <div className={'detail-group size-7'}>
-                                <div className={`detail-label${typeof editedData.business !== 'undefined' && selected  ? ' value-changed' : ''}`}>{'Business:'}</div>
+                                <div className={`detail-label${typeof editedData.business !== 'undefined' && company  ? ' value-changed' : ''}`}>{'Business:'}</div>
                                 <Select
                                     options={companyBusinessOptions}
                                     value={business.map(business => ({value: business, label: CompanyBusiness[business] ? CompanyBusiness[business].label : ''}))}
@@ -83,16 +85,35 @@ export default class CompanyEdit extends React.PureComponent {
                                     isSearchable={true}
                                     isMulti={true}
                                     isClearable={true}
-                                    className={`control-select wrap${this.state.validation.status ? ' invalid' : ''}`}
+                                    className={`control-select wrap${this.state.validation.business ? ' invalid' : ''}`}
                                     classNamePrefix={'control-select'}
                                     placeholder={'Company business...'}
+                                />
+                            </div>
+                        </div>
+                        {/* ------------------ PERSONS ------------------ */}
+                        <div className={'detail-row spacer'}>
+                            <div className={'detail-group size-12'}>
+                                <div className={`detail-label${typeof editedData.person !== 'undefined' && company  ? ' value-changed' : ''}`}>{'People:'}</div>
+                                <CreatableSelect
+                                    options={this.getPersonsOption(persons)}
+                                    value={person.map(person => ({value: person, label: persons[person] ? persons[person].name : ''}))}
+                                    onChange={this.handlePersonChange}
+                                    onCreateOption={name => this.createNewPerson(name)}
+                                    formatCreateLabel={value => `Create: "${value}"`}
+                                    isSearchable={true}
+                                    isMulti={true}
+                                    isClearable={true}
+                                    className={`control-select wrap${this.state.validation.person ? ' invalid' : ''}`}
+                                    classNamePrefix={'control-select'}
+                                    placeholder={'Company People...'}
                                 />
                             </div>
                         </div>
                         {/* ------------------ CONTACTS ------------------ */}
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group column size-12'}>
-                                <div onClick={() => this.handleContactChange()} className={`detail-label clickable column${editedData.contact !== undefined && selected ? ' value-changed' : ''}`}>{'Contacts'}<FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/></div>
+                                <div onClick={() => this.handleContactChange()} className={`detail-label clickable column${editedData.contact !== undefined && company ? ' value-changed' : ''}`}>{'Contacts'}<FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/></div>
                                 <div className={'detail-group-wrapper'}>
                                     {contact.map((contactLine, i) =>
                                         <div className={`detail-array-line size-6 spacer`} key={i}>
@@ -134,7 +155,7 @@ export default class CompanyEdit extends React.PureComponent {
     };
 
     save = async () => {
-        if(this.props.selected) this.props.update();
+        if(this.props.company) this.props.update();
         else {
             if(this.returnNew) {
                 const object = await this.props.create();
@@ -161,7 +182,7 @@ export default class CompanyEdit extends React.PureComponent {
 
     isNameUsed = name => {
         if(!name) return false;
-        return Object.keys(this.props.companies).filter(id => id !== this.props.selected).map(id => this.props.companies[id].name.toLowerCase()).indexOf(name.toLowerCase()) >= 0;
+        return Object.keys(this.props.companies).filter(companyId =>  !this.props.company || (companyId !== this.props.company._id)).map(id => this.props.companies[id].name.toLowerCase()).indexOf(name.toLowerCase()) >= 0;
     };
 
     handleRemoveArmed = () => {
@@ -170,19 +191,26 @@ export default class CompanyEdit extends React.PureComponent {
 
     updateEditedData = updateData => {
         const newData = {...this.props.editedData, ...updateData};
-        const object = this.props.selected ? this.props.companies[this.props.selected] : undefined;
+        const object = this.props.company ? this.props.company : undefined;
         for(const key of Object.keys(newData)) {
-            if(object && object[key] === newData[key])  delete newData[key];
+            if(object && areEquivalent(object[key], newData[key]))  delete newData[key];
         }
         return newData;
+    };
+
+    getPersonsOption = persons => {
+      return Object.keys(persons).map(personId => ({
+          value: personId,
+          label: persons[personId].name
+      }))
     };
 
     // *****************************************************************************************************************
     // VALIDATION
     // *****************************************************************************************************************
     setValidation = () => {
-        const originalObject = this.props.selected && this.props.companies && this.props.companies[this.props.selected] ? this.props.companies[this.props.selected] : {};
-        if(!originalObject._id && this.props.selected) return true; // when refresh, no data fetched yet
+        const originalObject = this.props.company;
+        if(originalObject && !originalObject._id) return true; // when refresh, no data fetched yet
         const object = Object.assign({}, originalObject, this.props.editedData);
         let validation = {};
 
@@ -208,9 +236,13 @@ export default class CompanyEdit extends React.PureComponent {
         this.props.editItem(this.updateEditedData({business: options.map(option => option.value)}));
     };
 
+    handlePersonChange = options => {
+        this.props.editItem(this.updateEditedData({person: options.map(option => option.value)}));
+    };
+
     handleContactChange = (index, data) => {
         const emptyItem = {type: null, data: ''};
-        const object = this.props.companies[this.props.selected];
+        const object = this.props.company;
         const newData = this.props.editedData.contact ? [...this.props.editedData.contact] : object ? [...object.contact] : [];
         if(typeof index === 'undefined' && typeof data === 'undefined') { //ADD
             if (this.props.editedData.contact && this.props.editedData.contact.some(item => item.type === null)) return;
@@ -224,5 +256,10 @@ export default class CompanyEdit extends React.PureComponent {
         }
         const editedData = this.updateEditedData({contact: newData});
         this.props.editItem(editedData);
-    }
+    };
+
+    createNewPerson = (name) => {
+        //this.handleCompanyChange(index, {waiting: true});
+        this.props.addPerson(name);
+    };
 }
