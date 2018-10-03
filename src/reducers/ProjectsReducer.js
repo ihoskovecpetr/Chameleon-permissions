@@ -22,6 +22,39 @@ function ProjectsReducer (state = null, action = null) {
                     return projects;
                 } else return state;
 
+            case ActionTypes.REMOVE_PERSON:
+                const newProjectsPerson = {...state};
+                let hasChangedPerson = false;
+                for(const projectId of Object.keys(newProjectsPerson)) {
+                    const indexPerson = newProjectsPerson[projectId].person.findIndex(person => person.id === action.person);
+                    if(indexPerson >= 0) {
+                        hasChangedPerson = true;
+                        newProjectsPerson[projectId] = {...newProjectsPerson[projectId], person: [...newProjectsPerson[projectId].person].splice(indexPerson, 1)};
+                    }
+                }
+                if(hasChangedPerson) return newProjectsPerson;
+                else return state;
+
+            case ActionTypes.REMOVE_COMPANY:
+                const newProjectCompany = {...state};
+                let hasChangedCompany = false;
+                for(const projectId of Object.keys(newProjectsPerson)) {
+                    const indexCompany = newProjectCompany[projectId].company.findIndex(company => company.id === action.company);
+                    if(indexCompany >= 0) {
+                        hasChangedPerson = true;
+                        newProjectsPerson[projectId] = {...newProjectCompany[projectId], company: [...newProjectCompany[projectId].company].splice(indexCompany, 1)};
+                    }
+                    const indexCompanyPerson =  newProjectCompany[projectId].person.findIndex(person => person.company === action.company);
+                    if(indexCompanyPerson >= 0) {
+                        hasChangedPerson = true;
+                        const newPerson = {...newProjectCompany[projectId].person};
+                        newPerson[indexCompanyPerson] = {...newPerson[indexCompanyPerson], company: null};
+                        newProjectsPerson[projectId] = {...newProjectCompany[projectId], person: newPerson};
+                    }
+                }
+                if(hasChangedCompany) return newProjectCompany;
+                else return state;
+
             default:
                 return state;
         }

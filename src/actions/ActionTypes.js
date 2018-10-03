@@ -17,12 +17,10 @@ export const SET_DATA = 'SET_DATA';
 export const ADD_TO_BOX = 'ADD_TO_BOX';
 export const REMOVE_FROM_BOX = 'REMOVE_FROM_BOX';
 export const EMPTY_BOX = 'EMPTY_BOX';
-export const SELECT_BOX_ITEM = 'SELECT_BOX_ITEM';
 
 // projects
 export const SELECT_PROJECT = 'SELECT_PROJECT';
 export const SHOW_PROJECT = 'SHOW_PROJECT';
-export const SHOW_PROJECT_NEXT = 'SHOW_PROJECT_NEXT';
 export const EDIT_PROJECT = 'EDIT_PROJECT';
 export const CHANGE_PROJECT_EDIT_DATA = 'CHANGE_PROJECT_EDIT_DATA';
 export const ADD_PROJECT = 'ADD_PROJECT';
@@ -39,7 +37,6 @@ export const SET_ACTIVE_BID_SORT = 'SET_ACTIVE_BID_SORT';
 //persons
 export const SELECT_PERSON = 'SELECT_PERSON';
 export const SHOW_PERSON = 'SHOW_PERSON';
-export const SHOW_PERSON_NEXT = 'SHOW_PERSON_NEXT';
 export const EDIT_PERSON = 'EDIT_PERSON';
 export const CHANGE_PERSON_EDIT_DATA = 'CHANGE_PERSON_EDIT_DATA';
 export const ADD_PERSON = 'ADD_PERSON';
@@ -54,7 +51,6 @@ export const SET_PERSONS_SORT = 'SET_PERSONS_SORT';
 //companies
 export const SELECT_COMPANY = 'SELECT_COMPANY';
 export const SHOW_COMPANY = 'SHOW_COMPANY';
-export const SHOW_COMPANY_NEXT = 'SHOW_COMPANY_NEXT';
 export const EDIT_COMPANY = 'EDIT_COMPANY';
 export const CHANGE_COMPANY_EDIT_DATA = 'CHANGE_COMPANY_EDIT_DATA';
 export const ADD_COMPANY = 'ADD_COMPANY';

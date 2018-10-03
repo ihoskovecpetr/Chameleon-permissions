@@ -51,7 +51,7 @@ export default class CompanyEdit extends React.PureComponent {
                     <div className={'inner-container'}>
                         <div className={'toolbox-group'}>
                             <div onClick={this.close} className={'tool-box-button'}>{'Cancel'}</div>
-                            <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button green${this.state.saveDisabled ? ' disabled' : ''}`}>{company ? 'Save' : 'Create'}</div>
+                            <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button${company ? ' orange' : ' green'}${this.state.saveDisabled ? ' disabled' : ''}`}>{company ? 'Save' : 'Create'}</div>
                             <div className={'tool-box-validation'}>
                                 <FontAwesomeIcon className={`tool-box-validation-icon${Object.keys(this.state.validation).length > 0 ? ' active' : ''}`} icon={Icons.ICON_EDITOR_VALIDATION}/>
                                 <div className={'tool-box-validation-container'}>
@@ -150,12 +150,12 @@ export default class CompanyEdit extends React.PureComponent {
     // CLOSE, SAVE, REMOVE
     // *****************************************************************************************************************
     close = () => {
-        if(this.returnNew) this.props.setJustAddedObject(null);
+        if(this.returnNew) this.props.setJustAddedObject(null); //to remove waiting flag
         this.props.returnToPreviousView();
     };
 
     save = async () => {
-        if(this.props.company) this.props.update();
+        if(this.props.company) this.props.update(this.props.company._id);
         else {
             if(this.returnNew) {
                 const object = await this.props.create();
@@ -166,7 +166,7 @@ export default class CompanyEdit extends React.PureComponent {
     };
 
     remove = () => {
-        this.props.remove();
+        this.props.remove(this.props.company._id);
         this.close();
     };
 
@@ -182,7 +182,8 @@ export default class CompanyEdit extends React.PureComponent {
 
     isNameUsed = name => {
         if(!name) return false;
-        return Object.keys(this.props.companies).filter(companyId =>  !this.props.company || (companyId !== this.props.company._id)).map(id => this.props.companies[id].name.toLowerCase()).indexOf(name.toLowerCase()) >= 0;
+        const filtered = Object.keys(this.props.companies).filter(companyId => this.props.companies[companyId].name.toLowerCase().trim() === name.toLowerCase().trim()).filter(companyId => companyId !== this.props.company._id);
+        return filtered.length > 0;
     };
 
     handleRemoveArmed = () => {

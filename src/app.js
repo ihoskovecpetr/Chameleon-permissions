@@ -46,8 +46,6 @@ const finalCreateStore = compose(
             companiesSearch: state[path].companiesSearch,
             companiesSort: state[path].companiesSort,
             box: state[path].box,
-            selectedBoxItem: state[path].selectedBoxItem,
-            nextDetailId: state[path].nextDetailId,
             projectEditedData: state[path].projectEditedData,
             personEditedData: state[path].personEditedData,
             companyEditedData: state[path].companyEditedData,

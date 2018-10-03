@@ -3,7 +3,9 @@ import * as FilterTypes from "../constants/FilterTypes";
 
 export default {
     appState: {
-        view: ViewTypes.PROJECT_LIST,
+        view: {type: ViewTypes.PROJECT_LIST, selected: null, editable: false}, //TODO
+        previousView: [],
+
         fetching: false,
         message: null,
         dataTimeStamp: null,
@@ -30,11 +32,6 @@ export default {
         companyEditedData: {},
 
         box: [],
-        selectedBoxItem: null,
-
-        previousView: [],
-
-        nextDetailId: null
     },
     projects: {},
     persons: {},

@@ -93,10 +93,6 @@ export function removeFromBox(id) {
 export function emptyBox() {
     return {type: ActionTypes.EMPTY_BOX};
 }
-
-export function selectBoxItem(id) {
-    return {type: ActionTypes.SELECT_BOX_ITEM, id: id};
-}
 // *********************************************************************************************************************
 // PROJECTS
 // *********************************************************************************************************************
@@ -104,20 +100,16 @@ export function selectProject(id) {
     return {type: ActionTypes.SELECT_PROJECT, id: id}
 }
 
-export function showProject(id) {
-    return {type: ActionTypes.SHOW_PROJECT, id: id}
-}
-
-export function showProjectNext(id) {
-    return {type: ActionTypes.SHOW_PROJECT_NEXT, id: id}
+export function showProject(id, set, disableEdit) {
+    return {type: ActionTypes.SHOW_PROJECT, id: id, set: set, disableEdit: disableEdit}
 }
 
 export function addProject() {
     return {type: ActionTypes.ADD_PROJECT}
 }
 
-export function editProject(id) {
-    return {type: ActionTypes.EDIT_PROJECT, id: id}
+export function editProject(id, set) {
+    return {type: ActionTypes.EDIT_PROJECT, id: id, set: set}
 }
 
 export function setProjectsFilter(filter, remove) {
@@ -145,15 +137,15 @@ export function changeProjectEditedData(data) {
 }
 
 // remote db opp
-export function updateProject() {
+export function updateProject(id, updateData) {
     return async (dispatch, getState) => {
-        const projectUpdate = getState().appState.projectEditedData;
-        const id = getState().appState.selectedProject;
-        if(!id || !projectUpdate || Object.keys(projectUpdate).length === 0) return;
+        const projectUpdate = updateData ? updateData : getState().appState.projectEditedData;
+        const projectId = id ? id : getState().appState.selectedProject;
+        if(!projectId || !projectUpdate || Object.keys(projectUpdate).length === 0) return;
         dispatch(setFetching(true));
         dispatch(setMessage(null));
         try {
-            const updatedProject = await server.updateProject(id, projectUpdate);
+            const updatedProject = await server.updateProject(projectId, projectUpdate);
             dispatch({type: ActionTypes.UPDATE_PROJECT, project: updatedProject});
             if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
                 type: 'info',
@@ -169,7 +161,8 @@ export function updateProject() {
 }
 
 export function updateProjectDirect(id, projectUpdate) {
-    return async (dispatch, getState) => {
+    return updateProject(id, projectUpdate);
+    /*return async (dispatch, getState) => {
         dispatch(setFetching(true));
         dispatch(setMessage(null));
         try {
@@ -185,7 +178,7 @@ export function updateProjectDirect(id, projectUpdate) {
             dispatch(setMessage({type: 'error', text: `Update project error: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
         }
         dispatch(setFetching(false));
-    }
+    }*/
 }
 
 export function createProject() {
@@ -210,15 +203,15 @@ export function createProject() {
     }
 }
 
-export function removeProject() {
+export function removeProject(id) {
     return async (dispatch, getState) => {
-        const id = getState().appState.selectedProject;
-        if(!id) return;
+        const projectId = id ? id : getState().appState.selectedProject;
+        if(!projectId) return;
         dispatch(setFetching(true));
         dispatch(setMessage(null));
         try {
-            await server.removeProject(id);
-            dispatch({type: ActionTypes.REMOVE_PROJECT, project: id});
+            await server.removeProject(projectId);
+            dispatch({type: ActionTypes.REMOVE_PROJECT, project: projectId});
             if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
                 type: 'info',
                 text: 'Remove project done successfully!',
@@ -239,20 +232,16 @@ export function selectCompany(id) {
     return {type: ActionTypes.SELECT_COMPANY, id: id}
 }
 
-export function showCompany(id) {
-    return {type: ActionTypes.SHOW_COMPANY, id: id}
-}
-
-export function showCompanyNext(id) {
-    return {type: ActionTypes.SHOW_COMPANY_NEXT, id: id}
+export function showCompany(id, set, disableEdit) {
+    return {type: ActionTypes.SHOW_COMPANY, id: id, set: set, disableEdit: disableEdit}
 }
 
 export function addCompany(name) {
     return {type: ActionTypes.ADD_COMPANY, name: name}
 }
 
-export function editCompany(id) {
-    return {type: ActionTypes.EDIT_COMPANY, id: id}
+export function editCompany(id, set) {
+    return {type: ActionTypes.EDIT_COMPANY, id: id, set: set}
 }
 
 export function setCompaniesFilter(filter, remove) {
@@ -272,15 +261,15 @@ export function changeCompanyEditedData(data) {
 }
 
 // remote db opp
-export function updateCompany() {
+export function updateCompany(id, updateData) {
     return async (dispatch, getState) => {
-        const companyUpdate = getState().appState.companyEditedData;
-        const id = getState().appState.selectedCompany;
-        if(!id || !companyUpdate || Object.keys(companyUpdate).length === 0) return;
+        const companyUpdate = updateData ? updateData : getState().appState.companyEditedData;
+        const companyId = id ? id : getState().appState.selectedCompany;
+        if(!companyId || !companyUpdate || Object.keys(companyUpdate).length === 0) return;
         dispatch(setFetching(true));
         dispatch(setMessage(null));
         try {
-            const updatedCompany = await server.updateCompany(id, companyUpdate);
+            const updatedCompany = await server.updateCompany(companyId, companyUpdate);
             dispatch({type: ActionTypes.UPDATE_COMPANY, company: updatedCompany});
             if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
                 type: 'info',
@@ -319,15 +308,15 @@ export function createCompany() {
     }
 }
 
-export function removeCompany() {
+export function removeCompany(id) {
     return async (dispatch, getState) => {
-        const id = getState().appState.selectedCompany;
-        if(!id) return;
+        const companyId = id ? id : getState().appState.selectedCompany;
+        if(!companyId) return;
         dispatch(setFetching(true));
         dispatch(setMessage(null));
         try {
-            await server.removeCompany(id);
-            dispatch({type: ActionTypes.REMOVE_COMPANY, company: id});
+            await server.removeCompany(companyId);
+            dispatch({type: ActionTypes.REMOVE_COMPANY, company: companyId});
             if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
                 type: 'info',
                 text: 'Remove company done successfully!',
@@ -348,20 +337,16 @@ export function selectPerson(id) {
     return {type: ActionTypes.SELECT_PERSON, id: id}
 }
 
-export function showPerson(id) {
-    return {type: ActionTypes.SHOW_PERSON, id: id}
-}
-
-export function showPersonNext(id) {
-    return {type: ActionTypes.SHOW_PERSON_NEXT, id: id}
+export function showPerson(id, set, disableEdit) {
+    return {type: ActionTypes.SHOW_PERSON, id: id, set: set, disableEdit: disableEdit}
 }
 
 export function addPerson(name) {
     return {type: ActionTypes.ADD_PERSON, name: name}
 }
 
-export function editPerson(id) {
-    return {type: ActionTypes.EDIT_PERSON, id: id}
+export function editPerson(id, set) {
+    return {type: ActionTypes.EDIT_PERSON, id: id, set: set}
 }
 
 export function setPersonsFilter(filter, remove) {
@@ -381,15 +366,15 @@ export function changePersonEditedData(data) {
 }
 
 // remote db opp
-export function updatePerson() {
+export function updatePerson(id, updateData) {
     return async (dispatch, getState) => {
-        const personUpdate = getState().appState.personEditedData;
-        const id = getState().appState.selectedPerson;
-        if(!id || !personUpdate || Object.keys(personUpdate).length === 0) return;
+        const personUpdate = updateData ? updateData : getState().appState.personEditedData;
+        const personId = id ? id : getState().appState.selectedPerson;
+        if(!personId || !personUpdate || Object.keys(personUpdate).length === 0) return;
         dispatch(setFetching(true));
         dispatch(setMessage(null));
         try {
-            const updatedPerson = await server.updatePerson(id, personUpdate);
+            const updatedPerson = await server.updatePerson(personId, personUpdate);
             dispatch({type: ActionTypes.UPDATE_PERSON, person: updatedPerson});
             if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
                 type: 'info',
@@ -428,15 +413,15 @@ export function createPerson() {
     }
 }
 
-export function removePerson() {
+export function removePerson(id) {
     return async (dispatch, getState) => {
-        const id = getState().appState.selectedPerson;
-        if(!id) return;
+        const personId = id ? id : getState().appState.selectedPerson;
+        if(!personId) return;
         dispatch(setFetching(true));
         dispatch(setMessage(null));
         try {
-            await server.removePerson(id);
-            dispatch({type: ActionTypes.REMOVE_PERSON, person: id});
+            await server.removePerson(personId);
+            dispatch({type: ActionTypes.REMOVE_PERSON, person: personId});
             if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
                 type: 'info',
                 text: 'Remove person done successfully!',

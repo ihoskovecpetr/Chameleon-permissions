@@ -23,47 +23,52 @@ export default class ProjectDetail extends React.PureComponent {
         const statusNote = project.statusNote ? project.statusNote : '';
         const lastContact = project.lastContact ? moment(project.lastContact).format('D.M.YYYY') : 'Not set';
         const team =  project.team ? project.team : [];
+
         team.sort((a, b) => (a.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)) - (b.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)));
         let client = {};
 
         if(project.company) {
-            for(const company of project.company) {
-                if (!client[company.id]) client[company.id] = {};
-                client[company.id] = {
-                    id: company.id,
-                    name: this.props.companies[company.id] ? this.props.companies[company.id].name : `<${company.id}>`,
-                    uppClient: company.flag && company.flag.indexOf(CompanyFlag.UPP_CLIENT) >= 0,
-                    business: company.business ? this.props.companies[company.id].business.map(business => ({
-                        label: CompanyBusiness[business] ? CompanyBusiness[business].label : business,
-                        active: company.business.indexOf(business) >= 0
-                    })).sort((a, b) => (a.active ? 0 : 1) - (b.active ? 0 : 1)) : [],
-                    people: [],
-                    note: company.note
+            for (const company of project.company) {
+                if(this.props.companies[company.id]) {
+                    if (!client[company.id]) client[company.id] = {};
+                    client[company.id] = {
+                        id: company.id,
+                        name: this.props.companies[company.id].name,
+                        uppClient: company.flag && company.flag.indexOf(CompanyFlag.UPP_CLIENT) >= 0,
+                        business: company.business ? this.props.companies[company.id].business.map(business => ({
+                            label: CompanyBusiness[business] ? CompanyBusiness[business].label : business,
+                            active: company.business.indexOf(business) >= 0
+                        })).sort((a, b) => (a.active ? 0 : 1) - (b.active ? 0 : 1)) : [],
+                        people: [],
+                        note: company.note
+                    }
                 }
             }
         }
 
         if(project.person) {
             for(const person of project.person) {
-                const companyId = person.company && client[person.company] ? person.company : 'noCompany';
-                if(companyId === 'noCompany' && !client[companyId]) client[companyId] = {
-                    name: 'No company group',
-                    virtual: true,
-                    business: [],
-                    people: []
-                };
-                client[companyId].people.push({
-                    id: person.id,
-                    name: this.props.persons[person.id] ? this.props.persons[person.id].name : `<${person.id}>`,
-                    profession: person.profession ? this.props.persons[person.id].profession.map(profession => ({
-                        label: PersonProfession[profession] ? PersonProfession[profession].label : profession,
-                        active: person.profession.indexOf(profession) >= 0
-                    })).sort((a, b) => (a.active ? 0 : 1) - (b.active ? 0 : 1)) : [],
-                    businessRole: person.flag && person.flag.indexOf(PersonFlag.BUSINESS) >= 0,
-                    creativityRole: person.flag && person.flag.indexOf(PersonFlag.CREATIVITY) >= 0,
-                    organisationRole: person.flag && person.flag.indexOf(PersonFlag.ORGANIZATION) >= 0,
-                    note: person.note
-                })
+                if(this.props.persons[person.id]) {
+                    const companyId = person.company && client[person.company] ? person.company : 'noCompany';
+                    if (companyId === 'noCompany' && !client[companyId]) client[companyId] = {
+                        name: 'No company group',
+                        virtual: true,
+                        business: [],
+                        people: []
+                    };
+                    client[companyId].people.push({
+                        id: person.id,
+                        name: this.props.persons[person.id].name,
+                        profession: person.profession ? this.props.persons[person.id].profession.map(profession => ({
+                            label: PersonProfession[profession] ? PersonProfession[profession].label : profession,
+                            active: person.profession.indexOf(profession) >= 0
+                        })).sort((a, b) => (a.active ? 0 : 1) - (b.active ? 0 : 1)) : [],
+                        businessRole: person.flag && person.flag.indexOf(PersonFlag.BUSINESS) >= 0,
+                        creativityRole: person.flag && person.flag.indexOf(PersonFlag.CREATIVITY) >= 0,
+                        organisationRole: person.flag && person.flag.indexOf(PersonFlag.ORGANIZATION) >= 0,
+                        note: person.note
+                    })
+                }
             }
         }
 
@@ -84,7 +89,7 @@ export default class ProjectDetail extends React.PureComponent {
                     selected = {this.props.selected}
                     label = {'Project'}
                     id = {selected && projects[selected] ? projects[selected].projectId : null}
-                    isNext={this.props.isNext}
+                    editable={this.props.editable}
                 />
 
                 <Scrollbars autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
@@ -130,7 +135,7 @@ export default class ProjectDetail extends React.PureComponent {
                                             </div> :
                                             <div className={`company${company.people.length === 0 ? ' empty' : ''}`}>
                                                 <div className={'field name'}>
-                                                    <div className={'clickable'} onClick={() => this.props.showCompanyNext(company.id)}>{company.name}</div>
+                                                    <div className={'clickable'} onClick={() => this.props.showCompany(company.id, false, true)}>{company.name}</div>
                                                     {company.uppClient ? <div  data-tooltip={'UPP Client'} className={'role-icon first'}><FontAwesomeIcon icon={Icons.ICON_EDITOR_FLAG_CLIENT}/></div> : null}
                                                 </div>
                                                 <div className={`field profession-business${company.note ? '' : ' wide'}`}>{company.business.map((business, i) => <span key={i} className={`item${business.active ? ' ' : ' disabled'}`}>{business.label}</span>)}</div>
@@ -140,7 +145,7 @@ export default class ProjectDetail extends React.PureComponent {
                                         {company.people.map((person, i) =>
                                             <div key={i} className={'person'}>
                                                 <div className={'field name for-person'}>
-                                                    <div className={'clickable'} onClick={() => this.props.showPersonNext(person.id)}>{person.name}</div>
+                                                    <div className={'clickable'} onClick={() => this.props.showPerson(person.id, false, true)}>{person.name}</div>
                                                     {person.businessRole ? <div  data-tooltip={'Business'} className={'role-icon first'}><FontAwesomeIcon icon={Icons.ICON_EDITOR_FLAG_BUSINESS}/></div> : null}
                                                     {person.creativityRole ? <div  data-tooltip={'Creativity'} className={'role-icon'}><FontAwesomeIcon icon={Icons.ICON_EDITOR_FLAG_CREATIVITY}/></div> : null}
                                                     {person.organisationRole ? <div  data-tooltip={'Organization'} className={'role-icon'}><FontAwesomeIcon icon={Icons.ICON_EDITOR_FLAG_ORGANIZE}/></div> : null}

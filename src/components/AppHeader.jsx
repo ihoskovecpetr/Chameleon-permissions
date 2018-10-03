@@ -25,33 +25,30 @@ export default class AppHeader extends React.PureComponent {
         let activeSwitch;
         let switchesEnabled = true;
         switch(this.props.view) {
-            case ViewTypes.PROJECT_NEW:
             case ViewTypes.PROJECT_EDIT:
                 switchesEnabled = this.props.projectNoEditData;
-            case ViewTypes.PROJECT_LIST:
-            case ViewTypes.PROJECT_DETAIL:
-            case ViewTypes.PROJECT_DETAIL_NEXT:
                 activeSwitch = 'projects';
                 break;
-
-            case ViewTypes.COMPANY_NEW:
+            case ViewTypes.PROJECT_LIST:
+            case ViewTypes.PROJECT_DETAIL:
+                activeSwitch = 'projects';
+                break;
             case ViewTypes.COMPANY_EDIT:
                 switchesEnabled = this.props.companyNoEditData;
-            case ViewTypes.COMPANY_LIST:
-            case ViewTypes.COMPANY_DETAIL:
-            case ViewTypes.COMPANY_DETAIL_NEXT:
                 activeSwitch = 'companies';
                 break;
-
-            case ViewTypes.PERSON_NEW:
+            case ViewTypes.COMPANY_LIST:
+            case ViewTypes.COMPANY_DETAIL:
+                activeSwitch = 'companies';
+                break;
             case ViewTypes.PERSON_EDIT:
                 switchesEnabled = this.props.personNoEditData;
-            case ViewTypes.PERSON_LIST:
-            case ViewTypes.PERSON_DETAIL:
-            case ViewTypes.PERSON_DETAIL_NEXT:
                 activeSwitch = 'persons';
                 break;
-
+            case ViewTypes.PERSON_LIST:
+            case ViewTypes.PERSON_DETAIL:
+                activeSwitch = 'persons';
+                break;
             case ViewTypes.BOX_LIST:
                 activeSwitch = 'box';
                 break;

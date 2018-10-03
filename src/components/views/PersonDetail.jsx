@@ -21,9 +21,9 @@ export default class PersonDetail extends React.PureComponent {
                     edit = {this.props.edit}
                     remove = {this.props.remove}
                     addToBox = {this.props.addToBox}
-                    selected = {this.props.selected}
+                    selected = {person._id}
                     label = {'Person'}
-                    isNext={this.props.isNext}
+                    editable={this.props.editable}
                 />
                 <Scrollbars autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                     <div className={'detail-body'}>
@@ -49,7 +49,7 @@ export default class PersonDetail extends React.PureComponent {
                         </div>
                         <ProjectsForSubject
                             projects={projects}
-                            id={person.id}
+                            id={person._id}
                             type={'person'}
                         />
                     </div>

@@ -8,7 +8,7 @@ $too-box-search-radius: 0.8rem;
 $tool-button-color-default: #b4b4b4;
 $tool-button-color-red: #9b0006;
 $tool-button-color-green: #007300;
-$tool-button-color-orange: #cf9d3a;
+$tool-button-color-orange: #daaa4b;
 $tool-button-color-blue: #2257ad;
 $tool-button-color-disabled: #9b9b9b;
 
@@ -115,7 +115,7 @@ $tool-button-color-disabled: #9b9b9b;
         @include tool-button($tool-button-color-red, false);
       }
       &.orange {
-        @include tool-button($tool-button-color-orange, false);
+        @include tool-button($tool-button-color-orange, true);
       }
       &.blue {
         @include tool-button($tool-button-color-blue, false);

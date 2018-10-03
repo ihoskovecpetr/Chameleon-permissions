@@ -21,9 +21,9 @@ export default class CompanyDetail extends React.PureComponent {
                     edit = {this.props.edit}
                     remove = {this.props.remove}
                     addToBox = {this.props.addToBox}
-                    selected = {this.props.selected}
+                    selected = {company._id}
                     label = {'Company'}
-                    isNext={this.props.isNext}
+                    editable={this.props.editable}
                 />
                 <Scrollbars autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                     <div className={'detail-body'}>
@@ -33,7 +33,7 @@ export default class CompanyDetail extends React.PureComponent {
                                 <div className={`detail-value selectable`}>{name}</div>
                             </div>
                             <div className={'detail-group size-7'}>
-                                <div className={`detail-label`}>{'Profession:'}</div>
+                                <div className={`detail-label`}>{'Business:'}</div>
                                 <div className={`detail-value group wrap`}>
                                     {business.map((business, i) => <div key={i} className={'value-item comma'}>{business}</div> )}
                                 </div>

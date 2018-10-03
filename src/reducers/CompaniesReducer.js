@@ -22,6 +22,19 @@ function CompaniesReducer (state = null, action = null) {
                     return projects;
                 } else return state;
 
+            case ActionTypes.REMOVE_PERSON:
+                const newCompanies = {...state};
+                let hasChanged = false;
+                for(const companyId of Object.keys(newCompanies)) {
+                    const index = newCompanies[companyId].person.indexOf(action.person);
+                    if(index >= 0) {
+                        hasChanged = true;
+                        newCompanies[companyId] = {...newCompanies[companyId], person: [...newCompanies[companyId].person].splice(index, 1)};
+                    }
+                }
+                if(hasChanged) return newCompanies;
+                else return state;
+
             default:
                 return state;
         }

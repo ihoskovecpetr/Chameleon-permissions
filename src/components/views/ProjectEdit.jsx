@@ -67,7 +67,7 @@ export default class ProjectEdit extends React.PureComponent {
                     <div className={'inner-container'}>
                         <div className={'toolbox-group'}>
                             <div onClick={this.close} className={'tool-box-button'}>{'Cancel'}</div>
-                            <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button green${this.state.saveDisabled ? ' disabled' : ''}`}>{selected ? 'Save' : 'Create'}</div>
+                            <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button${selected ? ' orange' : ' green'}${this.state.saveDisabled ? ' disabled' : ''}`}>{selected ? 'Save' : 'Create'}</div>
                             <div onClick={this.props.box && this.props.box.length > 0 ? this.addFromBox : undefined} className={`tool-box-button blue${!this.props.box || this.props.box.length === 0 ? ' disabled' : ''}`}><FontAwesomeIcon icon={Icons.ICON_BOX}/><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/></div>
                             <div className={'tool-box-validation'}>
                                 <FontAwesomeIcon className={`tool-box-validation-icon${Object.keys(this.state.validation).length > 0 ? ' active' : ''}`} icon={Icons.ICON_EDITOR_VALIDATION}/>
@@ -187,7 +187,7 @@ export default class ProjectEdit extends React.PureComponent {
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group column size-12'}>
                                 <div onClick={() => this.handleCompanyChange()} className={`detail-label clickable column${editedData.company !== undefined && selected ? ' value-changed' : ''}`}>{'Companies'}<FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/></div>
-                                {company.map((companyLine, i) =>
+                                {company.map((companyLine, i) => companyLine.id && !companies[companyLine.id] ? null :
                                     <div className={`detail-array-line`} key={i}>
                                         <FontAwesomeIcon className={'remove-icon'} onClick={() => this.handleCompanyChange(i)} icon={Icons.ICON_EDITOR_LINE_REMOVE}/>
                                         <div className={'line-content'}>
@@ -242,7 +242,7 @@ export default class ProjectEdit extends React.PureComponent {
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group column size-12'}>
                                 <div onClick={() => this.handlePersonChange()} className={`detail-label clickable column${editedData.person !== undefined && selected ? ' value-changed' : ''}`}>{'People'}<FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/></div>
-                                {person.map((personLine, i) =>
+                                {person.map((personLine, i) => personLine.id && !persons[personLine.id] ? null :
                                     <div className={`detail-array-line`} key={i}>
                                         <FontAwesomeIcon className={'remove-icon'} onClick={() => this.handlePersonChange(i)} icon={Icons.ICON_EDITOR_LINE_REMOVE}/>
                                         <div className={'line-content'}>
@@ -332,13 +332,13 @@ export default class ProjectEdit extends React.PureComponent {
     };
 
     save = () => {
-        if(this.props.selected) this.props.update();
+        if(this.props.selected) this.props.update(this.props.selected);
         else this.props.create();
         this.close();
     };
 
     remove = () => {
-        this.props.remove();
+        this.props.remove(this.props.selected);
         this.close();
     };
 
@@ -354,7 +354,8 @@ export default class ProjectEdit extends React.PureComponent {
 
     isNameUsed = name => {
         if(!name) return false;
-        return Object.keys(this.props.projects).filter(id => id !== this.props.selected).map(id => this.props.projects[id].name.toLowerCase()).indexOf(name.toLowerCase()) >= 0;
+        const filtered = Object.keys(this.props.projects).filter(projectId => this.props.projects[projectId].name.toLowerCase().trim() === name.toLowerCase().trim()).filter(projectId => projectId !== this.props.selected);
+        return filtered.length > 0;
     };
 
     handleRemoveArmed = () => {

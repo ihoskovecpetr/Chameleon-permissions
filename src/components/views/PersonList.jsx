@@ -38,8 +38,8 @@ export default class PersonList extends React.PureComponent {
                     <div className={'inner-container space'}>
                         <div className={'toolbox-group'}>
                             <div onClick={this.add} className={'tool-box-button green'}>{'New'}</div>
-                            <div onClick={selected ? () => this.show() : undefined} className={`tool-box-button${selected ? '' : ' disabled'}`}>{'Show'}</div>
-                            <div onClick={selected ? () => this.edit() : undefined} className={`tool-box-button${selected ? '' : ' disabled'}`}>{'Edit'}</div>
+                            <div onClick={selected ? () => this.show(selected) : undefined} className={`tool-box-button${selected ? '' : ' disabled'}`}>{'Show'}</div>
+                            <div onClick={selected ? () => this.edit(selected) : undefined} className={`tool-box-button orange${selected ? '' : ' disabled'}`}>{'Edit'}</div>
                             <div onClick={selected ? this.addToBox : undefined} className={`tool-box-button blue${selected ? '' : ' disabled'}`}><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/><FontAwesomeIcon icon={Icons.ICON_BOX}/></div>
                         </div>
                     </div>
@@ -164,12 +164,12 @@ export default class PersonList extends React.PureComponent {
         this.props.add();
     };
 
-    show = (id) => {
-        this.props.show(id);
+    show = (id, set) => {
+        this.props.show(id, set);
     };
 
-    edit = (id) => {
-        this.props.edit(id);
+    edit = (id, set) => {
+        this.props.edit(id, set);
     };
 
     addToBox = () => {
@@ -184,7 +184,7 @@ export default class PersonList extends React.PureComponent {
     };
 
     rowDoubleClickHandler = (event, personId) => {
-        if(typeof event.target.className === 'string' && event.target.className.indexOf('table-select') < 0 && event.target.className.indexOf('table-button') < 0) event.altKey ? this.edit(personId) : this.show(personId);
+        if(typeof event.target.className === 'string' && event.target.className.indexOf('table-select') < 0 && event.target.className.indexOf('table-button') < 0) event.altKey ? this.edit(personId, true) : this.show(personId, true);
     };
 
     searchInputHandler = (event) => {

@@ -49,7 +49,7 @@ export default class PersonEdit extends React.PureComponent {
                     <div className={'inner-container'}>
                         <div className={'toolbox-group'}>
                             <div onClick={this.close} className={'tool-box-button'}>{'Cancel'}</div>
-                            <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button green${this.state.saveDisabled ? ' disabled' : ''}`}>{person ? 'Save' : 'Create'}</div>
+                            <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button${person ? ' orange' : ' green'}${this.state.saveDisabled ? ' disabled' : ''}`}>{person ? 'Save' : 'Create'}</div>
                             <div className={'tool-box-validation'}>
                                 <FontAwesomeIcon className={`tool-box-validation-icon${Object.keys(this.state.validation).length > 0 ? ' active' : ''}`} icon={Icons.ICON_EDITOR_VALIDATION}/>
                                 <div className={'tool-box-validation-container'}>
@@ -129,12 +129,12 @@ export default class PersonEdit extends React.PureComponent {
     // CLOSE, SAVE, REMOVE
     // *****************************************************************************************************************
     close = () => {
-        if(this.returnNew) this.props.setJustAddedObject(null);
+        if(this.returnNew) this.props.setJustAddedObject(null); //to remove waiting flag
         this.props.returnToPreviousView();
     };
 
     save = async () => {
-        if(this.props.person) this.props.update();
+        if(this.props.person) this.props.update(this.props.person._id);
         else {
             if(this.returnNew) {
                 const object = await this.props.create();
@@ -145,7 +145,7 @@ export default class PersonEdit extends React.PureComponent {
     };
 
     remove = () => {
-        this.props.remove();
+        this.props.remove(this.props.person._id);
         this.close();
     };
 
@@ -160,8 +160,9 @@ export default class PersonEdit extends React.PureComponent {
     }
 
     isNameUsed = name => {
-        if(!name) return false;
-        return Object.keys(this.props.persons).filter(personId => !this.props.person || !this.props.person._id || !personId !== this.props.person._id).map(id => this.props.persons[id].name.toLowerCase()).indexOf(name.toLowerCase()) >= 0;
+        if(!name || !this.props.person) return false;
+        const filtered = Object.keys(this.props.persons).filter(personId => this.props.persons[personId].name.toLowerCase().trim() === name.toLowerCase().trim()).filter(personId => personId !== this.props.person._id);
+        return filtered.length > 0;
     };
 
     handleRemoveArmed = () => {
