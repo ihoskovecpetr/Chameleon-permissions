@@ -146,7 +146,8 @@ export default class ProjectEdit extends React.PureComponent {
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group column size-12'}>
                                 <div onClick={() => this.handleTeamChange()} className={`detail-label clickable column${editedData.team !== undefined && selected ? ' value-changed' : ''}`}>
-                                    {'UPP Team'}<FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/>
+                                    {'UPP Team'}
+                                    <FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/>
                                 </div>
                                 <div className={'detail-group-wrapper'}>
                                     {team.map((line, i) =>
@@ -156,6 +157,7 @@ export default class ProjectEdit extends React.PureComponent {
                                                 <Select
                                                     options={this.getTeamUsersOptions(team, i)}
                                                     value={line.id ? {value: line.id, label: users[line.id] ? users[line.id].name : line.id  } : null}
+                                                    autoFocus={!line.id}
                                                     onChange={option => this.handleTeamChange(i, {id: !option || !option.value ? null : option.value})}
                                                     isSearchable={true}
                                                     isMulti={false}
@@ -163,7 +165,6 @@ export default class ProjectEdit extends React.PureComponent {
                                                     className={`control-select team-name${line.id === null || (this.state.validation['team-name-duplicity'] && this.state.validation['team-name-duplicity'].index.indexOf(i) >= 0)  ? ' invalid' : ''}`}
                                                     classNamePrefix={'control-select'}
                                                     placeholder={'Team member...'}
-
                                                 />
                                                 <Select
                                                     options={this.getTeamRoleOptions(team, i)}
@@ -186,7 +187,10 @@ export default class ProjectEdit extends React.PureComponent {
                         {/* ------------------ COMPANY ------------------ */}
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group column size-12'}>
-                                <div onClick={() => this.handleCompanyChange()} className={`detail-label clickable column${editedData.company !== undefined && selected ? ' value-changed' : ''}`}>{'Companies'}<FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/></div>
+                                <div onClick={() => this.handleCompanyChange()} className={`detail-label clickable column${editedData.company !== undefined && selected ? ' value-changed' : ''}`}>
+                                    {'Companies'}
+                                    <FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/>
+                                </div>
                                 {company.map((companyLine, i) => companyLine.id && !companies[companyLine.id] ? null :
                                     <div className={`detail-array-line`} key={i}>
                                         <FontAwesomeIcon className={'remove-icon'} onClick={() => this.handleCompanyChange(i)} icon={Icons.ICON_EDITOR_LINE_REMOVE}/>
@@ -195,6 +199,7 @@ export default class ProjectEdit extends React.PureComponent {
                                                 <CreatableSelect
                                                     options={this.getCompanyOptions(companies)}
                                                     value={companyLine.id ? {value: companyLine.id, label: companies[companyLine.id] ? companies[companyLine.id].name : companyLine.id  } : null}
+                                                    autoFocus={!companyLine.id}
                                                     onChange={option => this.handleCompanyChange(i, {id: !option || !option.value ? null : option.value})}
                                                     onCreateOption={name => this.createNewCompany(i, name)}
                                                     formatCreateLabel={value => `Create: "${value}"`}
@@ -241,7 +246,10 @@ export default class ProjectEdit extends React.PureComponent {
                         {/* ------------------ PERSON ------------------ */}
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group column size-12'}>
-                                <div onClick={() => this.handlePersonChange()} className={`detail-label clickable column${editedData.person !== undefined && selected ? ' value-changed' : ''}`}>{'People'}<FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/></div>
+                                <div onClick={() => this.handlePersonChange()} className={`detail-label clickable column${editedData.person !== undefined && selected ? ' value-changed' : ''}`}>
+                                    {'People'}
+                                    <FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/>
+                                </div>
                                 {person.map((personLine, i) => personLine.id && !persons[personLine.id] ? null :
                                     <div className={`detail-array-line`} key={i}>
                                         <FontAwesomeIcon className={'remove-icon'} onClick={() => this.handlePersonChange(i)} icon={Icons.ICON_EDITOR_LINE_REMOVE}/>
@@ -250,6 +258,7 @@ export default class ProjectEdit extends React.PureComponent {
                                                 <CreatableSelect
                                                     options={this.getPersonOptions(persons)}
                                                     value={personLine.id ? {value: personLine.id, label: persons[personLine.id] ? persons[personLine.id].name : personLine.id  } : null}
+                                                    autoFocus={!personLine.id}
                                                     onChange={option => this.handlePersonChange(i, {id: !option || !option.value ? null : option.value})}
                                                     onCreateOption={name => this.createNewPerson(i, name)}
                                                     formatCreateLabel={value => `Create: "${value}"`}

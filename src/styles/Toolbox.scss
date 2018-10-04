@@ -59,11 +59,11 @@ $tool-button-color-disabled: #9b9b9b;
   //justify-content: space-between;
   .toolbox-id {
     margin-left: auto;
-    font-size: 0.8rem;
+    font-size: 1rem;
     padding: 0.1rem 0.5rem;
     border-radius: 1rem;
     background-color: #757575;
-    color: #adadad;
+    color: #b7b7b7;
     margin-bottom: 0.6rem;
     @include media("<=phone") {
       display: none;
@@ -106,7 +106,7 @@ $tool-button-color-disabled: #9b9b9b;
       border-radius: $tool-height / 2;
       height: $tool-height;
       min-height: $tool-height;
-      min-width: 4.5rem;
+      min-width: 4.8rem;
       @include tool-button($tool-button-color-default);
       &.green {
         @include tool-button($tool-button-color-green, false);

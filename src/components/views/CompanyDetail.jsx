@@ -8,11 +8,12 @@ import ProjectsForSubject from '../element/ProjectsForSubject';
 
 export default class CompanyDetail extends React.PureComponent {
     render() {
-        const {projects, company} = this.props;
+        const {projects, persons, company} = this.props;
 
         const name = company.name ? company.name : '';
         const business = company.business ? company.business.map(business => CompanyBusiness[business] ? CompanyBusiness[business].label : `<${business()}>`)  : [];
         const contact = company.contact ? company.contact : [];
+        const person  = company.person ? company.person : [];
 
         return (
             <div className={'app-body'}>
@@ -41,6 +42,14 @@ export default class CompanyDetail extends React.PureComponent {
                         </div>
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group size-12'}>
+                                <div className={`detail-label`}>{'People:'}</div>
+                                <div className={'detail-value group wrap'}>
+                                    {person.map((person, i) => persons[person] ? <div onClick={() => this.props.showPerson(person, false, true)} key={i} className={'value-item clickable underline comma'}><span>{persons[person].name}</span></div> : null)}
+                                </div>
+                            </div>
+                        </div>
+                        <div className={'detail-row spacer'}>
+                            <div className={'detail-group size-12'}>
                                 <div className={`detail-label`}>{'Contacts:'}</div>
                                 <div className={'detail-value group wrap'}>
                                     {contact.map((contactItem, i) => <div key={i} className={'value-item selectable'}><ContactElement contact={contactItem}/></div>)}
@@ -49,7 +58,8 @@ export default class CompanyDetail extends React.PureComponent {
                         </div>
                         <ProjectsForSubject
                             projects={projects}
-                            id={company.id}
+                            id={company._id}
+                            showProject={this.props.showProject}
                             type={'company'}
                         />
                     </div>

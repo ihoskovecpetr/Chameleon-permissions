@@ -131,7 +131,7 @@ export default class ProjectDetail extends React.PureComponent {
                                     <div className={`detail-project-client`} key={i}>
                                         {company.virtual ?
                                             <div className={'company'}>
-                                                <span><div className={'role-icon'}><FontAwesomeIcon icon={Icons.ICON_EDITOR_NO_COMPANY}/></div></span>
+                                                <div className={'role-icon'}><FontAwesomeIcon icon={Icons.ICON_EDITOR_NO_COMPANY}/></div>
                                             </div> :
                                             <div className={`company${company.people.length === 0 ? ' empty' : ''}`}>
                                                 <div className={'field name'}>

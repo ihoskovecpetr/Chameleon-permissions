@@ -107,6 +107,44 @@ $detail-client-person-padding-left: 1em;
           }
         }
       }
+      .detail-subject-project {
+        display: flex;
+        width: 100%;
+        font-size: $detail-font-size;
+        font-style: normal;
+        border: 1px solid $detail-value-border-color;
+        border-radius: $detail-control-border-radius;
+        flex-direction: column;
+        background-color: $detail-value-background-color;
+        .project {
+          display: flex;
+          width: 100%;
+          padding: 0.2em $detail-control-padding-horizontal;
+          flex-wrap: wrap;
+          &:not(:last-child) {
+            border-bottom: 1px solid $detail-value-border-color;
+          }
+          .name {
+            cursor: pointer;
+            white-space: nowrap;
+            display: flex;
+            &:hover {
+              text-decoration: underline;
+            }
+            flex: 0 0 50%;
+            @include media("<=phone") {
+              flex: 0 0 100%;
+            }
+          }
+          .role {
+            white-space: nowrap;
+            flex: 0 0 50%;
+            @include media("<=phone") {
+              flex: 0 0 100%;
+            }
+          }
+        }
+      }
       .detail-project-client {
         display: flex;
         width: 100%;
@@ -350,6 +388,9 @@ $detail-client-person-padding-left: 1em;
           }
           &.clickable {
             cursor: pointer;
+            &.underline:hover {
+              text-decoration: underline;
+            }
           }
           &:not(:last-child) {
             &.comma {

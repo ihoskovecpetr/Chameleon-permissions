@@ -122,6 +122,7 @@ export default class CompanyEdit extends React.PureComponent {
                                                 <Select
                                                     options={contactTypeOptions}
                                                     value={contactLine.type ? {value: contactLine.type, label: ContactType[contactLine.type] ? ContactType[contactLine.type].label : contactLine.type  } : null}
+                                                    autoFocus={!contactLine.type}
                                                     onChange={option => this.handleContactChange(i, {type: !option || !option.value ? null : option.value})}
                                                     isSearchable={true}
                                                     isMulti={false}
@@ -260,7 +261,6 @@ export default class CompanyEdit extends React.PureComponent {
     };
 
     createNewPerson = (name) => {
-        //this.handleCompanyChange(index, {waiting: true});
         this.props.addPerson(name);
     };
 }

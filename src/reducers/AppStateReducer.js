@@ -30,7 +30,7 @@ function AppStateReducer(state = null, action = null) {
                 if(state.previousView && state.previousView.length > 0) {
                     const previousView = [...state.previousView];
                     const view = previousView.pop();
-                    return {...state, view: view, previousView: previousView}; //TODO if created new and return to the list - selected this.
+                    return {...state, view: view, previousView: previousView};
                 } else return {...state, view: {type: ViewTypes.PROJECT_LIST, selected: null, editable: false}, previousView: []};
 
             case ActionTypes.SET_FETCHING:
@@ -68,10 +68,9 @@ function AppStateReducer(state = null, action = null) {
                             if(action.data && action.data._id) newCompany[companyIndex] = {id: action.data._id, business: action.data.business ? action.data.business : [], flag: [], note: ''};
                             return {...state, projectEditedData: {...state.projectEditedData, company: newCompany}}
                         } else return state;
-                    case ViewTypes.PERSON_EDIT: //TODO *********************
+                    case ViewTypes.PERSON_EDIT:
                         if(action.data) {
-                            console.log('Add company to person');
-                            return state
+                            return {...state, personEditedData: {...state.personEditedData, company: state.personEditedData.company ? [...state.personEditedData.company, action.data._id] : [action.data._id]}};
                         } else return state;
                     case ViewTypes.COMPANY_EDIT:
                         if(action.data) {

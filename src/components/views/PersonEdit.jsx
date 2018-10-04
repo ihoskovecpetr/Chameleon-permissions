@@ -10,6 +10,7 @@ import * as Icons from '../../constants/Icons';
 
 import * as PersonProfession from '../../constants/PersonProfession';
 import * as ContactType from '../../constants/ContactType';
+import CreatableSelect from "react-select/lib/Creatable";
 
 const personProfessionOptions = Object.keys(PersonProfession).map(key => ({value: PersonProfession[key].id, label: PersonProfession[key].label}));
 const contactTypeOptions = Object.keys(ContactType).map(key => ({value: ContactType[key].type, label: ContactType[key].label}));
@@ -36,11 +37,12 @@ export default class PersonEdit extends React.PureComponent {
     }
 
     render() {
-        const {person, editedData} = this.props;
+        const {person, companies, editedData} = this.props;
 
         const name = editedData.name !== undefined ? editedData.name : person && person.name ? person.name : '';
         const profession = editedData.profession !== undefined ? editedData.profession : person && person.profession ? person.profession : [];
         const contact = editedData.contact !== undefined ? editedData.contact : person && person.contact ? person.contact : [];
+        const company = editedData.company !== undefined ? editedData.company :  person && person.company ? person.company : [];
 
         return (
             <div className={'app-body'}>
@@ -89,6 +91,25 @@ export default class PersonEdit extends React.PureComponent {
                                 />
                             </div>
                         </div>
+                        {/* ------------------ COMPANIES ------------------ */}
+                        <div className={'detail-row spacer'}>
+                            <div className={'detail-group size-12'}>
+                                <div className={`detail-label${typeof editedData.company !== 'undefined' && company  ? ' value-changed' : ''}`}>{'Companies:'}</div>
+                                <CreatableSelect
+                                    options={this.getCompaniesOption(companies)}
+                                    value={company.map(company => ({value: company, label: companies[company] ? companies[company].name : ''}))}
+                                    onChange={this.handleCompanyChange}
+                                    onCreateOption={name => this.createNewCompany(name)}
+                                    formatCreateLabel={value => `Create: "${value}"`}
+                                    isSearchable={true}
+                                    isMulti={true}
+                                    isClearable={true}
+                                    className={`control-select wrap${this.state.validation.company ? ' invalid' : ''}`}
+                                    classNamePrefix={'control-select'}
+                                    placeholder={'Person Companies...'}
+                                />
+                            </div>
+                        </div>
                         {/* ------------------ CONTACTS ------------------ */}
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group column size-12'}>
@@ -101,6 +122,7 @@ export default class PersonEdit extends React.PureComponent {
                                                 <Select
                                                     options={contactTypeOptions}
                                                     value={contactLine.type ? {value: contactLine.type, label: ContactType[contactLine.type] ? ContactType[contactLine.type].label : contactLine.type  } : null}
+                                                    autoFocus={!contactLine.type}
                                                     onChange={option => this.handleContactChange(i, {type: !option || !option.value ? null : option.value})}
                                                     isSearchable={true}
                                                     isMulti={false}
@@ -178,6 +200,13 @@ export default class PersonEdit extends React.PureComponent {
         return newData;
     };
 
+    getCompaniesOption = companies => {
+        return Object.keys(companies).map(companyId => ({
+            value: companyId,
+            label: companies[companyId].name
+        }))
+    };
+
     // *****************************************************************************************************************
     // VALIDATION
     // *****************************************************************************************************************
@@ -209,6 +238,10 @@ export default class PersonEdit extends React.PureComponent {
         this.props.editItem(this.updateEditedData({profession: options.map(option => option.value)}));
     };
 
+    handleCompanyChange = options => {
+        this.props.editItem(this.updateEditedData({company: options.map(option => option.value)}));
+    };
+
     handleContactChange = (index, data) => {
         const emptyItem = {type: null, data: ''};
         const object = this.props.person;
@@ -225,5 +258,9 @@ export default class PersonEdit extends React.PureComponent {
         }
         const editedData = this.updateEditedData({contact: newData});
         this.props.editItem(editedData);
-    }
+    };
+
+    createNewCompany = (name) => {
+        this.props.addCompany(name);
+    };
 }

@@ -138,7 +138,7 @@ export default class AppLayout extends React.PureComponent {
                 AppBody =
                     <CompanyDetail
                         projects={this.props.projects}
-                        //persons={this.props.persons}
+                        persons={this.props.persons}
                         //companies={this.props.companies}
                         //users={this.props.users}
                         user={this.props.user}
@@ -148,9 +148,9 @@ export default class AppLayout extends React.PureComponent {
 
                         returnToPreviousView={this.props.returnToPreviousView}
 
-                        showProjectNext={this.props.showProjectNext}
-                        showPersonNext={this.props.showPersonNext}
-                        showCompanyNext={this.props.showCompanyNext}
+                        showProject={this.props.showProject}
+                        showPerson={this.props.showPerson}
+                        //showCompany={this.props.showCompany}
                         edit={this.props.editCompany}
                         remove={this.props.removeCompany}
                         addToBox={this.props.addToBox}
@@ -211,7 +211,7 @@ export default class AppLayout extends React.PureComponent {
                     <PersonDetail
                         projects={this.props.projects}
                         //persons={this.props.persons}
-                        //companies={this.props.companies}
+                        companies={this.props.companies}
                         //users={this.props.users}
                         user={this.props.user}
 
@@ -220,9 +220,9 @@ export default class AppLayout extends React.PureComponent {
 
                         returnToPreviousView={this.props.returnToPreviousView}
 
-                        showProjectNext={this.props.showProjectNext}
-                        showPersonNext={this.props.showPersonNext}
-                        showCompanyNext={this.props.showCompanyNext}
+                        showProject={this.props.showProject}
+                        //showPerson={this.props.showPerson}
+                        showCompany={this.props.showCompany}
 
                         edit={this.props.editPerson}
                         remove={this.props.removePerson}

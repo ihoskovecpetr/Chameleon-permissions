@@ -2,7 +2,7 @@ import React, {Fragment} from 'react';
 import * as TeamRole from "../../constants/TeamRole";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-export default function getTeamMemberElement(props) {
+export default function TeamMemberElement(props) {
     const {teamMember, users} = props;
     if(!teamMember) return null;
     return (
