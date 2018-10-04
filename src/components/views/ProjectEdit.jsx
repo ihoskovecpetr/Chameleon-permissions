@@ -353,7 +353,7 @@ export default class ProjectEdit extends React.PureComponent {
     }
 
     isNameUsed = name => {
-        if(!name) return false;
+        if(!name || !this.props.selected) return false;
         const filtered = Object.keys(this.props.projects).filter(projectId => this.props.projects[projectId].name.toLowerCase().trim() === name.toLowerCase().trim()).filter(projectId => projectId !== this.props.selected);
         return filtered.length > 0;
     };

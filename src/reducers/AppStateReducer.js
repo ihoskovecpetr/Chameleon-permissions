@@ -30,7 +30,7 @@ function AppStateReducer(state = null, action = null) {
                 if(state.previousView && state.previousView.length > 0) {
                     const previousView = [...state.previousView];
                     const view = previousView.pop();
-                    return {...state, view: view, previousView: previousView};
+                    return {...state, view: view, previousView: previousView}; //TODO if created new and return to the list - selected this.
                 } else return {...state, view: {type: ViewTypes.PROJECT_LIST, selected: null, editable: false}, previousView: []};
 
             case ActionTypes.SET_FETCHING:
@@ -68,14 +68,14 @@ function AppStateReducer(state = null, action = null) {
                             if(action.data && action.data._id) newCompany[companyIndex] = {id: action.data._id, business: action.data.business ? action.data.business : [], flag: [], note: ''};
                             return {...state, projectEditedData: {...state.projectEditedData, company: newCompany}}
                         } else return state;
-                    case ViewTypes.PERSON_LIST: //TODO *********************
+                    case ViewTypes.PERSON_EDIT: //TODO *********************
                         if(action.data) {
                             console.log('Add company to person');
                             return state
                         } else return state;
                     case ViewTypes.COMPANY_EDIT:
                         if(action.data) {
-                            return {...state, companyEditedData: {...state.companyEditedData, person: [...state.companyEditedData.person, action.data._id]}};
+                            return {...state, companyEditedData: {...state.companyEditedData, person: state.companyEditedData.person ? [...state.companyEditedData.person, action.data._id] : [action.data._id]}};
                         } else return state;
                     default: return state;
                 }
@@ -146,8 +146,8 @@ function AppStateReducer(state = null, action = null) {
                 } else return state;
 
             case ActionTypes.CREATE_PROJECT:
-                if(action.project && action.project._id) {
-                    return {...state, selectedProject: action.project._id};
+                if(action.project && action.project._id && state.view.type === ViewTypes.PROJECT_LIST) {
+                    return {...state, selectedProject: action.project._id, view: {...state.view, selected: action.project._id}};
                 } else return state;
 
             case ActionTypes.REMOVE_PROJECT:
@@ -220,8 +220,8 @@ function AppStateReducer(state = null, action = null) {
 
 
             case ActionTypes.CREATE_COMPANY:
-                if(action.company && action.company._id) {
-                    return {...state, selectedCompany: action.company._id};
+                if(action.company && action.company._id && state.view.type === ViewTypes.COMPANY_LIST) {
+                    return {...state, selectedCompany: action.company._id, view: {...state.view, selected: action.company._id}};
                 } else return state;
 
             case ActionTypes.REMOVE_COMPANY:
@@ -293,8 +293,8 @@ function AppStateReducer(state = null, action = null) {
                 } else return state;
 
             case ActionTypes.CREATE_PERSON:
-                if(action.person && action.person._id) {
-                    return {...state, selectedPerson: action.person._id};
+                if(action.person && action.person._id && state.view.type === ViewTypes.PERSON_LIST) {
+                    return {...state, selectedPerson: action.person._id, view: {...state.view, selected: action.person._id}};
                 } else return state;
 
             case ActionTypes.REMOVE_PERSON:

@@ -181,7 +181,7 @@ export default class CompanyEdit extends React.PureComponent {
     }
 
     isNameUsed = name => {
-        if(!name) return false;
+        if(!name || !this.props.company) return false;
         const filtered = Object.keys(this.props.companies).filter(companyId => this.props.companies[companyId].name.toLowerCase().trim() === name.toLowerCase().trim()).filter(companyId => companyId !== this.props.company._id);
         return filtered.length > 0;
     };
