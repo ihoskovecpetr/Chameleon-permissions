@@ -38,18 +38,18 @@ function ProjectsReducer (state = null, action = null) {
             case ActionTypes.REMOVE_COMPANY:
                 const newProjectCompany = {...state};
                 let hasChangedCompany = false;
-                for(const projectId of Object.keys(newProjectsPerson)) {
+                for(const projectId of Object.keys(newProjectCompany)) {
                     const indexCompany = newProjectCompany[projectId].company.findIndex(company => company.id === action.company);
                     if(indexCompany >= 0) {
-                        hasChangedPerson = true;
-                        newProjectsPerson[projectId] = {...newProjectCompany[projectId], company: [...newProjectCompany[projectId].company].splice(indexCompany, 1)};
+                        hasChangedCompany = true;
+                        newProjectCompany[projectId] = {...newProjectCompany[projectId], company: [...newProjectCompany[projectId].company].splice(indexCompany, 1)};
                     }
                     const indexCompanyPerson =  newProjectCompany[projectId].person.findIndex(person => person.company === action.company);
                     if(indexCompanyPerson >= 0) {
-                        hasChangedPerson = true;
+                        hasChangedCompany = true;
                         const newPerson = {...newProjectCompany[projectId].person};
                         newPerson[indexCompanyPerson] = {...newPerson[indexCompanyPerson], company: null};
-                        newProjectsPerson[projectId] = {...newProjectCompany[projectId], person: newPerson};
+                        newProjectCompany[projectId] = {...newProjectCompany[projectId], person: newPerson};
                     }
                 }
                 if(hasChangedCompany) return newProjectCompany;

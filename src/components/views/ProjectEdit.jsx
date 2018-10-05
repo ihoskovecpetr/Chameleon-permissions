@@ -34,6 +34,7 @@ export default class ProjectEdit extends React.PureComponent {
     }
 
     componentDidMount() {
+        this.props.editItem(this.updateEditedData({}));
         this.checkValidity();
     }
 
@@ -90,7 +91,7 @@ export default class ProjectEdit extends React.PureComponent {
 
                 {/* ------------------ FORM ------------------ */}
                 <Scrollbars autoHide={true} autoHideTimeout={Constants.TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={Constants.TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
-                    <div className={'detail-body'}>
+                    <div className={'detail-body edit'}>
 
                         {/* ------------------ NAME, CONTACT ------------------ */}
                         <div className={'detail-row'}>
@@ -187,7 +188,10 @@ export default class ProjectEdit extends React.PureComponent {
                         {/* ------------------ COMPANY ------------------ */}
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group column size-12'}>
-                                <div onClick={() => this.handleCompanyChange()} className={`detail-label clickable column${editedData.company !== undefined && selected ? ' value-changed' : ''}`}>
+                                <div
+                                    onClick={event => event.altKey ? this.createNewCompany() : this.handleCompanyChange()}
+                                    className={`detail-label clickable column${editedData.company !== undefined && selected ? ' value-changed' : ''}`}
+                                >
                                     {'Companies'}
                                     <FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/>
                                 </div>
@@ -246,7 +250,10 @@ export default class ProjectEdit extends React.PureComponent {
                         {/* ------------------ PERSON ------------------ */}
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group column size-12'}>
-                                <div onClick={() => this.handlePersonChange()} className={`detail-label clickable column${editedData.person !== undefined && selected ? ' value-changed' : ''}`}>
+                                <div
+                                    onClick={event => event.altKey ? this.createNewPerson() : this.handlePersonChange()}
+                                    className={`detail-label clickable column${editedData.person !== undefined && selected ? ' value-changed' : ''}`}
+                                >
                                     {'People'}
                                     <FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/>
                                 </div>
@@ -610,8 +617,8 @@ export default class ProjectEdit extends React.PureComponent {
         if(typeof index === 'undefined' && typeof data === 'undefined') { //ADD
             if (this.props.editedData.company && this.props.editedData.company.some(company => company.id === null)) return;
             newData.push(emptyItem)
-        } else if(typeof index === 'undefined') { //ADD - fill id in data
-            newData.push({...emptyItem, id: data})
+        } else if(typeof index === 'undefined') { //ADD - fill in data
+            newData.push({...emptyItem, ...data})
         } else if(typeof data === 'undefined') { //REMOVE at index
             newData.splice(index, 1);
         } else { //data contains update for line index
@@ -636,8 +643,8 @@ export default class ProjectEdit extends React.PureComponent {
         if(typeof index === 'undefined' && typeof data === 'undefined') { //ADD
             if(this.props.editedData.person && this.props.editedData.person.some(person => person.id === null)) return;
             newData.push(emptyItem)
-        } else if(typeof index === 'undefined') { //ADD - fill id in data
-            newData.push({...emptyItem, id: data})
+        } else if(typeof index === 'undefined') { //ADD - fill in data
+            newData.push({...emptyItem, ...data})
         } else if(typeof data === 'undefined') { //REMOVE at index
             newData.splice(index, 1);
         } else { //data contains update for line index
@@ -679,12 +686,22 @@ export default class ProjectEdit extends React.PureComponent {
     };
 
     createNewPerson = (index, name) => {
-        this.handlePersonChange(index, {waiting: true});
-        this.props.addPerson(name);
+        if(typeof index === 'undefined') {
+            this.handlePersonChange(index, {waiting: 1});
+            this.props.addPerson('');
+        } else {
+            this.handlePersonChange(index, {waiting: 2});
+            this.props.addPerson(name);
+        }
     };
 
     createNewCompany = (index, name) => {
-        this.handleCompanyChange(index, {waiting: true});
-        this.props.addCompany(name);
+        if(typeof index === 'undefined') {
+            this.handleCompanyChange(index, {waiting: 1});
+            this.props.addCompany('');
+        } else {
+            this.handleCompanyChange(index, {waiting: 2});
+            this.props.addCompany(name);
+        }
     };
 };

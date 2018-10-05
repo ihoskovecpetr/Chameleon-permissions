@@ -58,14 +58,19 @@ function AppStateReducer(state = null, action = null) {
                         const companyIndex = state.projectEditedData && state.projectEditedData.company && state.projectEditedData.company.length > 0 ? state.projectEditedData.company.findIndex(company => company.waiting) : -1;
                         if(personIndex >= 0) {
                             const newPerson = [...state.projectEditedData.person];
-                            delete newPerson[personIndex].waiting;
                             if(action.data && action.data._id) newPerson[personIndex] = {id: action.data._id, profession: action.data.profession ? action.data.profession : [], flag: [], note: ''};
+                            else {
+                                if(newPerson[personIndex].waiting === 1) newPerson.splice(personIndex, 1);
+                                else delete newPerson[personIndex].waiting;
+                            }
                             return {...state, projectEditedData: {...state.projectEditedData, person: newPerson}}
-                        }
-                        if (companyIndex >= 0) {
+                        } else if (companyIndex >= 0) {
                             const newCompany = [...state.projectEditedData.company];
-                            delete newCompany[companyIndex].waiting;
                             if(action.data && action.data._id) newCompany[companyIndex] = {id: action.data._id, business: action.data.business ? action.data.business : [], flag: [], note: ''};
+                            else {
+                                if(newCompany[companyIndex].waiting === 1) newCompany.splice(companyIndex, 1);
+                                else delete newCompany[companyIndex].waiting;
+                            }
                             return {...state, projectEditedData: {...state.projectEditedData, company: newCompany}}
                         } else return state;
                     case ViewTypes.PERSON_EDIT:

@@ -7,6 +7,7 @@ $detail-control-padding-vertical: 0em;
 
 $detail-body-padding-horizontal: $app-padding-horizontal;
 $detail-body-background-color: #c3c3c3;
+$detail-body-edit-background-color: desaturate(lighten($app-header-background-color, 50%), 18%);
 $detail-body-color: #0f0f0f;
 
 $detail-group-padding-horizontal: 0.8rem;
@@ -27,6 +28,9 @@ $detail-client-person-padding-left: 1em;
   font-size: $detail-font-size;
   width: 100%;
   margin-bottom: 0;
+  &.edit {
+    background-color: $detail-body-edit-background-color;
+  }
   .detail-row {
     &.spacer::before {
       content: '';

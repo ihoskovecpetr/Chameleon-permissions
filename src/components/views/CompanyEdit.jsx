@@ -69,7 +69,7 @@ export default class CompanyEdit extends React.PureComponent {
                 </div>
                 {/* ------------------ FORM ------------------ */}
                 <Scrollbars autoHide={true} autoHideTimeout={Constants.TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={Constants.TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
-                    <div className={'detail-body'}>
+                    <div className={'detail-body edit'}>
                         {/* ------------------ NAME, BUSINESS ------------------ */}
                         <div className={'detail-row'}>
                             <div className={'detail-group size-5'}>
@@ -94,7 +94,7 @@ export default class CompanyEdit extends React.PureComponent {
                         {/* ------------------ PERSONS ------------------ */}
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group size-12'}>
-                                <div className={`detail-label${typeof editedData.person !== 'undefined' && company  ? ' value-changed' : ''}`}>{'People:'}</div>
+                                <div onClick={event => event.altKey ? this.createNewPerson('') : {}} className={`detail-label${typeof editedData.person !== 'undefined' && company  ? ' value-changed' : ''}`}>{'People:'}</div>
                                 <CreatableSelect
                                     options={this.getPersonsOption(persons)}
                                     value={person.map(person => ({value: person, label: persons[person] ? persons[person].name : ''}))}
@@ -261,6 +261,7 @@ export default class CompanyEdit extends React.PureComponent {
     };
 
     createNewPerson = (name) => {
+        if(!this.props.editedData.person) this.props.editItem({person: [...this.props.company.person]});
         this.props.addPerson(name);
     };
 }

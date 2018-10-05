@@ -159,10 +159,10 @@ export function updateProject(id, updateData) {
         dispatch(setFetching(false));
     }
 }
-
+/*
 export function updateProjectDirect(id, projectUpdate) {
     return updateProject(id, projectUpdate);
-    /*return async (dispatch, getState) => {
+    return async (dispatch, getState) => {
         dispatch(setFetching(true));
         dispatch(setMessage(null));
         try {
@@ -178,9 +178,9 @@ export function updateProjectDirect(id, projectUpdate) {
             dispatch(setMessage({type: 'error', text: `Update project error: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
         }
         dispatch(setFetching(false));
-    }*/
+    }
 }
-
+*/
 export function createProject() {
     return async (dispatch, getState) => {
         const project = getState().appState.projectEditedData;
