@@ -125,15 +125,25 @@ $detail-client-person-padding-left: 1em;
             border-bottom: 1px solid $detail-value-border-color;
           }
           .name {
-            cursor: pointer;
             white-space: nowrap;
             display: flex;
-            &:hover {
-              text-decoration: underline;
+            align-items: baseline;
+            .clickable {
+              cursor: pointer;
+              &:hover {
+                text-decoration: underline;
+              }
             }
             flex: 0 0 50%;
             @include media("<=phone") {
               flex: 0 0 100%;
+            }
+            .flag-icon {
+              margin-left: 0.3em;
+              font-size: 0.8em;
+              &.first {
+                margin-left: 1em;
+              }
             }
           }
           .role {
