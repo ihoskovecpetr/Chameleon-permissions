@@ -50,6 +50,11 @@ function AppStateReducer(state = null, action = null) {
                 } else return state;
 
             case ActionTypes.SET_JUST_ADDED_OBJECT:
+                if(typeof action.data === 'undefined') return state;
+                else return {...state, justAdded: action.data};
+
+                /*
+                return state;
                 if(typeof action.data === 'undefined' || state.previousView.length === 0) return state;
                 const lastView = state.previousView[state.previousView.length - 1];
                 switch (lastView.type) {
@@ -58,7 +63,7 @@ function AppStateReducer(state = null, action = null) {
                         const companyIndex = state.projectEditedData && state.projectEditedData.company && state.projectEditedData.company.length > 0 ? state.projectEditedData.company.findIndex(company => company.waiting) : -1;
                         if(personIndex >= 0) {
                             const newPerson = [...state.projectEditedData.person];
-                            if(action.data && action.data._id) newPerson[personIndex] = {id: action.data._id, profession: action.data.profession ? action.data.profession : [], flag: [], note: ''};
+                            if(action.data && action.data._id) newPerson[personIndex] = {id: action.data._id, profession: action.data.profession ? action.data.profession : [], flag: [], note: '', company: null};
                             else {
                                 if(newPerson[personIndex].waiting === 1) newPerson.splice(personIndex, 1);
                                 else delete newPerson[personIndex].waiting;
@@ -82,7 +87,7 @@ function AppStateReducer(state = null, action = null) {
                             return {...state, companyEditedData: {...state.companyEditedData, person: state.companyEditedData.person ? [...state.companyEditedData.person, action.data._id] : [action.data._id]}};
                         } else return state;
                     default: return state;
-                }
+                }*/
 
             // *********************************************************************************************************
             // PROJECTS
@@ -180,7 +185,7 @@ function AppStateReducer(state = null, action = null) {
             case ActionTypes.EDIT_COMPANY:
                 return {...state, companyEditedData: {}, selectedCompany: action.set ? action.id : state.selectedCompany, view: {type: ViewTypes.COMPANY_EDIT, selected: action.id ? action.id : state.selectedCompany, editable: !action.disableEdit}, previousView: [...state.previousView, {...state.view, selected: action.set ? action.id : state.view.selected}]};
 
-            case ActionTypes.ADD_COMPANY:
+            case ActionTypes.ADD_COMPANY: //TODO RESET just edidted data
                 if(typeof action.name === 'undefined') return {...state, companyEditedData: {}, view: {type: ViewTypes.COMPANY_EDIT, selected: null, editable: false}, previousView: [...state.previousView, state.view]};
                 else return {...state, companyEditedData: {name: action.name}, view: {type: ViewTypes.COMPANY_EDIT, selected: null, editable: false}, previousView: [...state.previousView, state.view]};
 
@@ -254,7 +259,7 @@ function AppStateReducer(state = null, action = null) {
                 case ActionTypes.EDIT_PERSON:
                 return {...state, personEditedData: {}, selectedPerson: action.set ? action.id : state.selectedPerson, view: {type: ViewTypes.PERSON_EDIT, selected: action.id ? action.id : state.selectedPerson, editable: !action.disableEdit}, previousView: [...state.previousView, {...state.view, selected: action.set ? action.id : state.view.selected}]};
 
-                case ActionTypes.ADD_PERSON:
+                case ActionTypes.ADD_PERSON:  //TODO RESET just edidted data
                 if(typeof action.name === 'undefined') return {...state, personEditedData: {}, view: {type: ViewTypes.PERSON_EDIT, selected: null, editable: false}, previousView: [...state.previousView, state.view]};
                 else return {...state, personEditedData: {name: action.name}, view: {type: ViewTypes.PERSON_EDIT, selected: null, editable: false}, previousView: [...state.previousView, state.view]};
 

@@ -31,6 +31,8 @@ export default {
         companiesSort: '',
         companyEditedData: {},
 
+        justAdded: null,
+
         box: [],
     },
     projects: {},

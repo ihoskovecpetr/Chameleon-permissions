@@ -29,6 +29,7 @@ export default class CompanyEdit extends React.PureComponent {
     }
 
     componentDidMount() {
+        this.checkJustAddedObject();
         this.checkValidity();
     }
 
@@ -151,7 +152,7 @@ export default class CompanyEdit extends React.PureComponent {
     // CLOSE, SAVE, REMOVE
     // *****************************************************************************************************************
     close = () => {
-        if(this.returnNew) this.props.setJustAddedObject(null); //to remove waiting flag
+        //if(this.returnNew) this.props.setJustAddedObject(null); //to remove waiting flag
         this.props.returnToPreviousView();
     };
 
@@ -261,7 +262,14 @@ export default class CompanyEdit extends React.PureComponent {
     };
 
     createNewPerson = (name) => {
-        if(!this.props.editedData.person) this.props.editItem({person: [...this.props.company.person]});
         this.props.addPerson(name);
     };
+
+    checkJustAddedObject = () => {
+        if(this.props.justAdded) {
+            const person = this.props.editedData.person ? [...this.props.editedData.person, this.props.justAdded._id] : this.props.company ? [...this.props.company.person, this.props.justAdded._id] : [this.props.justAdded._id];
+            this.props.editItem(this.updateEditedData({person: person}));
+        }
+        this.props.setJustAddedObject(null);
+    }
 }

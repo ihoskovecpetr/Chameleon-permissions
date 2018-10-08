@@ -34,7 +34,7 @@ export default class ProjectEdit extends React.PureComponent {
     }
 
     componentDidMount() {
-        this.props.editItem(this.updateEditedData({}));
+        this.checkJustAddedObject();
         this.checkValidity();
     }
 
@@ -617,13 +617,15 @@ export default class ProjectEdit extends React.PureComponent {
         if(typeof index === 'undefined' && typeof data === 'undefined') { //ADD
             if (this.props.editedData.company && this.props.editedData.company.some(company => company.id === null)) return;
             newData.push(emptyItem)
-        } else if(typeof index === 'undefined') { //ADD - fill in data
-            newData.push({...emptyItem, ...data})
         } else if(typeof data === 'undefined') { //REMOVE at index
             newData.splice(index, 1);
-        } else { //data contains update for line index
+        } else { //data contains update for line index, index === undefined => insert new
+            if(typeof index === 'undefined') {
+                newData.push(emptyItem);
+                index = newData.length - 1;
+            }
             newData[index] = {...newData[index], ...data};
-            if(data && typeof data.id !== "undefined") newData[index].business = data.id && this.props.companies[data.id] ? this.props.companies[data.id].business : [];
+            if(data && typeof data.id !== "undefined") newData[index].business = data.id && this.props.companies[data.id] ? this.props.companies[data.id].business : []; //business
         }
         this.props.editItem(this.updateEditedData({company: newData}));
     };
@@ -643,15 +645,21 @@ export default class ProjectEdit extends React.PureComponent {
         if(typeof index === 'undefined' && typeof data === 'undefined') { //ADD
             if(this.props.editedData.person && this.props.editedData.person.some(person => person.id === null)) return;
             newData.push(emptyItem)
-        } else if(typeof index === 'undefined') { //ADD - fill in data
-            newData.push({...emptyItem, ...data})
         } else if(typeof data === 'undefined') { //REMOVE at index
             newData.splice(index, 1);
-        } else { //data contains update for line index
+        } else { //data contains update for line index, index === undefined => insert new
+            if(typeof index === 'undefined') {
+                newData.push(emptyItem);
+                index = newData.length - 1;
+            }
             newData[index] = {...newData[index], ...data};
-            if(data && typeof data.id !== "undefined") {
-                newData[index].profession = data.id && this.props.persons[data.id] ? this.props.persons[data.id].profession : [];
-                newData[index].company = null;
+            if(data && data.id) { //person has been changed - reset/set some data
+                newData[index].profession = data.id && this.props.persons[data.id] ? this.props.persons[data.id].profession : []; //profession
+                let projectCompanies = this.props.editedData.company !== undefined ? this.props.editedData.company : project ? project.company : [];
+                const personCompanies = this.props.persons[data.id].company;
+                projectCompanies = projectCompanies.filter(company => company.id).map(company => company.id).filter((projectCompaniesId, index, self) => self.indexOf(projectCompaniesId) === index);
+                projectCompanies = projectCompanies.filter(projectCompaniesId => personCompanies.indexOf(projectCompaniesId) >= 0);
+                newData[index].company = projectCompanies.length === 1 ? projectCompanies[0] : null;
             }
         }
         this.props.editItem(this.updateEditedData({person: newData}));
@@ -668,21 +676,16 @@ export default class ProjectEdit extends React.PureComponent {
     addFromBox = () => {
         if(!this.props.box) return;
         const project = this.props.projects[this.props.selected];
-        const newCompany = this.props.editedData.company ? [...this.props.editedData.company] : project ? [...project.company] : [];
-        const newPerson = this.props.editedData.person ? [...this.props.editedData.person] : project ? [...project.person] : [];
+        const company = this.props.editedData.company ? this.props.editedData.company : project ? project.company : [];
+        const person = this.props.editedData.person ? this.props.editedData.person : project ? project.person : [];
 
         for (const id of this.props.box) {
             if (this.props.companies[id]) {
-                if(!newCompany.some(company => company.id === id)) newCompany.push({id: id, flag: [], business: this.props.companies[id].business ? this.props.companies[id].business : [], note: ''});
+                if(!company.some(company => company.id === id)) setTimeout(() => this.handleCompanyChange(undefined, {id: id}), 0);
             } else if (this.props.persons[id]) {
-                if(!newPerson.some(person => person.id === id)) newPerson.push({id: id, flag: [], profession: this.props.persons[id].profession ? this.props.persons[id].profession : [], company: null, note: ''});
+                if(!person.some(person => person.id === id)) setTimeout(() => this.handlePersonChange(undefined, {id: id}), 0);
             }
         }
-
-        this.props.editItem(this.updateEditedData({
-            company: newCompany,
-            person: newPerson
-        }));
     };
 
     createNewPerson = (index, name) => {
@@ -704,4 +707,26 @@ export default class ProjectEdit extends React.PureComponent {
             this.props.addCompany(name);
         }
     };
+
+    checkJustAddedObject = () => {
+        if(this.props.editedData && this.props.editedData.company) {
+            this.props.editedData.company.forEach((companyLine, i) => {
+                if(companyLine.waiting) {
+                    if(this.props.justAdded) this.handleCompanyChange(i, {id: this.props.justAdded._id, waiting: undefined});
+                    else if(companyLine.waiting === 1) this.handleCompanyChange(i);
+                    else if(companyLine.waiting === 2) this.handleCompanyChange(i, {waiting: undefined});
+                }
+            })
+        }
+        if(this.props.editedData && this.props.editedData.person) {
+            this.props.editedData.person.forEach((personLine, i) => {
+                if(personLine.waiting) {
+                    if(this.props.justAdded) this.handlePersonChange(i,  {id: this.props.justAdded._id, waiting: undefined});
+                    else if(personLine.waiting === 1) this.handlePersonChange(i);
+                    else if(personLine.waiting === 2) this.handlePersonChange(i, {waiting: undefined});
+                }
+            })
+        }
+        this.props.setJustAddedObject(null);
+    }
 };
