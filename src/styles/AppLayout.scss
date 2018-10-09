@@ -39,7 +39,6 @@ body {
   height: 100%;
   overflow: hidden;
   display: flex;
-  box-sizing: border-box;
   margin: 0;
   //-webkit-font-smoothing: antialiased;
   //font-smoothing: antialiased;
@@ -48,6 +47,10 @@ body {
     //display: none;
     //width: 15px;
   }
+}
+
+*, ::after, ::before {
+  box-sizing: border-box;
 }
 
 .app-layout {
@@ -269,6 +272,7 @@ body {
   max-width: $app-max-width;
   margin: 0 auto;
   width: 100%;
+  background-color: #cacaca;
 }
 
 .fa-icon {
