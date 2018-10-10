@@ -96,7 +96,7 @@ export default class ProjectDetail extends React.PureComponent {
                     <div className={'detail-body'}>
                         <div className={'detail-row'}>
                             <div className={'detail-group size-6'}>
-                                <div className={`detail-label`}>{'Project name:'}</div>
+                                <div className={`detail-label`}>{'Project Name:'}</div>
                                 <div className={`detail-value selectable`}>{name}</div>
                             </div>
                             <div className={'detail-group size-3'}>
@@ -135,7 +135,7 @@ export default class ProjectDetail extends React.PureComponent {
                                             </div> :
                                             <div className={`company${company.people.length === 0 ? ' empty' : ''}`}>
                                                 <div className={'field name'}>
-                                                    <div className={'clickable'} onClick={() => this.props.showCompany(company.id, false, true)}>{company.name}</div>
+                                                    <div className={'clickable flex-center'} onClick={() => this.props.showCompany(company.id, false, true)}><FontAwesomeIcon className={'prefix-icon'} icon={Icons.ICON_EDITOR_COMPANY}/>{company.name}</div>
                                                     {company.uppClient ? <div  data-tooltip={'UPP Client'} className={'role-icon first'}><FontAwesomeIcon icon={Icons.ICON_EDITOR_FLAG_CLIENT}/></div> : null}
                                                 </div>
                                                 <div className={`field profession-business${company.note ? '' : ' wide'}`}>{company.business.map((business, i) => <span key={i} className={`item${business.active ? ' ' : ' disabled'}`}>{business.label}</span>)}</div>
@@ -145,7 +145,7 @@ export default class ProjectDetail extends React.PureComponent {
                                         {company.people.map((person, i) =>
                                             <div key={i} className={'person'}>
                                                 <div className={'field name for-person'}>
-                                                    <div className={'clickable'} onClick={() => this.props.showPerson(person.id, false, true)}>{person.name}</div>
+                                                    <div className={'clickable flex-center'} onClick={() => this.props.showPerson(person.id, false, true)}><FontAwesomeIcon className={'prefix-icon'} icon={Icons.ICON_EDITOR_PERSON}/>{person.name}</div>
                                                     {person.businessRole ? <div  data-tooltip={'Business'} className={'role-icon first'}><FontAwesomeIcon icon={Icons.ICON_EDITOR_FLAG_BUSINESS}/></div> : null}
                                                     {person.creativityRole ? <div  data-tooltip={'Creativity'} className={'role-icon'}><FontAwesomeIcon icon={Icons.ICON_EDITOR_FLAG_CREATIVITY}/></div> : null}
                                                     {person.organisationRole ? <div  data-tooltip={'Organization'} className={'role-icon'}><FontAwesomeIcon icon={Icons.ICON_EDITOR_FLAG_ORGANIZE}/></div> : null}

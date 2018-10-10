@@ -96,7 +96,7 @@ export default class ProjectEdit extends React.PureComponent {
                         {/* ------------------ NAME, CONTACT ------------------ */}
                         <div className={'detail-row'}>
                             <div className={'detail-group size-8'}>
-                                <div className={`detail-label${typeof editedData.name !== 'undefined' && selected  ? ' value-changed' : ''}`}>{'Project name:'}</div>
+                                <div className={`detail-label${typeof editedData.name !== 'undefined' && selected  ? ' value-changed' : ''}`}>{'Project Name:'}</div>
                                 <Input
                                     placeholder={'Project name...'}
                                     autoFocus={!selected}
@@ -506,8 +506,8 @@ export default class ProjectEdit extends React.PureComponent {
         const object = Object.assign({}, originalObject, this.props.editedData);
         let validation = {};
 
-        if(!object.name || !object.name.trim()) validation['name'] = {field: 'Project name', status: 'Must be set'};
-        if(this.isNameUsed(object.name)) validation['name'] = {field: 'Project name', status: 'Is not unique'};
+        if(!object.name || !object.name.trim()) validation['name'] = {field: 'Project Name', status: 'Must be set'};
+        if(this.isNameUsed(object.name)) validation['name'] = {field: 'Project Name', status: 'Is not unique'};
         if(!object.status) validation['status'] = {field: 'Project status', status: 'Must be set'};
         if(!ProjectStatus[object.status]) validation['status'] = {field: 'Project status', status: 'Is invalid'};
 

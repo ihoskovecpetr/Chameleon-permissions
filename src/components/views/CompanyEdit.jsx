@@ -74,8 +74,8 @@ export default class CompanyEdit extends React.PureComponent {
                         {/* ------------------ NAME, BUSINESS ------------------ */}
                         <div className={'detail-row'}>
                             <div className={'detail-group size-5'}>
-                                <div className={`detail-label${typeof editedData.name !== 'undefined' && company  ? ' value-changed' : ''}`}>{'Company name:'}</div>
-                                <Input placeholder={'Company name...'} autoFocus={!company} className={`detail-input${this.state.validation.name ? ' invalid' : ''}`} onChange={this.handleNameChange} value={name}/>
+                                <div className={`detail-label${typeof editedData.name !== 'undefined' && company  ? ' value-changed' : ''}`}>{'Company Name:'}</div>
+                                <Input placeholder={'Company Name...'} autoFocus={!company} className={`detail-input${this.state.validation.name ? ' invalid' : ''}`} onChange={this.handleNameChange} value={name}/>
                             </div>
                             <div className={'detail-group size-7'}>
                                 <div className={`detail-label${typeof editedData.business !== 'undefined' && company  ? ' value-changed' : ''}`}>{'Business:'}</div>
@@ -89,25 +89,6 @@ export default class CompanyEdit extends React.PureComponent {
                                     className={`control-select wrap${this.state.validation.business ? ' invalid' : ''}`}
                                     classNamePrefix={'control-select'}
                                     placeholder={'Company business...'}
-                                />
-                            </div>
-                        </div>
-                        {/* ------------------ PERSONS ------------------ */}
-                        <div className={'detail-row spacer'}>
-                            <div className={'detail-group size-12'}>
-                                <div onClick={event => event.altKey ? this.createNewPerson('') : {}} className={`detail-label${typeof editedData.person !== 'undefined' && company  ? ' value-changed' : ''}`}>{'People:'}</div>
-                                <CreatableSelect
-                                    options={this.getPersonsOption(persons)}
-                                    value={person.map(person => ({value: person, label: persons[person] ? persons[person].name : ''}))}
-                                    onChange={this.handlePersonChange}
-                                    onCreateOption={name => this.createNewPerson(name)}
-                                    formatCreateLabel={value => `Create: "${value}"`}
-                                    isSearchable={true}
-                                    isMulti={true}
-                                    isClearable={true}
-                                    className={`control-select wrap${this.state.validation.person ? ' invalid' : ''}`}
-                                    classNamePrefix={'control-select'}
-                                    placeholder={'Company People...'}
                                 />
                             </div>
                         </div>
@@ -141,6 +122,25 @@ export default class CompanyEdit extends React.PureComponent {
                                         </div>
                                     )}
                                 </div>
+                            </div>
+                        </div>
+                        {/* ------------------ PERSONS ------------------ */}
+                        <div className={'detail-row spacer'}>
+                            <div className={'detail-group size-12'}>
+                                <div onClick={event => event.altKey ? this.createNewPerson('') : {}} className={`detail-label${typeof editedData.person !== 'undefined' && company  ? ' value-changed' : ''}`}>{'People:'}</div>
+                                <CreatableSelect
+                                    options={this.getPersonsOption(persons)}
+                                    value={person.map(person => ({value: person, label: persons[person] ? persons[person].name : ''}))}
+                                    onChange={this.handlePersonChange}
+                                    onCreateOption={name => this.createNewPerson(name)}
+                                    formatCreateLabel={value => `Create: "${value}"`}
+                                    isSearchable={true}
+                                    isMulti={true}
+                                    isClearable={true}
+                                    className={`control-select wrap${this.state.validation.person ? ' invalid' : ''}`}
+                                    classNamePrefix={'control-select'}
+                                    placeholder={'Company People...'}
+                                />
                             </div>
                         </div>
                     </div>
@@ -217,8 +217,8 @@ export default class CompanyEdit extends React.PureComponent {
         const object = Object.assign({}, originalObject, this.props.editedData);
         let validation = {};
 
-        if(!object.name || !object.name.trim()) validation['name'] = {field: 'Company name', status: 'Is empty'};
-        if(this.isNameUsed(object.name)) validation['name'] = {field: 'Company name', status: 'Is not unique'};
+        if(!object.name || !object.name.trim()) validation['name'] = {field: 'Company Name', status: 'Is empty'};
+        if(this.isNameUsed(object.name)) validation['name'] = {field: 'Company Name', status: 'Is not unique'};
 
         if(object.contact && object.contact.some(contact => contact.type === null)) validation['contact-type'] = {field: 'Contact', status: 'Some contact has not set type'};
         if(object.contact && object.contact.some(contact => !contact.data || !contact.data.trim())) validation['contact-data'] = {field: 'Contact', status: 'Some contact is not set'};

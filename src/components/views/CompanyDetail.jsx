@@ -5,6 +5,7 @@ import {TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT, TABLE_SCROLLBARS_AUTO_HIDE_DURATION}
 import * as CompanyBusiness from '../../constants/CompanyBusiness';
 import ContactElement from '../element/ContactElement';
 import ProjectsForSubject from '../element/ProjectsForSubject';
+import PersonsInCompany from '../element/PersonsInCompany';
 
 export default class CompanyDetail extends React.PureComponent {
     render() {
@@ -30,7 +31,7 @@ export default class CompanyDetail extends React.PureComponent {
                     <div className={'detail-body'}>
                         <div className={'detail-row'}>
                             <div className={'detail-group size-5'}>
-                                <div className={`detail-label`}>{'Company name:'}</div>
+                                <div className={`detail-label`}>{'Company Name:'}</div>
                                 <div className={`detail-value selectable`}>{name}</div>
                             </div>
                             <div className={'detail-group size-7'}>
@@ -42,20 +43,17 @@ export default class CompanyDetail extends React.PureComponent {
                         </div>
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group size-12'}>
-                                <div className={`detail-label`}>{'People:'}</div>
-                                <div className={'detail-value group wrap'}>
-                                    {person.map((person, i) => persons[person] ? <div onClick={() => this.props.showPerson(person, false, true)} key={i} className={'value-item clickable underline comma'}><span>{persons[person].name}</span></div> : null)}
-                                </div>
-                            </div>
-                        </div>
-                        <div className={'detail-row spacer'}>
-                            <div className={'detail-group size-12'}>
                                 <div className={`detail-label`}>{'Contacts:'}</div>
                                 <div className={'detail-value group wrap'}>
                                     {contact.map((contactItem, i) => <div key={i} className={'value-item selectable'}><ContactElement contact={contactItem}/></div>)}
                                 </div>
                             </div>
                         </div>
+                        <PersonsInCompany
+                            persons={persons}
+                            members={person}
+                            showPerson={this.props.showPerson}
+                        />
                         <ProjectsForSubject
                             projects={projects}
                             id={company._id}

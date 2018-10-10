@@ -54,6 +54,9 @@ export const ICON_EDITOR_FLAG_CLIENT = 'hand-holding-usd';
 
 export const ICON_EDITOR_NO_COMPANY = 'ellipsis-h';
 
+export const ICON_EDITOR_COMPANY = ['far', 'building'];
+export const ICON_EDITOR_PERSON = ['far', 'user'];
+
 //box
 export const ICON_BOX_REMOVE = 'trash';
 

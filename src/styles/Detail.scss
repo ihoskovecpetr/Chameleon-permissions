@@ -111,7 +111,7 @@ $detail-client-person-padding-left: 1em;
           }
         }
       }
-      .detail-subject-project {
+      .detail-subject-project, .detail-subject-person, .detail-subject-company {
         display: flex;
         width: 100%;
         font-size: $detail-font-size;
@@ -120,7 +120,7 @@ $detail-client-person-padding-left: 1em;
         border-radius: $detail-control-border-radius;
         flex-direction: column;
         background-color: $detail-value-background-color;
-        .project {
+        .project, .person , .company {
           display: flex;
           width: 100%;
           padding: 0.2em $detail-control-padding-horizontal;
@@ -132,13 +132,7 @@ $detail-client-person-padding-left: 1em;
             white-space: nowrap;
             display: flex;
             align-items: baseline;
-            .clickable {
-              cursor: pointer;
-              &:hover {
-                text-decoration: underline;
-              }
-            }
-            flex: 0 0 50%;
+            flex: 0 0 40%;
             @include media("<=phone") {
               flex: 0 0 100%;
             }
@@ -152,7 +146,7 @@ $detail-client-person-padding-left: 1em;
           }
           .role {
             white-space: nowrap;
-            flex: 0 0 50%;
+            flex: 0 0 60%;
             @include media("<=phone") {
               flex: 0 0 100%;
             }
@@ -195,6 +189,10 @@ $detail-client-person-padding-left: 1em;
           padding: 0.2em $detail-control-padding-horizontal;
           display: flex;
           flex-wrap: wrap;
+          .flex-center {
+            display: flex;
+            align-items: center;
+          }
           .role-icon {
             margin-left: 0.3em;
             font-size: 0.8em;
@@ -202,10 +200,6 @@ $detail-client-person-padding-left: 1em;
             &.first {
               margin-left: 1em;
             }
-          }
-          .clickable:hover {
-            text-decoration: underline;
-            cursor: pointer;
           }
           .field {
             padding-right: 0.7em;
@@ -263,6 +257,16 @@ $detail-client-person-padding-left: 1em;
           padding-left: $detail-client-person-padding-left;
         }
 
+      }
+      .clickable {
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+      .prefix-icon {
+        font-size: 0.7rem;
+        margin-right: 0.2rem;
       }
       .detail-array-line {
         display: flex;
