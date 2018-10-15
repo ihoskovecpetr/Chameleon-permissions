@@ -9,6 +9,7 @@ import * as CompanyBusiness from '../../constants/CompanyBusiness';
 import * as PersonProfession from '../../constants/PersonProfession';
 import * as CompanyFlag from '../../constants/CompanyFlag';
 import * as PersonFlag from '../../constants/PersonFlag';
+import * as ProjectClientTiming from '../../constants/ProjectClientTiming';
 import moment from "moment";
 import * as TeamRole from "../../constants/TeamRole";
 import * as Icons from '../../constants/Icons';
@@ -23,6 +24,10 @@ export default class ProjectDetail extends React.PureComponent {
         const statusNote = project.statusNote ? project.statusNote : '';
         const lastContact = project.lastContact ? moment(project.lastContact).format('D.M.YYYY') : 'Not set';
         const team =  project.team ? project.team : [];
+
+        const timing = project.timing ? project.timing : [];
+
+        timing.sort((a, b) => 0);
 
         team.sort((a, b) => (a.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)) - (b.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)));
         let client = {};
@@ -116,6 +121,14 @@ export default class ProjectDetail extends React.PureComponent {
                             </div>
                         </div>
                         : null}
+                        <div className={'detail-row spacer'}>
+                            <div className={'detail-group size-12'}>
+                                <div className={`detail-label`}>{'Client Timing:'}</div>
+                                <div className={'detail-value group wrap'}>
+                                    {timing.map((timingLine, i) => <div key={i}>{`${ProjectClientTiming[timingLine.label].label}: ${moment(timingLine.date).format('D.M.YYYY')}`}</div>)}
+                                </div>
+                            </div>
+                        </div>
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group size-12'}>
                                 <div className={`detail-label`}>{'UPP Team:'}</div>

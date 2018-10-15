@@ -73,9 +73,9 @@ $detail-client-person-padding-left: 1em;
       @include media("<=tablet") {
         //&.size-1 {flex: 0 0 16.6666%; max-width: 16.6666%}
         &.size-2 {flex: 0 0 25%; max-width: 25%}
-        &.size-3, &.size-4 {flex: 0 0 50%; max-width: 50%}
+        &.size-3 {flex: 0 0 50%; max-width: 50%}
         //&.size-4 {flex: 0 0 50%; max-width: 50%}
-        &.size-5, &.size-6, &.size-7, &.size-8, &.size-9, &.size-10, &.size-11, &.size-12 {flex: 0 0 100%; max-width: 100%}
+        &.size-4, &.size-5, &.size-6, &.size-7, &.size-8, &.size-9, &.size-10, &.size-11, &.size-12 {flex: 0 0 100%; max-width: 100%}
       }
       @include media("<=phone") {
         flex: 0 0 100%;
@@ -344,6 +344,12 @@ $detail-client-person-padding-left: 1em;
             @include media("<=tablet") { width: calc(50% - #{$detail-array-line-control-space});}
             @include media("<=phone") {width: 100%}
           }
+          //timing
+
+          .timing-label {
+            width: calc(50% - #{$detail-array-line-control-space});
+            @include media("<=small-phone") {width: 100%}
+          }
 
           // team
           .team-name {
@@ -439,6 +445,21 @@ $detail-client-person-padding-left: 1em;
             overflow: visible;
           }
         }
+      }
+    }
+    .datepicker-container {
+      .react-datepicker-wrapper, .react-datepicker__input-container {
+        width: 100%;
+      }
+    }
+    .datepicker-container.last-contact {
+      > * {
+        width: 100%;
+      }
+    }
+    .datepicker-container.timing {
+      > * {
+        width: 48%;
       }
     }
   }

@@ -13,6 +13,7 @@ import * as CompanyFlag from '../../constants/CompanyFlag';
 import * as PersonFlag from '../../constants/PersonFlag';
 import * as CompanyBusiness from '../../constants/CompanyBusiness';
 import * as PersonProfession from '../../constants/PersonProfession';
+import * as ProjectClientTiming from '../../constants/ProjectClientTiming';
 
 import * as Icons from '../../constants/Icons';
 
@@ -20,6 +21,7 @@ import * as ProjectStatus from '../../constants/ProjectStatus';
 import * as TeamRole from '../../constants/TeamRole';
 
 const statusOptions = Object.keys(ProjectStatus).map(key => ({value: ProjectStatus[key].id, label: ProjectStatus[key].label}));
+const timingOptions = [{value: ProjectClientTiming.GO_AHEAD.id, label: ProjectClientTiming.GO_AHEAD.label}]//Object.keys(ProjectClientTiming).map(key => ({value: ProjectClientTiming[key].id, label: ProjectClientTiming[key].label}));
 
 export default class ProjectEdit extends React.PureComponent {
     constructor(props) {
@@ -53,10 +55,12 @@ export default class ProjectEdit extends React.PureComponent {
         const company = editedData.company !== undefined ? editedData.company : projects[selected] ? projects[selected].company : [];
         const person = editedData.person !== undefined ? editedData.person : projects[selected] ? projects[selected].person : [];
         const team = editedData.team !== undefined ? editedData.team : projects[selected] ? projects[selected].team : [];
+        const timing = editedData.timing !== undefined ? editedData.timing : projects[selected] ? projects[selected].timing : [];
         const lastContact = editedData.lastContact !== undefined ? editedData.lastContact ? moment(editedData.lastContact) : null : projects[selected] && projects[selected].lastContact ? moment(projects[selected].lastContact) : null;
 
         if(Object.keys(editedData).length === 0) {
             team.sort((a, b) => (a.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)) - (b.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)));
+            timing.sort((a, b) => 0);
             company.sort((a, b) => (a.flag.map(flag => CompanyFlag[flag] ? Object.keys(CompanyFlag).indexOf(flag) : 100).reduce((a, b) => Math.min(a, b), 100)) - (b.flag.map(flag => CompanyFlag[flag] ? Object.keys(CompanyFlag).indexOf(flag) : 100).reduce((a, b) => Math.min(a, b), 100)));
             person.sort((a, b) => (a.flag.map(flag => PersonFlag[flag] ? Object.keys(PersonFlag).indexOf(flag) : 100).reduce((a, b) => Math.min(a, b), 100)) - (b.flag.map(flag => PersonFlag[flag] ? Object.keys(PersonFlag).indexOf(flag) : 100).reduce((a, b) => Math.min(a, b), 100)));
         }
@@ -105,7 +109,7 @@ export default class ProjectEdit extends React.PureComponent {
                                     value={name}
                                 />
                             </div>
-                            <div className={'detail-group size-4'}>
+                            <div className={'detail-group size-4 datepicker-container last-contact'}>
                                 <div className={`detail-label${typeof editedData.lastContact !== 'undefined' && selected  ? ' value-changed' : ''}`}>{'Last Contact:'}</div>
                                 <DatePicker
                                     selected={lastContact}
@@ -140,6 +144,45 @@ export default class ProjectEdit extends React.PureComponent {
                                     onChange={this.handleStatusNoteChange}
                                     value={statusNote}
                                 />
+                            </div>
+                        </div>
+
+                        {/* ------------------ CLIENT TIMING ------------------ */}
+                        <div className={'detail-row spacer'}>
+                            <div className={'detail-group column size-12'}>
+                                <div onClick={() => this.handleTimingChange()} className={`detail-label clickable column${editedData.timing !== undefined && selected ? ' value-changed' : ''}`}>
+                                    {'Client Timing'}
+                                    <FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/>
+                                </div>
+                                <div className={'detail-group-wrapper'}>
+                                    {timing.map((line, i) =>
+                                        <div className={`detail-array-line size-6 spacer`} key={i}>
+                                            <FontAwesomeIcon className={'remove-icon'} onClick={() => this.handleTimingChange(i)} icon={Icons.ICON_EDITOR_LINE_REMOVE}/>
+                                            <div className={'line-content datepicker-container timing'}>
+                                                <Select
+                                                    options={timingOptions}
+                                                    value={line.category === 100 && line.label && ProjectClientTiming[line.label] ? {value: line.label, label: ProjectClientTiming[line.label].label} : null}
+                                                    onChange={option => this.handleTimingChange(i, {label: !option || !option.value ? null : option.value})}
+                                                    isSearchable={false}
+                                                    isMulti={false}
+                                                    isClearable={false}
+                                                    className={`control-select timing-label`}
+                                                    classNamePrefix={'control-select'}
+                                                    placeholder={'Timing type...'}
+                                                />
+                                                <DatePicker
+                                                    selected={line.date ? moment(line.date) : null}
+                                                    autoFocus={!line.date}
+                                                    dateFormat={'D.M.YYYY'}
+                                                    className={`detail-date-picker${!line.date ? ' invalid' : ''}`}
+                                                    onChange={date => this.handleTimingChange(i, {date: date.startOf('day')})}
+                                                    placeholderText={'Last Contact...'}
+                                                    isClearable={false}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
 
@@ -551,6 +594,15 @@ export default class ProjectEdit extends React.PureComponent {
             });
         }
 
+        if(object.timing && object.timing.length > 0) {
+            object.timing.forEach((timingLine, index) => {
+                if(!timingLine.date) {
+                    if(!validation['timing']) validation['timing'] = {field: 'Timing', index: [index], status: `Some timing date is not set`};
+                    else validation['timing'].index.push(index);
+                }
+            })
+        }
+
         const disableSave = Object.keys(validation).length > 0 || Object.keys(this.props.editedData).length === 0;
         if(areEquivalent(validation, this.state.validation)) validation = this.state.validation;
         this.setState({validation: validation, saveDisabled: disableSave});
@@ -577,6 +629,25 @@ export default class ProjectEdit extends React.PureComponent {
 
     handleLastContactChange = date => {
         this.props.editItem(this.updateEditedData({lastContact: date ? date.startOf('day') : null}));
+    };
+
+    handleTimingChange = (index, data) => {
+        const emptyItem = {type: 'CLIENT', date: null, dateTo: null, category: 100, label: ProjectClientTiming.GO_AHEAD.id};
+        const object = this.props.projects[this.props.selected];
+        const newData = this.props.editedData.timing ? [...this.props.editedData.timing] : object ? [...object.timing] : [];
+        if(typeof index === 'undefined' && typeof data === 'undefined') { //ADD
+            if (newData.length >= 1) return;//this.props.editedData.timing.some(item => !item.label || !item.date)) return;
+            newData.push(emptyItem)
+        } else if(typeof index === 'undefined') { //ADD - fill id in data
+            newData.push({...emptyItem, id: data});
+        } else if(typeof data === 'undefined') { //REMOVE at index
+            newData.splice(index, 1);
+        } else { //data contains update for line index
+            newData[index] = {...newData[index], ...data}
+        }
+        const editedData = this.updateEditedData({timing: newData});
+        //TODO check if there is only one go ahead etc...
+        this.props.editItem(editedData);
     };
 
     handleTeamChange = (index, data) => {

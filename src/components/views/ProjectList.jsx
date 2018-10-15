@@ -10,6 +10,8 @@ import Fuse from 'fuse.js';
 import moment from 'moment';
 import Select from 'react-select';
 
+import * as ProjectClientTiming from '../../constants/ProjectClientTiming';
+
 import {TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT, TABLE_SCROLLBARS_AUTO_HIDE_DURATION} from '../../constants/Constatnts';
 
 import {daysToString} from '../../lib/dateHelper';
@@ -172,6 +174,7 @@ export default class ProjectList extends React.PureComponent {
                 const down = sort.indexOf('-') === 0;
                 let field = down ? sort.substr(1) : sort;
                 if (field === 'status') field = 'status-order';
+                if (field === 'go-ahead') field = 'go-ahead-order';
                 let dataA = down ? this.getComputedField(field, projects[a]) : this.getComputedField(field, projects[b]);
                 let dataB = down ? this.getComputedField(field, projects[b]) : this.getComputedField(field, projects[a]);
                 if (typeof dataA === 'undefined' && typeof dataB === 'undefined') return 0;
@@ -382,8 +385,16 @@ export default class ProjectList extends React.PureComponent {
                 return '10.000 USD [10%]';
 
             case 'go-ahead': //find go ahead from timing [{date, text, category}] in days to go ahead /colors?/
-                const goAhead = daysToString(100);//daysToString(project ? project.goAhead : null, null, false); //TODO synthesize goAhead from timing
-                return goAhead;
+                let goAheadDate = project && project.timing ? project.timing.find(line => line.label === ProjectClientTiming.GO_AHEAD.id) : null;
+                goAheadDate = goAheadDate && goAheadDate.date ? goAheadDate.date : null;
+                return daysToString(goAheadDate, null, false);
+
+            case 'go-ahead-order':
+                //return ProjectStatus[project['status']] && ProjectStatus[project['status']].sortOrder ? ProjectStatus[project['status']].sortOrder.toString() : '0';
+                let goAheadDate2 = project && project.timing ? project.timing.find(line => line.label === ProjectClientTiming.GO_AHEAD.id) : null;
+                goAheadDate2 = goAheadDate2 && goAheadDate2.date ? +new Date(goAheadDate2.date) : +new Date(2100,0,1,0,0,0,0);
+                return `${goAheadDate2}`;
+
 
             case 'last-contact': //last contact in days passed this - colors?
                 const lastContact = daysToString(project ? project.lastContact : null, null, true);
