@@ -16,7 +16,7 @@ import memoize from 'memoize-one';
 
 import {PersonsColumnDef} from '../../constants/TableColumnsDef';
 
-const searchKeys = ['name', '$name', 'contact', 'profession'];
+const searchKeys = ['name', '$name', 'contact', 'profession', 'company', 'project'];
 
 export default class PersonList extends React.PureComponent {
 
@@ -138,7 +138,7 @@ export default class PersonList extends React.PureComponent {
             })
         }
     });
-
+    /*
     searchList = memoize((projects, ids, search, keys) => {
         //console.log('SEARCH');
         if(search && search.trim()) {
@@ -150,6 +150,41 @@ export default class PersonList extends React.PureComponent {
                 keys: keys
             });
             return fuse.search(search.trim());
+        } else return ids;
+    });
+    */
+    searchList = memoize((projects, ids, search, keys) => {
+        //console.log('SEARCH');
+        if(search && search.trim()) {
+            let keysModified = keys;
+            let tokenize = false;
+            if(search.indexOf(':') > 1) {
+                const index = search.trim().indexOf(':');
+                const key = search.substring(0, index).trim();
+                if(keys.indexOf(key) >= 0) {
+                    search = search.substring(index + 1);
+                    keysModified = [key];
+                    if(key === 'name') keysModified.push('$name');
+                }
+            }
+            let searchModified = search.trim().replace(/[^a-zA-Z ]/g, '').replace(/ +/g, '_');
+            //console.log(keysModified);
+            //console.log(searchModified);
+            const data = ids.map(id => keysModified.reduce((mod, key) => ({...mod, [key]: this.getComputedField(key, projects[id], false, true)}) , {_id: id}));
+            const fuse = new Fuse(data, {
+                verbose: false,
+                id: '_id',
+                findAllMatches: true,
+                keys: keysModified,
+                tokenize: tokenize,
+                matchAllTokens: true,
+                threshold: 0.4,
+                location: 0,
+                distance: 100,
+                maxPatternLength: 32,
+                minMatchCharLength: 2
+            });
+            return fuse.search(searchModified.trim());
         } else return ids;
     });
 
@@ -237,6 +272,23 @@ export default class PersonList extends React.PureComponent {
                         return person.profession.map(profession => PersonProfession[profession] ? PersonProfession[profession].label : '').join(', ');
                     } else return '---';
                 }
+
+            case 'company':
+                if(searchable) {
+                    if (person && person.company && person.company.length > 0) {
+                        return person.company.map(companyId => this.props.companies[companyId] ? `${this.props.companies[companyId].name.replace(/ +/g, '_')}` : '').join(' ');
+                    } else return '';
+                } else return '';
+
+            case 'project':
+                if(searchable) {
+                    /*console.log(this.props.projects)
+                    if (company && company.project && company.person.length > 0) {
+                        return company.person.map(personId => this.props.persons[personId] ? `${this.props.persons[personId].name.replace(/ +/g, '_')}` : '').join(' ');
+                    } else return '';*/
+                    return '';
+                } else return '';
+
             default: return person && person[field] ? person[field] : '---';
         }
     }

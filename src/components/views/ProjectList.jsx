@@ -190,14 +190,35 @@ export default class ProjectList extends React.PureComponent {
     searchList = memoize((projects, ids, search, keys) => {
         //console.log('SEARCH');
         if(search && search.trim()) {
-            const data = ids.map(id => keys.reduce((mod, key) => ({...mod, [key]: this.getComputedField(key, projects[id], false, true)}) , {_id: id}));
+            let keysModified = keys;
+            let tokenize = false;
+            if(search.indexOf(':') > 1) {
+                const index = search.trim().indexOf(':');
+                const key = search.substring(0, index).trim();
+                if(keys.indexOf(key) >= 0) {
+                    search = search.substring(index + 1);
+                    keysModified = [key];
+                    if(key === 'name') keysModified.push('$name');
+                }
+            }
+            let searchModified = search.trim().replace(/[^a-zA-Z ]/g, '').replace(/ +/g, '_');
+            //console.log(keysModified);
+            //console.log(searchModified);
+            const data = ids.map(id => keysModified.reduce((mod, key) => ({...mod, [key]: this.getComputedField(key, projects[id], false, true)}) , {_id: id}));
             const fuse = new Fuse(data, {
                 verbose: false,
                 id: '_id',
                 findAllMatches: true,
-                keys: keys
+                keys: keysModified,
+                tokenize: tokenize,
+                matchAllTokens: true,
+                threshold: 0.4,
+                location: 0,
+                distance: 100,
+                maxPatternLength: 32,
+                minMatchCharLength: 2
             });
-            return fuse.search(search.trim());
+            return fuse.search(searchModified.trim());
         } else return ids;
     });
 
