@@ -117,7 +117,7 @@ export default class ProjectDetail extends React.PureComponent {
                         <div className={'detail-row'}>
                             <div className={'detail-group size-12'}>
                                 <div className={`detail-label`}>{'Status note:'}</div>
-                                <div className={`detail-value`}>{statusNote}</div>
+                                <div className={`detail-value multi-line`}>{statusNote}</div>
                             </div>
                         </div>
                         : null}

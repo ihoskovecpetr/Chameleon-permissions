@@ -158,7 +158,7 @@ export default class ProjectList extends React.PureComponent {
                         break;
 
                     case FilterTypes.USER_FILTER:
-                        return project.team && project.team.some(member => member.id === this.props.user.id);
+                        if(!(project.team && project.team.some(member => member.id === this.props.user.id))) return false;
                 }
             }
             return true;
@@ -173,8 +173,9 @@ export default class ProjectList extends React.PureComponent {
             return ids.sort((a, b) => {
                 const down = sort.indexOf('-') === 0;
                 let field = down ? sort.substr(1) : sort;
-                if (field === 'status') field = 'status-order';
-                if (field === 'go-ahead') field = 'go-ahead-order';
+                //if (field === 'status') field = 'status-order';
+                //if (field === 'go-ahead') field = 'go-ahead-order';
+                if(['status', 'go-ahead', 'last-contact'].indexOf(field) >= 0) field = `${field}-order`;
                 let dataA = down ? this.getComputedField(field, projects[a]) : this.getComputedField(field, projects[b]);
                 let dataB = down ? this.getComputedField(field, projects[b]) : this.getComputedField(field, projects[a]);
                 if (typeof dataA === 'undefined' && typeof dataB === 'undefined') return 0;
@@ -353,7 +354,7 @@ export default class ProjectList extends React.PureComponent {
                 else return `id: ${supervisor.id}`;
 
             case 'status-order':
-                return ProjectStatus[project['status']] && ProjectStatus[project['status']].sortOrder ? ProjectStatus[project['status']].sortOrder.toString() : '0';
+                return ProjectStatus[project['status']] && ProjectStatus[project['status']].sort ? ProjectStatus[project['status']].sort.toString() : '0';
 
             case 'status':
                 const status = ProjectStatus[project['status']] ? ProjectStatus[project['status']].label : '---';
@@ -412,14 +413,18 @@ export default class ProjectList extends React.PureComponent {
 
             case 'go-ahead-order':
                 //return ProjectStatus[project['status']] && ProjectStatus[project['status']].sortOrder ? ProjectStatus[project['status']].sortOrder.toString() : '0';
-                let goAheadDate2 = project && project.timing ? project.timing.find(line => line.label === ProjectClientTiming.GO_AHEAD.id) : null;
-                goAheadDate2 = goAheadDate2 && goAheadDate2.date ? +new Date(goAheadDate2.date) : +new Date(2100,0,1,0,0,0,0);
-                return `${goAheadDate2}`;
+                let goAheadDateOrder = project && project.timing ? project.timing.find(line => line.label === ProjectClientTiming.GO_AHEAD.id) : null;
+                goAheadDateOrder = goAheadDateOrder && goAheadDateOrder.date ? +new Date(goAheadDateOrder.date) : +new Date(2100,0,1,0,0,0,0);
+                return `${goAheadDateOrder}`;
 
 
             case 'last-contact': //last contact in days passed this - colors?
                 const lastContact = daysToString(project ? project.lastContact : null, null, true);
                 return editable ? <div onClick={() => this.handleResetLastContact(project._id)} className={'table-button'}>{lastContact}</div> : lastContact;
+
+            case 'last-contact-order':
+                const  lastContactOrder = project && project.lastContact ? +new Date(project.lastContact) :  +new Date(0);
+                return `${lastContactOrder}`;
 
             default: return project && project[field] ? project[field] : '---';
         }

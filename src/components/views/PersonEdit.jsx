@@ -152,24 +152,27 @@ export default class PersonEdit extends React.PureComponent {
     // CLOSE, SAVE, REMOVE
     // *****************************************************************************************************************
     close = () => {
-        //if(this.returnNew) this.props.setJustAddedObject(null); //to remove waiting flag
         this.props.returnToPreviousView();
     };
 
     save = async () => {
-        if(this.props.person) this.props.update(this.props.person._id);
-        else {
-            if(this.returnNew) {
-                const object = await this.props.create();
-                this.props.setJustAddedObject(object);
-            } else this.props.create();
-        }
-        this.close();
+        try {
+            if (this.props.person) this.props.update(this.props.person._id);
+            else {
+                if (this.returnNew) {
+                    const object = await this.props.create();
+                    this.props.setJustAddedObject(object);
+                } else this.props.create();
+            }
+            this.close();
+        } catch(e) {}
     };
 
-    remove = () => {
-        this.props.remove(this.props.person._id);
-        this.close();
+    remove = async () => {
+        try {
+            this.props.remove(this.props.person._id);
+            this.close();
+        } catch(e) {}
     };
 
     // *****************************************************************************************************************

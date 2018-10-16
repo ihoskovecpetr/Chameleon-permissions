@@ -6,7 +6,7 @@ import persistState from 'redux-sessionstorage';
 import thunk from 'redux-thunk';
 
 import * as logger from 'loglevel';
-import { getAuthenticatedUser } from './lib/authenticatedUser';
+import { getAuthenticatedUser } from './lib/serverData';
 
 import Reducer from './reducers/Reducer';
 
@@ -71,8 +71,10 @@ const rootElement = document.getElementById('app');
         const user = await getAuthenticatedUser();
         store.dispatch(Actions.setUser(user));
         logger.info(user);
+        if(user.exp) logger.info(`Session will expire on ${new Date(user.exp)}`)
     } catch(e) {
-        logger.warn('Error while getAuthenticatedUser')
+        logger.warn('Error while getAuthenticatedUser');
+        return;
     }
 
     try {
@@ -91,7 +93,6 @@ const rootElement = document.getElementById('app');
 
 if (module.hot) {
     logger.debug('Accepting Hot Module');
-    //module.hot.accept();
     module.hot.accept('./reducers/Reducer', () => {
         const nextRootReducer = require('./reducers/Reducer');
         store.replaceReducer(nextRootReducer);

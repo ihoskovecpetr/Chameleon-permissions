@@ -6,7 +6,7 @@ const HtmlWepackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
-const PROXY_REMOTE_USER = 'miroslav.kozel';
+const PROXY_REMOTE_USER = 'jan.malir';
 
 module.exports = {
     entry: [

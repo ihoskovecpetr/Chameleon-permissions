@@ -1,4 +1,19 @@
 //**********************************************************************************************************************
+// AUTHENTICATED USER
+//**********************************************************************************************************************
+export async function getAuthenticatedUser() {
+    const options = {
+        credentials: 'same-origin',
+        headers: {'Content-Type': 'application/json', 'cache-control': 'no-cache','pragma': 'no-cache'}
+    };
+    const response = await fetch('/remote-user', options);
+    if(response.ok) {
+        return await response.json();
+    } else {
+        throw 'Not Authenticated';
+    }
+}
+//**********************************************************************************************************************
 // PROJECTS
 //**********************************************************************************************************************
 export async function getProjects() {
@@ -6,7 +21,8 @@ export async function getProjects() {
     try {
         const options = {
             credentials: 'same-origin',
-            headers: {'cache-control': 'no-cache', 'pragma': 'no-cache'}
+            headers: {'cache-control': 'no-cache', 'pragma': 'no-cache'},
+            redirect: 'manual'
         };
         const response = await fetch(`/api/project/projects`, options);
         const contentType = response.headers.get("content-type");
@@ -14,7 +30,10 @@ export async function getProjects() {
         if (response.ok) {
             return  data;
         } else {
-            if(data) {
+            if(response.type === 'opaqueredirect') {
+                error = new Error('User not authenticated or session expired.');
+                loginRedirect();
+            } else if(data) {
                 if(typeof data === 'string') error = new Error(`${data} - ${response.statusText} (${response.status})`);
                 else error = new Error(data.error ? data.error : `(${response.status}) ${response.statusText}`);
             } else error = new Error(`${response.statusText} (${response.status})`);
@@ -32,7 +51,8 @@ export async function createProject(project) {
             method: 'POST',
             credentials: 'same-origin',
             headers: {'Content-Type': 'application/json', 'cache-control': 'no-cache', 'pragma': 'no-cache'},
-            body: JSON.stringify(project)
+            body: JSON.stringify(project),
+            redirect: 'manual'
         };
         const response = await fetch(`/api/project/projects`, options);
         const contentType = response.headers.get("content-type");
@@ -40,7 +60,10 @@ export async function createProject(project) {
         if (response.ok) {
             return  data;
         } else {
-            if(data) {
+            if(response.type === 'opaqueredirect') {
+                error = new Error('User not authenticated or session expired.');
+                loginRedirect();
+            } else if(data) {
                 if(typeof data === 'string') error = new Error(`${data} - ${response.statusText} (${response.status})`);
                 else error = new Error(data.error ? data.error : `(${response.status}) ${response.statusText}`);
             } else error = new Error(`${response.statusText} (${response.status})`);
@@ -58,7 +81,8 @@ export async function updateProject(id, project) {
             method: 'PUT',
             credentials: 'same-origin',
             headers: {'Content-Type': 'application/json', 'cache-control': 'no-cache', 'pragma': 'no-cache'},
-            body: JSON.stringify(project)
+            body: JSON.stringify(project),
+            redirect: 'manual'
         };
         const response = await fetch(`/api/project/projects/${id}`, options);
         const contentType = response.headers.get("content-type");
@@ -66,7 +90,10 @@ export async function updateProject(id, project) {
         if (response.ok) {
             return  data;
         } else {
-            if(data) {
+            if(response.type === 'opaqueredirect') {
+                error = new Error('User not authenticated or session expired.');
+                loginRedirect();
+            } else if(data) {
                 if(typeof data === 'string') error = new Error(`${data} - ${response.statusText} (${response.status})`);
                 else error = new Error(data.error ? data.error : `(${response.status}) ${response.statusText}`);
             } else error = new Error(`${response.statusText} (${response.status})`);
@@ -83,7 +110,8 @@ export async function removeProject(id) {
         const options = {
             method: 'DELETE',
             credentials: 'same-origin',
-            headers: {'cache-control': 'no-cache', 'pragma': 'no-cache'}
+            headers: {'cache-control': 'no-cache', 'pragma': 'no-cache'},
+            redirect: 'manual'
         };
         const response = await fetch(`/api/project/projects/${id}`, options);
         const contentType = response.headers.get("content-type");
@@ -91,7 +119,10 @@ export async function removeProject(id) {
         if (response.ok) {
             return  data;
         } else {
-            if(data) {
+            if(response.type === 'opaqueredirect') {
+                error = new Error('User not authenticated or session expired.');
+                loginRedirect();
+            } else if(data) {
                 if(typeof data === 'string') error = new Error(`${data} - ${response.statusText} (${response.status})`);
                 else error = new Error(data.error ? data.error : `(${response.status}) ${response.statusText}`);
             } else error = new Error(`${response.statusText} (${response.status})`);
@@ -109,7 +140,8 @@ export async function getUsers() {
     try {
         const options = {
             credentials: 'same-origin',
-            headers: {'cache-control': 'no-cache', 'pragma': 'no-cache'}
+            headers: {'cache-control': 'no-cache', 'pragma': 'no-cache'},
+            redirect: 'manual'
         };
         const response = await fetch(`/api/project/users`, options);
         const contentType = response.headers.get("content-type");
@@ -117,7 +149,10 @@ export async function getUsers() {
         if (response.ok) {
             return  data;
         } else {
-            if(data) {
+            if(response.type === 'opaqueredirect') {
+                error = new Error('User not authenticated or session expired.');
+                loginRedirect();
+            } else if(data) {
                 if(typeof data === 'string') error = new Error(`${data} - ${response.statusText} (${response.status})`);
                 else error = new Error(data.error ? data.error : `(${response.status}) ${response.statusText}`);
             } else error = new Error(`${response.statusText} (${response.status})`);
@@ -136,7 +171,8 @@ export async function getPersons() {
     try {
         const options = {
             credentials: 'same-origin',
-            headers: {'cache-control': 'no-cache', 'pragma': 'no-cache'}
+            headers: {'cache-control': 'no-cache', 'pragma': 'no-cache'},
+            redirect: 'manual'
         };
         const response = await fetch(`/api/project/persons`, options);
         const contentType = response.headers.get("content-type");
@@ -144,7 +180,10 @@ export async function getPersons() {
         if (response.ok) {
             return  data;
         } else {
-            if(data) {
+            if(response.type === 'opaqueredirect') {
+                error = new Error('User not authenticated or session expired.');
+                loginRedirect();
+            } else if(data) {
                 if(typeof data === 'string') error = new Error(`${data} - ${response.statusText} (${response.status})`);
                 else error = new Error(data.error ? data.error : `(${response.status}) ${response.statusText}`);
             } else error = new Error(`${response.statusText} (${response.status})`);
@@ -163,7 +202,8 @@ export async function createPerson(person) {
             method: 'POST',
             credentials: 'same-origin',
             headers: {'Content-Type': 'application/json', 'cache-control': 'no-cache', 'pragma': 'no-cache'},
-            body: JSON.stringify(person)
+            body: JSON.stringify(person),
+            redirect: 'manual'
         };
         const response = await fetch(`/api/project/persons`, options);
         const contentType = response.headers.get("content-type");
@@ -171,7 +211,10 @@ export async function createPerson(person) {
         if (response.ok) {
             return  data;
         } else {
-            if(data) {
+            if(response.type === 'opaqueredirect') {
+                error = new Error('User not authenticated or session expired.');
+                loginRedirect();
+            } else if(data) {
                 if(typeof data === 'string') error = new Error(`${data} - ${response.statusText} (${response.status})`);
                 else error = new Error(data.error ? data.error : `(${response.status}) ${response.statusText}`);
             } else error = new Error(`${response.statusText} (${response.status})`);
@@ -189,7 +232,8 @@ export async function updatePerson(id, person) {
             method: 'PUT',
             credentials: 'same-origin',
             headers: {'Content-Type': 'application/json', 'cache-control': 'no-cache', 'pragma': 'no-cache'},
-            body: JSON.stringify(person)
+            body: JSON.stringify(person),
+            redirect: 'manual'
         };
         const response = await fetch(`/api/project/persons/${id}`, options);
         const contentType = response.headers.get("content-type");
@@ -197,7 +241,10 @@ export async function updatePerson(id, person) {
         if (response.ok) {
             return  data;
         } else {
-            if(data) {
+            if(response.type === 'opaqueredirect') {
+                error = new Error('User not authenticated or session expired.');
+                loginRedirect();
+            } else if(data) {
                 if(typeof data === 'string') error = new Error(`${data} - ${response.statusText} (${response.status})`);
                 else error = new Error(data.error ? data.error : `(${response.status}) ${response.statusText}`);
             } else error = new Error(`${response.statusText} (${response.status})`);
@@ -214,7 +261,8 @@ export async function removePerson(id) {
         const options = {
             method: 'DELETE',
             credentials: 'same-origin',
-            headers: {'cache-control': 'no-cache', 'pragma': 'no-cache'}
+            headers: {'cache-control': 'no-cache', 'pragma': 'no-cache'},
+            redirect: 'manual'
         };
         const response = await fetch(`/api/project/persons/${id}`, options);
         const contentType = response.headers.get("content-type");
@@ -222,7 +270,10 @@ export async function removePerson(id) {
         if (response.ok) {
             return  data;
         } else {
-            if(data) {
+            if(response.type === 'opaqueredirect') {
+                error = new Error('User not authenticated or session expired.');
+                loginRedirect();
+            } else if(data) {
                 if(typeof data === 'string') error = new Error(`${data} - ${response.statusText} (${response.status})`);
                 else error = new Error(data.error ? data.error : `(${response.status}) ${response.statusText}`);
             } else error = new Error(`${response.statusText} (${response.status})`);
@@ -240,7 +291,8 @@ export async function getCompanies() {
     try {
         const options = {
             credentials: 'same-origin',
-            headers: {'cache-control': 'no-cache', 'pragma': 'no-cache'}
+            headers: {'cache-control': 'no-cache', 'pragma': 'no-cache'},
+            redirect: 'manual'
         };
         const response = await fetch(`/api/project/companies`, options);
         const contentType = response.headers.get("content-type");
@@ -248,7 +300,10 @@ export async function getCompanies() {
         if (response.ok) {
             return  data;
         } else {
-            if(data) {
+            if(response.type === 'opaqueredirect') {
+                error = new Error('User not authenticated or session expired.');
+                loginRedirect();
+            } else if(data) {
                 if(typeof data === 'string') error = new Error(`${data} - ${response.statusText} (${response.status})`);
                 else error = new Error(data.error ? data.error : `(${response.status}) ${response.statusText}`);
             } else error = new Error(`${response.statusText} (${response.status})`);
@@ -266,7 +321,8 @@ export async function createCompany(company) {
             method: 'POST',
             credentials: 'same-origin',
             headers: {'Content-Type': 'application/json', 'cache-control': 'no-cache', 'pragma': 'no-cache'},
-            body: JSON.stringify(company)
+            body: JSON.stringify(company),
+            redirect: 'manual'
         };
         const response = await fetch(`/api/project/companies`, options);
         const contentType = response.headers.get("content-type");
@@ -274,7 +330,10 @@ export async function createCompany(company) {
         if (response.ok) {
             return  data;
         } else {
-            if(data) {
+            if(response.type === 'opaqueredirect') {
+                error = new Error('User not authenticated or session expired.');
+                loginRedirect();
+            } else if(data) {
                 if(typeof data === 'string') error = new Error(`${data} - ${response.statusText} (${response.status})`);
                 else error = new Error(data.error ? data.error : `(${response.status}) ${response.statusText}`);
             } else error = new Error(`${response.statusText} (${response.status})`);
@@ -292,7 +351,8 @@ export async function updateCompany(id, company) {
             method: 'PUT',
             credentials: 'same-origin',
             headers: {'Content-Type': 'application/json', 'cache-control': 'no-cache', 'pragma': 'no-cache'},
-            body: JSON.stringify(company)
+            body: JSON.stringify(company),
+            redirect: 'manual'
         };
         const response = await fetch(`/api/project/companies/${id}`, options);
         const contentType = response.headers.get("content-type");
@@ -300,7 +360,10 @@ export async function updateCompany(id, company) {
         if (response.ok) {
             return  data;
         } else {
-            if(data) {
+            if(response.type === 'opaqueredirect') {
+                error = new Error('User not authenticated or session expired.');
+                loginRedirect();
+            } else if(data) {
                 if(typeof data === 'string') error = new Error(`${data} - ${response.statusText} (${response.status})`);
                 else error = new Error(data.error ? data.error : `(${response.status}) ${response.statusText}`);
             } else error = new Error(`${response.statusText} (${response.status})`);
@@ -317,7 +380,8 @@ export async function removeCompany(id) {
         const options = {
             method: 'DELETE',
             credentials: 'same-origin',
-            headers: {'cache-control': 'no-cache', 'pragma': 'no-cache'}
+            headers: {'cache-control': 'no-cache', 'pragma': 'no-cache'},
+            redirect: 'manual'
         };
         const response = await fetch(`/api/project/companies/${id}`, options);
         const contentType = response.headers.get("content-type");
@@ -325,7 +389,10 @@ export async function removeCompany(id) {
         if (response.ok) {
             return  data;
         } else {
-            if(data) {
+            if(response.type === 'opaqueredirect') {
+                error = new Error('User not authenticated or session expired.');
+                loginRedirect();
+            } else if(data) {
                 if(typeof data === 'string') error = new Error(`${data} - ${response.statusText} (${response.status})`);
                 else error = new Error(data.error ? data.error : `(${response.status}) ${response.statusText}`);
             } else error = new Error(`${response.statusText} (${response.status})`);
@@ -334,4 +401,8 @@ export async function removeCompany(id) {
         error = e;
     }
     if(error) throw error;
+}
+
+function loginRedirect() {
+    window.location.replace('/login?app=projects');
 }

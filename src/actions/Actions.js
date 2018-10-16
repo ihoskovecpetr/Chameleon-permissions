@@ -52,7 +52,7 @@ export function resetData() {
 }
 
 export function getData(scheduled) {
-    if(scheduled) logger.info('Refresh data - scheduled');
+    if(scheduled) logger.info(`Refresh data - scheduled`);
     if(refreshTimer) clearTimeout(refreshTimer);
     return async (dispatch, getState) => {
         if(!scheduled) dispatch(setFetching(true));
@@ -154,33 +154,14 @@ export function updateProject(id, updateData) {
             }));
         } catch(e) {
             logger.error(e);
+            dispatch(setFetching(false));
             dispatch(setMessage({type: 'error', text: `Update project error: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
+            throw e;
         }
         dispatch(setFetching(false));
     }
 }
-/*
-export function updateProjectDirect(id, projectUpdate) {
-    return updateProject(id, projectUpdate);
-    return async (dispatch, getState) => {
-        dispatch(setFetching(true));
-        dispatch(setMessage(null));
-        try {
-            const updatedProject = await server.updateProject(id, projectUpdate);
-            dispatch({type: ActionTypes.UPDATE_PROJECT, project: updatedProject});
-            if (Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
-                type: 'info',
-                text: 'Update project done successfully!',
-                timeout: Constants.DEFAULT_MESSAGE_TIMEOUT_MS
-            }));
-        } catch(e) {
-            logger.error(e);
-            dispatch(setMessage({type: 'error', text: `Update project error: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
-        }
-        dispatch(setFetching(false));
-    }
-}
-*/
+
 export function createProject() {
     return async (dispatch, getState) => {
         const project = getState().appState.projectEditedData;
@@ -197,7 +178,9 @@ export function createProject() {
             }));
         } catch(e) {
             logger.error(e);
+            dispatch(setFetching(false));
             dispatch(setMessage({type: 'error', text: `Create project error: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
+            throw e;
         }
         dispatch(setFetching(false));
     }
@@ -219,7 +202,9 @@ export function removeProject(id) {
             }));
         } catch(e) {
             logger.error(e);
+            dispatch(setFetching(false));
             dispatch(setMessage({type: 'error', text: `Remove project error: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
+            throw e;
         }
         dispatch(setFetching(false));
     }
@@ -278,7 +263,9 @@ export function updateCompany(id, updateData) {
             }));
         } catch(e) {
             logger.error(e);
+            dispatch(setFetching(false));
             dispatch(setMessage({type: 'error', text: `Update company error: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
+            throw e;
         }
         dispatch(setFetching(false));
     }
@@ -301,7 +288,9 @@ export function createCompany() {
             }));
         } catch(e) {
             logger.error(e);
+            dispatch(setFetching(false));
             dispatch(setMessage({type: 'error', text: `Create company error: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
+            throw e;
         }
         dispatch(setFetching(false));
         if(newCompany && newCompany._id) return newCompany;
@@ -324,7 +313,9 @@ export function removeCompany(id) {
             }));
         } catch(e) {
             logger.error(e);
+            dispatch(setFetching(false));
             dispatch(setMessage({type: 'error', text: `Remove company error: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
+            throw e;
         }
         dispatch(setFetching(false));
     }
@@ -383,7 +374,9 @@ export function updatePerson(id, updateData) {
             }));
         } catch(e) {
             logger.error(e);
+            dispatch(setFetching(false));
             dispatch(setMessage({type: 'error', text: `Update person error: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
+            throw e;
         }
         dispatch(setFetching(false));
     }
@@ -406,7 +399,9 @@ export function createPerson() {
             }));
         } catch(e) {
             logger.error(e);
+            dispatch(setFetching(false));
             dispatch(setMessage({type: 'error', text: `Create person error: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
+            throw e;
         }
         dispatch(setFetching(false));
         if(newPerson && newPerson._id) return newPerson;
@@ -429,7 +424,9 @@ export function removePerson(id) {
             }));
         } catch(e) {
             logger.error(e);
+            dispatch(setFetching(false));
             dispatch(setMessage({type: 'error', text: `Remove person error: ${e instanceof Error ? e.message : JSON.stringify(e)}`}));
+            throw e;
         }
         dispatch(setFetching(false));
     }

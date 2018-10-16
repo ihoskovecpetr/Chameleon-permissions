@@ -9,10 +9,6 @@ import * as Icons from '../constants/Icons';
 export default class AppHeader extends React.PureComponent {
     constructor(props) {
         super(props);
-
-        this.refresh = this.refresh.bind(this);
-        this.logout = this.logout.bind(this);
-        this.home = this.home.bind(this);
     }
 
     render() {
@@ -98,16 +94,17 @@ export default class AppHeader extends React.PureComponent {
         )
     }
 
-    refresh() {
-        logger.info('Refresh data');
-        this.props.refresh();
-    }
+    refresh = async () => {
+        try {
+            this.props.refresh();
+        } catch(e) {}
+    };
 
-    logout() {
-        logger.info('Logout');
-    }
+    logout = () => {
+        window.location.replace('/login');
+    };
 
-    home() {
-        logger.info('Go home');
-    }
+    home = () => {
+        window.location.replace('/hub');
+    };
 }

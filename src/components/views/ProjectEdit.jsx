@@ -140,9 +140,10 @@ export default class ProjectEdit extends React.PureComponent {
                                 <div className={`detail-label${editedData.statusNote !== undefined && selected ? ' value-changed' : ''}`}>{'Status note:'}</div>
                                 <Input
                                     placeholder={'Status note...'}
-                                    className={`detail-input${this.state.validation.statusNote ? ' invalid' : ''}`}
+                                    className={`detail-input textarea${this.state.validation.statusNote ? ' invalid' : ''}`}
                                     onChange={this.handleStatusNoteChange}
                                     value={statusNote}
+                                    type={'textarea'}
                                 />
                             </div>
                         </div>
@@ -390,15 +391,19 @@ export default class ProjectEdit extends React.PureComponent {
         this.props.returnToPreviousView();
     };
 
-    save = () => {
-        if(this.props.selected) this.props.update(this.props.selected);
-        else this.props.create();
-        this.close();
+    save = async () => {
+        try {
+            if (this.props.selected) await this.props.update(this.props.selected);
+            else await this.props.create();
+            this.close();
+        } catch (e) {}
     };
 
-    remove = () => {
-        this.props.remove(this.props.selected);
-        this.close();
+    remove = async () => {
+        try {
+            await this.props.remove(this.props.selected);
+            this.close();
+        } catch(e) {}
     };
 
     // *****************************************************************************************************************

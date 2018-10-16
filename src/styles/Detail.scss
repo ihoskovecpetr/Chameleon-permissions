@@ -386,6 +386,11 @@ $detail-client-person-padding-left: 1em;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      &.multi-line {
+        height: auto;
+        min-height: $detail-control-height;
+        white-space: normal;
+      }
       &.selectable {
         -moz-user-select: text;
         -webkit-user-select: text;

@@ -59,6 +59,11 @@ $table-control-background-color: #f5f5f5;
   //border-color: #9b9b9b;
   border: 1px solid #9b9b9b;
   border-radius: $detail-control-border-radius;
+  &.textarea {
+    min-height: $detail-control-height;
+    height: $detail-control-height;
+    padding-top: 0.25em;
+  }
   &.invalid {
     background-color: $detail-control-invalid-color;
     &:focus {

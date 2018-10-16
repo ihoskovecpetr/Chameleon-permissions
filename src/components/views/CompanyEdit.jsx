@@ -157,19 +157,23 @@ export default class CompanyEdit extends React.PureComponent {
     };
 
     save = async () => {
-        if(this.props.company) this.props.update(this.props.company._id);
-        else {
-            if(this.returnNew) {
-                const object = await this.props.create();
-                this.props.setJustAddedObject(object);
-            } else this.props.create();
-        }
-        this.close();
+        try {
+            if (this.props.company) this.props.update(this.props.company._id);
+            else {
+                if (this.returnNew) {
+                    const object = await this.props.create();
+                    this.props.setJustAddedObject(object);
+                } else this.props.create();
+            }
+            this.close();
+        } catch(e) {}
     };
 
     remove = () => {
-        this.props.remove(this.props.company._id);
-        this.close();
+        try {
+            this.props.remove(this.props.company._id);
+            this.close();
+        } catch(e) {}
     };
 
     // *****************************************************************************************************************
