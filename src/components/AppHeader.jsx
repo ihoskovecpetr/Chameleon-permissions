@@ -101,10 +101,10 @@ export default class AppHeader extends React.PureComponent {
     };
 
     logout = () => {
-        window.location.replace('/login');
+        window.location.assign('/logout');
     };
 
     home = () => {
-        window.location.replace('/hub');
+        window.location.assign('/hub');
     };
 }
