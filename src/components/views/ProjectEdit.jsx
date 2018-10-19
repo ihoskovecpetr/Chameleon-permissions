@@ -45,18 +45,22 @@ export default class ProjectEdit extends React.PureComponent {
         if(this.props.editedData !== prevProps.editedData || this.props.projects !== prevProps.projects) this.checkValidity();
     }
 
+    componentWillUnmount() {
+        if(this.validationTimer) clearTimeout(this.validationTimer);
+    }
+
     render() {
         //console.log('RENDER')
-        const {selected, editedData, projects, companies, persons, users} = this.props;
+        const {project, editedData, projects, companies, persons, users} = this.props;
 
-        const name = editedData.name !== undefined ? editedData.name : !selected ? '' : projects[selected] ? projects[selected].name : '';
-        const status = editedData.status !== undefined ? editedData.status : projects[selected] ? projects[selected].status : null;
-        const statusNote = editedData.statusNote !== undefined ? editedData.statusNote : projects[selected] ? projects[selected].statusNote : '';
-        const company = editedData.company !== undefined ? editedData.company : projects[selected] ? projects[selected].company : [];
-        const person = editedData.person !== undefined ? editedData.person : projects[selected] ? projects[selected].person : [];
-        const team = editedData.team !== undefined ? editedData.team : projects[selected] ? projects[selected].team : [];
-        const timing = editedData.timing !== undefined ? editedData.timing : projects[selected] ? projects[selected].timing : [];
-        const lastContact = editedData.lastContact !== undefined ? editedData.lastContact ? moment(editedData.lastContact) : null : projects[selected] && projects[selected].lastContact ? moment(projects[selected].lastContact) : null;
+        const name = editedData.name !== undefined ? editedData.name : project ? project.name : '';
+        const status = editedData.status !== undefined ? editedData.status : project && project.status ? project.status : null;
+        const statusNote = editedData.statusNote !== undefined ? editedData.statusNote : project && project.statusNote ? project.statusNote : '';
+        const company = editedData.company !== undefined ? editedData.company : project && project.company ? project.company : [];
+        const person = editedData.person !== undefined ? editedData.person : project && project.person ? project.person : [];
+        const team = editedData.team !== undefined ? editedData.team : project && project.team ? project.team : [];
+        const timing = editedData.timing !== undefined ? editedData.timing : project && project.timing ? project.timing : [];
+        const lastContact = editedData.lastContact !== undefined ? editedData.lastContact ? moment(editedData.lastContact) : null : project && project.lastContact ? moment(projects.lastContact) : null;
 
         if(Object.keys(editedData).length === 0) {
             team.sort((a, b) => (a.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)) - (b.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)));
@@ -72,7 +76,7 @@ export default class ProjectEdit extends React.PureComponent {
                     <div className={'inner-container'}>
                         <div className={'toolbox-group'}>
                             <div onClick={this.close} className={'tool-box-button'}>{'Cancel'}</div>
-                            <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button${selected ? ' orange' : ' green'}${this.state.saveDisabled ? ' disabled' : ''}`}>{selected ? 'Save' : 'Create'}</div>
+                            <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button${project ? ' orange' : ' green'}${this.state.saveDisabled ? ' disabled' : ''}`}>{project ? 'Save' : 'Create'}</div>
                             <div onClick={this.props.box && this.props.box.length > 0 ? this.addFromBox : undefined} className={`tool-box-button blue${!this.props.box || this.props.box.length === 0 ? ' disabled' : ''}`}><FontAwesomeIcon icon={Icons.ICON_BOX}/><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/></div>
                             <div className={'tool-box-validation'}>
                                 <FontAwesomeIcon className={`tool-box-validation-icon${Object.keys(this.state.validation).length > 0 ? ' active' : ''}`} icon={Icons.ICON_EDITOR_VALIDATION}/>
@@ -80,7 +84,7 @@ export default class ProjectEdit extends React.PureComponent {
                                     {Object.keys(this.state.validation).map(validationField => <div key={validationField}>{`${this.state.validation[validationField].field}: ${this.state.validation[validationField].status}`}</div>)}
                                 </div>
                             </div>
-                            {!selected ? null :
+                            {!project ? null :
                                 <Fragment>
                                     <div onClick={!this.state.removeArmed ? undefined : this.remove} className={`tool-box-button remove red${!this.state.removeArmed ? ' disabled' : ''}`}>{'Remove Project'}</div>
                                     <FontAwesomeIcon className={`tool-box-checkbox`} onClick={this.handleRemoveArmed} icon={this.state.removeArmed ? Icons.ICON_CHECKBOX_CHECKED : Icons.ICON_CHECKBOX_UNCHECKED} style={{cursor: 'pointer'}}/>
@@ -89,7 +93,7 @@ export default class ProjectEdit extends React.PureComponent {
                         </div>
                     </div>
                     <div className={'inner-container left-auto'}>
-                    {selected && projects[selected] ? <div className={'toolbox-id'}>{projects[selected].projectId}</div> : null}
+                    {project ? <div className={'toolbox-id'}>{project.projectId}</div> : null}
                     </div>
                 </div>
 
@@ -100,17 +104,17 @@ export default class ProjectEdit extends React.PureComponent {
                         {/* ------------------ NAME, CONTACT ------------------ */}
                         <div className={'detail-row'}>
                             <div className={'detail-group size-8'}>
-                                <div className={`detail-label${typeof editedData.name !== 'undefined' && selected  ? ' value-changed' : ''}`}>{'Project Name:'}</div>
+                                <div className={`detail-label${typeof editedData.name !== 'undefined' && project  ? ' value-changed' : ''}`}>{'Project Name:'}</div>
                                 <Input
                                     placeholder={'Project name...'}
-                                    autoFocus={!selected}
+                                    autoFocus={!project}
                                     className={`detail-input${this.state.validation.name ? ' invalid' : ''}`}
                                     onChange={this.handleNameChange}
                                     value={name}
                                 />
                             </div>
                             <div className={'detail-group size-4 datepicker-container last-contact'}>
-                                <div className={`detail-label${typeof editedData.lastContact !== 'undefined' && selected  ? ' value-changed' : ''}`}>{'Last Contact:'}</div>
+                                <div className={`detail-label${typeof editedData.lastContact !== 'undefined' && project  ? ' value-changed' : ''}`}>{'Last Contact:'}</div>
                                 <DatePicker
                                     selected={lastContact}
                                     dateFormat={'D.M.YYYY'}
@@ -126,7 +130,7 @@ export default class ProjectEdit extends React.PureComponent {
                         {/* ------------------ STATUS + NOTE ------------------ */}
                         <div className={'detail-row'}>
                             <div className={'detail-group size-4'}>
-                                <div className={`detail-label${typeof editedData.status !== 'undefined' && selected ? ' value-changed' : ''}`}>{'Project status:'}</div>
+                                <div className={`detail-label${typeof editedData.status !== 'undefined' && project ? ' value-changed' : ''}`}>{'Project status:'}</div>
                                 <Select
                                     options={statusOptions}
                                     value={{value: status, label: ProjectStatus[status] ? ProjectStatus[status].label : ''}}
@@ -137,7 +141,7 @@ export default class ProjectEdit extends React.PureComponent {
                                 />
                             </div>
                             <div className={'detail-group size-8'}>
-                                <div className={`detail-label${editedData.statusNote !== undefined && selected ? ' value-changed' : ''}`}>{'Status note:'}</div>
+                                <div className={`detail-label${editedData.statusNote !== undefined && project ? ' value-changed' : ''}`}>{'Status note:'}</div>
                                 <Input
                                     placeholder={'Status note...'}
                                     className={`detail-input textarea${this.state.validation.statusNote ? ' invalid' : ''}`}
@@ -151,7 +155,7 @@ export default class ProjectEdit extends React.PureComponent {
                         {/* ------------------ CLIENT TIMING ------------------ */}
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group column size-12'}>
-                                <div onClick={() => this.handleTimingChange()} className={`detail-label clickable column${editedData.timing !== undefined && selected ? ' value-changed' : ''}`}>
+                                <div onClick={() => this.handleTimingChange()} className={`detail-label clickable column${editedData.timing !== undefined && project ? ' value-changed' : ''}`}>
                                     {'Client Timing'}
                                     <FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/>
                                 </div>
@@ -190,7 +194,7 @@ export default class ProjectEdit extends React.PureComponent {
                         {/* ------------------ TEAM ------------------ */}
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group column size-12'}>
-                                <div onClick={() => this.handleTeamChange()} className={`detail-label clickable column${editedData.team !== undefined && selected ? ' value-changed' : ''}`}>
+                                <div onClick={() => this.handleTeamChange()} className={`detail-label clickable column${editedData.team !== undefined && project ? ' value-changed' : ''}`}>
                                     {'UPP Team'}
                                     <FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/>
                                 </div>
@@ -234,7 +238,7 @@ export default class ProjectEdit extends React.PureComponent {
                             <div className={'detail-group column size-12'}>
                                 <div
                                     onClick={event => event.altKey ? this.createNewCompany() : this.handleCompanyChange()}
-                                    className={`detail-label clickable column${editedData.company !== undefined && selected ? ' value-changed' : ''}`}
+                                    className={`detail-label clickable column${editedData.company !== undefined && project ? ' value-changed' : ''}`}
                                 >
                                     {'Companies'}
                                     <FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/>
@@ -296,7 +300,7 @@ export default class ProjectEdit extends React.PureComponent {
                             <div className={'detail-group column size-12'}>
                                 <div
                                     onClick={event => event.altKey ? this.createNewPerson() : this.handlePersonChange()}
-                                    className={`detail-label clickable column${editedData.person !== undefined && selected ? ' value-changed' : ''}`}
+                                    className={`detail-label clickable column${editedData.person !== undefined && project ? ' value-changed' : ''}`}
                                 >
                                     {'People'}
                                     <FontAwesomeIcon className={'label-icon add'} icon={Icons.ICON_EDITOR_ITEM_ADD}/>
@@ -392,8 +396,9 @@ export default class ProjectEdit extends React.PureComponent {
     };
 
     save = async () => {
+        if(this.setValidation()) return;
         try {
-            if (this.props.selected) await this.props.update(this.props.selected);
+            if (this.props.project) await this.props.update(this.props.project._id);
             else await this.props.create();
             this.close();
         } catch (e) {}
@@ -401,7 +406,7 @@ export default class ProjectEdit extends React.PureComponent {
 
     remove = async () => {
         try {
-            await this.props.remove(this.props.selected);
+            await this.props.remove(this.props.project._id);
             this.close();
         } catch(e) {}
     };
@@ -409,16 +414,17 @@ export default class ProjectEdit extends React.PureComponent {
     // *****************************************************************************************************************
     // HELPERS
     // *****************************************************************************************************************
-    checkValidity() {
+    checkValidity = () => {
+        //console.log('CHECK VALIDITY')
         if(this.validationTimer) return;
         const time = +new Date() - this.lastValidation;
         if(time > Constants.VALIDATION_DELAY_MS) this.setValidation();
         else this.validationTimer = setTimeout(this.setValidation, Constants.VALIDATION_DELAY_MS - time);
-    }
+    };
 
     isNameUsed = name => {
-        if(!name || !this.props.selected) return false;
-        const filtered = Object.keys(this.props.projects).filter(projectId => this.props.projects[projectId].name.toLowerCase().trim() === name.toLowerCase().trim()).filter(projectId => projectId !== this.props.selected);
+        if(!name) return false;
+        const filtered = Object.keys(this.props.projects).filter(projectId => this.props.projects[projectId].name.toLowerCase().trim() === name.toLowerCase().trim()).filter(projectId => !this.props.project || projectId !== this.props.project._id);
         return filtered.length > 0;
     };
 
@@ -427,14 +433,14 @@ export default class ProjectEdit extends React.PureComponent {
     };
 
     updateEditedData = updateData => {
-        const object = this.props.selected ? this.props.projects[this.props.selected] : {};
+        const object = this.props.project ? this.props.project : undefined;
         const newData = {...this.props.editedData, ...updateData};
         for (const key of Object.keys(newData)) {
             if (object && areEquivalent(object[key], newData[key])) {
                 delete newData[key];
                 switch (key) {
                     case 'status':
-                        delete newData['statusNote'];
+                        delete newData['statusNote']; //to refresh ald one if status returned to original
                         break;
                 }
             }
@@ -545,12 +551,11 @@ export default class ProjectEdit extends React.PureComponent {
     // *****************************************************************************************************************
 
     setValidation = () => {
-        //console.log('VALIDATION')
         if(this.validationTimer) clearTimeout(this.validationTimer);
         this.validationTimer = null;
         this.lastValidation = +new Date();
-        const originalObject = this.props.selected && this.props.projects && this.props.projects[this.props.selected] ? this.props.projects[this.props.selected] : {};
-        if(!originalObject._id && this.props.selected) return true; // when refresh, no data fetched yet
+        const originalObject = this.props.project;
+        if(originalObject && !originalObject._id) return true; // when refresh, no data fetched yet
         const object = Object.assign({}, originalObject, this.props.editedData);
         let validation = {};
 
@@ -559,7 +564,8 @@ export default class ProjectEdit extends React.PureComponent {
         if(!object.status) validation['status'] = {field: 'Project status', status: 'Must be set'};
         if(!ProjectStatus[object.status]) validation['status'] = {field: 'Project status', status: 'Is invalid'};
 
-        if((object.status === ProjectStatus.ON_HOLD.id || object.status === ProjectStatus.REFUSED.id || object.status === ProjectStatus.LOST.id) && (!object.statusNote || !object.statusNote.trim())) validation['statusNote'] = {field: 'Status note', status: `Must be set for status "${ProjectStatus[object.status].label}"`};
+        //if((object.status === ProjectStatus.ON_HOLD.id || object.status === ProjectStatus.REFUSED.id || object.status === ProjectStatus.LOST.id) && (!object.statusNote || !object.statusNote.trim())) validation['statusNote'] = {field: 'Status note', status: `Must be set for status "${ProjectStatus[object.status].label}"`};
+        if(!object.statusNote || !object.statusNote.trim()) validation['statusNote'] = {field: 'Status note', status: 'Must be set'};
 
         if(object.team && object.team.some(team => team.id === null)) validation['team-name'] = {field: 'Team', status: 'Some team member is not set'};
         if(object.team && object.team.some(team => team.role.length === 0)) validation['team-role'] = {field: 'Team', status: 'Some team member has not set role'};
@@ -611,21 +617,22 @@ export default class ProjectEdit extends React.PureComponent {
         const disableSave = Object.keys(validation).length > 0 || Object.keys(this.props.editedData).length === 0;
         if(areEquivalent(validation, this.state.validation)) validation = this.state.validation;
         this.setState({validation: validation, saveDisabled: disableSave});
+        return disableSave;
     };
 
     // *****************************************************************************************************************
     // VALUES CHANGE HANDLERS
     // *****************************************************************************************************************
     handleNameChange = event => {
-        this.props.editItem(this.updateEditedData({name: event.target.value}));
+        this.props.editItem(this.updateEditedData({name: event.target.value.toUpperCase()}));
     };
 
     handleStatusChange = option => {
-        if(option.value === ProjectStatus.ON_HOLD.id || option.value === ProjectStatus.REFUSED.id || option.value === ProjectStatus.LOST.id) {
+        //if(option.value === ProjectStatus.ON_HOLD.id || option.value === ProjectStatus.REFUSED.id || option.value === ProjectStatus.LOST.id) {
             this.props.editItem(this.updateEditedData({status: option.value, statusNote: ''}));
-        } else {
-            this.props.editItem(this.updateEditedData({status: option.value}));
-        }
+        //} else {
+            //this.props.editItem(this.updateEditedData({status: option.value}));
+        //}
     };
 
     handleStatusNoteChange = event => {
@@ -638,7 +645,7 @@ export default class ProjectEdit extends React.PureComponent {
 
     handleTimingChange = (index, data) => {
         const emptyItem = {type: 'CLIENT', date: null, dateTo: null, category: 100, label: ProjectClientTiming.GO_AHEAD.id};
-        const object = this.props.projects[this.props.selected];
+        const object = this.props.project;
         const newData = this.props.editedData.timing ? [...this.props.editedData.timing] : object ? [...object.timing] : [];
         if(typeof index === 'undefined' && typeof data === 'undefined') { //ADD
             if (newData.length >= 1) return;//this.props.editedData.timing.some(item => !item.label || !item.date)) return;
@@ -657,7 +664,7 @@ export default class ProjectEdit extends React.PureComponent {
 
     handleTeamChange = (index, data) => {
         const emptyItem = {id: null, role: [], note: ''};
-        const object = this.props.projects[this.props.selected];
+        const object = this.props.project;
         const newData = this.props.editedData.team ? [...this.props.editedData.team] : object ? [...object.team] : [];
         if(typeof index === 'undefined' && typeof data === 'undefined') { //ADD
             if (this.props.editedData.team && this.props.editedData.team.some(item => item.id === null)) return;
@@ -688,7 +695,7 @@ export default class ProjectEdit extends React.PureComponent {
 
     handleCompanyChange = (index, data) => {
         const emptyItem = {id: null, business: [], flag: [], note: ''};
-        const project = this.props.projects[this.props.selected];
+        const project = this.props.project;
         const newData = this.props.editedData.company ? [...this.props.editedData.company] : project ? [...project.company] : [];
         if(typeof index === 'undefined' && typeof data === 'undefined') { //ADD
             if (this.props.editedData.company && this.props.editedData.company.some(company => company.id === null)) return;
@@ -716,7 +723,7 @@ export default class ProjectEdit extends React.PureComponent {
 
     handlePersonChange = (index, data) => {
         const emptyItem = {id: null, profession: [], flag: [], note: '', company: null};
-        const project = this.props.projects[this.props.selected];
+        const project = this.props.project;
         const newData = this.props.editedData.person ? [...this.props.editedData.person] : project ? [...project.person] : [];
         if(typeof index === 'undefined' && typeof data === 'undefined') { //ADD
             if(this.props.editedData.person && this.props.editedData.person.some(person => person.id === null)) return;
@@ -751,7 +758,7 @@ export default class ProjectEdit extends React.PureComponent {
 
     addFromBox = () => {
         if(!this.props.box) return;
-        const project = this.props.projects[this.props.selected];
+        const project = this.props.project;
         const company = this.props.editedData.company ? this.props.editedData.company : project ? project.company : [];
         const person = this.props.editedData.person ? this.props.editedData.person : project ? project.person : [];
 

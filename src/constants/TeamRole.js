@@ -7,3 +7,4 @@ export const LEAD_2D = {id: 'LEAD_2D', sort: 4, label: '2D lead', role: 'booking
 export const LEAD_3D = {id: 'LEAD_3D', sort: 5, label: '3D lead', role: 'booking:lead3D', multi: false, icon: Icons.ICON_ROLE_LEAD_3D};
 export const LEAD_MP = {id: 'LEAD_MP', sort: 6, label: 'MP lead', role: 'booking:leadMP', multi: false, icon: Icons.ICON_ROLE_LEAD_MP};
 export const COLORIST = {id: 'COLORIST', sort: 7, label: 'Colorist', role: 'booking:colorist', multi: false, icon: Icons.ICON_ROLE_COLORIST};
+export const DIRECTOR = {id: 'DIRECTOR', sort: 8, label: 'Director', role: ['booking:producer', 'booking:manager', 'booking:supervisor', 'booking:lead2D', 'booking:lead3D', 'booking:leadMP'], multi: false, icon: Icons.ICON_ROLE_DIRECTOR};

@@ -171,10 +171,9 @@ export default class ProjectList extends React.PureComponent {
             return ids.sort((a, b) => projects[b].created.localeCompare(projects[a].created)); //default sort - latest created first
         } else {
             return ids.sort((a, b) => {
-                const down = sort.indexOf('-') === 0;
+                let down = sort.indexOf('-') === 0;
                 let field = down ? sort.substr(1) : sort;
-                //if (field === 'status') field = 'status-order';
-                //if (field === 'go-ahead') field = 'go-ahead-order';
+                if(['last-contact'].indexOf(field) >= 0) down = !down;
                 if(['status', 'go-ahead', 'last-contact'].indexOf(field) >= 0) field = `${field}-order`;
                 let dataA = down ? this.getComputedField(field, projects[a]) : this.getComputedField(field, projects[b]);
                 let dataB = down ? this.getComputedField(field, projects[b]) : this.getComputedField(field, projects[a]);

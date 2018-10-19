@@ -37,6 +37,10 @@ export default class PersonEdit extends React.PureComponent {
         if(this.props.editedData !== prevProps.editedData || this.props.persons !== prevProps.persons) this.checkValidity();
     }
 
+    componentWillUnmount() {
+        if(this.validationTimer) clearTimeout(this.validationTimer);
+    }
+
     render() {
         const {person, companies, editedData} = this.props;
 
@@ -75,7 +79,7 @@ export default class PersonEdit extends React.PureComponent {
                         <div className={'detail-row'}>
                             <div className={'detail-group size-5'}>
                                 <div className={`detail-label${typeof editedData.name !== 'undefined' && person  ? ' value-changed' : ''}`}>{'Person Name:'}</div>
-                                <Input placeholder={'Company Name...'} autoFocus={!person} className={`detail-input${this.state.validation.name ? ' invalid' : ''}`} onChange={this.handleNameChange} value={name}/>
+                                <Input placeholder={'Person Name...'} autoFocus={!person} className={`detail-input${this.state.validation.name ? ' invalid' : ''}`} onChange={this.handleNameChange} value={name}/>
                             </div>
                             <div className={'detail-group size-7'}>
                                 <div className={`detail-label${typeof editedData.profession !== 'undefined' && person  ? ' value-changed' : ''}`}>{'Profession:'}</div>
@@ -156,6 +160,7 @@ export default class PersonEdit extends React.PureComponent {
     };
 
     save = async () => {
+        if(this.setValidation()) return;
         try {
             if (this.props.person) this.props.update(this.props.person._id);
             else {
@@ -186,8 +191,8 @@ export default class PersonEdit extends React.PureComponent {
     }
 
     isNameUsed = name => {
-        if(!name || !this.props.person) return false;
-        const filtered = Object.keys(this.props.persons).filter(personId => this.props.persons[personId].name.toLowerCase().trim() === name.toLowerCase().trim()).filter(personId => personId !== this.props.person._id);
+        if(!name) return false;
+        const filtered = Object.keys(this.props.persons).filter(personId => this.props.persons[personId].name.toLowerCase().trim() === name.toLowerCase().trim()).filter(personId => !this.props.person || personId !== this.props.person._id);
         return filtered.length > 0;
     };
 
@@ -215,6 +220,9 @@ export default class PersonEdit extends React.PureComponent {
     // VALIDATION
     // *****************************************************************************************************************
     setValidation = () => {
+        if(this.validationTimer) clearTimeout(this.validationTimer);
+        this.validationTimer = null;
+        this.lastValidation = +new Date();
         const originalObject = this.props.person;
         if(originalObject && !originalObject._id) return true; // when refresh, no data fetched yet
         const object = Object.assign({}, originalObject, this.props.editedData);
@@ -229,6 +237,7 @@ export default class PersonEdit extends React.PureComponent {
         const disableSave = Object.keys(validation).length > 0 || Object.keys(this.props.editedData).length === 0;
         if(areEquivalent(validation, this.state.validation)) validation = this.state.validation;
         this.setState({validation: validation, saveDisabled: disableSave});
+        return disableSave;
     };
 
     // *****************************************************************************************************************

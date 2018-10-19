@@ -186,35 +186,23 @@ $table-control-font-size: $table-row-font-size;
     }
   }
 
-  // company
+  // *** company *****************************************
   &.company-name {
-    width: 20%;
-    @include media("<=tablet") {
-      width: 30%;
-    }
+    width: 30%;
     @include media("<=phone") {
-      width: 40%;
-    }
-    @include media("<=small-phone") {
-      width: 50%;
+      width: 55%;
     }
   }
   &.company-business {
-    width: 40%;
-    @include media("<=tablet") {
-      width: 30%;
-    }
+    width: 25%;
     @include media("<=phone") {
-      display: none;
+      width: 45%;
     }
   }
   &.company-contact {
-    width: 40%;
+    width: 45%;
     @include media("<=phone") {
-      width: 60%;
-    }
-    @include media("<=small-phone") {
-      width: 50%;
+      display: none;
     }
     .table-contact {
       display: flex;
@@ -234,35 +222,44 @@ $table-control-font-size: $table-row-font-size;
     }
   }
 
-  // person
+  // *** person *****************************************
   &.person-name {
     width: 20%;
     @include media("<=tablet") {
       width: 30%;
     }
     @include media("<=phone") {
-      width: 40%;
-    }
-    @include media("<=small-phone") {
       width: 50%;
+    }
+    @include media("<small-phone") {
+      width: 100%;
+    }
+  }
+  &.person-company {
+    width: 20%;
+    @include media("<=tablet") {
+      width: 30%;
+    }
+    @include media("<=phone") {
+      width: 50%;
+    }
+    @include media("<small-phone") {
+      display: none;
     }
   }
   &.person-profession {
-    width: 40%;
+    width: 25%;
     @include media("<=tablet") {
-      width: 30%;
+      width: 40%;
     }
     @include media("<=phone") {
       display: none;
     }
   }
   &.person-contact {
-    width: 40%;
-    @include media("<=phone") {
-      width: 60%;
-    }
-    @include media("<=small-phone") {
-      width: 50%;
+    width: 35%;
+    @include media("<=tablet") {
+      display:none
     }
     .table-contact {
       display: flex;

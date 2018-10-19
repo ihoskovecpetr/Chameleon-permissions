@@ -113,15 +113,21 @@ export const PersonsColumnDef = [
         sort: 'name'
     },
     {
+        field: 'company',
+        label: 'Company',
+        className: 'person-company',
+        sort: 'company'
+    },
+    {
         field: 'profession',
         label: 'Profession',
-        className: 'company-profession',
+        className: 'person-profession',
         sort: null
     },
     {
         field: 'contact',
         label: 'Contact',
-        className: 'company-contact',
+        className: 'person-contact',
         sort: null
     }
 ];

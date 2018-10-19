@@ -39,6 +39,7 @@ export const ICON_ROLE_LEAD_2D = ['far', 'square'];
 export const ICON_ROLE_LEAD_3D = 'cube';
 export const ICON_ROLE_LEAD_MP = 'paint-brush';
 export const ICON_ROLE_COLORIST = 'palette';
+export const ICON_ROLE_DIRECTOR = 'male';
 
 
 // detail editor

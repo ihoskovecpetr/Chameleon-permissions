@@ -263,7 +263,7 @@ $table-control-background-color: #f5f5f5;
 .control-flags {
   height: $detail-control-height;
   padding: $detail-control-padding-vertical 0.5em;
-  background-color: rgba(235, 235, 235, 0.3);//lighten($detail-body-background-color, 5%);
+  background-color: rgba(235, 235, 235, 0.45);//lighten($detail-body-background-color, 5%);
   border: 1px solid darken($detail-body-background-color, 1%);
   border-radius: $detail-control-border-radius;
   display: flex;
@@ -273,7 +273,7 @@ $table-control-background-color: #f5f5f5;
   margin-left: 0.4em;
   .control-flag-icon {
     cursor: pointer;
-    color: darken($detail-body-background-color, 5%);
+    color: darken($detail-body-background-color, 15%);
     margin: 0 0.2em;
     &.active {
       color: #0083d5;//lighten($app-header-background-color, 18%);

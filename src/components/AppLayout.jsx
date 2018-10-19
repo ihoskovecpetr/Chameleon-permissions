@@ -69,7 +69,7 @@ export default class AppLayout extends React.PureComponent {
                         users={this.props.users}
                         user={this.props.user}
 
-                        selected={selected}
+                        project={selected ? this.props.projects[selected] ? this.props.projects[selected] : {} : null}
                         editable={editable}
 
                         returnToPreviousView={this.props.returnToPreviousView}
@@ -91,7 +91,7 @@ export default class AppLayout extends React.PureComponent {
                         users={this.props.users}
                         user={this.props.user}
 
-                        selected={selected}
+                        project={selected ? this.props.projects[selected] ? this.props.projects[selected] : {} : null}
                         editedData={this.props.appState.projectEditedData}
 
                         returnToPreviousView={this.props.returnToPreviousView}

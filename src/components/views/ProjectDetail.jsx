@@ -16,8 +16,7 @@ import * as Icons from '../../constants/Icons';
 
 export default class ProjectDetail extends React.PureComponent {
     render() {
-        const {selected, projects} = this.props;
-        const project = projects[selected] ? projects[selected] : {};
+        const {project, projects} = this.props;
 
         const name = project.name ? project.name : '';
         const status = ProjectStatus[project.status] ? ProjectStatus[project.status].label : project.status;
@@ -91,9 +90,9 @@ export default class ProjectDetail extends React.PureComponent {
                     edit = {this.props.edit}
                     remove = {this.props.remove}
                     addToBox = {this.props.addToBox}
-                    selected = {this.props.selected}
+                    selected = {project._id}
                     label = {'Project'}
-                    id = {selected && projects[selected] ? projects[selected].projectId : null}
+                    id = {projects && project.projectId ? project.projectId : null}
                     editable={this.props.editable}
                 />
 

@@ -37,6 +37,10 @@ export default class CompanyEdit extends React.PureComponent {
         if(this.props.editedData !== prevProps.editedData || this.props.companies !== prevProps.companies) this.checkValidity();
     }
 
+    componentWillUnmount() {
+        if(this.validationTimer) clearTimeout(this.validationTimer);
+    }
+
     render() {
         const {company, persons, editedData} = this.props;
 
@@ -157,6 +161,7 @@ export default class CompanyEdit extends React.PureComponent {
     };
 
     save = async () => {
+        if(this.setValidation()) return;
         try {
             if (this.props.company) this.props.update(this.props.company._id);
             else {
@@ -187,8 +192,8 @@ export default class CompanyEdit extends React.PureComponent {
     }
 
     isNameUsed = name => {
-        if(!name || !this.props.company) return false;
-        const filtered = Object.keys(this.props.companies).filter(companyId => this.props.companies[companyId].name.toLowerCase().trim() === name.toLowerCase().trim()).filter(companyId => companyId !== this.props.company._id);
+        if(!name) return false;
+        const filtered = Object.keys(this.props.companies).filter(companyId => this.props.companies[companyId].name.toLowerCase().trim() === name.toLowerCase().trim()).filter(companyId => !this.props.company || companyId !== this.props.company._id);
         return filtered.length > 0;
     };
 
@@ -216,6 +221,9 @@ export default class CompanyEdit extends React.PureComponent {
     // VALIDATION
     // *****************************************************************************************************************
     setValidation = () => {
+        if(this.validationTimer) clearTimeout(this.validationTimer);
+        this.validationTimer = null;
+        this.lastValidation = +new Date();
         const originalObject = this.props.company;
         if(originalObject && !originalObject._id) return true; // when refresh, no data fetched yet
         const object = Object.assign({}, originalObject, this.props.editedData);
@@ -230,6 +238,7 @@ export default class CompanyEdit extends React.PureComponent {
         const disableSave = Object.keys(validation).length > 0 || Object.keys(this.props.editedData).length === 0;
         if(areEquivalent(validation, this.state.validation)) validation = this.state.validation;
         this.setState({validation: validation, saveDisabled: disableSave});
+        return disableSave;
     };
 
     // *****************************************************************************************************************

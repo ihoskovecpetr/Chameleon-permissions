@@ -124,9 +124,10 @@ export default class PersonList extends React.PureComponent {
             return ids.sort((a, b) => persons[b].created.localeCompare(persons[a].created)); //default sort - latest created first
         } else {
             return ids.sort((a, b) => {
-                const down = sort.indexOf('-') === 0;
+                let down = sort.indexOf('-') === 0;
                 let field = down ? sort.substr(1) : sort;
-                //if (field === 'status') field = 'status-order';
+                //if(['last-contact'].indexOf(field) >= 0) down = !down;
+                if(['company'].indexOf(field) >= 0) field = `${field}-order`;
                 let dataA = down ? this.getComputedField(field, persons[a], false, true) : this.getComputedField(field, persons[b], false, true);
                 let dataB = down ? this.getComputedField(field, persons[b], false, true) : this.getComputedField(field, persons[a], false, true);
                 if (typeof dataA === 'undefined' && typeof dataB === 'undefined') return 0;
@@ -278,7 +279,17 @@ export default class PersonList extends React.PureComponent {
                     if (person && person.company && person.company.length > 0) {
                         return person.company.map(companyId => this.props.companies[companyId] ? `${this.props.companies[companyId].name.replace(/ +/g, '_')}` : '').join(' ');
                     } else return '';
-                } else return '';
+                } else {
+                    if (person && person.company && person.company.length > 0) {
+                        return person.company.map(companyId => this.props.companies[companyId] ? `${this.props.companies[companyId].name}` : '').join(', ');
+                    } else return '---';
+                };
+
+            case 'company-order':
+                if (person && person.company && person.company.length > 0) {
+                    if(this.props.companies[person.company[0]]) return this.props.companies[person.company[0]].name;
+                    else return 'zzzzzzzzz'
+                } else return 'zzzzzzzzz';
 
             case 'project':
                 if(searchable) {
