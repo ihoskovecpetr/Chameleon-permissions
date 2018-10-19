@@ -27,7 +27,7 @@ export const ProjectsColumnDef = [
         field: 'supervisor',
         label: 'Project Supervisor',
         className: 'project-supervisor',
-        sort: 'manager'
+        sort: 'supervisor'
     },
     {
         field: 'status',
