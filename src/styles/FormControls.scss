@@ -61,7 +61,7 @@ $table-control-background-color: #f5f5f5;
   border-radius: $detail-control-border-radius;
   &.textarea {
     min-height: $detail-control-height;
-    height: $detail-control-height;
+    //height: $detail-control-height;
     padding-top: 0.25em;
   }
   &.invalid {

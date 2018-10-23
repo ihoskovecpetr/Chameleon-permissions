@@ -14,14 +14,11 @@ import AppLayout from './components/AppLayout';
 import * as Actions from './actions/Actions';
 
 import initialState from './reducers/InitialState';
+import createIconLibrary from './lib/createIconLibrary'
 
 logger.setLevel('debug');
-//TODO REVISE CONTENT - generate from constants.ICONS library?
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { fas } from '@fortawesome/free-solid-svg-icons';
-import { far } from '@fortawesome/free-regular-svg-icons';
-import { fab } from '@fortawesome/free-brands-svg-icons';
-library.add(fas, far, fab);
+
+createIconLibrary();
 
 import './app.scss';
 

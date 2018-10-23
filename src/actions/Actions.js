@@ -221,8 +221,8 @@ export function showCompany(id, set, disableEdit) {
     return {type: ActionTypes.SHOW_COMPANY, id: id, set: set, disableEdit: disableEdit}
 }
 
-export function addCompany(name) {
-    return {type: ActionTypes.ADD_COMPANY, name: name}
+export function addCompany(name, person) {
+    return {type: ActionTypes.ADD_COMPANY, name: name, person: person}
 }
 
 export function editCompany(id, set) {
@@ -332,8 +332,8 @@ export function showPerson(id, set, disableEdit) {
     return {type: ActionTypes.SHOW_PERSON, id: id, set: set, disableEdit: disableEdit}
 }
 
-export function addPerson(name) {
-    return {type: ActionTypes.ADD_PERSON, name: name}
+export function addPerson(name, company) {
+    return {type: ActionTypes.ADD_PERSON, name: name, company: company}
 }
 
 export function editPerson(id, set) {

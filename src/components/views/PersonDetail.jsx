@@ -15,6 +15,7 @@ export default class PersonDetail extends React.PureComponent {
         const profession = person.profession ? person.profession.map(profession => PersonProfession[profession] ? PersonProfession[profession].label : `<${profession()}>`)  : [];
         const contact = person.contact ? person.contact : [];
         const company = person.company ? person.company : [];
+        const note = person.note ? person.note : '';
 
         return (
             <div className={'app-body'}>
@@ -60,6 +61,14 @@ export default class PersonDetail extends React.PureComponent {
                             showProject={this.props.showProject}
                             type={'person'}
                         />
+                        {note ?
+                            <div className={'detail-row spacer'}>
+                                <div className={'detail-group size-12 column'}>
+                                    <div className={`detail-label column`}>{'Person note:'}</div>
+                                    <div className={`detail-value multi-line`}>{note}</div>
+                                </div>
+                            </div>
+                        : null}
                     </div>
                 </Scrollbars>
             </div>

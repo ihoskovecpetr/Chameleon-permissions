@@ -2,6 +2,7 @@ import React, {Fragment} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Input } from 'reactstrap';
+import Textarea from 'react-textarea-autosize';
 import Select from 'react-select';
 import areEquivalent from '../../lib/compareObjects';
 import * as Constants from '../../constants/Constatnts';
@@ -48,6 +49,7 @@ export default class PersonEdit extends React.PureComponent {
         const profession = editedData.profession !== undefined ? editedData.profession : person && person.profession ? person.profession : [];
         const contact = editedData.contact !== undefined ? editedData.contact : person && person.contact ? person.contact : [];
         const company = editedData.company !== undefined ? editedData.company :  person && person.company ? person.company : [];
+        const note = editedData.note !== undefined ? editedData.note : person && person.note ? person.note : '';
 
         return (
             <div className={'app-body'}>
@@ -147,6 +149,18 @@ export default class PersonEdit extends React.PureComponent {
                                 />
                             </div>
                         </div>
+                        {/* ------------------ NOTE ------------------ */}
+                        <div className={'detail-row spacer'}>
+                            <div className={'detail-group column size-12'}>
+                                <div className={`detail-label column${editedData.note !== undefined && person ? ' value-changed' : ''}`}>{'Person note'}</div>
+                                <Textarea
+                                    placeholder={'Person note...'}
+                                    className={`detail-input textarea`}
+                                    onChange={this.handleNoteChange}
+                                    value={note}
+                                />
+                            </div>
+                        </div>
                     </div>
                 </Scrollbars>
             </div>
@@ -216,6 +230,10 @@ export default class PersonEdit extends React.PureComponent {
         }))
     };
 
+    handleNoteChange = event => {
+        this.props.editItem(this.updateEditedData({note: event.target.value}));
+    };
+
     // *****************************************************************************************************************
     // VALIDATION
     // *****************************************************************************************************************
@@ -274,12 +292,12 @@ export default class PersonEdit extends React.PureComponent {
     };
 
     createNewCompany = (name) => {
-        this.props.addCompany(name);
+        this.props.addCompany(name, this.props.person ? this.props.person._id : undefined);
     };
 
     checkJustAddedObject = () => {
-        if(this.props.justAdded) {
-            const company = this.props.editedData.person ? [...this.props.editedData.company, this.props.justAdded._id] : this.props.person ? [...this.props.person.company, this.props.justAdded._id] : [this.props.justAdded._id];
+        if(this.props.justAdded && !this.props.person) { //new company added to not exists yet person
+            const company = this.props.editedData.company ? [...this.props.editedData.company, this.props.justAdded._id] : this.props.person ? [...this.props.person.company, this.props.justAdded._id] : [this.props.justAdded._id];
             this.props.editItem(this.updateEditedData({company: company}));
         }
         this.props.setJustAddedObject(null);

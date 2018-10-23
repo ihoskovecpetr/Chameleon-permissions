@@ -1,0 +1,13 @@
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { far } from '@fortawesome/free-regular-svg-icons';
+import { fab } from '@fortawesome/free-brands-svg-icons';
+//import {faSpinner as fas_faSpinner, faBoxOpen as fas_faBoxOpen, faArrowRight as fas_faArrowRight, faTrash as fas_faTrash, faBuilding as fas_faBuilding, faAt as fas_faAt, faMobileAlt as fas_faMobileAlt, faAddressCard as fas_faAddressCard, faPhone as fas_faPhone, faDesktop as fas_faDesktop, faDollarSign as fas_faDollarSign, faHandHoldingUsd as fas_faHandHoldingUsd, faPaintBrush as fas_faPaintBrush, faTasks as fas_faTasks, faPlusCircle as fas_faPlusCircle, faMinusCircle as fas_faMinusCircle, faEllipsisH as fas_faEllipsisH, faExclamationCircle as fas_faExclamationCircle, faHome as fas_faHome, faSignOutAlt as fas_faSignOutAlt, faSyncAlt as fas_faSyncAlt, faUser as fas_faUser, faTimes as fas_faTimes, faUsers as fas_faUsers, faPalette as fas_faPalette, faMale as fas_faMale, faCube as fas_faCube, faUserCircle as fas_faUserCircle, faSearch as fas_faSearch, faArrowsAltV as fas_faArrowsAltV, faLongArrowAltDown as fas_faLongArrowAltDown, faLongArrowAltUp as fas_faLongArrowAltUp} from '@fortawesome/free-solid-svg-icons';
+//import {faCheckSquare as far_faCheckSquare, faCheckCircle as far_faCheckCircle, faCircle as far_faCircle, faSquare as far_faSquare, faBuilding as far_faBuilding, faUser as far_faUser, faEye as far_faEye} from '@fortawesome/free-regular-svg-icons';
+//import {faFacebook as fab_faFacebook, faLinkedin as fab_faLinkedin, faSkype as fab_faSkype, faTwitter as fab_faTwitter} from '@fortawesome/free-brands-svg-icons';
+
+export default () => {
+    library.add(fas, far, fab);
+    //library.add(fas_faSpinner, fas_faBoxOpen, fas_faArrowRight, fas_faTrash, fas_faBuilding, fas_faAt, fas_faMobileAlt, fas_faAddressCard, fas_faPhone, fas_faDesktop, fas_faDollarSign, fas_faHandHoldingUsd, fas_faPaintBrush, fas_faTasks, fas_faPlusCircle, fas_faMinusCircle, fas_faEllipsisH, fas_faExclamationCircle, fas_faHome, fas_faSignOutAlt, fas_faSyncAlt, fas_faUser, fas_faTimes, fas_faUsers, fas_faPalette, fas_faMale, fas_faCube, fas_faUserCircle, fas_faSearch, fas_faArrowsAltV, fas_faLongArrowAltDown, fas_faLongArrowAltUp, far_faCheckSquare, far_faCheckCircle, far_faCircle, far_faSquare, far_faBuilding, far_faUser, far_faEye, fab_faFacebook, fab_faLinkedin, fab_faSkype, fab_faTwitter);
+
+}

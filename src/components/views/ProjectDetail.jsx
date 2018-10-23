@@ -21,6 +21,7 @@ export default class ProjectDetail extends React.PureComponent {
         const name = project.name ? project.name : '';
         const status = ProjectStatus[project.status] ? ProjectStatus[project.status].label : project.status;
         const statusNote = project.statusNote ? project.statusNote : '';
+        const projectNote = project.projectNote ? project.projectNote : '';
         const lastContact = project.lastContact ? moment(project.lastContact).format('D.M.YYYY') : 'Not set';
         const team =  project.team ? project.team : [];
 
@@ -170,6 +171,14 @@ export default class ProjectDetail extends React.PureComponent {
                                 )}
                             </div>
                         </div>
+                        {projectNote ?
+                            <div className={'detail-row spacer'}>
+                                <div className={'detail-group size-12 column'}>
+                                    <div className={`detail-label column`}>{'Project note:'}</div>
+                                    <div className={`detail-value multi-line`}>{projectNote}</div>
+                                </div>
+                            </div>
+                        : null}
                     </div>
                 </Scrollbars>
             </div>

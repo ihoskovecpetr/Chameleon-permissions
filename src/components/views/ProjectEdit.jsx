@@ -2,6 +2,8 @@ import React, {Fragment} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Input } from 'reactstrap';
+import Textarea from 'react-textarea-autosize';
+
 import Select from 'react-select';
 import CreatableSelect from 'react-select/lib/Creatable';
 import moment from 'moment';
@@ -61,6 +63,7 @@ export default class ProjectEdit extends React.PureComponent {
         const team = editedData.team !== undefined ? editedData.team : project && project.team ? project.team : [];
         const timing = editedData.timing !== undefined ? editedData.timing : project && project.timing ? project.timing : [];
         const lastContact = editedData.lastContact !== undefined ? editedData.lastContact ? moment(editedData.lastContact) : null : project && project.lastContact ? moment(projects.lastContact) : null;
+        const projectNote = editedData.projectNote !== undefined ? editedData.projectNote : project && project.projectNote ? project.projectNote : '';
 
         if(Object.keys(editedData).length === 0) {
             team.sort((a, b) => (a.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)) - (b.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)));
@@ -142,12 +145,11 @@ export default class ProjectEdit extends React.PureComponent {
                             </div>
                             <div className={'detail-group size-8'}>
                                 <div className={`detail-label${editedData.statusNote !== undefined && project ? ' value-changed' : ''}`}>{'Status note:'}</div>
-                                <Input
+                                <Textarea
                                     placeholder={'Status note...'}
                                     className={`detail-input textarea${this.state.validation.statusNote ? ' invalid' : ''}`}
                                     onChange={this.handleStatusNoteChange}
                                     value={statusNote}
-                                    type={'textarea'}
                                 />
                             </div>
                         </div>
@@ -286,7 +288,8 @@ export default class ProjectEdit extends React.PureComponent {
 
                                             <Input
                                                 className={`detail-input company-note`}
-                                                onChange={event => this.handleCompanyChange(i, {note: event.target.value})} value={companyLine.note}
+                                                onChange={event => this.handleCompanyChange(i, {note: event.target.value})}
+                                                value={companyLine.note}
                                                 placeholder={'Note...'}
                                             />
                                         </div>
@@ -372,7 +375,8 @@ export default class ProjectEdit extends React.PureComponent {
                                             />
                                             <Input
                                                 className={`detail-input person-note`}
-                                                onChange={event => this.handlePersonChange(i, {note: event.target.value})} value={personLine.note}
+                                                onChange={event => this.handlePersonChange(i, {note: event.target.value})}
+                                                value={personLine.note}
                                                 placeholder={'Note...'}
                                             />
                                         </div>
@@ -380,7 +384,18 @@ export default class ProjectEdit extends React.PureComponent {
                                 )}
                             </div>
                         </div>
-                        {/* -------------------------------------------- */}
+                        {/* ------------------ NOTE ------------------ */}
+                        <div className={'detail-row spacer'}>
+                            <div className={'detail-group column size-12'}>
+                                <div className={`detail-label column${editedData.projectNote !== undefined && project ? ' value-changed' : ''}`}>{'Project note'}</div>
+                                <Textarea
+                                    placeholder={'Project note...'}
+                                    className={`detail-input textarea`}
+                                    onChange={this.handleProjectNoteChange}
+                                    value={projectNote}
+                                />
+                            </div>
+                        </div>
                     </div>
                 </Scrollbars>
             </div>
@@ -637,6 +652,10 @@ export default class ProjectEdit extends React.PureComponent {
 
     handleStatusNoteChange = event => {
         this.props.editItem(this.updateEditedData({statusNote: event.target.value}));
+    };
+
+    handleProjectNoteChange = event => {
+        this.props.editItem(this.updateEditedData({projectNote: event.target.value}));
     };
 
     handleLastContactChange = date => {

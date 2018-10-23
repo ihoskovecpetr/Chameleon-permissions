@@ -15,6 +15,7 @@ export default class CompanyDetail extends React.PureComponent {
         const business = company.business ? company.business.map(business => CompanyBusiness[business] ? CompanyBusiness[business].label : `<${business()}>`)  : [];
         const contact = company.contact ? company.contact : [];
         const person  = company.person ? company.person : [];
+        const note = company.note ? company.note : '';
 
         return (
             <div className={'app-body'}>
@@ -60,6 +61,14 @@ export default class CompanyDetail extends React.PureComponent {
                             showProject={this.props.showProject}
                             type={'company'}
                         />
+                        {note ?
+                            <div className={'detail-row spacer'}>
+                                <div className={'detail-group size-12 column'}>
+                                    <div className={`detail-label column`}>{'Company note:'}</div>
+                                    <div className={`detail-value multi-line`}>{note}</div>
+                                </div>
+                            </div>
+                        : null}
                     </div>
                 </Scrollbars>
             </div>
