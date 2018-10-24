@@ -9,6 +9,7 @@ import { Input } from 'reactstrap';
 import Fuse from 'fuse.js';
 import moment from 'moment';
 import Select from 'react-select';
+import * as StringFormatter from '../../lib/stringFormatHelper';
 
 import * as ProjectClientTiming from '../../constants/ProjectClientTiming';
 
@@ -173,8 +174,8 @@ export default class ProjectList extends React.PureComponent {
             return ids.sort((a, b) => {
                 let down = sort.indexOf('-') === 0;
                 let field = down ? sort.substr(1) : sort;
-                if(['last-contact'].indexOf(field) >= 0) down = !down;
-                if(['status', 'go-ahead', 'last-contact'].indexOf(field) >= 0) field = `${field}-order`;
+                if(['last-contact', 'budget'].indexOf(field) >= 0) down = !down;
+                if(['status', 'go-ahead', 'last-contact', 'budget'].indexOf(field) >= 0) field = `${field}-order`;
                 let dataA = down ? this.getComputedField(field, projects[a]) : this.getComputedField(field, projects[b]);
                 let dataB = down ? this.getComputedField(field, projects[b]) : this.getComputedField(field, projects[a]);
                 if (typeof dataA === 'undefined' && typeof dataB === 'undefined') return 0;
@@ -182,7 +183,11 @@ export default class ProjectList extends React.PureComponent {
                 if (typeof dataB === 'undefined') return 0;
                 if (dataA === null) dataA = '';
                 if (dataB === null) dataB = '';
-                return dataA.localeCompare(dataB);
+                if(typeof dataA === 'string') {
+                    return dataA.localeCompare(dataB);
+                } else if(typeof dataA === 'number') {
+                    return dataA - dataB;
+                } else return 0;
             })
         }
     });
@@ -353,7 +358,7 @@ export default class ProjectList extends React.PureComponent {
                 else return `id: ${supervisor.id}`;
 
             case 'status-order':
-                return ProjectStatus[project['status']] && ProjectStatus[project['status']].sort ? ProjectStatus[project['status']].sort.toString() : '0';
+                return ProjectStatus[project['status']] && ProjectStatus[project['status']].sort ? ProjectStatus[project['status']].sort : 0;
 
             case 'status':
                 const status = ProjectStatus[project['status']] ? ProjectStatus[project['status']].label : '---';
@@ -402,8 +407,20 @@ export default class ProjectList extends React.PureComponent {
                     } else return '---';
                 }
 
-            case 'budget': //find current budget in budget field {booking, client, sent, ballpark: {from, to}}, get discount %, normalize currency '10000 USD 10%' or '10000 - 20000 USD' etc
-                return '10.000 USD [10%]';
+            case 'budget':
+                const ballparkFrom = project && project.budget && project.budget.ballpark && project.budget.ballpark.from ? project.budget.ballpark.from : null;
+                const ballparkTo = project && project.budget && project.budget.ballpark && project.budget.ballpark.to ? project.budget.ballpark.to : null;
+                if(ballparkFrom || ballparkTo) {
+                    return `${StringFormatter.currencyFormat(ballparkFrom, ballparkTo ? '' : 'EUR')}${ballparkTo ? ` - ${StringFormatter.currencyFormat(ballparkTo, 'EUR')}` : ''}`;
+                } else return '---';
+
+            case 'budget-order':
+                const ballparkFromSort = project && project.budget && project.budget.ballpark && project.budget.ballpark.from ? project.budget.ballpark.from : null;
+                const ballparkToSort = project && project.budget && project.budget.ballpark && project.budget.ballpark.to ? project.budget.ballpark.to : null;
+                if(ballparkFromSort || ballparkToSort) {
+                    if(!ballparkTo) return ballparkFromSort;
+                    else return Math.round((ballparkFromSort + ballparkToSort) / 2);
+                } else return 0; //Number.MAX_SAFE_INTEGER;
 
             case 'go-ahead': //find go ahead from timing [{date, text, category}] in days to go ahead /colors?/
                 let goAheadDate = project && project.timing ? project.timing.find(line => line.label === ProjectClientTiming.GO_AHEAD.id) : null;
@@ -411,10 +428,9 @@ export default class ProjectList extends React.PureComponent {
                 return daysToString(goAheadDate, null, false);
 
             case 'go-ahead-order':
-                //return ProjectStatus[project['status']] && ProjectStatus[project['status']].sortOrder ? ProjectStatus[project['status']].sortOrder.toString() : '0';
                 let goAheadDateOrder = project && project.timing ? project.timing.find(line => line.label === ProjectClientTiming.GO_AHEAD.id) : null;
                 goAheadDateOrder = goAheadDateOrder && goAheadDateOrder.date ? +new Date(goAheadDateOrder.date) : +new Date(2100,0,1,0,0,0,0);
-                return `${goAheadDateOrder}`;
+                return goAheadDateOrder;
 
 
             case 'last-contact': //last contact in days passed this - colors?
@@ -423,7 +439,7 @@ export default class ProjectList extends React.PureComponent {
 
             case 'last-contact-order':
                 const  lastContactOrder = project && project.lastContact ? +new Date(project.lastContact) :  +new Date(0);
-                return `${lastContactOrder}`;
+                return lastContactOrder;
 
             default: return project && project[field] ? project[field] : '---';
         }

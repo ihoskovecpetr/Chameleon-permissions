@@ -151,8 +151,8 @@ export default class PersonEdit extends React.PureComponent {
                         </div>
                         {/* ------------------ NOTE ------------------ */}
                         <div className={'detail-row spacer'}>
-                            <div className={'detail-group column size-12'}>
-                                <div className={`detail-label column${editedData.note !== undefined && person ? ' value-changed' : ''}`}>{'Person note'}</div>
+                            <div className={'detail-group size-12'}>
+                                <div className={`detail-label${editedData.note !== undefined && person ? ' value-changed' : ''}`}>{'Person note:'}</div>
                                 <Textarea
                                     placeholder={'Person note...'}
                                     className={`detail-input textarea`}

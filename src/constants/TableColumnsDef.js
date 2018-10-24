@@ -67,7 +67,7 @@ export const ActiveBidsColumnDef = [
         field: 'budget',
         label: 'Budget',
         className: 'bid-budget',
-        sort: null
+        sort: 'budget'
     },
     {
         field: 'go-ahead',

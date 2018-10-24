@@ -61,8 +61,9 @@ $table-control-background-color: #f5f5f5;
   border-radius: $detail-control-border-radius;
   &.textarea {
     min-height: $detail-control-height;
-    //height: $detail-control-height;
-    padding-top: 0.25em;
+    padding-top: 0.3em;
+    padding-bottom: 0.3em;
+    line-height: 1.3;
   }
   &.invalid {
     background-color: $detail-control-invalid-color;
@@ -93,6 +94,29 @@ $table-control-background-color: #f5f5f5;
   }
   &::-ms-input-placeholder { /* Microsoft Edge */
     color: #afafaf;
+  }
+}
+
+.detail-input-group {
+  width: 100%;
+  display: flex;
+  position: relative;
+  .detail-input {
+    padding-right: 3.2em;
+  }
+  &.eur::after {
+    content: "EUR";
+    position: absolute;
+    right: 1px;
+    top: 1px;
+    background-color: #e3e3e3;
+    height: calc(100% - 2px);
+    width: 3em;
+    text-align: center;
+    border-left: 1px solid #9b9b9b;
+    border-top-right-radius: $detail-control-border-radius;
+    border-bottom-right-radius: $detail-control-border-radius;
+    line-height: $detail-control-height;
   }
 }
 .react-datepicker__close-icon::after {

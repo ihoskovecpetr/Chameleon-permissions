@@ -13,6 +13,7 @@ import * as ProjectClientTiming from '../../constants/ProjectClientTiming';
 import moment from "moment";
 import * as TeamRole from "../../constants/TeamRole";
 import * as Icons from '../../constants/Icons';
+import * as StringFormatter from '../../lib/stringFormatHelper';
 
 export default class ProjectDetail extends React.PureComponent {
     render() {
@@ -24,6 +25,8 @@ export default class ProjectDetail extends React.PureComponent {
         const projectNote = project.projectNote ? project.projectNote : '';
         const lastContact = project.lastContact ? moment(project.lastContact).format('D.M.YYYY') : 'Not set';
         const team =  project.team ? project.team : [];
+        const ballparkFrom = project.budget && project.budget.ballpark && project.budget.ballpark.from ? project.budget.ballpark.from : null;
+        const ballparkTo = project.budget && project.budget.ballpark && project.budget.ballpark.to ? project.budget.ballpark.to : null;
 
         const timing = project.timing ? project.timing : [];
 
@@ -121,6 +124,14 @@ export default class ProjectDetail extends React.PureComponent {
                             </div>
                         </div>
                         : null}
+                        {ballparkFrom || ballparkTo?
+                            <div className={'detail-row'}>
+                                <div className={'detail-group size-6'}>
+                                    <div className={`detail-label`}>{'Budget:'}</div>
+                                    <div className={`detail-value selectable`}>{`${StringFormatter.currencyFormat(ballparkFrom, 'EUR')}${ballparkTo ? ` - ${StringFormatter.currencyFormat(ballparkTo, 'EUR')}` : ''}`}</div>
+                                </div>
+                            </div>
+                        : null}
                         <div className={'detail-row spacer'}>
                             <div className={'detail-group size-12'}>
                                 <div className={`detail-label`}>{'Client Timing:'}</div>
@@ -173,8 +184,8 @@ export default class ProjectDetail extends React.PureComponent {
                         </div>
                         {projectNote ?
                             <div className={'detail-row spacer'}>
-                                <div className={'detail-group size-12 column'}>
-                                    <div className={`detail-label column`}>{'Project note:'}</div>
+                                <div className={'detail-group size-12'}>
+                                    <div className={`detail-label`}>{'Project note:'}</div>
                                     <div className={`detail-value multi-line`}>{projectNote}</div>
                                 </div>
                             </div>

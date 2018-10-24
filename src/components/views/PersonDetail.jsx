@@ -63,8 +63,8 @@ export default class PersonDetail extends React.PureComponent {
                         />
                         {note ?
                             <div className={'detail-row spacer'}>
-                                <div className={'detail-group size-12 column'}>
-                                    <div className={`detail-label column`}>{'Person note:'}</div>
+                                <div className={'detail-group size-12'}>
+                                    <div className={`detail-label`}>{'Person note:'}</div>
                                     <div className={`detail-value multi-line`}>{note}</div>
                                 </div>
                             </div>

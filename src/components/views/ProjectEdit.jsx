@@ -16,6 +16,7 @@ import * as PersonFlag from '../../constants/PersonFlag';
 import * as CompanyBusiness from '../../constants/CompanyBusiness';
 import * as PersonProfession from '../../constants/PersonProfession';
 import * as ProjectClientTiming from '../../constants/ProjectClientTiming';
+import * as StringFormatter from '../../lib/stringFormatHelper';
 
 import * as Icons from '../../constants/Icons';
 
@@ -64,6 +65,9 @@ export default class ProjectEdit extends React.PureComponent {
         const timing = editedData.timing !== undefined ? editedData.timing : project && project.timing ? project.timing : [];
         const lastContact = editedData.lastContact !== undefined ? editedData.lastContact ? moment(editedData.lastContact) : null : project && project.lastContact ? moment(projects.lastContact) : null;
         const projectNote = editedData.projectNote !== undefined ? editedData.projectNote : project && project.projectNote ? project.projectNote : '';
+
+        const ballparkFrom = editedData.budget !== undefined ? editedData.budget.ballpark.from ? editedData.budget.ballpark.from : '' : project && project.budget ? project.budget.ballpark.from ? project.budget.ballpark.from : '' : '';
+        const ballparkTo = editedData.budget !== undefined ? editedData.budget.ballpark.to ? editedData.budget.ballpark.to : '' : project && project.budget ? project.budget.ballpark.to ? project.budget.ballpark.to : '' : '';
 
         if(Object.keys(editedData).length === 0) {
             team.sort((a, b) => (a.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)) - (b.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)));
@@ -130,7 +134,7 @@ export default class ProjectEdit extends React.PureComponent {
                             </div>
                         </div>
 
-                        {/* ------------------ STATUS + NOTE ------------------ */}
+                        {/* ------------------ STATUS + STATUS NOTE ------------------ */}
                         <div className={'detail-row'}>
                             <div className={'detail-group size-4'}>
                                 <div className={`detail-label${typeof editedData.status !== 'undefined' && project ? ' value-changed' : ''}`}>{'Project status:'}</div>
@@ -151,6 +155,29 @@ export default class ProjectEdit extends React.PureComponent {
                                     onChange={this.handleStatusNoteChange}
                                     value={statusNote}
                                 />
+                            </div>
+                        </div>
+                        {/* ------------------ BUDGET - BALLPARK ------------------ */}
+                        <div className={'detail-row'}>
+                            <div className={'detail-group size-6'}>
+                                <div className={`detail-label${typeof editedData.budget !== 'undefined' && project ? ' value-changed' : ''}`}>{'Budget [EUR]:'}</div>
+                                <div className={'detail-input-group eur'}>
+                                    <Input
+                                        placeholder={'Budget from...'}
+                                        className={`detail-input${this.state.validation.budget ? ' invalid' : ''}`}
+                                        onChange={event => this.handleBudgetChange('ballpark.from', event.target.value)}
+                                        value={StringFormatter.currencyFormat(ballparkFrom)}
+                                    />
+                                </div>
+                                <div style={{margin: '0 0.5em', whiteSpace: 'nowrap'}}>{'-'}</div>
+                                <div className={'detail-input-group eur'}>
+                                    <Input
+                                        placeholder={'Budget to...'}
+                                        className={`detail-input marker${this.state.validation.budget ? ' invalid' : ''}`}
+                                        onChange={event => this.handleBudgetChange('ballpark.to', event.target.value)}
+                                        value={StringFormatter.currencyFormat(ballparkTo)}
+                                    />
+                                </div>
                             </div>
                         </div>
 
@@ -386,8 +413,8 @@ export default class ProjectEdit extends React.PureComponent {
                         </div>
                         {/* ------------------ NOTE ------------------ */}
                         <div className={'detail-row spacer'}>
-                            <div className={'detail-group column size-12'}>
-                                <div className={`detail-label column${editedData.projectNote !== undefined && project ? ' value-changed' : ''}`}>{'Project note'}</div>
+                            <div className={'detail-group size-12'}>
+                                <div className={`detail-label${editedData.projectNote !== undefined && project ? ' value-changed' : ''}`}>{'Project note:'}</div>
                                 <Textarea
                                     placeholder={'Project note...'}
                                     className={`detail-input textarea`}
@@ -629,6 +656,12 @@ export default class ProjectEdit extends React.PureComponent {
             })
         }
 
+        if(object.budget && object.budget.ballpark && object.budget.ballpark.to) {
+            if(!object.budget.ballpark.from) validation['budget'] = {field: 'Budget', status: 'Budget from is not set'};
+            else if(object.budget.ballpark.to === object.budget.ballpark.from) validation['budget'] = {field: 'Budget', status: `Budget 'from' is equal to Budget 'to'`};
+            else if(object.budget.ballpark.to < object.budget.ballpark.from) validation['budget'] = {field: 'Budget', status: `Budget 'from' is less than Budget 'to'`};
+        }
+
         const disableSave = Object.keys(validation).length > 0 || Object.keys(this.props.editedData).length === 0;
         if(areEquivalent(validation, this.state.validation)) validation = this.state.validation;
         this.setState({validation: validation, saveDisabled: disableSave});
@@ -739,6 +772,28 @@ export default class ProjectEdit extends React.PureComponent {
         else newFlags.splice(i, 1);
         this.handleCompanyChange(index, {flag: newFlags})
     };
+
+    handleBudgetChange = (which, value) => {
+        const emptyItem = {booking: null, client: null, sent: [], ballpark: {from: 0, to: 0}, flag: true};
+        const project = this.props.project;
+        const newData = this.props.editedData.budget ? {...this.props.editedData.budget, ballpark: {...this.props.editedData.budget.ballpark}, sent: [...this.props.editedData.budget.sent]} : project ? {...project.budget, ballpark: {...project.budget.ballpark}, sent: [...project.budget.sent]} : emptyItem;
+        switch(which) {
+            case 'ballpark.from':
+                value = value ? Number.parseInt(value.replace(/[. ,]/g, '')) : 0;
+                if(isNaN(value)) value = 0;
+                if(value < 0) value = -value;
+                newData.ballpark.from = value;
+                break;
+            case 'ballpark.to':
+                value = value ? Number.parseInt(value.replace(/[. ,]/g, '')) : 0;
+                if(isNaN(value)) value = 0;
+                if(value < 0) value = -value;
+                newData.ballpark.to = value;
+                break;
+        }
+        this.props.editItem(this.updateEditedData({budget: newData}));
+    };
+
 
     handlePersonChange = (index, data) => {
         const emptyItem = {id: null, profession: [], flag: [], note: '', company: null};

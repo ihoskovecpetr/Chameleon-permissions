@@ -151,8 +151,8 @@ export default class CompanyEdit extends React.PureComponent {
                         </div>
                         {/* ------------------ NOTE ------------------ */}
                         <div className={'detail-row spacer'}>
-                            <div className={'detail-group column size-12'}>
-                                <div className={`detail-label column${editedData.note !== undefined && company ? ' value-changed' : ''}`}>{'Company note'}</div>
+                            <div className={'detail-group size-12'}>
+                                <div className={`detail-label${editedData.note !== undefined && company ? ' value-changed' : ''}`}>{'Company note:'}</div>
                                 <Textarea
                                     placeholder={'Company note...'}
                                     className={`detail-input textarea`}
