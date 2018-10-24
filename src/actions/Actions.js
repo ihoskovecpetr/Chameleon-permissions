@@ -112,8 +112,8 @@ export function editProject(id, set) {
     return {type: ActionTypes.EDIT_PROJECT, id: id, set: set}
 }
 
-export function setProjectsFilter(filter, remove) {
-    return {type: ActionTypes.SET_PROJECTS_FILTER, filter: filter, state: remove};
+export function setProjectsFilter(filter, state) {
+    return {type: ActionTypes.SET_PROJECTS_FILTER, filter: filter, state: state};
 }
 
 export function setProjectsSearch(search) {

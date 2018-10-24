@@ -12,6 +12,8 @@ $tool-button-color-orange: #daaa4b;
 $tool-button-color-blue: #2257ad;
 $tool-button-color-disabled: #9b9b9b;
 
+$tool-button-color-reversed: #7a4f8b;
+
 // BUTTON MIXIN ********************************************************************************************************
 @mixin tool-button($bg, $fg-dark: true, $disabled: false) {
   $gradient-step: 10%;
@@ -212,15 +214,22 @@ $tool-button-color-disabled: #9b9b9b;
       min-width: $tool-height;
       padding: 0.1rem 0.7rem 0.1rem 0.5rem ;
       color: #e1e1e1;
-      text-shadow: darken($app-toolbox-background-color, 30%) 0 0 0.1rem;
-      background-color: darken($app-toolbox-background-color, 15%);
+      //text-shadow: darken($app-toolbox-background-color, 30%) 0 0 0.1rem;
+      background-color: darken($app-toolbox-background-color, 10%);
       text-align: center;
       border-radius: $tool-height / 2;
       cursor: pointer;
+      &.checked {
+        background-color: $tool-button-color-blue;
+      }
       &.reversed {
-        color: darken($app-toolbox-background-color, 15%);
-        text-shadow: none;
-        background-color: #c5c5c5;
+        //color: darken($app-toolbox-background-color, 15%);
+        //text-shadow: none;
+        //background-color: #c5c5c5;
+        background-color: $tool-button-color-reversed;
+        //color: $tool-button-color-blue;
+        //box-shadow: inset 0 0 0 3px $tool-button-color-blue;
+        //background-color: #c5c5c5;
       }
       //border: 1px solid darken($app-toolbox-background-color, 15%);
       &:not(:last-child) {

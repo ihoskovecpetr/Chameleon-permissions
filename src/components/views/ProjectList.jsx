@@ -51,8 +51,10 @@ export default class ProjectList extends React.PureComponent {
 
         return (
             <div className={'app-body'}>
+                {/* ------------------ TOOLBOX ------------------ */}
                 <div className={'app-toolbox'}>
                     <div className={'inner-container space'}>
+                        {/* ------------------ BUTTONS ------------------ */}
                         <div className={'toolbox-group'}>
                             <div onClick={this.add} className={'tool-box-button green'}>{'New'}</div>
                             <div onClick={selected ? () => this.show(selected) : undefined} className={`tool-box-button${selected ? '' : ' disabled'}`}>{'Show'}</div>
@@ -61,6 +63,7 @@ export default class ProjectList extends React.PureComponent {
                         </div>
                     </div>
                     <div className={'inner-container flex'}>
+                        {/* ------------------ SEARCH ------------------ */}
                         <div className={'toolbox-group right-auto'}>
                             <div className={'tool-box-search-container'}>
                                 <div className={'icon search'}><FontAwesomeIcon icon={Icons.ICON_SEARCH}/></div>
@@ -68,21 +71,26 @@ export default class ProjectList extends React.PureComponent {
                                 <div className={'icon clear'} onClick={this.clearSearchInputHandler}><FontAwesomeIcon icon={Icons.ICON_SEARCH_CLEAR}/></div>
                             </div>
                         </div>
+                        {/* ------------------ FILTER SWITCHES ------------------ */}
                         <div className={'toolbox-group'}>
-                            <div onClick={this.userFilterHandler} className={`tool-box-button-switch`}><FontAwesomeIcon className={'check'} icon={userFilter ? Icons.ICON_CHECKBOX_FILTER_CHECKED : Icons.ICON_CHECKBOX_FILTER_UNCHECKED}/><span className={`text`}>{'My'}</span></div>
+                            <div onClick={this.userFilterHandler} className={`tool-box-button-switch${userFilter ? ' checked' : ''}`}><FontAwesomeIcon className={'check'} icon={userFilter ? Icons.ICON_CHECKBOX_FILTER_CHECKED : Icons.ICON_CHECKBOX_FILTER_UNCHECKED}/><span className={`text`}>{'My'}</span></div>
 
                             {activeBid ? null :
                                 <Fragment>
-                                    <div className={`tool-box-button-switch${activeFilterReversed ? ' reversed' : ''}`}><FontAwesomeIcon onClick={this.activeFilterHandler} className={'check'} icon={activeFilter ? Icons.ICON_CHECKBOX_FILTER_CHECKED : Icons.ICON_CHECKBOX_FILTER_UNCHECKED}/><span onClick={this.activeFilterReverseHandler} className={`text${activeFilterReversed ? ' reversed' : ''}`}>{'Active'}</span></div>
-                                    <div className={`tool-box-button-switch${awardFilterReversed ? ' reversed ' : ''}`}><FontAwesomeIcon onClick={this.awardedFilterHandler} className={'check'} icon={awardedFilter ? Icons.ICON_CHECKBOX_FILTER_CHECKED : Icons.ICON_CHECKBOX_FILTER_UNCHECKED}/><span onClick={this.awardedFilterReverseHandler} className={`text${awardFilterReversed ? ' reversed' : ''}`}>{'Awarded'}</span></div>
+                                    <div onClick={event => this.activeFilterHandler(event, false)} className={`tool-box-button-switch${activeFilter ?  activeFilterReversed ? ' reversed' : ' checked' : ''}`}><FontAwesomeIcon onClick={event => this.activeFilterHandler(event, true)} className={'check'} icon={activeFilter ? Icons.ICON_CHECKBOX_FILTER_CHECKED : Icons.ICON_CHECKBOX_FILTER_UNCHECKED}/><span className={`text${activeFilterReversed ? ' reversed' : ''}`}>{'Active'}</span></div>
+                                    <div onClick={event => this.awardedFilterHandler(event, false)} className={`tool-box-button-switch${awardedFilter ? awardFilterReversed ? ' reversed ' : ' checked' : ''}`}><FontAwesomeIcon onClick={event => this.awardedFilterHandler(event, true)} className={'check'} icon={awardedFilter ? Icons.ICON_CHECKBOX_FILTER_CHECKED : Icons.ICON_CHECKBOX_FILTER_UNCHECKED}/><span className={`text${awardFilterReversed ? ' reversed' : ''}`}>{'Awarded'}</span></div>
                                 </Fragment>
                             }
-                            <div onClick={this.toggleActiveBidMode} className={'tool-box-button blue active-bid'}>
+                            {/* BID SWITCH */}
+                            {/*<div onClick={this.toggleActiveBidMode} className={'tool-box-button blue active-bid'}>
                                 {activeBid ? 'All' : 'Bids'}
-                            </div>
+                            </div>*/}
+                            <div onClick={this.toggleActiveBidMode} className={`tool-box-button-switch${activeBid ? ' checked' : ''}`}><FontAwesomeIcon className={'check'} icon={activeBid ? Icons.ICON_CHECKBOX_FILTER_CHECKED : Icons.ICON_CHECKBOX_FILTER_UNCHECKED}/><span className={`text`}>{'Bids'}</span></div>
                         </div>
+                        {/* ------------------------------------ */}
                     </div>
                 </div>
+                {/* ------------------ TABLE LIST ------------------ */}
                 <Fragment>
                     {this.getHeader(activeBid ? ActiveBidsColumnDef : ProjectsColumnDef)}
                     <Scrollbars autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
@@ -265,6 +273,26 @@ export default class ProjectList extends React.PureComponent {
         if(typeof event.target.className === 'string' && event.target.className.indexOf('control-select') < 0 && event.target.className.indexOf('table-button') < 0) event.altKey ? this.edit(projectId, true) : this.show(projectId, true);
     };
 
+    activeFilterHandler = (event, check) => {
+        if(check) event.stopPropagation();
+        if (this.props.filter.indexOf(FilterTypes.ACTIVE_PROJECTS_FILTER) >= 0) {
+            this.props.setFilter(FilterTypes.ACTIVE_PROJECTS_FILTER, false);
+            if(!check) this.props.setFilter(FilterTypes.NON_ACTIVE_PROJECTS_FILTER, true);
+        }
+        else if (this.props.filter.indexOf(FilterTypes.NON_ACTIVE_PROJECTS_FILTER) >= 0) this.props.setFilter(FilterTypes.NON_ACTIVE_PROJECTS_FILTER, false);
+        else this.props.setFilter(FilterTypes.ACTIVE_PROJECTS_FILTER, true);
+    };
+
+    awardedFilterHandler = (event, check) => {
+        if(check) event.stopPropagation();
+        if (this.props.filter.indexOf(FilterTypes.AWARDED_PROJECTS_FILTER) >= 0) {
+            this.props.setFilter(FilterTypes.AWARDED_PROJECTS_FILTER, false);
+            if(!check) this.props.setFilter(FilterTypes.NOT_AWARDED_PROJECTS_FILTER, true);
+        }
+        else if (this.props.filter.indexOf(FilterTypes.NOT_AWARDED_PROJECTS_FILTER) >= 0) this.props.setFilter(FilterTypes.NOT_AWARDED_PROJECTS_FILTER, false);
+        else this.props.setFilter(FilterTypes.AWARDED_PROJECTS_FILTER, true);
+    };
+    /*
     activeFilterHandler = () => {
         if(this.props.filter.indexOf(FilterTypes.ACTIVE_PROJECTS_FILTER) >= 0) this.props.setFilter(FilterTypes.ACTIVE_PROJECTS_FILTER, false);
         else if(this.props.filter.indexOf(FilterTypes.NON_ACTIVE_PROJECTS_FILTER) >= 0) this.props.setFilter(FilterTypes.NON_ACTIVE_PROJECTS_FILTER, false);
@@ -300,7 +328,7 @@ export default class ProjectList extends React.PureComponent {
         }
         else this.props.setFilter(FilterTypes.NOT_AWARDED_PROJECTS_FILTER, true);
     };
-
+    */
     userFilterHandler = () => {
         if(this.props.filter.indexOf(FilterTypes.USER_FILTER) >= 0) this.props.setFilter(FilterTypes.USER_FILTER, false);
         else this.props.setFilter(FilterTypes.USER_FILTER, true);
