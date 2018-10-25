@@ -63,7 +63,8 @@ export default class ProjectEdit extends React.PureComponent {
         const person = editedData.person !== undefined ? editedData.person : project && project.person ? project.person : [];
         const team = editedData.team !== undefined ? editedData.team : project && project.team ? project.team : [];
         const timing = editedData.timing !== undefined ? editedData.timing : project && project.timing ? project.timing : [];
-        const lastContact = editedData.lastContact !== undefined ? editedData.lastContact ? moment(editedData.lastContact) : null : project && project.lastContact ? moment(projects.lastContact) : null;
+        const lastContact = editedData.lastContact !== undefined ? editedData.lastContact ? moment(editedData.lastContact) : null : project && project.lastContact ? moment(project.lastContact) : null;
+
         const projectNote = editedData.projectNote !== undefined ? editedData.projectNote : project && project.projectNote ? project.projectNote : '';
 
         const ballparkFrom = editedData.budget !== undefined ? editedData.budget.ballpark.from ? editedData.budget.ballpark.from : '' : project && project.budget ? project.budget.ballpark.from ? project.budget.ballpark.from : '' : '';
