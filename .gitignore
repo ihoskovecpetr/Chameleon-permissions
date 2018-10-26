@@ -1,7 +1,0 @@
-.*
-!.gitignore
-!.babelrc
-node_modules
-build
-npm-debug.log
-package-lock.json
