@@ -139,9 +139,11 @@ export function changeProjectEditedData(data) {
 // remote db opp
 export function updateProject(id, updateData) {
     return async (dispatch, getState) => {
-        const projectUpdate = updateData ? updateData : getState().appState.projectEditedData;
+        const projectUpdate = updateData ? updateData : {...getState().appState.projectEditedData};
         const projectId = id ? id : getState().appState.selectedProject;
         if(!projectId || !projectUpdate || Object.keys(projectUpdate).length === 0) return;
+        if(projectUpdate.name) projectUpdate.name = projectUpdate.name.toUpperCase().trim();
+        if(projectUpdate.alias) projectUpdate.alias = projectUpdate.alias.toUpperCase().trim();
         dispatch(setFetching(true));
         dispatch(setMessage(null));
         try {
@@ -164,8 +166,10 @@ export function updateProject(id, updateData) {
 
 export function createProject() {
     return async (dispatch, getState) => {
-        const project = getState().appState.projectEditedData;
+        const project = {...getState().appState.projectEditedData};
         if(!project || Object.keys(project).length === 0) return;
+        if(project.name) project.name = project.name.toUpperCase().trim();
+        if(project.alias) project.alias = project.alias.toUpperCase().trim();
         dispatch(setFetching(true));
         dispatch(setMessage(null));
         try {
@@ -248,9 +252,10 @@ export function changeCompanyEditedData(data) {
 // remote db opp
 export function updateCompany(id, updateData) {
     return async (dispatch, getState) => {
-        const companyUpdate = updateData ? updateData : getState().appState.companyEditedData;
+        const companyUpdate = updateData ? updateData : {...getState().appState.companyEditedData};
         const companyId = id ? id : getState().appState.selectedCompany;
         if(!companyId || !companyUpdate || Object.keys(companyUpdate).length === 0) return;
+        if(companyUpdate.name) companyUpdate.name = companyUpdate.name.trim();
         dispatch(setFetching(true));
         dispatch(setMessage(null));
         try {
@@ -273,9 +278,10 @@ export function updateCompany(id, updateData) {
 
 export function createCompany() {
     return async (dispatch, getState) => {
-        const company = getState().appState.companyEditedData;
+        const company = {...getState().appState.companyEditedData};
         let newCompany;
         if(!company || Object.keys(company).length === 0) return;
+        if(company.name) company.name = company.name.trim();
         dispatch(setFetching(true));
         dispatch(setMessage(null));
         try {
@@ -359,9 +365,10 @@ export function changePersonEditedData(data) {
 // remote db opp
 export function updatePerson(id, updateData) {
     return async (dispatch, getState) => {
-        const personUpdate = updateData ? updateData : getState().appState.personEditedData;
+        const personUpdate = updateData ? updateData : {...getState().appState.personEditedData};
         const personId = id ? id : getState().appState.selectedPerson;
         if(!personId || !personUpdate || Object.keys(personUpdate).length === 0) return;
+        if(personUpdate.name) personUpdate.name = personUpdate.name.trim();
         dispatch(setFetching(true));
         dispatch(setMessage(null));
         try {
@@ -384,9 +391,10 @@ export function updatePerson(id, updateData) {
 
 export function createPerson() {
     return async (dispatch, getState) => {
-        const person = getState().appState.personEditedData;
+        const person = {...getState().appState.personEditedData};
         let newPerson;
         if(!person || Object.keys(person).length === 0) return;
+        if(person.name) person.name = person.name.trim();
         dispatch(setFetching(true));
         dispatch(setMessage(null));
         try {

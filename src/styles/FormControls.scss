@@ -97,6 +97,10 @@ $table-control-background-color: #f5f5f5;
   }
 }
 
+.detail-input.upper-case {
+  text-transform: uppercase;
+}
+
 .detail-input-group {
   width: 100%;
   display: flex;

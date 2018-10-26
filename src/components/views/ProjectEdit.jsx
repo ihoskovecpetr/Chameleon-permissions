@@ -57,6 +57,7 @@ export default class ProjectEdit extends React.PureComponent {
         const {project, editedData, projects, companies, persons, users} = this.props;
 
         const name = editedData.name !== undefined ? editedData.name : project ? project.name : '';
+        const alias = editedData.alias !== undefined ? editedData.alias : project ? project.alias : '';
         const status = editedData.status !== undefined ? editedData.status : project && project.status ? project.status : null;
         const statusNote = editedData.statusNote !== undefined ? editedData.statusNote : project && project.statusNote ? project.statusNote : '';
         const company = editedData.company !== undefined ? editedData.company : project && project.company ? project.company : [];
@@ -109,16 +110,25 @@ export default class ProjectEdit extends React.PureComponent {
                 <Scrollbars autoHide={true} autoHideTimeout={Constants.TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={Constants.TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                     <div className={'detail-body edit'}>
 
-                        {/* ------------------ NAME, CONTACT ------------------ */}
+                        {/* ------------------ NAME, ALIAS, CONTACT ------------------ */}
                         <div className={'detail-row'}>
-                            <div className={'detail-group size-8'}>
+                            <div className={'detail-group size-4'}>
                                 <div className={`detail-label${typeof editedData.name !== 'undefined' && project  ? ' value-changed' : ''}`}>{'Project Name:'}</div>
                                 <Input
                                     placeholder={'Project name...'}
                                     autoFocus={!project}
-                                    className={`detail-input${this.state.validation.name ? ' invalid' : ''}`}
+                                    className={`detail-input upper-case${this.state.validation.name ? ' invalid' : ''}`}
                                     onChange={this.handleNameChange}
                                     value={name}
+                                />
+                            </div>
+                            <div className={'detail-group size-4'}>
+                                <div className={`detail-label${typeof editedData.alias !== 'undefined' && project  ? ' value-changed' : ''}`}>{'Project Alias:'}</div>
+                                <Input
+                                    placeholder={'Project alias...'}
+                                    className={`detail-input upper-case${this.state.validation.alias ? ' invalid' : ''}`}
+                                    onChange={this.handleAliasChange}
+                                    value={alias}
                                 />
                             </div>
                             <div className={'detail-group size-4 datepicker-container last-contact'}>
@@ -673,7 +683,11 @@ export default class ProjectEdit extends React.PureComponent {
     // VALUES CHANGE HANDLERS
     // *****************************************************************************************************************
     handleNameChange = event => {
-        this.props.editItem(this.updateEditedData({name: event.target.value.toUpperCase()}));
+        this.props.editItem(this.updateEditedData({name: event.target.value}));
+    };
+
+    handleAliasChange = event => {
+        this.props.editItem(this.updateEditedData({alias: event.target.value}));
     };
 
     handleStatusChange = option => {

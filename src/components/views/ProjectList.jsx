@@ -427,9 +427,9 @@ export default class ProjectList extends React.PureComponent {
                     if (teamProducer || teamManager || teamSupervisor) {
                         return (
                             <div className={'table-team'}>
-                                {teamProducer ? <div className={'team-member producer'}><FontAwesomeIcon icon={Icons.ICON_ROLE_PRODUCER} fixedWidth/>{teamProducer}</div> : null}
-                                {teamManager ? <div className={'team-member manager'}><FontAwesomeIcon icon={Icons.ICON_ROLE_MANAGER} fixedWidth/>{teamManager}</div> : null}
-                                {teamSupervisor ? <div className={'team-member supervisor'}><FontAwesomeIcon icon={Icons.ICON_ROLE_SUPERVISOR} fixedWidth/>{teamSupervisor}</div> : null}
+                                {teamProducer ? <div className={'team-member producer'}><FontAwesomeIcon icon={Icons.ICON_ROLE_PRODUCER} fixedWidth/>{StringFormatter.getSurrname(teamProducer)}</div> : null}
+                                {teamManager ? <div className={'team-member manager'}><FontAwesomeIcon icon={Icons.ICON_ROLE_MANAGER} fixedWidth/>{StringFormatter.getSurrname(teamManager)}</div> : null}
+                                {teamSupervisor ? <div className={'team-member supervisor'}><FontAwesomeIcon icon={Icons.ICON_ROLE_SUPERVISOR} fixedWidth/>{StringFormatter.getSurrname(teamSupervisor)}</div> : null}
                             </div>
                         );
                     } else return '---';

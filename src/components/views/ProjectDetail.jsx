@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Toolbox from '../toolbox/DetailToolbox';
@@ -20,6 +20,7 @@ export default class ProjectDetail extends React.PureComponent {
         const {project, projects} = this.props;
 
         const name = project.name ? project.name : '';
+        const alias = project.alias ? project.alias : '';
         const status = ProjectStatus[project.status] ? ProjectStatus[project.status].label : project.status;
         const statusNote = project.statusNote ? project.statusNote : '';
         const projectNote = project.projectNote ? project.projectNote : '';
@@ -105,7 +106,7 @@ export default class ProjectDetail extends React.PureComponent {
                         <div className={'detail-row'}>
                             <div className={'detail-group size-6'}>
                                 <div className={`detail-label`}>{'Project Name:'}</div>
-                                <div className={`detail-value selectable`}>{name}</div>
+                                <div className={`detail-value selectable`}>{alias ? <Fragment><span>{name}</span><span className={'alias-name'}>{alias}</span></Fragment> : name}</div>
                             </div>
                             <div className={'detail-group size-3'}>
                                 <div className={`detail-label`}>{'Project status:'}</div>

@@ -451,6 +451,17 @@ $detail-client-person-padding-left: 1em;
           }
         }
       }
+      .alias-name {
+        margin-left: 1em;
+        font-size: 0.8rem;
+        opacity: 0.6;
+        &::before {
+          content: "[";
+        }
+        &::after {
+          content: "]";
+        }
+      }
     }
     .datepicker-container {
       .react-datepicker-wrapper, .react-datepicker__input-container {
