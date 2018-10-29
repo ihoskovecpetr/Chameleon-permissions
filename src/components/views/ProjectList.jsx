@@ -392,7 +392,7 @@ export default class ProjectList extends React.PureComponent {
                 const status = ProjectStatus[project['status']] ? ProjectStatus[project['status']].label : '---';
                 return editable ?
                     <Select
-                        className={'control-select inline'}
+                        className={`control-select inline${project['status'] && ProjectStatus[project['status']] && ProjectStatus[project['status']].colorClass ? ` ${ProjectStatus[project['status']].colorClass}` : ''}`}
                         options={statusOptions}
                         value={{value: project['status'], label: ProjectStatus[project['status']] ? ProjectStatus[project['status']].label : ''}}
                         onChange={option => this.handleStatusChange(project._id, option.value)}
@@ -412,26 +412,24 @@ export default class ProjectList extends React.PureComponent {
                         return project.team.map(member => this.props.users[member.id] ? this.props.users[member.id].name : '');
                     } else return '';
                 } else {
-                    let teamProducer = undefined;
-                    let teamManager = undefined;
-                    let teamSupervisor = undefined;
                     if (project && project.team && project.team.length > 0) {
-                        teamProducer = project.team.find(member => member.role.indexOf(TeamRole.PRODUCER.id) >= 0);
-                        teamManager = project.team.find(member => member.role.indexOf(TeamRole.MANAGER.id) >= 0);
-                        teamSupervisor = project.team.find(member => member.role.indexOf(TeamRole.SUPERVISOR.id) >= 0);
-                    }
-                    if (teamProducer) teamProducer = this.props.users[teamProducer.id] ? this.props.users[teamProducer.id].name : `id: ${teamProducer.id}`;
-                    if (teamManager) teamManager = this.props.users[teamManager.id] ? this.props.users[teamManager.id].name : `id: ${teamManager.id}`;
-                    if (teamSupervisor) teamSupervisor = this.props.users[teamSupervisor.id] ? this.props.users[teamSupervisor.id].name : `id: ${teamSupervisor.id}`;
-
-                    if (teamProducer || teamManager || teamSupervisor) {
+                        const team = project.team
+                            .filter(member => member.role.indexOf(TeamRole.PRODUCER.id) >= 0 || member.role.indexOf(TeamRole.MANAGER.id) >= 0 || member.role.indexOf(TeamRole.SUPERVISOR.id) >= 0 )
+                            .sort((a, b) => {
+                                const aSort = Math.min(...a.role.map(role => TeamRole[role].sort));
+                                const bSort = Math.min(...b.role.map(role => TeamRole[role].sort));
+                                return aSort - bSort;
+                            }); //remove duplicity of supervisor etc ??? or supervisor - second
                         return (
                             <div className={'table-team'}>
-                                {teamProducer ? <div className={'team-member producer'}><FontAwesomeIcon icon={Icons.ICON_ROLE_PRODUCER} fixedWidth/>{StringFormatter.getSurrname(teamProducer)}</div> : null}
-                                {teamManager ? <div className={'team-member manager'}><FontAwesomeIcon icon={Icons.ICON_ROLE_MANAGER} fixedWidth/>{StringFormatter.getSurrname(teamManager)}</div> : null}
-                                {teamSupervisor ? <div className={'team-member supervisor'}><FontAwesomeIcon icon={Icons.ICON_ROLE_SUPERVISOR} fixedWidth/>{StringFormatter.getSurrname(teamSupervisor)}</div> : null}
+                                {team.map((member, index) => {
+                                    const name = this.props.users[member.id] ? this.props.users[member.id].name : `id: ${member.id}`;
+                                    const icons = member.role.map((role, index) => <FontAwesomeIcon key={index} icon={TeamRole[role].icon} fixedWidth/>);
+                                    return <div key={index} className={'team-member'}>{icons}<span>{StringFormatter.getSurrname(name)}</span></div>
+
+                                })}
                             </div>
-                        );
+                        )
                     } else return '---';
                 }
 

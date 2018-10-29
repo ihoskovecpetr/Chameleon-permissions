@@ -12,3 +12,10 @@ export function getSurrname(fullName) {
     split.shift();
     return split.join(' ');
 }
+
+export function getShortName(fullName) {
+    if(!fullName || fullName.trim().indexOf(' ') < 0) return fullName;
+    const split = fullName.trim().split(' ');
+    const name = split.shift();
+    return `${name.charAt(0)}. ${split.join(' ')}`;
+}

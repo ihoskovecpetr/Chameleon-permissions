@@ -124,38 +124,26 @@ $table-control-font-size: $table-row-font-size;
   }
 
   &.bid-team {
-    width: 27%;
+    width: 22%;
     .table-team {
       display: flex;
       flex-wrap: wrap;
-      //flex-direction: column;
       .team-member {
         overflow: hidden;
         text-overflow: ellipsis;
         &:not(:last-child) {
-          margin-right: 0.6em;
-        }
-        &.supervisor {
-          @include media("<=tablet") {
-            display: none;
-          }
-        }
-        &.manager {
-          @include media("<=phone") {
-            //display: none;
-          }
+          margin-right: 0.7em;
         }
         svg {
-          //width: 1.7rem;
           font-size: 0.9em;
-          margin-right: 0.2em;
+          margin-right: 0.15em;
         }
       }
     }
   }
   &.bid-status {
-    width: 8em;
-    min-width: 8em;
+    width: 8.2em;
+    min-width: 8.2em;
     overflow: visible;
     @include media("<=phone") {
       width: 7em;
@@ -163,8 +151,8 @@ $table-control-font-size: $table-row-font-size;
     }
   }
   &.bid-budget {
-    width: 10em;
-    min-width: 10em;
+    width: 11em;
+    min-width: 11em;
     white-space: initial;
     @include media("<=tablet") {
       display: none;

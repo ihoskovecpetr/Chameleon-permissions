@@ -24,6 +24,7 @@ export default class ProjectDetail extends React.PureComponent {
         const status = ProjectStatus[project.status] ? ProjectStatus[project.status].label : project.status;
         const statusNote = project.statusNote ? project.statusNote : '';
         const projectNote = project.projectNote ? project.projectNote : '';
+        const story = project.story ? project.story : '';
         const lastContact = project.lastContact ? moment(project.lastContact).format('D.M.YYYY') : 'Not set';
         const team =  project.team ? project.team : [];
         const ballparkFrom = project.budget && project.budget.ballpark && project.budget.ballpark.from ? project.budget.ballpark.from : null;
@@ -188,6 +189,14 @@ export default class ProjectDetail extends React.PureComponent {
                                 <div className={'detail-group size-12'}>
                                     <div className={`detail-label`}>{'Project note:'}</div>
                                     <div className={`detail-value multi-line`}>{projectNote}</div>
+                                </div>
+                            </div>
+                        : null}
+                        {story ?
+                            <div className={'detail-row spacer'}>
+                                <div className={'detail-group size-12'}>
+                                    <div className={`detail-label`}>{'Project story:'}</div>
+                                    <div className={`detail-value multi-line`}>{story}</div>
                                 </div>
                             </div>
                         : null}

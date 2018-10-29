@@ -65,8 +65,10 @@ export default class ProjectEdit extends React.PureComponent {
         const team = editedData.team !== undefined ? editedData.team : project && project.team ? project.team : [];
         const timing = editedData.timing !== undefined ? editedData.timing : project && project.timing ? project.timing : [];
         const lastContact = editedData.lastContact !== undefined ? editedData.lastContact ? moment(editedData.lastContact) : null : project && project.lastContact ? moment(project.lastContact) : null;
+        const inquired = editedData.inquired !== undefined ? editedData.inquired ? moment(editedData.inquired) : null : project && project.inquired ? moment(project.inquired) : null;
 
         const projectNote = editedData.projectNote !== undefined ? editedData.projectNote : project && project.projectNote ? project.projectNote : '';
+        const story = editedData.story !== undefined ? editedData.story : project && project.story ? project.story : '';
 
         const ballparkFrom = editedData.budget !== undefined ? editedData.budget.ballpark.from ? editedData.budget.ballpark.from : '' : project && project.budget ? project.budget.ballpark.from ? project.budget.ballpark.from : '' : '';
         const ballparkTo = editedData.budget !== undefined ? editedData.budget.ballpark.to ? editedData.budget.ballpark.to : '' : project && project.budget ? project.budget.ballpark.to ? project.budget.ballpark.to : '' : '';
@@ -131,7 +133,7 @@ export default class ProjectEdit extends React.PureComponent {
                                     value={alias}
                                 />
                             </div>
-                            <div className={'detail-group size-4 datepicker-container last-contact'}>
+                            <div className={'detail-group size-4 datepicker-container full-width'}>
                                 <div className={`detail-label${typeof editedData.lastContact !== 'undefined' && project  ? ' value-changed' : ''}`}>{'Last Contact:'}</div>
                                 <DatePicker
                                     selected={lastContact}
@@ -141,6 +143,22 @@ export default class ProjectEdit extends React.PureComponent {
                                     maxDate={moment().startOf('day')}
                                     placeholderText={'Last Contact...'}
                                     isClearable
+                                />
+                            </div>
+                        </div>
+                        {/* ------------------ INQUIRED ------------------ */}
+                        <div className={'detail-row'}>
+                            <div className={'detail-group size-8'}>
+                            </div>
+                            <div className={'detail-group size-4 datepicker-container full-width'}>
+                                <div className={`detail-label${typeof editedData.inquired !== 'undefined' && project  ? ' value-changed' : ''}`}>{'Project Inquired:'}</div>
+                                <DatePicker
+                                    selected={inquired}
+                                    dateFormat={'D.M.YYYY'}
+                                    className={`detail-date-picker${this.state.validation.inquired ? ' invalid' : ''}`}
+                                    onChange={this.handleInquiredChange}
+                                    maxDate={moment().startOf('day')}
+                                    placeholderText={'Project inquired...'}
                                 />
                             </div>
                         </div>
@@ -434,6 +452,18 @@ export default class ProjectEdit extends React.PureComponent {
                                 />
                             </div>
                         </div>
+                        {/* ------------------ STORY ------------------ */}
+                        <div className={'detail-row spacer'}>
+                            <div className={'detail-group size-12'}>
+                                <div className={`detail-label${editedData.story !== undefined && project ? ' value-changed' : ''}`}>{'Project story:'}</div>
+                                <Textarea
+                                    placeholder={'Project story...'}
+                                    className={`detail-input textarea`}
+                                    onChange={this.handleStoryChange}
+                                    value={story}
+                                />
+                            </div>
+                        </div>
                     </div>
                 </Scrollbars>
             </div>
@@ -632,6 +662,7 @@ export default class ProjectEdit extends React.PureComponent {
         });
 
         if(object.company && object.company.some(company => company.id === null)) validation['company'] = {field: 'Companies', status: 'Some company is not set'};
+        if(object.company && object.company.length > 0 && !object.company.some(company => company.flag.indexOf(CompanyFlag.UPP_CLIENT) >= 0)) validation['company'] = {field: 'Companies', status: 'UPP client is not set'};
         const companies = object.company ? object.company.filter(line => line.id).map(line => line.id) : [];
         companies.forEach((company, index) => {
             if(companies.indexOf(company) !== index) {
@@ -706,8 +737,16 @@ export default class ProjectEdit extends React.PureComponent {
         this.props.editItem(this.updateEditedData({projectNote: event.target.value}));
     };
 
+    handleStoryChange = event => {
+        this.props.editItem(this.updateEditedData({story: event.target.value}));
+    };
+
     handleLastContactChange = date => {
         this.props.editItem(this.updateEditedData({lastContact: date ? date.startOf('day') : null}));
+    };
+
+    handleInquiredChange = date => {
+        this.props.editItem(this.updateEditedData({inquired: date ? date.startOf('day') : null}));
     };
 
     handleTimingChange = (index, data) => {
@@ -750,7 +789,7 @@ export default class ProjectEdit extends React.PureComponent {
             editedData.team[index].role = Object.keys(TeamRole).reduce((roles, id) => {
                 const teamRole = Array.isArray(TeamRole[id].role) ? TeamRole[id].role : [TeamRole[id].role];
                 for(const role of teamRole) {
-                    if(userBookingRoles.indexOf(role) >= 0 && roles.indexOf(TeamRole[id].id) < 0 && (TeamRole[id].multi || projectUsedRoles.indexOf(TeamRole[id].id) < 0)) { //not used in others lines
+                    if(TeamRole[id].auto && userBookingRoles.indexOf(role) >= 0 && roles.indexOf(TeamRole[id].id) < 0 && (TeamRole[id].multi || projectUsedRoles.indexOf(TeamRole[id].id) < 0)) { //not used in others lines
                         roles.push(TeamRole[id].id);
                     }
                 }
