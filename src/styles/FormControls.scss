@@ -108,8 +108,8 @@ $table-control-background-color: #f5f5f5;
   .detail-input {
     padding-right: 3.2em;
   }
-  &.eur::after {
-    content: "EUR";
+  &[data-input-label]::after {
+    content: attr(data-input-label);
     position: absolute;
     right: 1px;
     top: 1px;
@@ -253,6 +253,12 @@ $table-control-background-color: #f5f5f5;
       }
     }
   }
+}
+
+.control-select.currency {
+  width: 5.5em;
+  min-width: 5.5em;
+  margin-right: 1em;
 }
 
 .control-select.inline {

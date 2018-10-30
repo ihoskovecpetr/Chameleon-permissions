@@ -72,6 +72,7 @@ export default class ProjectEdit extends React.PureComponent {
 
         const ballparkFrom = editedData.budget !== undefined ? editedData.budget.ballpark.from ? editedData.budget.ballpark.from : '' : project && project.budget ? project.budget.ballpark.from ? project.budget.ballpark.from : '' : '';
         const ballparkTo = editedData.budget !== undefined ? editedData.budget.ballpark.to ? editedData.budget.ballpark.to : '' : project && project.budget ? project.budget.ballpark.to ? project.budget.ballpark.to : '' : '';
+        const ballparkCurrency = editedData.budget !== undefined ? editedData.budget.ballpark.currency ? editedData.budget.ballpark.currency : 'eur' : project && project.budget ? project.budget.ballpark.currency ? project.budget.ballpark.currency : 'eur' : 'eur';
 
         if(Object.keys(editedData).length === 0) {
             team.sort((a, b) => (a.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)) - (b.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)));
@@ -112,7 +113,7 @@ export default class ProjectEdit extends React.PureComponent {
                 <Scrollbars autoHide={true} autoHideTimeout={Constants.TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={Constants.TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                     <div className={'detail-body edit'}>
 
-                        {/* ------------------ NAME, ALIAS, CONTACT ------------------ */}
+                        {/* ------------------ NAME, INQUIRED, LAST CONTACT ------------------ */}
                         <div className={'detail-row'}>
                             <div className={'detail-group size-4'}>
                                 <div className={`detail-label${typeof editedData.name !== 'undefined' && project  ? ' value-changed' : ''}`}>{'Project Name:'}</div>
@@ -124,13 +125,16 @@ export default class ProjectEdit extends React.PureComponent {
                                     value={name}
                                 />
                             </div>
-                            <div className={'detail-group size-4'}>
-                                <div className={`detail-label${typeof editedData.alias !== 'undefined' && project  ? ' value-changed' : ''}`}>{'Project Alias:'}</div>
-                                <Input
-                                    placeholder={'Project alias...'}
-                                    className={`detail-input upper-case${this.state.validation.alias ? ' invalid' : ''}`}
-                                    onChange={this.handleAliasChange}
-                                    value={alias}
+                            <div className={'detail-group size-4 datepicker-container full-width'}>
+                                <div className={`detail-label${typeof editedData.inquired !== 'undefined' && project  ? ' value-changed' : ''}`}>{'Project Inquired:'}</div>
+                                <DatePicker
+                                    selected={inquired}
+                                    dateFormat={'D.M.YYYY'}
+                                    className={`detail-date-picker${this.state.validation.inquired ? ' invalid' : ''}`}
+                                    onChange={this.handleInquiredChange}
+                                    maxDate={moment().startOf('day')}
+                                    placeholderText={'Project inquired...'}
+                                    onChangeRaw={this.handleDateChangeRaw}
                                 />
                             </div>
                             <div className={'detail-group size-4 datepicker-container full-width'}>
@@ -143,30 +147,28 @@ export default class ProjectEdit extends React.PureComponent {
                                     maxDate={moment().startOf('day')}
                                     placeholderText={'Last Contact...'}
                                     isClearable
+                                    onChangeRaw={this.handleDateChangeRaw}
                                 />
                             </div>
                         </div>
-                        {/* ------------------ INQUIRED ------------------ */}
+                        {/* ------------------ ALIAS ------------------ */}
                         <div className={'detail-row'}>
-                            <div className={'detail-group size-8'}>
-                            </div>
-                            <div className={'detail-group size-4 datepicker-container full-width'}>
-                                <div className={`detail-label${typeof editedData.inquired !== 'undefined' && project  ? ' value-changed' : ''}`}>{'Project Inquired:'}</div>
-                                <DatePicker
-                                    selected={inquired}
-                                    dateFormat={'D.M.YYYY'}
-                                    className={`detail-date-picker${this.state.validation.inquired ? ' invalid' : ''}`}
-                                    onChange={this.handleInquiredChange}
-                                    maxDate={moment().startOf('day')}
-                                    placeholderText={'Project inquired...'}
+                            <div className={'detail-group size-4'}>
+                                <div className={`detail-label${typeof editedData.alias !== 'undefined' && project  ? ' value-changed' : ''}`}>{'Project Alias:'}</div>
+                                <Input
+                                    placeholder={'Project alias...'}
+                                    className={`detail-input upper-case${this.state.validation.alias ? ' invalid' : ''}`}
+                                    onChange={this.handleAliasChange}
+                                    value={alias}
                                 />
                             </div>
+
                         </div>
 
                         {/* ------------------ STATUS + STATUS NOTE ------------------ */}
                         <div className={'detail-row'}>
                             <div className={'detail-group size-4'}>
-                                <div className={`detail-label${typeof editedData.status !== 'undefined' && project ? ' value-changed' : ''}`}>{'Project status:'}</div>
+                                <div className={`detail-label${typeof editedData.status !== 'undefined' && project ? ' value-changed' : ''}`}>{'Project Status:'}</div>
                                 <Select
                                     options={statusOptions}
                                     value={{value: status, label: ProjectStatus[status] ? ProjectStatus[status].label : ''}}
@@ -177,7 +179,7 @@ export default class ProjectEdit extends React.PureComponent {
                                 />
                             </div>
                             <div className={'detail-group size-8'}>
-                                <div className={`detail-label${editedData.statusNote !== undefined && project ? ' value-changed' : ''}`}>{'Status note:'}</div>
+                                <div className={`detail-label${editedData.statusNote !== undefined && project ? ' value-changed' : ''}`}>{'Status Note:'}</div>
                                 <Textarea
                                     placeholder={'Status note...'}
                                     className={`detail-input textarea${this.state.validation.statusNote ? ' invalid' : ''}`}
@@ -188,9 +190,17 @@ export default class ProjectEdit extends React.PureComponent {
                         </div>
                         {/* ------------------ BUDGET - BALLPARK ------------------ */}
                         <div className={'detail-row'}>
-                            <div className={'detail-group size-6'}>
-                                <div className={`detail-label${typeof editedData.budget !== 'undefined' && project ? ' value-changed' : ''}`}>{'Budget [EUR]:'}</div>
-                                <div className={'detail-input-group eur'}>
+                            <div className={'detail-group size-8'}>
+                                <div className={`detail-label${typeof editedData.budget !== 'undefined' && project ? ' value-changed' : ''}`}>{'Budget:'}</div>
+                                <Select
+                                    options={[{value: 'czk', label: 'CZK'}, {value: 'eur', label: 'EUR'}, {value: 'usd', label: 'USD'}]}
+                                    value={{value: ballparkCurrency, label: ballparkCurrency.toUpperCase()}}
+                                    onChange={option => this.handleBudgetChange('ballpark.currency', option.value)}
+                                    isSearchable={false}
+                                    className={`control-select currency`}
+                                    classNamePrefix={'control-select'}
+                                />
+                                <div className={'detail-input-group'} data-input-label={ballparkCurrency.toUpperCase()}>
                                     <Input
                                         placeholder={'Budget from...'}
                                         className={`detail-input${this.state.validation.budget ? ' invalid' : ''}`}
@@ -199,10 +209,10 @@ export default class ProjectEdit extends React.PureComponent {
                                     />
                                 </div>
                                 <div style={{margin: '0 0.5em', whiteSpace: 'nowrap'}}>{'-'}</div>
-                                <div className={'detail-input-group eur'}>
+                                <div className={'detail-input-group'} data-input-label={ballparkCurrency.toUpperCase()}>
                                     <Input
                                         placeholder={'Budget to...'}
-                                        className={`detail-input marker${this.state.validation.budget ? ' invalid' : ''}`}
+                                        className={`detail-input${this.state.validation.budget ? ' invalid' : ''}`}
                                         onChange={event => this.handleBudgetChange('ballpark.to', event.target.value)}
                                         value={StringFormatter.currencyFormat(ballparkTo)}
                                     />
@@ -828,7 +838,7 @@ export default class ProjectEdit extends React.PureComponent {
     };
 
     handleBudgetChange = (which, value) => {
-        const emptyItem = {booking: null, client: null, sent: [], ballpark: {from: 0, to: 0}, flag: true};
+        const emptyItem = {booking: null, client: null, sent: [], ballpark: {from: 0, to: 0, currency: 'eur'}};
         const project = this.props.project;
         const newData = this.props.editedData.budget ? {...this.props.editedData.budget, ballpark: {...this.props.editedData.budget.ballpark}, sent: [...this.props.editedData.budget.sent]} : project ? {...project.budget, ballpark: {...project.budget.ballpark}, sent: [...project.budget.sent]} : emptyItem;
         switch(which) {
@@ -843,6 +853,9 @@ export default class ProjectEdit extends React.PureComponent {
                 if(isNaN(value)) value = 0;
                 if(value < 0) value = -value;
                 newData.ballpark.to = value;
+                break;
+            case 'ballpark.currency':
+                newData.ballpark.currency = value;
                 break;
         }
         this.props.editItem(this.updateEditedData({budget: newData}));
@@ -939,5 +952,9 @@ export default class ProjectEdit extends React.PureComponent {
             })
         }
         this.props.setJustAddedObject(null);
+    };
+
+    handleDateChangeRaw = event => {
+        event.preventDefault();
     }
 };

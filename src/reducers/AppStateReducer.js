@@ -1,6 +1,7 @@
 import * as ViewTypes from '../constants/ViewTypes';
 import * as ActionTypes from '../actions/ActionTypes';
 import * as ProjectStatus from '../constants/ProjectStatus';
+import moment from 'moment';
 
 function AppStateReducer(state = null, action = null) {
     if(action && action.type) {
@@ -68,7 +69,7 @@ function AppStateReducer(state = null, action = null) {
                 return {...state, projectEditedData: {}, selectedProject: action.set ? action.id : state.selectedProject, view: {type: ViewTypes.PROJECT_EDIT, selected: action.id ? action.id : state.selectedProject, editable: !action.disableEdit}, previousView: [...state.previousView, {...state.view, selected: action.set ? action.id : state.view.selected}]};
 
             case ActionTypes.ADD_PROJECT:
-                return {...state, projectEditedData: {status: ProjectStatus.PRE_BID.id}, view: {type: ViewTypes.PROJECT_EDIT, selected: null, editable: false}, previousView: [...state.previousView, state.view]};
+                return {...state, projectEditedData: {status: ProjectStatus.PRE_BID.id, inquired: moment().startOf('day')}, view: {type: ViewTypes.PROJECT_EDIT, selected: null, editable: false}, previousView: [...state.previousView, state.view]};
 
             case ActionTypes.CHANGE_PROJECT_EDIT_DATA:
                 if(action.data) {

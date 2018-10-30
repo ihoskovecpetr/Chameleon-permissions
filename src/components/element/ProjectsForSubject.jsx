@@ -4,7 +4,9 @@ import * as CompanyBusiness from '../../constants/CompanyBusiness';
 import * as CompanyFlag from '../../constants/CompanyFlag';
 import * as PersonFlag from '../../constants/PersonFlag';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import * as ProjectStatus from '../../constants/ProjectStatus'
 import * as Icons from '../../constants/Icons';
+import * as StringFormater from '../../lib/stringFormatHelper';
 
 export default function ProjectsForSubject(props) {
     const {projects, id, type} = props;
@@ -14,11 +16,16 @@ export default function ProjectsForSubject(props) {
     }).map(projectId => {
         const project = projects[projectId];
         const person = project[type].find(item => item.id === id);
+        const ballparkFrom = project && project.budget && project.budget.ballpark ? project.budget.ballpark.from : 0;
+        const ballparkTo = project && project.budget && project.budget.ballpark ? project.budget.ballpark.to : 0;
+        const ballparkCurrency = project && project.budget && project.budget.ballpark && project.budget.ballpark.currency ? project.budget.ballpark.currency : 'eur';
         return {
             id: projectId,
-            name: project.name,
+            name: project.alias ? <Fragment><span>{project.name}</span><span className={'alias-name'}>{project.alias}</span></Fragment> : project.name,
             flag: <Fragment>{person.flag.map((flag, i) => <div key={i} data-tooltip={getFlagTooltip(flag)} className={`flag-icon${i === 0 ? ' first' : ''}`}><FontAwesomeIcon icon={getFlagIcon(flag)}/></div>)}</Fragment>,
-            role: type === 'person' ? person.profession.map(profession => PersonProfession[profession] ? PersonProfession[profession].label : profession) : person.business.map(business => CompanyBusiness[business] ? CompanyBusiness[business].label : business)
+            role: type === 'person' ? person.profession.map(profession => PersonProfession[profession] ? PersonProfession[profession].label : profession) : person.business.map(business => CompanyBusiness[business] ? CompanyBusiness[business].label : business),
+            status: project.status && ProjectStatus[project.status] ? ProjectStatus[project.status].label : 'Unknown Status',
+            budget: ballparkFrom ? `${ballparkTo ? `${StringFormater.currencyFormat(ballparkFrom)} - ${StringFormater.currencyFormat(ballparkTo, ballparkCurrency.toUpperCase())}` : StringFormater.currencyFormat(ballparkFrom, ballparkCurrency.toUpperCase())}` : null
         }
     });
     if(projectsForSubject.length > 0) {
@@ -35,6 +42,8 @@ export default function ProjectsForSubject(props) {
                                     {project.flag}
                                 </div>
                                 <div className={'role'}>{project.role.join(', ')}</div>
+                                <div className={'status'}>{project.status}</div>
+                                {project.budget ? <div className={'budget'}>{project.budget}</div> : null}
                             </div>
                         )}
                     )}

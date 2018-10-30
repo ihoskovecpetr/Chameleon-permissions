@@ -132,9 +132,20 @@ $detail-client-person-padding-left: 1em;
             white-space: nowrap;
             display: flex;
             align-items: baseline;
-            flex: 0 0 40%;
+            flex: 0 0 35%;
             @include media("<=phone") {
               flex: 0 0 100%;
+            }
+            .alias-name {
+              margin-left: 0.3em;
+              font-size: 0.9rem;
+              opacity: 0.4;
+              &::before {
+                content: "[";
+              }
+              &::after {
+                content: "]";
+              }
             }
             .flag-icon {
               margin-left: 0.3em;
@@ -146,7 +157,21 @@ $detail-client-person-padding-left: 1em;
           }
           .role {
             white-space: nowrap;
-            flex: 0 0 60%;
+            flex: 0 0 35%;
+            @include media("<=phone") {
+              flex: 0 0 100%;
+            }
+          }
+          .status {
+            white-space: nowrap;
+            flex: 0 0 10%;
+            @include media("<=phone") {
+              flex: 0 0 100%;
+            }
+          }
+          .budget {
+            white-space: nowrap;
+            flex: 0 0 20%;
             @include media("<=phone") {
               flex: 0 0 100%;
             }
@@ -452,9 +477,9 @@ $detail-client-person-padding-left: 1em;
         }
       }
       .alias-name {
-        margin-left: 1em;
-        font-size: 0.8rem;
-        opacity: 0.6;
+        margin-left: 0.7em;
+        font-size: 0.9rem;
+        opacity: 0.4;
         &::before {
           content: "[";
         }

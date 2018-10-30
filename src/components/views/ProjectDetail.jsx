@@ -26,9 +26,11 @@ export default class ProjectDetail extends React.PureComponent {
         const projectNote = project.projectNote ? project.projectNote : '';
         const story = project.story ? project.story : '';
         const lastContact = project.lastContact ? moment(project.lastContact).format('D.M.YYYY') : 'Not set';
+        const inquired = project.inquired ? moment(project.inquired).format('D.M.YYYY') : 'Not set';
         const team =  project.team ? project.team : [];
         const ballparkFrom = project.budget && project.budget.ballpark && project.budget.ballpark.from ? project.budget.ballpark.from : null;
         const ballparkTo = project.budget && project.budget.ballpark && project.budget.ballpark.to ? project.budget.ballpark.to : null;
+        const ballparkCurrency = project.budget && project.budget.ballpark && project.budget.ballpark.currency ? project.budget.ballpark.currency : 'eur';
 
         const timing = project.timing ? project.timing : [];
 
@@ -110,27 +112,31 @@ export default class ProjectDetail extends React.PureComponent {
                                 <div className={`detail-value selectable`}>{alias ? <Fragment><span>{name}</span><span className={'alias-name'}>{alias}</span></Fragment> : name}</div>
                             </div>
                             <div className={'detail-group size-3'}>
-                                <div className={`detail-label`}>{'Project status:'}</div>
-                                <div className={`detail-value`}>{status}</div>
+                                <div className={`detail-label`}>{'Project Inquired:'}</div>
+                                <div className={`detail-value selectable`}>{inquired}</div>
                             </div>
                             <div className={'detail-group size-3'}>
                                 <div className={`detail-label`}>{'Last Contact:'}</div>
                                 <div className={`detail-value selectable`}>{lastContact}</div>
                             </div>
                         </div>
-                        {statusNote ?
                         <div className={'detail-row'}>
-                            <div className={'detail-group size-12'}>
-                                <div className={`detail-label`}>{'Status note:'}</div>
-                                <div className={`detail-value multi-line`}>{statusNote}</div>
+                            <div className={'detail-group size-3'}>
+                                <div className={`detail-label`}>{'Project Status:'}</div>
+                                <div className={`detail-value`}>{status}</div>
                             </div>
+                            {statusNote ?
+                                <div className={'detail-group size-9'}>
+                                    <div className={`detail-label`}>{'Status Note:'}</div>
+                                    <div className={`detail-value multi-line`}>{statusNote}</div>
+                                </div>
+                                : null}
                         </div>
-                        : null}
                         {ballparkFrom || ballparkTo?
                             <div className={'detail-row'}>
                                 <div className={'detail-group size-6'}>
                                     <div className={`detail-label`}>{'Budget:'}</div>
-                                    <div className={`detail-value selectable`}>{`${StringFormatter.currencyFormat(ballparkFrom, 'EUR')}${ballparkTo ? ` - ${StringFormatter.currencyFormat(ballparkTo, 'EUR')}` : ''}`}</div>
+                                    <div className={`detail-value selectable`}>{`${StringFormatter.currencyFormat(ballparkFrom, ballparkCurrency.toUpperCase())}${ballparkTo ? ` - ${StringFormatter.currencyFormat(ballparkTo, ballparkCurrency.toUpperCase())}` : ''}`}</div>
                                 </div>
                             </div>
                         : null}

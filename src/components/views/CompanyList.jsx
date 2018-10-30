@@ -281,12 +281,9 @@ export default class CompanyList extends React.PureComponent {
                 } else return '';
 
             case 'project':
-                if(searchable) {
-                    /*console.log(this.props.projects)
-                    if (company && company.project && company.person.length > 0) {
-                        return company.person.map(personId => this.props.persons[personId] ? `${this.props.persons[personId].name.replace(/ +/g, '_')}` : '').join(' ');
-                    } else return '';*/
-                    return '';
+                if(searchable && this.props.projects) {
+                    const projects = Object.keys(this.props.projects).filter(projectId => this.props.projects[projectId].company && this.props.projects[projectId].company.some(projectCompany => projectCompany.id === company._id));
+                    return projects.map(projectId => `${this.props.projects[projectId].name.replace(/ +/g, '_')}${this.props.projects[projectId].alias ? ` ${this.props.projects[projectId].alias.replace(/ +/g, '_')}` : ''}`).join(' ');
                 } else return '';
 
             default: return company && company[field] ? company[field] : '---';

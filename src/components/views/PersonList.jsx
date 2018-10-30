@@ -283,7 +283,7 @@ export default class PersonList extends React.PureComponent {
                     if (person && person.company && person.company.length > 0) {
                         return person.company.map(companyId => this.props.companies[companyId] ? `${this.props.companies[companyId].name}` : '').join(', ');
                     } else return '---';
-                };
+                }
 
             case 'company-order':
                 if (person && person.company && person.company.length > 0) {
@@ -292,12 +292,9 @@ export default class PersonList extends React.PureComponent {
                 } else return 'zzzzzzzzz';
 
             case 'project':
-                if(searchable) {
-                    /*console.log(this.props.projects)
-                    if (company && company.project && company.person.length > 0) {
-                        return company.person.map(personId => this.props.persons[personId] ? `${this.props.persons[personId].name.replace(/ +/g, '_')}` : '').join(' ');
-                    } else return '';*/
-                    return '';
+                if(searchable && this.props.projects) {
+                    const projects = Object.keys(this.props.projects).filter(projectId => this.props.projects[projectId].person && this.props.projects[projectId].person.some(projectPerson => projectPerson.id === person._id));
+                    return projects.map(projectId => `${this.props.projects[projectId].name.replace(/ +/g, '_')}${this.props.projects[projectId].alias ? ` ${this.props.projects[projectId].alias.replace(/ +/g, '_')}` : ''}`).join(' ');
                 } else return '';
 
             default: return person && person[field] ? person[field] : '---';

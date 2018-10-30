@@ -23,8 +23,10 @@ import memoize from 'memoize-one';
 
 import {ProjectsColumnDef, ActiveBidsColumnDef} from '../../constants/TableColumnsDef';
 const statusOptions = Object.keys(ProjectStatus).filter(key => ProjectStatus[key].bids).map(key => {return {value: ProjectStatus[key].id, label: ProjectStatus[key].label}});
-const searchKeysProjects = ['name', '$name', 'client', 'team', 'status'];
+const searchKeysProjects = ['name', '$name', 'alias', 'client', 'team', 'status'];
 const searchKeysBids = searchKeysProjects;
+
+const CURRENCY_RATIO = {eur: 25.5, usd: 21.5};
 
 export default class ProjectList extends React.PureComponent {
 
@@ -82,9 +84,6 @@ export default class ProjectList extends React.PureComponent {
                                 </Fragment>
                             }
                             {/* BID SWITCH */}
-                            {/*<div onClick={this.toggleActiveBidMode} className={'tool-box-button blue active-bid'}>
-                                {activeBid ? 'All' : 'Bids'}
-                            </div>*/}
                             <div onClick={this.toggleActiveBidMode} className={`tool-box-button-switch${activeBid ? ' checked' : ''}`}><FontAwesomeIcon className={'check'} icon={activeBid ? Icons.ICON_CHECKBOX_FILTER_CHECKED : Icons.ICON_CHECKBOX_FILTER_UNCHECKED}/><span className={`text`}>{'Bids'}</span></div>
                         </div>
                         {/* ------------------------------------ */}
@@ -211,7 +210,10 @@ export default class ProjectList extends React.PureComponent {
                 if(keys.indexOf(key) >= 0) {
                     search = search.substring(index + 1);
                     keysModified = [key];
-                    if(key === 'name') keysModified.push('$name');
+                    if(key === 'name') {
+                        keysModified.push('$name');
+                        keysModified.push('alias');
+                    }
                 }
             }
             let searchModified = search.trim().replace(/[^a-zA-Z ]/g, '').replace(/ +/g, '_');
@@ -292,43 +294,7 @@ export default class ProjectList extends React.PureComponent {
         else if (this.props.filter.indexOf(FilterTypes.NOT_AWARDED_PROJECTS_FILTER) >= 0) this.props.setFilter(FilterTypes.NOT_AWARDED_PROJECTS_FILTER, false);
         else this.props.setFilter(FilterTypes.AWARDED_PROJECTS_FILTER, true);
     };
-    /*
-    activeFilterHandler = () => {
-        if(this.props.filter.indexOf(FilterTypes.ACTIVE_PROJECTS_FILTER) >= 0) this.props.setFilter(FilterTypes.ACTIVE_PROJECTS_FILTER, false);
-        else if(this.props.filter.indexOf(FilterTypes.NON_ACTIVE_PROJECTS_FILTER) >= 0) this.props.setFilter(FilterTypes.NON_ACTIVE_PROJECTS_FILTER, false);
-        else this.props.setFilter(FilterTypes.ACTIVE_PROJECTS_FILTER, true);
-    };
 
-    activeFilterReverseHandler = () => {
-        if(this.props.filter.indexOf(FilterTypes.ACTIVE_PROJECTS_FILTER) >= 0) {
-            this.props.setFilter(FilterTypes.ACTIVE_PROJECTS_FILTER, false);
-            this.props.setFilter(FilterTypes.NON_ACTIVE_PROJECTS_FILTER, true);
-        }
-        else if(this.props.filter.indexOf(FilterTypes.NON_ACTIVE_PROJECTS_FILTER) >= 0) {
-            this.props.setFilter(FilterTypes.NON_ACTIVE_PROJECTS_FILTER, false);
-            this.props.setFilter(FilterTypes.ACTIVE_PROJECTS_FILTER, true);
-        }
-        else this.props.setFilter(FilterTypes.NON_ACTIVE_PROJECTS_FILTER, true);
-    };
-
-    awardedFilterHandler = () => {
-        if(this.props.filter.indexOf(FilterTypes.AWARDED_PROJECTS_FILTER) >= 0) this.props.setFilter(FilterTypes.AWARDED_PROJECTS_FILTER, false);
-        else if(this.props.filter.indexOf(FilterTypes.NOT_AWARDED_PROJECTS_FILTER) >= 0) this.props.setFilter(FilterTypes.NOT_AWARDED_PROJECTS_FILTER, false);
-        else this.props.setFilter(FilterTypes.AWARDED_PROJECTS_FILTER, true);
-    };
-
-    awardedFilterReverseHandler = () => {
-        if(this.props.filter.indexOf(FilterTypes.AWARDED_PROJECTS_FILTER) >= 0) {
-            this.props.setFilter(FilterTypes.AWARDED_PROJECTS_FILTER, false);
-            this.props.setFilter(FilterTypes.NOT_AWARDED_PROJECTS_FILTER, true);
-        }
-        else if(this.props.filter.indexOf(FilterTypes.NOT_AWARDED_PROJECTS_FILTER) >= 0) {
-            this.props.setFilter(FilterTypes.NOT_AWARDED_PROJECTS_FILTER, false);
-            this.props.setFilter(FilterTypes.AWARDED_PROJECTS_FILTER, true);
-        }
-        else this.props.setFilter(FilterTypes.NOT_AWARDED_PROJECTS_FILTER, true);
-    };
-    */
     userFilterHandler = () => {
         if(this.props.filter.indexOf(FilterTypes.USER_FILTER) >= 0) this.props.setFilter(FilterTypes.USER_FILTER, false);
         else this.props.setFilter(FilterTypes.USER_FILTER, true);
@@ -434,17 +400,32 @@ export default class ProjectList extends React.PureComponent {
                 }
 
             case 'budget':
-                const ballparkFrom = project && project.budget && project.budget.ballpark && project.budget.ballpark.from ? project.budget.ballpark.from : null;
-                const ballparkTo = project && project.budget && project.budget.ballpark && project.budget.ballpark.to ? project.budget.ballpark.to : null;
+                let ballparkCurrency = project && project.budget && project.budget.ballpark && project.budget.ballpark.currency ? project.budget.ballpark.currency : 'eur';
+                let ballparkFrom = project && project.budget && project.budget.ballpark && project.budget.ballpark.from ? project.budget.ballpark.from : null;
+                let ballparkTo = project && project.budget && project.budget.ballpark && project.budget.ballpark.to ? project.budget.ballpark.to : null;
+
                 if(ballparkFrom || ballparkTo) {
-                    return `${StringFormatter.currencyFormat(ballparkFrom, ballparkTo ? '' : 'EUR')}${ballparkTo ? ` - ${StringFormatter.currencyFormat(ballparkTo, 'EUR')}` : ''}`;
+                    const userFilter = this.props.filter.indexOf(FilterTypes.USER_FILTER) >= 0;
+                    if(!userFilter && ballparkCurrency !== 'eur') {
+                        const ration = ballparkCurrency === 'czk' ? 1 / CURRENCY_RATIO.eur : CURRENCY_RATIO.usd / CURRENCY_RATIO.eur;
+                        if(ballparkFrom) ballparkFrom = Math.round(ballparkFrom * ration);
+                        if(ballparkTo) ballparkTo = Math.round(ballparkTo * ration);
+                        ballparkCurrency = 'eur';
+                    }
+                    return `${StringFormatter.currencyFormat(ballparkFrom, ballparkTo ? '' : ballparkCurrency.toUpperCase())}${ballparkTo ? ` - ${StringFormatter.currencyFormat(ballparkTo, ballparkCurrency.toUpperCase())}` : ''}`;
                 } else return '---';
 
             case 'budget-order':
-                const ballparkFromSort = project && project.budget && project.budget.ballpark && project.budget.ballpark.from ? project.budget.ballpark.from : null;
-                const ballparkToSort = project && project.budget && project.budget.ballpark && project.budget.ballpark.to ? project.budget.ballpark.to : null;
+                const ballparkCurrencySort = project && project.budget && project.budget.ballpark && project.budget.ballpark.currency ? project.budget.ballpark.currency : 'eur';
+                let ballparkFromSort = project && project.budget && project.budget.ballpark && project.budget.ballpark.from ? project.budget.ballpark.from : null;
+                let ballparkToSort = project && project.budget && project.budget.ballpark && project.budget.ballpark.to ? project.budget.ballpark.to : null;
                 if(ballparkFromSort || ballparkToSort) {
-                    if(!ballparkTo) return ballparkFromSort;
+                    if(ballparkCurrencySort !== 'eur') {
+                        const ration = ballparkCurrencySort === 'czk' ? 1 / CURRENCY_RATIO.eur : CURRENCY_RATIO.usd / CURRENCY_RATIO.eur;
+                        if(ballparkFromSort) ballparkFromSort = Math.round(ballparkFromSort * ration);
+                        if(ballparkToSort) ballparkToSort = Math.round(ballparkToSort * ration);
+                    }
+                    if(!ballparkToSort) return ballparkFromSort;
                     else return Math.round((ballparkFromSort + ballparkToSort) / 2);
                 } else return 0; //Number.MAX_SAFE_INTEGER;
 
