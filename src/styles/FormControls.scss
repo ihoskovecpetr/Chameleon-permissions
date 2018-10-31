@@ -348,3 +348,23 @@ $table-control-background-color: #f5f5f5;
   }
 }
 
+.control-vip-tag {
+  height: $detail-control-height;
+  padding: $detail-control-padding-vertical 0.4em;
+  background-color: rgba(235, 235, 235, 0.45);//lighten($detail-body-background-color, 5%);
+  border: 1px solid darken($detail-body-background-color, 1%);
+  border-radius: $detail-control-border-radius;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  flex-wrap: nowrap;
+  .control-tag-icon {
+    cursor: pointer;
+    color: darken($detail-body-background-color, 15%);
+    margin: 0 0.5em;
+    &.active {
+      color: #0083d5;//lighten($app-header-background-color, 18%);
+    }
+  }
+}
+

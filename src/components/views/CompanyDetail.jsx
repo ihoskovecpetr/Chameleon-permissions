@@ -28,7 +28,7 @@ export default class CompanyDetail extends React.PureComponent {
                     label = {'Company'}
                     editable={this.props.editable}
                 />
-                <Scrollbars autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
+                <Scrollbars  className={'body-scroll-content companies'} autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                     <div className={'detail-body'}>
                         <div className={'detail-row'}>
                             <div className={'detail-group size-5'}>

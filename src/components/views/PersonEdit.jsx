@@ -75,7 +75,7 @@ export default class PersonEdit extends React.PureComponent {
                     </div>
                 </div>
                 {/* ------------------ FORM ------------------ */}
-                <Scrollbars autoHide={true} autoHideTimeout={Constants.TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={Constants.TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
+                <Scrollbars className={'body-scroll-content people'} className={'body-scroll-content people'} autoHide={true} autoHideTimeout={Constants.TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={Constants.TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                     <div className={'detail-body edit'}>
                         {/* ------------------ NAME, PROFESSION ------------------ */}
                         <div className={'detail-row'}>

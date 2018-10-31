@@ -1,5 +1,11 @@
 export const ProjectsColumnDef = [
     {
+        field: 'vipTag',
+        label: '',
+        className: 'vip-tag',
+        sort: 'vipTag'
+    },
+    {
         field: 'name',
         label: 'Project Name',
         className: 'project-name',
@@ -38,6 +44,12 @@ export const ProjectsColumnDef = [
 ];
 
 export const ActiveBidsColumnDef = [
+    {
+        field: 'vipTag',
+        label: '',
+        className: 'bid-vip-tag',
+        sort: 'vipTag'
+    },
     {
         field: 'name',
         label: 'Project Name',

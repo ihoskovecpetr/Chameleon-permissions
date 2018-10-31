@@ -84,11 +84,18 @@ $table-control-font-size: $table-row-font-size;
   // *******************************************************************************************************************
 
   // *** project ***********************************
+  &.vip-tag {
+    width: 2.2em;
+    min-width: 2.2em;
+    @include media("<=phone") {
+      width: 4%
+    }
+  }
   &.project-name {
-    width: 20%;
+    width: 19%;
   }
   &.project-client {
-    width: 20%;
+    width: 19%;
   }
   &.project-producer {
     width: 15%;
@@ -110,12 +117,16 @@ $table-control-font-size: $table-row-font-size;
   }
   &.project-status {
     width: 15%;
-    &.active-bid {
-      overflow: visible;
-    }
   }
 
   // *** bid *****************************************
+  &.bid-vip-tag {
+    width: 2.2em;
+    min-width: 2.2em;
+    @include media("<=phone") {
+      width: 5%
+    }
+  }
   &.bid-name {
     width: 17%;
   }
@@ -124,7 +135,7 @@ $table-control-font-size: $table-row-font-size;
   }
 
   &.bid-team {
-    width: 22%;
+    width: 20%;
     .table-team {
       display: flex;
       flex-wrap: wrap;

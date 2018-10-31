@@ -22,6 +22,7 @@ import * as Icons from '../../constants/Icons';
 
 import * as ProjectStatus from '../../constants/ProjectStatus';
 import * as TeamRole from '../../constants/TeamRole';
+import * as VipTag from '../../constants/VipTag';
 
 const statusOptions = Object.keys(ProjectStatus).map(key => ({value: ProjectStatus[key].id, label: ProjectStatus[key].label}));
 const timingOptions = [{value: ProjectClientTiming.GO_AHEAD.id, label: ProjectClientTiming.GO_AHEAD.label}]//Object.keys(ProjectClientTiming).map(key => ({value: ProjectClientTiming[key].id, label: ProjectClientTiming[key].label}));
@@ -74,6 +75,9 @@ export default class ProjectEdit extends React.PureComponent {
         const ballparkTo = editedData.budget !== undefined ? editedData.budget.ballpark.to ? editedData.budget.ballpark.to : '' : project && project.budget ? project.budget.ballpark.to ? project.budget.ballpark.to : '' : '';
         const ballparkCurrency = editedData.budget !== undefined ? editedData.budget.ballpark.currency ? editedData.budget.ballpark.currency : 'eur' : project && project.budget ? project.budget.ballpark.currency ? project.budget.ballpark.currency : 'eur' : 'eur';
 
+        const vipTag = editedData.vipTag !== undefined ? editedData.vipTag : project && project.vipTag ? project.vipTag : [];
+        const vipTagNote = editedData.vipTagNote !== undefined ? editedData.vipTagNote : project && project.vipTagNote ? project.vipTagNote : '';
+
         if(Object.keys(editedData).length === 0) {
             team.sort((a, b) => (a.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)) - (b.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)));
             timing.sort((a, b) => 0);
@@ -110,7 +114,7 @@ export default class ProjectEdit extends React.PureComponent {
                 </div>
 
                 {/* ------------------ FORM ------------------ */}
-                <Scrollbars autoHide={true} autoHideTimeout={Constants.TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={Constants.TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
+                <Scrollbars  className={'body-scroll-content projects'} autoHide={true} autoHideTimeout={Constants.TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={Constants.TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                     <div className={'detail-body edit'}>
 
                         {/* ------------------ NAME, INQUIRED, LAST CONTACT ------------------ */}
@@ -151,7 +155,7 @@ export default class ProjectEdit extends React.PureComponent {
                                 />
                             </div>
                         </div>
-                        {/* ------------------ ALIAS ------------------ */}
+                        {/* ------------------ ALIAS, VIP TAG, VIP TAG NOTE ------------------ */}
                         <div className={'detail-row'}>
                             <div className={'detail-group size-4'}>
                                 <div className={`detail-label${typeof editedData.alias !== 'undefined' && project  ? ' value-changed' : ''}`}>{'Project Alias:'}</div>
@@ -162,7 +166,28 @@ export default class ProjectEdit extends React.PureComponent {
                                     value={alias}
                                 />
                             </div>
-
+                            <div className={'detail-group size-4'}>
+                                <div className={`detail-label${typeof editedData.vipTag !== 'undefined' && project  ? ' value-changed' : ''}`}>{'VIP Tag:'}</div>
+                                <div className={`control-vip-tag`}>
+                                    {Object.keys(VipTag).map((tag, i) =>
+                                        <div key={i} data-tooltip={VipTag[tag].label}>
+                                            <FontAwesomeIcon
+                                                onClick={() => this.vipTagClicked(tag, vipTag)}
+                                                className={`control-tag-icon${vipTag.indexOf(tag) >= 0 ? ' active' : ''}`}
+                                                icon={VipTag[tag].icon}
+                                            />
+                                        </div>)}
+                                </div>
+                            </div>
+                            <div className={'detail-group size-4'}>
+                                <div className={`detail-label${typeof editedData.alias !== 'undefined' && project  ? ' value-changed' : ''}`}>{'VIP Tag Note:'}</div>
+                                <Textarea
+                                    placeholder={'VIP tag note...'}
+                                    className={`detail-input textarea${this.state.validation.vipTagNote ? ' invalid' : ''}`}
+                                    onChange={this.handleVipTagNoteChange}
+                                    value={vipTagNote}
+                                />
+                            </div>
                         </div>
 
                         {/* ------------------ STATUS + STATUS NOTE ------------------ */}
@@ -189,7 +214,7 @@ export default class ProjectEdit extends React.PureComponent {
                             </div>
                         </div>
                         {/* ------------------ BUDGET - BALLPARK ------------------ */}
-                        <div className={'detail-row'}>
+                        <div className={'detail-row spacer'}>
                             <div className={'detail-group size-8'}>
                                 <div className={`detail-label${typeof editedData.budget !== 'undefined' && project ? ' value-changed' : ''}`}>{'Budget:'}</div>
                                 <Select
@@ -714,6 +739,9 @@ export default class ProjectEdit extends React.PureComponent {
             else if(object.budget.ballpark.to < object.budget.ballpark.from) validation['budget'] = {field: 'Budget', status: `Budget 'from' is less than Budget 'to'`};
         }
 
+        if(object.vipTag.length > 0 && !object.vipTagNote.trim()) validation['vipTagNote'] = {field: 'VIP Tag Note', status: `Tag note has to be set`};
+        if(object.vipTag.length === 0 && object.vipTagNote.trim()) validation['vipTagNote'] = {field: 'VIP Tag Note', status: `Tag note is not relevant`};
+
         const disableSave = Object.keys(validation).length > 0 || Object.keys(this.props.editedData).length === 0;
         if(areEquivalent(validation, this.state.validation)) validation = this.state.validation;
         this.setState({validation: validation, saveDisabled: disableSave});
@@ -741,6 +769,10 @@ export default class ProjectEdit extends React.PureComponent {
 
     handleStatusNoteChange = event => {
         this.props.editItem(this.updateEditedData({statusNote: event.target.value}));
+    };
+
+    handleVipTagNoteChange = event => {
+        this.props.editItem(this.updateEditedData({vipTagNote: event.target.value}));
     };
 
     handleProjectNoteChange = event => {
@@ -834,7 +866,23 @@ export default class ProjectEdit extends React.PureComponent {
         const i = newFlags.indexOf(flag);
         if(i < 0) newFlags.push(flag);
         else newFlags.splice(i, 1);
-        this.handleCompanyChange(index, {flag: newFlags})
+        this.handleCompanyChange(index, {flag: newFlags.sort()})
+    };
+
+    personFlagClicked = (index, flags, flag) => {
+        const newFlags = [...flags];
+        const i = newFlags.indexOf(flag);
+        if(i < 0) newFlags.push(flag);
+        else newFlags.splice(i, 1);
+        this.handlePersonChange(index, {flag: newFlags.sort()})
+    };
+
+    vipTagClicked = (tag, tags) => {
+        const newTags = [...tags];
+        const i = newTags.indexOf(tag);
+        if(i < 0) newTags.push(tag);
+        else newTags.splice(i, 1);
+        this.props.editItem(this.updateEditedData({vipTag: newTags.sort((a, b) => VipTag[a].sort - VipTag[b].sort)}));
     };
 
     handleBudgetChange = (which, value) => {
@@ -887,14 +935,6 @@ export default class ProjectEdit extends React.PureComponent {
             }
         }
         this.props.editItem(this.updateEditedData({person: newData}));
-    };
-
-    personFlagClicked = (index, flags, flag) => {
-        const newFlags = [...flags];
-        const i = newFlags.indexOf(flag);
-        if(i < 0) newFlags.push(flag);
-        else newFlags.splice(i, 1);
-        this.handlePersonChange(index, {flag: newFlags})
     };
 
     addFromBox = () => {

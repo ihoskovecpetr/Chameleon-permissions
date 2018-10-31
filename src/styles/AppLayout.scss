@@ -275,6 +275,27 @@ body {
   background-color: #cacaca;
 }
 
+.body-scroll-content {
+  &::before {
+    content: "";
+    position: absolute;
+    width: 0.7em;
+    height: 100%;
+    z-index: 1;
+    left: 0;
+    opacity: 0.4;
+  }
+  &.projects::before {
+    background-color: #0d70a5;
+  }
+  &.people::before {
+    background-color: #c17415;
+  }
+  &.companies::before {
+    background-color: #11781f;
+  }
+}
+
 .fa-icon {
   &.margin-left {
     margin-left: 0.5rem;

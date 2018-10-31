@@ -71,3 +71,9 @@ export const ICON_CONTACT_FACEBOOK = ['fab', 'facebook'];
 export const ICON_CONTACT_TWITTER = ['fab','twitter'];
 export const ICON_CONTACT_SKYPE = ['fab','skype'];
 export const ICON_CONTACT_OTHER = 'address-card';
+
+//vip tag
+export const ICON_VIP_TAG_SHOWREEL = 'film';
+export const ICON_VIP_TAG_AWARDED = 'trophy';
+export const ICON_VIP_TAG_FLEXIBLE = ['far', 'clock'];
+export const ICON_VIP_TAG_STRATEGIC = 'exclamation';

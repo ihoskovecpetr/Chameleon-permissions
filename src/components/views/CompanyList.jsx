@@ -55,7 +55,7 @@ export default class CompanyList extends React.PureComponent {
                 </div>
                 <Fragment>
                     {this.getHeader(CompaniesColumnDef)}
-                    <Scrollbars autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
+                    <Scrollbars  className={'body-scroll-content companies'} autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                         {this.getTable(CompaniesColumnDef, sortedCompanyIds)}
                     </Scrollbars>
                 </Fragment>

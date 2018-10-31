@@ -92,7 +92,7 @@ export default class ProjectList extends React.PureComponent {
                 {/* ------------------ TABLE LIST ------------------ */}
                 <Fragment>
                     {this.getHeader(activeBid ? ActiveBidsColumnDef : ProjectsColumnDef)}
-                    <Scrollbars autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
+                    <Scrollbars className={'body-scroll-content projects'} autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                         {this.getTable(activeBid ? ActiveBidsColumnDef : ProjectsColumnDef, sortedProjectIds)}
                     </Scrollbars>
                 </Fragment>
@@ -182,7 +182,7 @@ export default class ProjectList extends React.PureComponent {
                 let down = sort.indexOf('-') === 0;
                 let field = down ? sort.substr(1) : sort;
                 if(['last-contact', 'budget'].indexOf(field) >= 0) down = !down;
-                if(['status', 'go-ahead', 'last-contact', 'budget'].indexOf(field) >= 0) field = `${field}-order`;
+                if(['status', 'go-ahead', 'last-contact', 'budget', 'vipTag'].indexOf(field) >= 0) field = `${field}-order`;
                 let dataA = down ? this.getComputedField(field, projects[a]) : this.getComputedField(field, projects[b]);
                 let dataB = down ? this.getComputedField(field, projects[b]) : this.getComputedField(field, projects[a]);
                 if (typeof dataA === 'undefined' && typeof dataB === 'undefined') return 0;
@@ -447,6 +447,12 @@ export default class ProjectList extends React.PureComponent {
             case 'last-contact-order':
                 const  lastContactOrder = project && project.lastContact ? +new Date(project.lastContact) :  +new Date(0);
                 return lastContactOrder;
+
+            case 'vipTag':
+                return project && project.vipTag && project.vipTag.length > 0 ? <FontAwesomeIcon style={{fontSize: '0.8em', color: '#636363'}} icon={'tag'}/> : '';
+
+            case 'vipTag-order':
+                return project && project.vipTag && project.vipTag.length > 0 ? 1 : 2;
 
             default: return project && project[field] ? project[field] : '---';
         }

@@ -12,6 +12,7 @@ import * as PersonFlag from '../../constants/PersonFlag';
 import * as ProjectClientTiming from '../../constants/ProjectClientTiming';
 import moment from "moment";
 import * as TeamRole from "../../constants/TeamRole";
+import * as VipTag from '../../constants/VipTag';
 import * as Icons from '../../constants/Icons';
 import * as StringFormatter from '../../lib/stringFormatHelper';
 
@@ -31,6 +32,9 @@ export default class ProjectDetail extends React.PureComponent {
         const ballparkFrom = project.budget && project.budget.ballpark && project.budget.ballpark.from ? project.budget.ballpark.from : null;
         const ballparkTo = project.budget && project.budget.ballpark && project.budget.ballpark.to ? project.budget.ballpark.to : null;
         const ballparkCurrency = project.budget && project.budget.ballpark && project.budget.ballpark.currency ? project.budget.ballpark.currency : 'eur';
+
+        const vipTag = project.vipTag ? project.vipTag : [];
+        const vipTagNote = project.vipTagNote ? project.vipTagNote : '';
 
         const timing = project.timing ? project.timing : [];
 
@@ -104,7 +108,7 @@ export default class ProjectDetail extends React.PureComponent {
                     editable={this.props.editable}
                 />
 
-                <Scrollbars autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
+                <Scrollbars  className={'body-scroll-content projects'} autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                     <div className={'detail-body'}>
                         <div className={'detail-row'}>
                             <div className={'detail-group size-6'}>
@@ -120,6 +124,20 @@ export default class ProjectDetail extends React.PureComponent {
                                 <div className={`detail-value selectable`}>{lastContact}</div>
                             </div>
                         </div>
+                        {vipTag.length > 0 ?
+                        <div className={'detail-row'}>
+                            <div className={'detail-group size-3'}>
+                                <div className={`detail-label`}>{'VIP Tag:'}</div>
+                                <div className={`detail-value group with-tooltip`}>
+                                    {vipTag.map((tag, i) => <div key={i} className={'tag-icon'} data-tooltip={VipTag[tag].label}><FontAwesomeIcon icon={VipTag[tag].icon}/></div>)}
+                                </div>
+                            </div>
+                            <div className={'detail-group size-9'}>
+                                <div className={`detail-label`}>{'VIP Tag Note:'}</div>
+                                <div className={`detail-value selectable`}>{vipTagNote}</div>
+                            </div>
+                        </div>
+                        : null}
                         <div className={'detail-row'}>
                             <div className={'detail-group size-3'}>
                                 <div className={`detail-label`}>{'Project Status:'}</div>
@@ -133,7 +151,7 @@ export default class ProjectDetail extends React.PureComponent {
                                 : null}
                         </div>
                         {ballparkFrom || ballparkTo?
-                            <div className={'detail-row'}>
+                            <div className={'detail-row spacer'}>
                                 <div className={'detail-group size-6'}>
                                     <div className={`detail-label`}>{'Budget:'}</div>
                                     <div className={`detail-value selectable`}>{`${StringFormatter.currencyFormat(ballparkFrom, ballparkCurrency.toUpperCase())}${ballparkTo ? ` - ${StringFormatter.currencyFormat(ballparkTo, ballparkCurrency.toUpperCase())}` : ''}`}</div>

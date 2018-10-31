@@ -425,6 +425,12 @@ $detail-client-person-padding-left: 1em;
       &.group {
         display: flex;
         flex-wrap: nowrap;
+        &.with-tooltip {
+          overflow: visible;
+        }
+        .tag-icon:not(:last-child) {
+          margin-right: 0.7em;
+        }
         .value-item {
           white-space: nowrap;
           overflow: hidden;
