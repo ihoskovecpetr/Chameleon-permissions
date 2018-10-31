@@ -739,8 +739,8 @@ export default class ProjectEdit extends React.PureComponent {
             else if(object.budget.ballpark.to < object.budget.ballpark.from) validation['budget'] = {field: 'Budget', status: `Budget 'from' is less than Budget 'to'`};
         }
 
-        if(object.vipTag.length > 0 && !object.vipTagNote.trim()) validation['vipTagNote'] = {field: 'VIP Tag Note', status: `Tag note has to be set`};
-        if(object.vipTag.length === 0 && object.vipTagNote.trim()) validation['vipTagNote'] = {field: 'VIP Tag Note', status: `Tag note is not relevant`};
+        if(object.vipTag && object.vipTag.length > 0 && (!object.vipTagNote || !object.vipTagNote.trim())) validation['vipTagNote'] = {field: 'VIP Tag Note', status: `Tag note has to be set`};
+        if(object.vipTag && object.vipTag.length === 0 && object.vipTagNote) validation['vipTagNote'] = {field: 'VIP Tag Note', status: `Tag note is not relevant`};
 
         const disableSave = Object.keys(validation).length > 0 || Object.keys(this.props.editedData).length === 0;
         if(areEquivalent(validation, this.state.validation)) validation = this.state.validation;
