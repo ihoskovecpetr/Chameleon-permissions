@@ -108,7 +108,7 @@ $tool-button-color-reversed: #7a4f8b;
       border-radius: $tool-height / 2;
       height: $tool-height;
       min-height: $tool-height;
-      min-width: 4.8rem;
+      min-width: 4.9rem;
       @include tool-button($tool-button-color-default);
       &.green {
         @include tool-button($tool-button-color-green, false);

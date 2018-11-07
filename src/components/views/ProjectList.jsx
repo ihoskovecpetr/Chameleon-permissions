@@ -12,6 +12,7 @@ import Select from 'react-select';
 import * as StringFormatter from '../../lib/stringFormatHelper';
 
 import * as ProjectClientTiming from '../../constants/ProjectClientTiming';
+import * as VipTags from '../../constants/VipTag';
 
 import {TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT, TABLE_SCROLLBARS_AUTO_HIDE_DURATION} from '../../constants/Constatnts';
 
@@ -21,7 +22,12 @@ import * as CompanyFlag from '../../constants/CompanyFlag';
 
 import memoize from 'memoize-one';
 
+const TOOLTIP_SHOW_DELAY = 0.1;
+
 import {ProjectsColumnDef, ActiveBidsColumnDef} from '../../constants/TableColumnsDef';
+
+import Tooltip  from 'rc-tooltip';
+
 const statusOptions = Object.keys(ProjectStatus).filter(key => ProjectStatus[key].bids).map(key => {return {value: ProjectStatus[key].id, label: ProjectStatus[key].label}});
 const searchKeysProjects = ['name', '$name', 'alias', 'client', 'team', 'status'];
 const searchKeysBids = searchKeysProjects;
@@ -330,6 +336,19 @@ export default class ProjectList extends React.PureComponent {
     // ***************************************************
     getComputedField(field, project, editable, searchable) {
         switch(field) {
+            case 'name':
+                if(!project || !project.name) return '---';
+                if(!project.story) return project.name;
+                return (
+                    <Tooltip
+                        placement={"topLeft"}
+                        mouseEnterDelay={TOOLTIP_SHOW_DELAY}
+                        mouseLeaveDelay={0}
+                        //align={{offset: [-7, -5]}}
+                        overlay={<span style={{whiteSpace: 'pre-wrap'}}>{project.story}</span>}
+                    >
+                        <span>{project.name}</span>
+                    </Tooltip>);
             case 'producer':
                 if(!project || !project.team || project.team.length === 0) return '---';
                 const producer = project.team.find(member => member.role.indexOf(TeamRole.PRODUCER.id) >= 0);
@@ -370,7 +389,21 @@ export default class ProjectList extends React.PureComponent {
                 if(!project || !project.company || project.company.length === 0) return '---';
                 let company = project.company.find(company => company.flag.indexOf(CompanyFlag.UPP_CLIENT) >= 0);
                 if(!company) return '---';
-                return this.props.companies[company.id] ? this.props.companies[company.id].name : '---';
+                const persons = project.person ? project.person
+                    .filter(person => person.company === company.id && (person.flag.indexOf('CREATIVITY') >= 0 || person.flag.indexOf('BUSINESS') >= 0))
+                        .map(person => this.props.persons[person.id] ? this.props.persons[person.id].name : `id: ${person.id}`)
+                    : null;
+                if(persons && persons.length > 0) return (
+                    <Tooltip
+                        placement={"topLeft"}
+                        mouseEnterDelay={TOOLTIP_SHOW_DELAY}
+                        mouseLeaveDelay={0}
+                        //align={{offset: [-7, -2]}}
+                        overlay={<span style={{whiteSpace: 'pre-wrap'}}>{persons.join('\n')}</span>}
+                    >
+                        <span>{this.props.companies[company.id] ? this.props.companies[company.id].name : '---'}</span>
+                    </Tooltip>);
+                else return this.props.companies[company.id] ? this.props.companies[company.id].name : '---';
 
             case 'team': //find producer, manager, supervisor in team field [{id, role}], icons + short names /not sortable anyway
                 if(searchable) {
@@ -441,15 +474,27 @@ export default class ProjectList extends React.PureComponent {
 
 
             case 'last-contact': //last contact in days passed this - colors?
-                const lastContact = daysToString(project ? project.lastContact : null, null, true);
+                let lastContact = daysToString(project ? project.lastContact : null, null, true);
+                if(false && project.inquired) {
+                    lastContact = <Tooltip placement={"right"} overlay={'zzzzzzzz'} mouseEnterDelay={TOOLTIP_SHOW_DELAY} mouseLeaveDelay={0}>{lastContact}</Tooltip>
+                }
                 return editable ? <div onClick={() => this.handleResetLastContact(project._id)} className={'table-button'}>{lastContact}</div> : lastContact;
 
             case 'last-contact-order':
-                const  lastContactOrder = project && project.lastContact ? +new Date(project.lastContact) :  +new Date(0);
-                return lastContactOrder;
+                return project && project.lastContact ? +new Date(project.lastContact) :  +new Date(0);
 
             case 'vipTag':
-                return project && project.vipTag && project.vipTag.length > 0 ? <FontAwesomeIcon style={{fontSize: '0.8em', color: '#636363'}} icon={'tag'}/> : '';
+                if(!project || !project.vipTag || !project.vipTag.length > 0) return '';
+                return (
+                    <Tooltip
+                        placement={"topLeft"}
+                        mouseEnterDelay={TOOLTIP_SHOW_DELAY}
+                        mouseLeaveDelay={0}
+                        //align={{offset: [-7, -2]}}
+                        overlay={<span style={{whiteSpace: 'pre-wrap'}}>{`${project.vipTag.map(tag => VipTags[tag] ? VipTags[tag].label : tag).join(', ')}\n${project.vipTagNote}`}</span>}
+                    >
+                        <FontAwesomeIcon style={{fontSize: '0.8em', color: '#636363'}} icon={'tag'}/>
+                    </Tooltip>);
 
             case 'vipTag-order':
                 return project && project.vipTag && project.vipTag.length > 0 ? 1 : 2;

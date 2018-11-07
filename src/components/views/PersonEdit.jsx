@@ -51,13 +51,15 @@ export default class PersonEdit extends React.PureComponent {
         const company = editedData.company !== undefined ? editedData.company :  person && person.company ? person.company : [];
         const note = editedData.note !== undefined ? editedData.note : person && person.note ? person.note : '';
 
+        const dataChanged = !person || Object.keys(editedData).length > 0;
+
         return (
             <div className={'app-body'}>
                 {/* ------------------ TOOLBOX ------------------ */}
                 <div className={'app-toolbox'}>
                     <div className={'inner-container'}>
                         <div className={'toolbox-group'}>
-                            <div onClick={this.close} className={'tool-box-button'}>{'Cancel'}</div>
+                            <div onClick={this.close} className={`tool-box-button${dataChanged ? ' red' : ''}`}>{dataChanged ? 'Cancel' : 'Close'}</div>
                             <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button${person ? ' orange' : ' green'}${this.state.saveDisabled ? ' disabled' : ''}`}>{person ? 'Save' : 'Create'}</div>
                             <div className={'tool-box-validation'}>
                                 <FontAwesomeIcon className={`tool-box-validation-icon${Object.keys(this.state.validation).length > 0 ? ' active' : ''}`} icon={Icons.ICON_EDITOR_VALIDATION}/>

@@ -18,10 +18,11 @@ $tooltip-x-pos: 50%;
   visibility: hidden;
   opacity: 0;
   transition: opacity 0s;
+  position: absolute;
 }
 
 [data-tooltip]:before {
-  position: absolute;
+  //position: absolute;
   left: $tooltip-x-pos;
   top: -2 * $tooltip-padding-v - $tooltip-font-size - $tooltip-arrow-size;
   padding: $tooltip-padding-v $tooltip-padding-h;
@@ -36,7 +37,7 @@ $tooltip-x-pos: 50%;
 }
 
 [data-tooltip]:after {
-  position: absolute;
+  //position: absolute;
   left: $tooltip-x-pos;
   top: calc(-#{$tooltip-arrow-size} - 1px);
   margin-left: -$tooltip-arrow-size;

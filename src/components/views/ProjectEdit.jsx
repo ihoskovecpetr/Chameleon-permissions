@@ -85,13 +85,15 @@ export default class ProjectEdit extends React.PureComponent {
             person.sort((a, b) => (a.flag.map(flag => PersonFlag[flag] ? Object.keys(PersonFlag).indexOf(flag) : 100).reduce((a, b) => Math.min(a, b), 100)) - (b.flag.map(flag => PersonFlag[flag] ? Object.keys(PersonFlag).indexOf(flag) : 100).reduce((a, b) => Math.min(a, b), 100)));
         }
 
+        const dataChanged = !project || Object.keys(editedData).length > 0;
+
         return (
             <div className={'app-body'}>
                 {/* ------------------ TOOLBOX ------------------ */}
                 <div className={'app-toolbox'}>
                     <div className={'inner-container'}>
                         <div className={'toolbox-group'}>
-                            <div onClick={this.close} className={'tool-box-button'}>{'Cancel'}</div>
+                            <div onClick={this.close} className={`tool-box-button${dataChanged ? ' red' : ''}`}>{dataChanged ? 'Cancel' : 'Close'}</div>
                             <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button${project ? ' orange' : ' green'}${this.state.saveDisabled ? ' disabled' : ''}`}>{project ? 'Save' : 'Create'}</div>
                             <div onClick={this.props.box && this.props.box.length > 0 ? this.addFromBox : undefined} className={`tool-box-button blue${!this.props.box || this.props.box.length === 0 ? ' disabled' : ''}`}><FontAwesomeIcon icon={Icons.ICON_BOX}/><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/></div>
                             <div className={'tool-box-validation'}>
