@@ -387,10 +387,13 @@ export default class ProjectList extends React.PureComponent {
                         onChange={option => this.handleStatusChange(project._id, option.value)}
                         isSearchable={false}
                         classNamePrefix={'control-select'}
+                        blurInputOnSelect={true}
+                        tabIndex={-1}
                     /> : status;
                 const statusNote = project.statusNote ? project.statusNote : '';
                 return statusNote ?
                     <Tooltip
+                        trigger={['hover', 'focus']}
                         placement={"topLeft"}
                         mouseEnterDelay={TOOLTIP_SHOW_DELAY}
                         mouseLeaveDelay={0}
