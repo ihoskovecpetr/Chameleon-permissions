@@ -23,7 +23,6 @@ import * as ViewTypes from '../constants/ViewTypes';
 import {name, version}  from '../../package.json';
 import * as FilterTypes from "../constants/FilterTypes";
 
-
 export default class AppLayout extends React.PureComponent {
     render() {
         let AppBody = null;

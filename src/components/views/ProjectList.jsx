@@ -22,7 +22,7 @@ import * as CompanyFlag from '../../constants/CompanyFlag';
 
 import memoize from 'memoize-one';
 
-const TOOLTIP_SHOW_DELAY = 0.1;
+const TOOLTIP_SHOW_DELAY = 0.2;
 
 import {ProjectsColumnDef, ActiveBidsColumnDef} from '../../constants/TableColumnsDef';
 
@@ -188,7 +188,7 @@ export default class ProjectList extends React.PureComponent {
                 let down = sort.indexOf('-') === 0;
                 let field = down ? sort.substr(1) : sort;
                 if(['last-contact', 'budget'].indexOf(field) >= 0) down = !down;
-                if(['status', 'go-ahead', 'last-contact', 'budget', 'vipTag'].indexOf(field) >= 0) field = `${field}-order`;
+                if(['name', 'status', 'go-ahead', 'last-contact', 'budget', 'vipTag'].indexOf(field) >= 0) field = `${field}-order`;
                 let dataA = down ? this.getComputedField(field, projects[a]) : this.getComputedField(field, projects[b]);
                 let dataB = down ? this.getComputedField(field, projects[b]) : this.getComputedField(field, projects[a]);
                 if (typeof dataA === 'undefined' && typeof dataB === 'undefined') return 0;
@@ -337,6 +337,7 @@ export default class ProjectList extends React.PureComponent {
     getComputedField(field, project, editable, searchable) {
         switch(field) {
             case 'name':
+                if(searchable) return project && project.name ? project.name : '';
                 if(!project || !project.name) return '---';
                 if(!project.story) return project.name;
                 return (
@@ -344,11 +345,14 @@ export default class ProjectList extends React.PureComponent {
                         placement={"topLeft"}
                         mouseEnterDelay={TOOLTIP_SHOW_DELAY}
                         mouseLeaveDelay={0}
-                        //align={{offset: [-7, -5]}}
-                        overlay={<span style={{whiteSpace: 'pre-wrap'}}>{project.story}</span>}
+                        align={{offset: [-7, -1]}}
+                        overlay={<span className={'mw60'}>{project.story}</span>}
                     >
                         <span>{project.name}</span>
                     </Tooltip>);
+
+            case 'name-order':
+                return project && project.name ? project.name : '';
             case 'producer':
                 if(!project || !project.team || project.team.length === 0) return '---';
                 const producer = project.team.find(member => member.role.indexOf(TeamRole.PRODUCER.id) >= 0);
@@ -374,8 +378,8 @@ export default class ProjectList extends React.PureComponent {
                 return ProjectStatus[project['status']] && ProjectStatus[project['status']].sort ? ProjectStatus[project['status']].sort : 0;
 
             case 'status':
-                const status = ProjectStatus[project['status']] ? ProjectStatus[project['status']].label : '---';
-                return editable ?
+                let status = ProjectStatus[project['status']] ? ProjectStatus[project['status']].label : '---';
+                status = editable ?
                     <Select
                         className={`control-select inline${project['status'] && ProjectStatus[project['status']] && ProjectStatus[project['status']].colorClass ? ` ${ProjectStatus[project['status']].colorClass}` : ''}`}
                         options={statusOptions}
@@ -384,6 +388,17 @@ export default class ProjectList extends React.PureComponent {
                         isSearchable={false}
                         classNamePrefix={'control-select'}
                     /> : status;
+                const statusNote = project.statusNote ? project.statusNote : '';
+                return statusNote ?
+                    <Tooltip
+                        placement={"topLeft"}
+                        mouseEnterDelay={TOOLTIP_SHOW_DELAY}
+                        mouseLeaveDelay={0}
+                        align={{offset: editable ? [0, -3] : [-7, -1]}}
+                        overlay={<span className={'mw20'}>{statusNote}</span>}
+                    >
+                        <span>{status}</span>
+                    </Tooltip> : status;
 
             case 'client': //find main client in company field [{id, role, note, rating}]
                 if(!project || !project.company || project.company.length === 0) return '---';
@@ -398,8 +413,8 @@ export default class ProjectList extends React.PureComponent {
                         placement={"topLeft"}
                         mouseEnterDelay={TOOLTIP_SHOW_DELAY}
                         mouseLeaveDelay={0}
-                        //align={{offset: [-7, -2]}}
-                        overlay={<span style={{whiteSpace: 'pre-wrap'}}>{persons.join('\n')}</span>}
+                        align={{offset: [-7, -1]}}
+                        overlay={<span>{persons.join('\n')}</span>}
                     >
                         <span>{this.props.companies[company.id] ? this.props.companies[company.id].name : '---'}</span>
                     </Tooltip>);
@@ -419,15 +434,30 @@ export default class ProjectList extends React.PureComponent {
                                 const bSort = Math.min(...b.role.map(role => TeamRole[role].sort));
                                 return aSort - bSort;
                             }); //remove duplicity of supervisor etc ??? or supervisor - second
-                        return (
-                            <div className={'table-team'}>
-                                {team.map((member, index) => {
-                                    const name = this.props.users[member.id] ? this.props.users[member.id].name : `id: ${member.id}`;
-                                    const icons = member.role.map((role, index) => <FontAwesomeIcon key={index} icon={TeamRole[role].icon} fixedWidth/>);
-                                    return <div key={index} className={'team-member'}>{icons}<span>{StringFormatter.getSurrname(name)}</span></div>
 
-                                })}
-                            </div>
+                        const teamOver = project.team
+                            .sort((a, b) => {
+                                const aSort = Math.min(...a.role.map(role => TeamRole[role].sort));
+                                const bSort = Math.min(...b.role.map(role => TeamRole[role].sort));
+                                return aSort - bSort;
+                            }).map(member => this.props.users[member.id] ? this.props.users[member.id].name : `id: ${member.id}`);
+                        return (
+                            <Tooltip
+                                placement={"topLeft"}
+                                mouseEnterDelay={TOOLTIP_SHOW_DELAY}
+                                mouseLeaveDelay={0}
+                                align={{offset: [-7, -4]}}
+                                overlay={<span>{teamOver.join('\n')}</span>}
+                            >
+                                <div className={'table-team'}>
+                                    {team.map((member, index) => {
+                                        const name = this.props.users[member.id] ? this.props.users[member.id].name : `id: ${member.id}`;
+                                        const icons = member.role.map((role, index) => <FontAwesomeIcon key={index} icon={TeamRole[role].icon} fixedWidth/>);
+                                        return <div key={index} className={'team-member'}>{icons}<span>{StringFormatter.getSurrname(name)}</span></div>
+
+                                    })}
+                                </div>
+                            </Tooltip>
                         )
                     } else return '---';
                 }
@@ -473,12 +503,21 @@ export default class ProjectList extends React.PureComponent {
                 return goAheadDateOrder;
 
 
-            case 'last-contact': //last contact in days passed this - colors?
+            case 'last-contact':
                 let lastContact = daysToString(project ? project.lastContact : null, null, true);
-                if(false && project.inquired) {
-                    lastContact = <Tooltip placement={"right"} overlay={'zzzzzzzz'} mouseEnterDelay={TOOLTIP_SHOW_DELAY} mouseLeaveDelay={0}>{lastContact}</Tooltip>
+                lastContact = editable ? <div onClick={() => this.handleResetLastContact(project._id)} className={'table-button'}>{lastContact}</div> : <span>lastContact</span>;
+                if(project.inquired) {
+                    lastContact = <Tooltip
+                        placement={"topRight"}
+                        mouseEnterDelay={TOOLTIP_SHOW_DELAY}
+                        mouseLeaveDelay={0}
+                        align={{offset: [0, -3]}}
+                        overlay={`Inquired: ${moment(project.inquired).format('D.M.YYYY')}`}
+                    >
+                        {lastContact}
+                    </Tooltip>
                 }
-                return editable ? <div onClick={() => this.handleResetLastContact(project._id)} className={'table-button'}>{lastContact}</div> : lastContact;
+                return lastContact;
 
             case 'last-contact-order':
                 return project && project.lastContact ? +new Date(project.lastContact) :  +new Date(0);
@@ -490,8 +529,8 @@ export default class ProjectList extends React.PureComponent {
                         placement={"topLeft"}
                         mouseEnterDelay={TOOLTIP_SHOW_DELAY}
                         mouseLeaveDelay={0}
-                        //align={{offset: [-7, -2]}}
-                        overlay={<span style={{whiteSpace: 'pre-wrap'}}>{`${project.vipTag.map(tag => VipTags[tag] ? VipTags[tag].label : tag).join(', ')}\n${project.vipTagNote}`}</span>}
+                        align={{offset: [-7, -4]}}
+                        overlay={<span>{`${project.vipTag.map(tag => VipTags[tag] ? VipTags[tag].label : tag).join(', ')}\n${project.vipTagNote}`}</span>}
                     >
                         <FontAwesomeIcon style={{fontSize: '0.8em', color: '#636363'}} icon={'tag'}/>
                     </Tooltip>);
