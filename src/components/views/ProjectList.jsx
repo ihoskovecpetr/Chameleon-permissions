@@ -45,6 +45,8 @@ export default class ProjectList extends React.PureComponent {
         //console.log('RENDER PROJECTS LIST');
         const {selected, projects, activeBid, filter, sort, search} = this.props;
 
+        console.log(filter)
+
         const searchKeys = this.props.activeBid ? searchKeysBids : searchKeysProjects;
 
         const filteredProjectIds = this.filterList(projects, filter);
@@ -56,6 +58,9 @@ export default class ProjectList extends React.PureComponent {
         const activeFilterReversed = filter.indexOf(FilterTypes.NON_ACTIVE_PROJECTS_FILTER) >= 0;
         const awardedFilter = filter.indexOf(FilterTypes.AWARDED_PROJECTS_FILTER) >= 0 || filter.indexOf(FilterTypes.NOT_AWARDED_PROJECTS_FILTER) >= 0;
         const awardFilterReversed = filter.indexOf(FilterTypes.NOT_AWARDED_PROJECTS_FILTER) >= 0;
+
+        const activeBidsFilter = filter.indexOf(FilterTypes.ACTIVE_BIDS_FILTER) >= 0 || filter.indexOf(FilterTypes.NON_ACTIVE_BIDS_FILTER) >= 0;
+        const activeBidsFilterReversed = filter.indexOf(FilterTypes.NON_ACTIVE_BIDS_FILTER) >= 0;
 
         return (
             <div className={'app-body'}>
@@ -83,7 +88,9 @@ export default class ProjectList extends React.PureComponent {
                         <div className={'toolbox-group'}>
                             <div onClick={this.userFilterHandler} className={`tool-box-button-switch${userFilter ? ' checked' : ''}`}><FontAwesomeIcon className={'check'} icon={userFilter ? Icons.ICON_CHECKBOX_FILTER_CHECKED : Icons.ICON_CHECKBOX_FILTER_UNCHECKED}/><span className={`text`}>{'My'}</span></div>
 
-                            {activeBid ? null :
+                            {activeBid ?
+                                <div onClick={event => this.activeBidsFilterHandler(event, false)} className={`tool-box-button-switch${activeBidsFilter ?  activeBidsFilterReversed ? ' reversed' : ' checked' : ''}`}><FontAwesomeIcon onClick={event => this.activeBidsFilterHandler(event, true)} className={'check'} icon={activeBidsFilter ? Icons.ICON_CHECKBOX_FILTER_CHECKED : Icons.ICON_CHECKBOX_FILTER_UNCHECKED}/><span className={`text${activeBidsFilterReversed ? ' reversed' : ''}`}>{'Active'}</span></div>
+                                :
                                 <Fragment>
                                     <div onClick={event => this.activeFilterHandler(event, false)} className={`tool-box-button-switch${activeFilter ?  activeFilterReversed ? ' reversed' : ' checked' : ''}`}><FontAwesomeIcon onClick={event => this.activeFilterHandler(event, true)} className={'check'} icon={activeFilter ? Icons.ICON_CHECKBOX_FILTER_CHECKED : Icons.ICON_CHECKBOX_FILTER_UNCHECKED}/><span className={`text${activeFilterReversed ? ' reversed' : ''}`}>{'Active'}</span></div>
                                     <div onClick={event => this.awardedFilterHandler(event, false)} className={`tool-box-button-switch${awardedFilter ? awardFilterReversed ? ' reversed ' : ' checked' : ''}`}><FontAwesomeIcon onClick={event => this.awardedFilterHandler(event, true)} className={'check'} icon={awardedFilter ? Icons.ICON_CHECKBOX_FILTER_CHECKED : Icons.ICON_CHECKBOX_FILTER_UNCHECKED}/><span className={`text${awardFilterReversed ? ' reversed' : ''}`}>{'Awarded'}</span></div>
@@ -171,8 +178,18 @@ export default class ProjectList extends React.PureComponent {
                         if(ProjectStatus[project.status] && ProjectStatus[project.status].active) return false;
                         break;
 
+                    case FilterTypes.ACTIVE_BIDS_FILTER:
+                        if(!ProjectStatus[project.status] || !ProjectStatus[project.status].activeBid) return false;
+                        break;
+
+                    case FilterTypes.NON_ACTIVE_BIDS_FILTER:
+                        if(ProjectStatus[project.status] && ProjectStatus[project.status].activeBid) return false;
+                        break;
+
                     case FilterTypes.USER_FILTER:
                         if(!(project.team && project.team.some(member => member.id === this.props.user.id))) return false;
+                        break;
+
                 }
             }
             return true;
@@ -298,6 +315,16 @@ export default class ProjectList extends React.PureComponent {
         else this.props.setFilter(FilterTypes.ACTIVE_PROJECTS_FILTER, true);
     };
 
+    activeBidsFilterHandler = (event, check) => {
+        if(check) event.stopPropagation();
+        if (this.props.filter.indexOf(FilterTypes.ACTIVE_BIDS_FILTER) >= 0) {
+            this.props.setFilter(FilterTypes.ACTIVE_BIDS_FILTER, false);
+            if(!check) this.props.setFilter(FilterTypes.NON_ACTIVE_BIDS_FILTER, true);
+        }
+        else if (this.props.filter.indexOf(FilterTypes.NON_ACTIVE_BIDS_FILTER) >= 0) this.props.setFilter(FilterTypes.NON_ACTIVE_BIDS_FILTER, false);
+        else this.props.setFilter(FilterTypes.ACTIVE_BIDS_FILTER, true);
+    };
+
     awardedFilterHandler = (event, check) => {
         if(check) event.stopPropagation();
         if (this.props.filter.indexOf(FilterTypes.AWARDED_PROJECTS_FILTER) >= 0) {
@@ -353,6 +380,7 @@ export default class ProjectList extends React.PureComponent {
                         mouseEnterDelay={TOOLTIP_SHOW_DELAY}
                         mouseLeaveDelay={0}
                         align={{offset: [-7, -1]}}
+                        destroyTooltipOnHide={true}
                         overlay={<span className={'mw60'}>{project.story}</span>}
                     >
                         <span>{project.name}</span>
@@ -406,6 +434,7 @@ export default class ProjectList extends React.PureComponent {
                         mouseEnterDelay={TOOLTIP_SHOW_DELAY}
                         mouseLeaveDelay={0}
                         align={{offset: editable ? [0, -3] : [-7, -1]}}
+                        destroyTooltipOnHide={true}
                         overlay={<span className={'mw20'}>{statusNote}</span>}
                     >
                         <span>{status}</span>
@@ -430,6 +459,7 @@ export default class ProjectList extends React.PureComponent {
                         mouseEnterDelay={TOOLTIP_SHOW_DELAY}
                         mouseLeaveDelay={0}
                         align={{offset: [-7, -1]}}
+                        destroyTooltipOnHide={true}
                         overlay={<span>{persons.join('\n')}</span>}
                     >
                         <span>{company}</span>
@@ -469,6 +499,7 @@ export default class ProjectList extends React.PureComponent {
                                 mouseEnterDelay={TOOLTIP_SHOW_DELAY}
                                 mouseLeaveDelay={0}
                                 align={{offset: [-7, -4]}}
+                                destroyTooltipOnHide={true}
                                 overlay={<span>{teamOver.join('\n')}</span>}
                             >
                                 <div className={'table-team'}>
@@ -534,6 +565,7 @@ export default class ProjectList extends React.PureComponent {
                         mouseEnterDelay={TOOLTIP_SHOW_DELAY}
                         mouseLeaveDelay={0}
                         align={{offset: [0, -3]}}
+                        destroyTooltipOnHide={true}
                         overlay={<span>{`Inquired: ${moment(project.inquired).format('D.M.YYYY')}${project.lastContact ? `\nContact: ${moment(project.lastContact).format('D.M.YYYY')}` : ''}`}</span>}
                     >
                         {lastContact}
@@ -552,6 +584,7 @@ export default class ProjectList extends React.PureComponent {
                         mouseEnterDelay={TOOLTIP_SHOW_DELAY}
                         mouseLeaveDelay={0}
                         align={{offset: [-7, -4]}}
+                        destroyTooltipOnHide={true}
                         overlay={<span>{`${project.vipTag.map(tag => VipTags[tag] ? VipTags[tag].label : tag).join(', ')}\n${project.vipTagNote}`}</span>}
                     >
                         <FontAwesomeIcon style={{fontSize: '0.8em', color: '#636363'}} icon={'tag'}/>
