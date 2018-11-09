@@ -29,7 +29,7 @@ import {ProjectsColumnDef, ActiveBidsColumnDef} from '../../constants/TableColum
 import Tooltip  from 'rc-tooltip';
 
 const statusOptions = Object.keys(ProjectStatus).filter(key => ProjectStatus[key].bids).map(key => {return {value: ProjectStatus[key].id, label: ProjectStatus[key].label}});
-const searchKeysProjects = ['name', '$name', 'alias', 'client', 'team', 'status'];
+const searchKeysProjects = ['name', '$name', 'alias', 'client', 'team', 'status', 'statusNote', 'story', 'vipTagNote'];
 const searchKeysBids = searchKeysProjects;
 
 const CURRENCY_RATIO = {eur: 25.5, usd: 21.5};
@@ -197,7 +197,7 @@ export default class ProjectList extends React.PureComponent {
                 let down = sort.indexOf('-') === 0;
                 let field = down ? sort.substr(1) : sort;
                 if(['last-contact', 'budget'].indexOf(field) >= 0) down = !down;
-                if(['name', 'status', 'go-ahead', 'last-contact', 'budget', 'vipTag'].indexOf(field) >= 0) field = `${field}-order`;
+                if(['name', 'status', 'go-ahead', 'last-contact', 'budget', 'vipTag', 'client'].indexOf(field) >= 0) field = `${field}-order`;
                 let dataA = down ? this.getComputedField(field, projects[a]) : this.getComputedField(field, projects[b]);
                 let dataB = down ? this.getComputedField(field, projects[b]) : this.getComputedField(field, projects[a]);
                 if (typeof dataA === 'undefined' && typeof dataB === 'undefined') return 0;
@@ -242,7 +242,7 @@ export default class ProjectList extends React.PureComponent {
                 matchAllTokens: true,
                 threshold: 0.4,
                 location: 0,
-                distance: 100,
+                distance: 500,
                 maxPatternLength: 32,
                 minMatchCharLength: 2
             });
@@ -385,6 +385,7 @@ export default class ProjectList extends React.PureComponent {
                 return ProjectStatus[project['status']] && ProjectStatus[project['status']].sort ? ProjectStatus[project['status']].sort : 0;
 
             case 'status':
+                if(searchable) return ProjectStatus[project['status']] ? ProjectStatus[project['status']].label : '';
                 let status = ProjectStatus[project['status']] ? ProjectStatus[project['status']].label : '---';
                 status = editable ?
                     <Select
@@ -412,12 +413,17 @@ export default class ProjectList extends React.PureComponent {
 
             case 'client': //find main client in company field [{id, role, note, rating}]
                 if(!project || !project.company || project.company.length === 0) return '---';
-                let company = project.company.find(company => company.flag.indexOf(CompanyFlag.UPP_CLIENT) >= 0);
-                if(!company) return '---';
+                let company = project.company.filter(company => company.flag.indexOf(CompanyFlag.UPP_CLIENT) >= 0);
+                if(!company || company.length === 0) return '---';
+
+                const companyIds = company.map(c => c.id);
+                company = company.filter(c => this.props.companies[c.id]).map(c => this.props.companies[c.id].name).join(', ');
+                if(searchable) return company;
                 const persons = project.person ? project.person
-                    .filter(person => person.company === company.id && (person.flag.indexOf('CREATIVITY') >= 0 || person.flag.indexOf('BUSINESS') >= 0))
+                    .filter(person => companyIds.indexOf(person.company) >= 0 && (person.flag.indexOf('CREATIVITY') >= 0 || person.flag.indexOf('BUSINESS') >= 0))
                         .map(person => this.props.persons[person.id] ? this.props.persons[person.id].name : `id: ${person.id}`)
                     : null;
+
                 if(persons && persons.length > 0) return (
                     <Tooltip
                         placement={"topLeft"}
@@ -426,9 +432,15 @@ export default class ProjectList extends React.PureComponent {
                         align={{offset: [-7, -1]}}
                         overlay={<span>{persons.join('\n')}</span>}
                     >
-                        <span>{this.props.companies[company.id] ? this.props.companies[company.id].name : '---'}</span>
+                        <span>{company}</span>
                     </Tooltip>);
-                else return this.props.companies[company.id] ? this.props.companies[company.id].name : '---';
+                else return company;
+
+            case 'client-order':
+                if(!project || !project.company || project.company.length === 0) return '';
+                let uppClient = project.company.find(company => company.flag.indexOf(CompanyFlag.UPP_CLIENT) >= 0); //first one
+                if(!uppClient) return '';
+                return this.props.companies[uppClient.id] ? this.props.companies[uppClient.id].name : '';
 
             case 'team': //find producer, manager, supervisor in team field [{id, role}], icons + short names /not sortable anyway
                 if(searchable) {
@@ -548,7 +560,7 @@ export default class ProjectList extends React.PureComponent {
             case 'vipTag-order':
                 return project && project.vipTag && project.vipTag.length > 0 ? 1 : 2;
 
-            default: return project && project[field] ? project[field] : '---';
+            default: return project && project[field] ? project[field] : searchable ? '' : '---';
         }
     }
 }
