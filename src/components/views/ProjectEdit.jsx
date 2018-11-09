@@ -169,7 +169,7 @@ export default class ProjectEdit extends React.PureComponent {
                                 />
                             </div>
                             <div className={'detail-group size-4'}>
-                                <div className={`detail-label${typeof editedData.vipTag !== 'undefined' && project  ? ' value-changed' : ''}`}>{'VIP Tag:'}</div>
+                                <div className={`detail-label${typeof editedData.vipTag !== 'undefined' && project  ? ' value-changed' : ''}`}>{'Prestige:'}</div>
                                 <div className={`control-vip-tag`}>
                                     {Object.keys(VipTag).map((tag, i) =>
                                         <div key={i} data-tooltip={VipTag[tag].label}>
@@ -182,9 +182,9 @@ export default class ProjectEdit extends React.PureComponent {
                                 </div>
                             </div>
                             <div className={'detail-group size-4'}>
-                                <div className={`detail-label${typeof editedData.alias !== 'undefined' && project  ? ' value-changed' : ''}`}>{'VIP Tag Note:'}</div>
+                                <div className={`detail-label${typeof editedData.alias !== 'undefined' && project  ? ' value-changed' : ''}`}>{'Prestige Note:'}</div>
                                 <Textarea
-                                    placeholder={'VIP tag note...'}
+                                    placeholder={'Prestige note...'}
                                     className={`detail-input textarea${this.state.validation.vipTagNote ? ' invalid' : ''}`}
                                     onChange={this.handleVipTagNoteChange}
                                     value={vipTagNote}
@@ -741,8 +741,8 @@ export default class ProjectEdit extends React.PureComponent {
             else if(object.budget.ballpark.to < object.budget.ballpark.from) validation['budget'] = {field: 'Budget', status: `Budget 'from' is less than Budget 'to'`};
         }
 
-        if(object.vipTag && object.vipTag.length > 0 && (!object.vipTagNote || !object.vipTagNote.trim())) validation['vipTagNote'] = {field: 'VIP Tag Note', status: `Tag note has to be set`};
-        if(object.vipTag && object.vipTag.length === 0 && object.vipTagNote) validation['vipTagNote'] = {field: 'VIP Tag Note', status: `Tag note is not relevant`};
+        if(object.vipTag && object.vipTag.length > 0 && (!object.vipTagNote || !object.vipTagNote.trim())) validation['vipTagNote'] = {field: 'Prestige Note', status: `Note has to be set`};
+        if(object.vipTag && object.vipTag.length === 0 && object.vipTagNote) validation['vipTagNote'] = {field: 'Prestige Note', status: `Note is not relevant`};
 
         const disableSave = Object.keys(validation).length > 0 || Object.keys(this.props.editedData).length === 0;
         if(areEquivalent(validation, this.state.validation)) validation = this.state.validation;

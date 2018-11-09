@@ -182,7 +182,16 @@ export default class ProjectList extends React.PureComponent {
     sortList = memoize((projects, ids, sort) => {
         //console.log('SORT');
         if(!sort) {
-            return ids.sort((a, b) => projects[b].created.localeCompare(projects[a].created)); //default sort - latest created first
+            //return ids.sort((a, b) => projects[b].created.localeCompare(projects[a].created)); //default sort - inquired
+            return ids.sort((a, b) => { //default sort - inquired
+                let aTime = projects[a] && projects[a].inquired ? +new Date(projects[a].inquired) : 0;
+                let bTime = projects[b] && projects[b].inquired ? +new Date(projects[b].inquired) : 0;
+                if(aTime === bTime) {
+                    aTime = projects[a] && projects[a].created ? +new Date(projects[a].created) : 0;
+                    bTime = projects[b] && projects[b].created ? +new Date(projects[b].created) : 0;
+                }
+                return bTime - aTime;
+            });
         } else {
             return ids.sort((a, b) => {
                 let down = sort.indexOf('-') === 0;
@@ -223,8 +232,6 @@ export default class ProjectList extends React.PureComponent {
                 }
             }
             let searchModified = search.trim().replace(/[^a-zA-Z ]/g, '').replace(/ +/g, '_');
-            //console.log(keysModified);
-            //console.log(searchModified);
             const data = ids.map(id => keysModified.reduce((mod, key) => ({...mod, [key]: this.getComputedField(key, projects[id], false, true)}) , {_id: id}));
             const fuse = new Fuse(data, {
                 verbose: false,
@@ -515,7 +522,7 @@ export default class ProjectList extends React.PureComponent {
                         mouseEnterDelay={TOOLTIP_SHOW_DELAY}
                         mouseLeaveDelay={0}
                         align={{offset: [0, -3]}}
-                        overlay={`Inquired: ${moment(project.inquired).format('D.M.YYYY')}`}
+                        overlay={<span>{`Inquired: ${moment(project.inquired).format('D.M.YYYY')}${project.lastContact ? `\nContact: ${moment(project.lastContact).format('D.M.YYYY')}` : ''}`}</span>}
                     >
                         {lastContact}
                     </Tooltip>

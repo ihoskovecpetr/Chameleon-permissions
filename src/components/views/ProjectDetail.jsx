@@ -127,13 +127,13 @@ export default class ProjectDetail extends React.PureComponent {
                         {vipTag.length > 0 ?
                         <div className={'detail-row'}>
                             <div className={'detail-group size-3'}>
-                                <div className={`detail-label`}>{'VIP Tag:'}</div>
+                                <div className={`detail-label`}>{'Prestige:'}</div>
                                 <div className={`detail-value group with-tooltip`}>
                                     {vipTag.map((tag, i) => <div key={i} className={'tag-icon'} data-tooltip={VipTag[tag].label}><FontAwesomeIcon icon={VipTag[tag].icon}/></div>)}
                                 </div>
                             </div>
                             <div className={'detail-group size-9'}>
-                                <div className={`detail-label`}>{'VIP Tag Note:'}</div>
+                                <div className={`detail-label`}>{'Prestige Note:'}</div>
                                 <div className={`detail-value selectable`}>{vipTagNote}</div>
                             </div>
                         </div>
