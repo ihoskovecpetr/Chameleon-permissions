@@ -70,6 +70,7 @@ const rootElement = document.getElementById('app');
         logger.info(user);
         if(user.exp) logger.info(`Session will expire on ${new Date(user.exp)}`)
     } catch(e) {
+        store.dispatch(Actions.setUser(null));
         logger.warn('Error while getAuthenticatedUser');
         return;
     }

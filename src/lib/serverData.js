@@ -6,7 +6,7 @@ export async function getAuthenticatedUser() {
         credentials: 'same-origin',
         headers: {'Content-Type': 'application/json', 'cache-control': 'no-cache','pragma': 'no-cache'}
     };
-    const response = await fetch('/remote-user', options);
+    const response = await fetch('/api/users/authenticated', options);
     if(response.ok) {
         return await response.json();
     } else {
