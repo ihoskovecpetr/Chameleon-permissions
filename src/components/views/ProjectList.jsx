@@ -44,9 +44,6 @@ export default class ProjectList extends React.PureComponent {
     render() {
         //console.log('RENDER PROJECTS LIST');
         const {selected, projects, activeBid, filter, sort, search} = this.props;
-
-        console.log(filter)
-
         const searchKeys = this.props.activeBid ? searchKeysBids : searchKeysProjects;
 
         const filteredProjectIds = this.filterList(projects, filter);
