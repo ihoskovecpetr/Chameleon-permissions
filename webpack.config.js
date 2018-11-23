@@ -25,15 +25,9 @@ module.exports = {
         port: 8080,
         compress: true,
         proxy: {
-            '/remote-user': {
-                target: 'http://localhost:3000',
-                secure: false,
-                headers: {'remote_user': PROXY_REMOTE_USER}
-            },
             '/api': {
-                target: 'http://localhost:3000',
-                secure: false,
-                headers: {'remote_user': PROXY_REMOTE_USER}
+                target: 'http://localhost:8008',
+                secure: false
             }
         }
     },
