@@ -1,0 +1,6 @@
+.*
+!.gitignore
+!.babelrc
+npm-debug.log
+build
+node_modules
