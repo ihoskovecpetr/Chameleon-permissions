@@ -143,7 +143,7 @@ export async function getUsers() {
             headers: {'cache-control': 'no-cache', 'pragma': 'no-cache'},
             redirect: 'manual'
         };
-        const response = await fetch(`/api/project/users`, options);
+        const response = await fetch(`/api/users`, options);
         const contentType = response.headers.get("content-type");
         const data = contentType && contentType.indexOf("application/json") !== -1 ? await response.json() : null;
         if (response.ok) {
