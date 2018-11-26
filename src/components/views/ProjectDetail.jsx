@@ -170,7 +170,7 @@ export default class ProjectDetail extends React.PureComponent {
                             <div className={'detail-group size-12'}>
                                 <div className={`detail-label`}>{'UPP Team:'}</div>
                                 <div className={'detail-value group wrap'}>
-                                    {team.map((teamMember, i) => <div key={i} className={`value-item selectable${teamMember.id === this.props.user.id ? ' highlighted' : ''}`}><TeamMemberElement teamMember={teamMember} users={this.props.users}/></div>)}
+                                    {team.map((teamMember, i) => <div key={i} className={`value-item selectable${teamMember.id === this.props.user._id ? ' highlighted' : ''}`}><TeamMemberElement teamMember={teamMember} users={this.props.users}/></div>)}
                                 </div>
                             </div>
                         </div>

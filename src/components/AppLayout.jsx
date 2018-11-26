@@ -286,8 +286,6 @@ export default class AppLayout extends React.PureComponent {
                     appVersion = {version}
                     user = {this.props.user}
                     refresh = {this.props.getData}
-                    //logout = {this.props.logout}
-                    //home = {this.props.home}
                     view = {this.props.appState.view.type}
                     activeBid = {this.props.appState.activeBid}
                     setView = {this.props.setView}

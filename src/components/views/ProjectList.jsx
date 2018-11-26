@@ -184,7 +184,7 @@ export default class ProjectList extends React.PureComponent {
                         break;
 
                     case FilterTypes.USER_FILTER:
-                        if(!(project.team && project.team.some(member => member.id === this.props.user.id))) return false;
+                        if(!(project.team && project.team.some(member => member.id === this.props.user._id))) return false;
                         break;
 
                 }
