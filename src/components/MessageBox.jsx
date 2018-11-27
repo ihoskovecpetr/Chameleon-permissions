@@ -15,7 +15,7 @@ export default class MessageBox extends React.PureComponent {
     static getDerivedStateFromProps(props, state) {
         if(props.message !== state.message) {
             if(state.timer) clearTimeout(state.timer);
-            const timer = props.message && props.message.timeout ? setTimeout(props.close, props.message.timeout) : null;
+            const timer = props.message && props.message.timeout ? setTimeout(() => props.setMessage(null), props.message.timeout) : null;
             return {isOpen: !!props.message, timer: timer, message: props.message}
         }
         return null;

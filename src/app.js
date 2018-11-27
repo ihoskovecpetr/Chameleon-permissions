@@ -14,7 +14,7 @@ import AppLayout from './components/AppLayout';
 import * as Actions from './actions/Actions';
 
 import initialState from './reducers/InitialState';
-import createIconLibrary from './lib/createIconLibrary'
+import createIconLibrary from './lib/createIconLibrary';
 
 logger.setLevel('debug');
 
