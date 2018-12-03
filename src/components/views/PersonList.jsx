@@ -1,8 +1,7 @@
 import React, {Fragment} from 'react';
-import { Table } from 'reactstrap';
+import { Table, Input } from 'reactstrap';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Input } from 'reactstrap';
 import Fuse from 'fuse.js';
 
 import * as Icons from '../../constants/Icons';
