@@ -145,7 +145,7 @@ export default class AppLayout extends React.PureComponent {
                         projects={this.props.projects}
                         persons={this.props.persons}
                         //companies={this.props.companies}
-                        //users={this.props.users}
+                        users={this.props.users}
                         user={this.props.user}
 
                         company={this.props.companies[selected] ? this.props.companies[selected] : {}}
@@ -219,7 +219,7 @@ export default class AppLayout extends React.PureComponent {
                         projects={this.props.projects}
                         //persons={this.props.persons}
                         companies={this.props.companies}
-                        //users={this.props.users}
+                        users={this.props.users}
                         user={this.props.user}
 
                         person={this.props.persons[selected] ? this.props.persons[selected] : {}}

@@ -132,8 +132,14 @@ $detail-client-person-padding-left: 1em;
             white-space: nowrap;
             display: flex;
             align-items: baseline;
-            flex: 0 0 35%;
+            flex: 0 0 20%;
+            @include media("<=tablet") {
+              flex: 0 0 33.333%;
+            }
             @include media("<=phone") {
+              flex: 0 0 50%;
+            }
+            @include media("<=small-phone") {
               flex: 0 0 100%;
             }
             .alias-name {
@@ -157,22 +163,110 @@ $detail-client-person-padding-left: 1em;
           }
           .role {
             white-space: nowrap;
-            flex: 0 0 35%;
+            flex: 0 0 20%;
+            @include media("<=tablet") {
+              flex: 0 0 33.333%;
+            }
             @include media("<=phone") {
+              flex: 0 0 50%;
+            }
+            @include media("<=small-phone") {
+              flex: 0 0 100%;
+            }
+          }
+          .team {
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            flex: 0 0 20%;
+            @include media("<=tablet") {
+              flex: 0 0 33.333%;
+            }
+            @include media("<=phone") {
+              flex: 0 0 50%;
+            }
+            @include media("<=small-phone") {
+              flex: 0 0 100%;
+            }
+            .team-member {
+              display: flex;
+              align-items: center;
+              &:not(:last-child) {
+                margin-right: 0.75em;
+              }
+              .team-member-icon {
+                svg {
+                  font-size: 0.85em;
+                  margin-right: 0.2em;
+                }
+              }
+              .team-member-name {
+                top: 0.05em;
+                position: relative;
+              }
+            }
+          }
+          .inquired {
+            white-space: nowrap;
+            flex: 0 0 10%;
+            @include media("<=tablet") {
+              flex: 0 0 33.333%;
+            }
+            @include media("<=phone") {
+              flex: 0 0 50%;
+            }
+            @include media("<=small-phone") {
               flex: 0 0 100%;
             }
           }
           .status {
             white-space: nowrap;
             flex: 0 0 10%;
+            @include media("<=tablet") {
+              flex: 0 0 33.333%;
+            }
             @include media("<=phone") {
+              flex: 0 0 50%;
+            }
+            @include media("<=small-phone") {
               flex: 0 0 100%;
+            }
+            span {
+              padding: 0.1em 0.4em;
+              border-radius: 0.6em;
+              &.ce_sent {
+                background-color: #83b1d9;
+              }
+              &.booked {
+                background-color: #4368a3;
+                color: #e3e3e3;
+              }
+              &.on_hold {
+                background-color: #ebbcab;
+              }
+              &.ongoing {
+                background-color: #88bf89;
+              }
+              &.completed {
+                background-color: #468c46;
+                color: #e3e3e3;
+              }
+              &.refused, &.lost {
+                background-color: #d55354;
+                color: #e3e3e3;
+              }
             }
           }
           .budget {
             white-space: nowrap;
             flex: 0 0 20%;
+            @include media("<=tablet") {
+              flex: 0 0 33.333%;
+            }
             @include media("<=phone") {
+              flex: 0 0 50%;
+            }
+            @include media("<=small-phone") {
               flex: 0 0 100%;
             }
           }

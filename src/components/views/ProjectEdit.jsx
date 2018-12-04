@@ -81,8 +81,8 @@ export default class ProjectEdit extends React.PureComponent {
         if(Object.keys(editedData).length === 0) {
             team.sort((a, b) => (a.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)) - (b.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)));
             timing.sort((a, b) => 0);
-            company.sort((a, b) => (a.flag.map(flag => CompanyFlag[flag] ? Object.keys(CompanyFlag).indexOf(flag) : 100).reduce((a, b) => Math.min(a, b), 100)) - (b.flag.map(flag => CompanyFlag[flag] ? Object.keys(CompanyFlag).indexOf(flag) : 100).reduce((a, b) => Math.min(a, b), 100)));
-            person.sort((a, b) => (a.flag.map(flag => PersonFlag[flag] ? Object.keys(PersonFlag).indexOf(flag) : 100).reduce((a, b) => Math.min(a, b), 100)) - (b.flag.map(flag => PersonFlag[flag] ? Object.keys(PersonFlag).indexOf(flag) : 100).reduce((a, b) => Math.min(a, b), 100)));
+            company.sort((a, b) => (a.flag.map(flag => CompanyFlag[flag] ? CompanyFlag[flag].sort : 100).reduce((a, b) => Math.min(a, b), 100)) - (b.flag.map(flag => CompanyFlag[flag] ? CompanyFlag[flag].sort : 100).reduce((a, b) => Math.min(a, b), 100)));
+            person.sort((a, b) => (a.flag.map(flag => PersonFlag[flag] ? PersonFlag[flag].sort : 100).reduce((a, b) => Math.min(a, b), 100)) - (b.flag.map(flag => PersonFlag[flag] ? PersonFlag[flag].sort : 100).reduce((a, b) => Math.min(a, b), 100)));
         }
 
         const dataChanged = !project || Object.keys(editedData).length > 0;
@@ -358,13 +358,15 @@ export default class ProjectEdit extends React.PureComponent {
                                                     placeholder={'Company...'}
                                                 />
                                                 <div className={`control-flags`}>
-                                                    <div data-tooltip={'UPP Client'}>
-                                                        <FontAwesomeIcon
-                                                            onClick={() => this.companyFlagClicked(i, companyLine.flag, CompanyFlag.UPP_CLIENT)}
-                                                            className={`control-flag-icon${companyLine.flag.indexOf(CompanyFlag.UPP_CLIENT) >= 0 ? ' active' : ''}`}
-                                                            icon={Icons.ICON_EDITOR_FLAG_CLIENT}
-                                                        />
-                                                    </div>
+                                                    {Object.keys(CompanyFlag).map(flag =>
+                                                        <div key={flag} data-tooltip={CompanyFlag[flag].label}>
+                                                            <FontAwesomeIcon
+                                                                onClick={() => this.companyFlagClicked(i, companyLine.flag, CompanyFlag[flag].id)}
+                                                                className={`control-flag-icon${companyLine.flag.indexOf(CompanyFlag[flag].id) >= 0 ? ' active' : ''}`}
+                                                                icon={CompanyFlag[flag].icon}
+                                                            />
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                             <Select
@@ -421,27 +423,15 @@ export default class ProjectEdit extends React.PureComponent {
                                                     placeholder={'Person...'}
                                                 />
                                                 <div className={`control-flags`}>
-                                                    <div data-tooltip={'Business'}>
-                                                        <FontAwesomeIcon
-                                                            onClick={() => this.personFlagClicked(i, personLine.flag, PersonFlag.BUSINESS)}
-                                                            className={`control-flag-icon${personLine.flag.indexOf(PersonFlag.BUSINESS) >= 0 ? ' active' : ''}`}
-                                                            icon={Icons.ICON_EDITOR_FLAG_BUSINESS}
-                                                        />
-                                                    </div>
-                                                    <div data-tooltip={'Creativity'}>
-                                                        <FontAwesomeIcon
-                                                            onClick={() => this.personFlagClicked(i, personLine.flag, PersonFlag.CREATIVITY)}
-                                                            className={`control-flag-icon${personLine.flag.indexOf(PersonFlag.CREATIVITY) >= 0 ? ' active' : ''}`}
-                                                            icon={Icons.ICON_EDITOR_FLAG_CREATIVITY}
-                                                        />
-                                                    </div>
-                                                    <div data-tooltip={'Organization'}>
-                                                        <FontAwesomeIcon
-                                                            onClick={() => this.personFlagClicked(i, personLine.flag, PersonFlag.ORGANIZATION)}
-                                                            className={`control-flag-icon${personLine.flag.indexOf(PersonFlag.ORGANIZATION) >= 0 ? ' active' : ''}`}
-                                                            icon={Icons.ICON_EDITOR_FLAG_ORGANIZE}
-                                                        />
-                                                    </div>
+                                                    {Object.keys(PersonFlag).map(flag =>
+                                                        <div key={flag} data-tooltip={PersonFlag[flag]}>
+                                                            <FontAwesomeIcon
+                                                                onClick={() => this.personFlagClicked(i, personLine.flag, PersonFlag[flag].id)}
+                                                                className={`control-flag-icon${personLine.flag.indexOf(PersonFlag[flag].id) >= 0 ? ' active' : ''}`}
+                                                                icon={PersonFlag[flag].icon}
+                                                            />
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                             <Select
@@ -699,7 +689,7 @@ export default class ProjectEdit extends React.PureComponent {
         });
 
         if(object.company && object.company.some(company => company.id === null)) validation['company'] = {field: 'Companies', status: 'Some company is not set'};
-        if(object.company && object.company.length > 0 && !object.company.some(company => company.flag.indexOf(CompanyFlag.UPP_CLIENT) >= 0)) validation['company'] = {field: 'Companies', status: 'UPP client is not set'};
+        if(object.company && object.company.length > 0 && !object.company.some(company => company.flag.indexOf(CompanyFlag.UPP_CLIENT.id) >= 0)) validation['company'] = {field: 'Companies', status: 'UPP client is not set'};
         const companies = object.company ? object.company.filter(line => line.id).map(line => line.id) : [];
         companies.forEach((company, index) => {
             if(companies.indexOf(company) !== index) {

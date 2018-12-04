@@ -439,7 +439,7 @@ export default class ProjectList extends React.PureComponent {
 
             case 'client': //find main client in company field [{id, role, note, rating}]
                 if(!project || !project.company || project.company.length === 0) return '---';
-                let company = project.company.filter(company => company.flag.indexOf(CompanyFlag.UPP_CLIENT) >= 0);
+                let company = project.company.filter(company => company.flag.indexOf(CompanyFlag.UPP_CLIENT.id) >= 0);
                 if(!company || company.length === 0) return '---';
 
                 const companyIds = company.map(c => c.id);
@@ -465,7 +465,7 @@ export default class ProjectList extends React.PureComponent {
 
             case 'client-order':
                 if(!project || !project.company || project.company.length === 0) return '';
-                let uppClient = project.company.find(company => company.flag.indexOf(CompanyFlag.UPP_CLIENT) >= 0); //first one
+                let uppClient = project.company.find(company => company.flag.indexOf(CompanyFlag.UPP_CLIENT.id) >= 0); //first one
                 if(!uppClient) return '';
                 return this.props.companies[uppClient.id] ? this.props.companies[uppClient.id].name : '';
 
@@ -482,7 +482,7 @@ export default class ProjectList extends React.PureComponent {
                                 const aSort = Math.min(...a.role.map(role => TeamRole[role].sort));
                                 const bSort = Math.min(...b.role.map(role => TeamRole[role].sort));
                                 return aSort - bSort;
-                            }); //remove duplicity of supervisor etc ??? or supervisor - second
+                            });
 
                         const teamOver = project.team
                             .sort((a, b) => {

@@ -50,7 +50,7 @@ export default class ProjectDetail extends React.PureComponent {
                     client[company.id] = {
                         id: company.id,
                         name: this.props.companies[company.id].name,
-                        uppClient: company.flag && company.flag.indexOf(CompanyFlag.UPP_CLIENT) >= 0,
+                        uppClient: company.flag && company.flag.indexOf(CompanyFlag.UPP_CLIENT.id) >= 0,
                         business: company.business ? this.props.companies[company.id].business.map(business => ({
                             label: CompanyBusiness[business] ? CompanyBusiness[business].label : business,
                             active: company.business.indexOf(business) >= 0
@@ -79,9 +79,9 @@ export default class ProjectDetail extends React.PureComponent {
                             label: PersonProfession[profession] ? PersonProfession[profession].label : profession,
                             active: person.profession.indexOf(profession) >= 0
                         })).sort((a, b) => (a.active ? 0 : 1) - (b.active ? 0 : 1)) : [],
-                        businessRole: person.flag && person.flag.indexOf(PersonFlag.BUSINESS) >= 0,
-                        creativityRole: person.flag && person.flag.indexOf(PersonFlag.CREATIVITY) >= 0,
-                        organisationRole: person.flag && person.flag.indexOf(PersonFlag.ORGANIZATION) >= 0,
+                        businessRole: person.flag && person.flag.indexOf(PersonFlag.BUSINESS.id) >= 0,
+                        creativityRole: person.flag && person.flag.indexOf(PersonFlag.CREATIVITY.id) >= 0,
+                        organisationRole: person.flag && person.flag.indexOf(PersonFlag.ORGANIZATION.id) >= 0,
                         note: person.note
                     })
                 }

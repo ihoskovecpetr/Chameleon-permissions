@@ -5,11 +5,13 @@ import * as CompanyFlag from '../../constants/CompanyFlag';
 import * as PersonFlag from '../../constants/PersonFlag';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as ProjectStatus from '../../constants/ProjectStatus'
-import * as Icons from '../../constants/Icons';
-import * as StringFormater from '../../lib/stringFormatHelper';
+import * as StringFormatter from '../../lib/stringFormatHelper';
+import TeamMemberElement from '../element/TeamMemberElement';
+import * as TeamRole from '../../constants/TeamRole';
+import moment from "moment";
 
 export default function ProjectsForSubject(props) {
-    const {projects, id, type} = props;
+    const {projects, id, type, users} = props;
     const projectsForSubject = Object.keys(projects).filter(projectId => {
         const filteredForId = projects[projectId][type].filter(item => item.id === id);
         return filteredForId.length > 0;
@@ -19,13 +21,21 @@ export default function ProjectsForSubject(props) {
         const ballparkFrom = project && project.budget && project.budget.ballpark ? project.budget.ballpark.from : 0;
         const ballparkTo = project && project.budget && project.budget.ballpark ? project.budget.ballpark.to : 0;
         const ballparkCurrency = project && project.budget && project.budget.ballpark && project.budget.ballpark.currency ? project.budget.ballpark.currency : 'eur';
+        const statusClass = project && project.status ? project.status.toLowerCase() : '';
+        const inquired = project && project.inquired ? moment(project.inquired).format('D.M.YYYY') : '';
+        const team = project.team
+            .filter(member => member.role.indexOf(TeamRole.PRODUCER.id) >= 0 || member.role.indexOf(TeamRole.MANAGER.id) >= 0 || member.role.indexOf(TeamRole.SUPERVISOR.id) >= 0 )
+            .sort((a, b) => Math.min(...a.role.map(role => TeamRole[role].sort)) - Math.min(...b.role.map(role => TeamRole[role].sort)));
         return {
             id: projectId,
             name: project.alias ? <Fragment><span>{project.name}</span><span className={'alias-name'}>{project.alias}</span></Fragment> : project.name,
             flag: <Fragment>{person.flag.map((flag, i) => <div key={i} data-tooltip={getFlagTooltip(flag)} className={`flag-icon${i === 0 ? ' first' : ''}`}><FontAwesomeIcon icon={getFlagIcon(flag)}/></div>)}</Fragment>,
             role: type === 'person' ? person.profession.map(profession => PersonProfession[profession] ? PersonProfession[profession].label : profession) : person.business.map(business => CompanyBusiness[business] ? CompanyBusiness[business].label : business),
             status: project.status && ProjectStatus[project.status] ? ProjectStatus[project.status].label : 'Unknown Status',
-            budget: ballparkFrom ? `${ballparkTo ? `${StringFormater.currencyFormat(ballparkFrom)} - ${StringFormater.currencyFormat(ballparkTo, ballparkCurrency.toUpperCase())}` : StringFormater.currencyFormat(ballparkFrom, ballparkCurrency.toUpperCase())}` : null
+            budget: ballparkFrom ? `${ballparkTo ? `${StringFormatter.currencyFormat(ballparkFrom)} - ${StringFormatter.currencyFormat(ballparkTo, ballparkCurrency.toUpperCase())}` : StringFormatter.currencyFormat(ballparkFrom, ballparkCurrency.toUpperCase())}` : null,
+            team: team && team.length > 0 ? <Fragment>{team.map((teamMember, i) => <div key={i} className={`team-member`}><TeamMemberElement teamMember={teamMember} users={users} shortName={true}/></div>)}</Fragment> : null,
+            statusClass: statusClass,
+            inquired: inquired ? <span data-tooltip={`Inquired: ${inquired}`}>{inquired}</span> : ''
         }
     });
     if(projectsForSubject.length > 0) {
@@ -42,7 +52,11 @@ export default function ProjectsForSubject(props) {
                                     {project.flag}
                                 </div>
                                 <div className={'role'}>{project.role.join(', ')}</div>
-                                <div className={'status'}>{project.status}</div>
+                                <div className={'team'}>{project.team}</div>
+                                <div className={'inquired'}>{project.inquired}</div>
+                                <div className={'status'}>
+                                    <span className={project.statusClass}>{project.status}</span>
+                                </div>
                                 {project.budget ? <div className={'budget'}>{project.budget}</div> : null}
                             </div>
                         )}
@@ -55,29 +69,9 @@ export default function ProjectsForSubject(props) {
 }
 
 function getFlagTooltip(flag) {
-    switch (flag) {
-        case CompanyFlag.UPP_CLIENT:
-            return 'UPP Client';
-        case PersonFlag.BUSINESS:
-            return 'Business';
-        case PersonFlag.CREATIVITY:
-            return 'Creativity';
-        case PersonFlag.ORGANIZATION:
-            return 'Organization';
-        default: return '???';
-    }
+    return CompanyFlag[flag] ? CompanyFlag[flag].label : PersonFlag[flag] ? PersonFlag[flag].label : '???';
 }
 
 function getFlagIcon(flag) {
-    switch (flag) {
-        case CompanyFlag.UPP_CLIENT:
-            return Icons.ICON_EDITOR_FLAG_CLIENT;
-        case PersonFlag.BUSINESS:
-            return Icons.ICON_EDITOR_FLAG_BUSINESS;
-        case PersonFlag.CREATIVITY:
-            return Icons.ICON_EDITOR_FLAG_CREATIVITY;
-        case PersonFlag.ORGANIZATION:
-            return Icons.ICON_EDITOR_FLAG_ORGANIZE;
-        default: return '';
-    }
+    return CompanyFlag[flag] ? CompanyFlag[flag].icon : PersonFlag[flag] ? PersonFlag[flag].icon : '';
 }

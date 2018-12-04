@@ -9,7 +9,7 @@ import PersonsInCompany from '../element/PersonsInCompany';
 
 export default class CompanyDetail extends React.PureComponent {
     render() {
-        const {projects, persons, company} = this.props;
+        const {projects, persons, company, users} = this.props;
 
         const name = company.name ? company.name : '';
         const business = company.business ? company.business.map(business => CompanyBusiness[business] ? CompanyBusiness[business].label : `<${business()}>`)  : [];
@@ -57,6 +57,7 @@ export default class CompanyDetail extends React.PureComponent {
                         />
                         <ProjectsForSubject
                             projects={projects}
+                            users={users}
                             id={company._id}
                             showProject={this.props.showProject}
                             type={'company'}
