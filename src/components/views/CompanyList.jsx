@@ -2,8 +2,10 @@ import React, {Fragment} from 'react';
 import { Table } from 'reactstrap';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Input } from 'reactstrap';
+
 import Fuse from 'fuse.js';
+
+import Toolbox from '../toolbox/ListToolbox';
 
 import * as Icons from '../../constants/Icons';
 
@@ -15,7 +17,6 @@ import {TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT, TABLE_SCROLLBARS_AUTO_HIDE_DURATION}
 import memoize from 'memoize-one';
 
 import {CompaniesColumnDef} from '../../constants/TableColumnsDef';
-import Tooltip from "rc-tooltip";
 
 const searchKeys = ['name', '$name', 'contact', 'business', 'person', 'project'];
 const searchKeysShort = {
@@ -44,27 +45,16 @@ export default class CompanyList extends React.PureComponent {
 
         return (
             <div className={'app-body'}>
-                <div className={'app-toolbox'}>
-                    <div className={'inner-container space'}>
-                        <div className={'toolbox-group'}>
-                            <div onClick={this.add} className={'tool-box-button green'}>{'New'}</div>
-                            <div onClick={selected ? () => this.show(selected) : undefined} className={`tool-box-button${selected ? '' : ' disabled'}`}>{'Show'}</div>
-                            <div onClick={selected ? () => this.edit(selected) : undefined} className={`tool-box-button orange${selected ? '' : ' disabled'}`}>{'Edit'}</div>
-                            <div onClick={selected ? this.addToBox : undefined} className={`tool-box-button blue${selected ? '' : ' disabled'}`}><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/><FontAwesomeIcon icon={Icons.ICON_BOX}/></div>
-                        </div>
-                    </div>
-                    <div className={'inner-container flex'}>
-                        <div className={'toolbox-group right-auto'}>
-                            <div className={'tool-box-search-container'}>
-                                <Tooltip placement={"bottomLeft"} overlay={<span>{searchTips}</span>}>
-                                    <div className={'icon search'}><FontAwesomeIcon icon={Icons.ICON_SEARCH}/></div>
-                                </Tooltip>
-                                <Input value={search} onChange={this.searchInputHandler} className={`input-search`}/>
-                                <div className={'icon clear'} onClick={this.clearSearchInputHandler}><FontAwesomeIcon icon={Icons.ICON_SEARCH_CLEAR}/></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <Toolbox
+                    add = {this.add}
+                    show = {this.show}
+                    edit = {this.edit}
+                    addToBox = {this.addToBox}
+                    searchTips = {searchTips}
+                    search = {search}
+                    selected = {selected}
+                    setSearch = {this.props.setSearch}
+                />
                 <Fragment>
                     {this.getHeader(CompaniesColumnDef)}
                     <Scrollbars  className={'body-scroll-content companies'} autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
@@ -150,21 +140,6 @@ export default class CompanyList extends React.PureComponent {
             })
         }
     });
-    /*
-    searchList = memoize((projects, ids, search, keys) => {
-        //console.log('SEARCH');
-        if(search && search.trim()) {
-            const data = ids.map(id => keys.reduce((mod, key) => ({...mod, [key]: this.getComputedField(key, projects[id], false, true)}) , {_id: id}));
-            const fuse = new Fuse(data, {
-                verbose: false,
-                id: '_id',
-                findAllMatches: true,
-                keys: keys
-            });
-            return fuse.search(search.trim());
-        } else return ids;
-    });
-    */
     searchList = memoize((projects, ids, search, keys) => {
         //console.log('SEARCH');
         if(search && search.trim()) {
@@ -178,13 +153,6 @@ export default class CompanyList extends React.PureComponent {
                     if(!Array.isArray(keysModified)) keysModified = [keysModified];
                     search = search.substring(index + 1);
                 }
-                /*
-                if(keys.indexOf(key) >= 0) {
-                    search = search.substring(index + 1);
-                    keysModified = [key];
-                    if(key === 'name') keysModified.push('$name');
-                }
-                */
             }
             let searchModified = search.trim().replace(/[^a-zA-Z ]/g, '').replace(/ +/g, '_');
             //console.log(keysModified);
@@ -239,14 +207,6 @@ export default class CompanyList extends React.PureComponent {
 
     rowDoubleClickHandler = (event, companyId) => {
         if(typeof event.target.className === 'string' && event.target.className.indexOf('table-select') < 0 && event.target.className.indexOf('table-button') < 0) event.altKey ? this.edit(companyId, true) : this.show(companyId, true);
-    };
-
-    searchInputHandler = (event) => {
-       this.props.setSearch(event.target.value);
-    };
-
-    clearSearchInputHandler = () => {
-       this.props.setSearch('');
     };
 
     handleSort = (sort) => {

@@ -19,26 +19,31 @@ export default class PersonDetail extends React.PureComponent {
     }
 
     render() {
-        const {id, label} = this.props;
+        const {id, label, dataChanged, selected, validation, saveDisabled} = this.props;
         return (
             <div className={'app-toolbox'}>
                 <div className={'inner-container'}>
                     <div className={'toolbox-group'}>
-                        <div onClick={this.close} className={'tool-box-button'}>{this.props.editable ? 'Close' : 'Return'}</div>
-                        {this.props.editable || true ? <div onClick={this.edit} className={`tool-box-button orange`}>{'Edit'}</div> : null}
-                        <div onClick={this.addToBox} className={`tool-box-button blue`}>
-                            <FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/>
-                            <FontAwesomeIcon icon={Icons.ICON_BOX}/>
+                        <div onClick={this.close} className={`tool-box-button${dataChanged ? ' red' : ''}`}>{dataChanged ? 'Cancel' : 'Close'}</div>
+                        <div onClick={saveDisabled ? undefined : this.save} className={`tool-box-button${selected ? ' orange' : ' green'}${saveDisabled ? ' disabled' : ''}`}>{selected ? 'Save' : 'Create'}</div>
+                        {this.props.addFromBox ? <div onClick={this.props.box ? this.addFromBox : undefined} className={`tool-box-button blue${!this.props.box  ? ' disabled' : ''}`}><FontAwesomeIcon icon={Icons.ICON_BOX}/><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/></div> : null}
+                        <div className={'tool-box-validation'}>
+                            <FontAwesomeIcon className={`tool-box-validation-icon${Object.keys(validation).length > 0 ? ' active' : ''}`} icon={Icons.ICON_EDITOR_VALIDATION}/>
+                            <div className={'tool-box-validation-container'}>
+                                {Object.keys(validation).map(validationField => <div key={validationField}>{`${validation[validationField].field}: ${validation[validationField].status}`}</div>)}
+                            </div>
                         </div>
-                        {this.props.editable ?
+                        {!selected ? null :
                             <Fragment>
                                 <div onClick={!this.state.removeArmed ? undefined : this.remove} className={`tool-box-button remove red${!this.state.removeArmed ? ' disabled' : ''}`}>{`Remove ${label}`}</div>
                                 <FontAwesomeIcon className={`tool-box-checkbox`} onClick={this.handleRemoveArmed} icon={this.state.removeArmed ? Icons.ICON_CHECKBOX_CHECKED : Icons.ICON_CHECKBOX_UNCHECKED} style={{cursor: 'pointer'}}/>
                             </Fragment>
-                        : null}
+                        }
                     </div>
                 </div>
-                {id ? <div className={'inner-container left-auto'}><div className={'toolbox-id'}>{id}</div></div> : null}
+                <div className={'inner-container left-auto'}>
+                    {selected && id ? <div className={'toolbox-id'}>{id}</div> : null}
+                </div>
             </div>
         );
     }
@@ -49,8 +54,12 @@ export default class PersonDetail extends React.PureComponent {
         this.props.returnToPreviousView();
     };
 
-    edit = () => {
-        if(this.props.editable || true) this.props.edit(this.props.selected);
+    save = () => {
+        this.props.save();
+    };
+
+    addFromBox = () => {
+        if(this.props.addFromBox) this.props.addFromBox();
     };
 
     remove = () => {
@@ -65,23 +74,16 @@ export default class PersonDetail extends React.PureComponent {
         this.setState({removeArmed: !this.state.removeArmed})
     };
 
-    addToBox = () => {
-        this.props.addToBox(this.props.selected);
-    };
-
     handleKeyDown = event => {
         switch(event.which) {
             case 27: //ESC
-                this.close();
+                if(!this.props.dataChanged) this.close();
                 break;
             case 81: // 'q'
-                if(event.ctrlKey) this.close();
+                if(event.ctrlKey && !this.props.dataChanged) this.close();
                 break;
-            case 69: // 'e'
-                if(event.ctrlKey) this.edit();
-                break;
-            case 66: // 'b'
-                if(event.ctrlKey) this.addToBox();
+            case 83: // 's'
+                if(!this.props.saveDisabled) this.save();
                 break;
         }
     }

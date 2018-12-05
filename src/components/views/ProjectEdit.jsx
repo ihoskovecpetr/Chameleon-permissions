@@ -18,6 +18,8 @@ import * as PersonProfession from '../../constants/PersonProfession';
 import * as ProjectClientTiming from '../../constants/ProjectClientTiming';
 import * as StringFormatter from '../../lib/stringFormatHelper';
 
+import Toolbox from '../toolbox/EditToolbox';
+
 import * as Icons from '../../constants/Icons';
 
 import * as ProjectStatus from '../../constants/ProjectStatus';
@@ -89,33 +91,19 @@ export default class ProjectEdit extends React.PureComponent {
 
         return (
             <div className={'app-body'}>
-                {/* ------------------ TOOLBOX ------------------ */}
-                <div className={'app-toolbox'}>
-                    <div className={'inner-container'}>
-                        <div className={'toolbox-group'}>
-                            <div onClick={this.close} className={`tool-box-button${dataChanged ? ' red' : ''}`}>{dataChanged ? 'Cancel' : 'Close'}</div>
-                            <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button${project ? ' orange' : ' green'}${this.state.saveDisabled ? ' disabled' : ''}`}>{project ? 'Save' : 'Create'}</div>
-                            <div onClick={this.props.box && this.props.box.length > 0 ? this.addFromBox : undefined} className={`tool-box-button blue${!this.props.box || this.props.box.length === 0 ? ' disabled' : ''}`}><FontAwesomeIcon icon={Icons.ICON_BOX}/><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/></div>
-                            <div className={'tool-box-validation'}>
-                                <FontAwesomeIcon className={`tool-box-validation-icon${Object.keys(this.state.validation).length > 0 ? ' active' : ''}`} icon={Icons.ICON_EDITOR_VALIDATION}/>
-                                <div className={'tool-box-validation-container'}>
-                                    {Object.keys(this.state.validation).map(validationField => <div key={validationField}>{`${this.state.validation[validationField].field}: ${this.state.validation[validationField].status}`}</div>)}
-                                </div>
-                            </div>
-                            {!project ? null :
-                                <Fragment>
-                                    <div onClick={!this.state.removeArmed ? undefined : this.remove} className={`tool-box-button remove red${!this.state.removeArmed ? ' disabled' : ''}`}>{'Remove Project'}</div>
-                                    <FontAwesomeIcon className={`tool-box-checkbox`} onClick={this.handleRemoveArmed} icon={this.state.removeArmed ? Icons.ICON_CHECKBOX_CHECKED : Icons.ICON_CHECKBOX_UNCHECKED} style={{cursor: 'pointer'}}/>
-                                </Fragment>
-                            }
-                        </div>
-                    </div>
-                    <div className={'inner-container left-auto'}>
-                    {project ? <div className={'toolbox-id'}>{project.projectId}</div> : null}
-                    </div>
-                </div>
-
-                {/* ------------------ FORM ------------------ */}
+                <Toolbox
+                    returnToPreviousView = {this.props.returnToPreviousView}
+                    save = {this.save}
+                    remove = {this.remove}
+                    dataChanged = {dataChanged}
+                    validation = {this.state.validation}
+                    saveDisabled = {this.state.saveDisabled}
+                    addFromBox = {this.addFromBox}
+                    box = {this.props.box && this.props.box.length > 0}
+                    selected = {project && project._id}
+                    label = {'Project'}
+                    id = {projects && project.projectId ? project.projectId : null}
+                />
                 <Scrollbars  className={'body-scroll-content projects'} autoHide={true} autoHideTimeout={Constants.TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={Constants.TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                     <div className={'detail-body edit'}>
 
@@ -501,10 +489,11 @@ export default class ProjectEdit extends React.PureComponent {
     // *****************************************************************************************************************
     // CLOSE, SAVE, REMOVE, BOX
     // *****************************************************************************************************************
+    /*
     close = () => {
         this.props.returnToPreviousView();
     };
-
+    */
     save = async () => {
         if(this.setValidation()) return;
         try {

@@ -5,11 +5,13 @@ import * as ProjectStatus from '../../constants/ProjectStatus';
 import * as TeamRole from '../../constants/TeamRole';
 import * as FilterTypes from '../../constants/FilterTypes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Input } from 'reactstrap';
+
 import Fuse from 'fuse.js';
 import moment from 'moment';
 import Select from 'react-select';
 import * as StringFormatter from '../../lib/stringFormatHelper';
+
+import Toolbox from '../toolbox/ListToolbox';
 
 import * as ProjectClientTiming from '../../constants/ProjectClientTiming';
 import * as VipTags from '../../constants/VipTag';
@@ -51,66 +53,29 @@ export default class ProjectList extends React.PureComponent {
     render() {
         //console.log('RENDER PROJECTS LIST');
         const {selected, projects, activeBid, filter, sort, search} = this.props;
-        const searchKeys = this.props.activeBid ? searchKeysBids : searchKeysProjects;
 
         const filteredProjectIds = this.filterList(projects, filter);
-        const searchedProjectIds = this.searchList(projects, filteredProjectIds, search, searchKeys);
+        const searchedProjectIds = this.searchList(projects, filteredProjectIds, search, this.props.activeBid ? searchKeysBids : searchKeysProjects);
         const sortedProjectIds = this.sortList(projects, searchedProjectIds, sort);
-
-        const userFilter = filter.indexOf(FilterTypes.USER_FILTER) >= 0;
-        const activeFilter = filter.indexOf(FilterTypes.ACTIVE_PROJECTS_FILTER) >= 0 || filter.indexOf(FilterTypes.NON_ACTIVE_PROJECTS_FILTER) >= 0;
-        const activeFilterReversed = filter.indexOf(FilterTypes.NON_ACTIVE_PROJECTS_FILTER) >= 0;
-        const awardedFilter = filter.indexOf(FilterTypes.AWARDED_PROJECTS_FILTER) >= 0 || filter.indexOf(FilterTypes.NOT_AWARDED_PROJECTS_FILTER) >= 0;
-        const awardFilterReversed = filter.indexOf(FilterTypes.NOT_AWARDED_PROJECTS_FILTER) >= 0;
-
-        const activeBidsFilter = filter.indexOf(FilterTypes.ACTIVE_BIDS_FILTER) >= 0 || filter.indexOf(FilterTypes.NON_ACTIVE_BIDS_FILTER) >= 0;
-        const activeBidsFilterReversed = filter.indexOf(FilterTypes.NON_ACTIVE_BIDS_FILTER) >= 0;
 
         const searchTips = Object.keys(searchKeysShort).map(key => `${key}: for search in ${searchKeysShort[key].description}`).join('\n');
 
         return (
             <div className={'app-body'}>
-                {/* ------------------ TOOLBOX ------------------ */}
-                <div className={'app-toolbox'}>
-                    <div className={'inner-container space'}>
-                        {/* ------------------ BUTTONS ------------------ */}
-                        <div className={'toolbox-group'}>
-                            <div onClick={this.add} className={'tool-box-button green'}>{'New'}</div>
-                            <div onClick={selected ? () => this.show(selected) : undefined} className={`tool-box-button${selected ? '' : ' disabled'}`}>{'Show'}</div>
-                            <div onClick={selected ? () => this.edit(selected) : undefined} className={`tool-box-button orange${selected ? '' : ' disabled'}`}>{'Edit'}</div>
-                            <div onClick={selected ? this.addToBox : undefined} className={`tool-box-button blue${selected ? '' : ' disabled'}`}><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/><FontAwesomeIcon icon={Icons.ICON_BOX}/></div>
-                        </div>
-                    </div>
-                    <div className={'inner-container flex'}>
-                        {/* ------------------ SEARCH ------------------ */}
-                        <div className={'toolbox-group right-auto'}>
-                            <div className={'tool-box-search-container'}>
-                                <Tooltip placement={"bottomLeft"} overlay={<span>{searchTips}</span>}>
-                                    <div className={'icon search'}><FontAwesomeIcon icon={Icons.ICON_SEARCH}/></div>
-                                </Tooltip>
-                                <Input value={search} onChange={this.searchInputHandler} className={`input-search`}/>
-                                <div className={'icon clear'} onClick={this.clearSearchInputHandler}><FontAwesomeIcon icon={Icons.ICON_SEARCH_CLEAR}/></div>
-                            </div>
-                        </div>
-                        {/* ------------------ FILTER SWITCHES ------------------ */}
-                        <div className={'toolbox-group'}>
-                            <div onClick={this.userFilterHandler} className={`tool-box-button-switch${userFilter ? ' checked' : ''}`}><FontAwesomeIcon className={'check'} icon={userFilter ? Icons.ICON_CHECKBOX_FILTER_CHECKED : Icons.ICON_CHECKBOX_FILTER_UNCHECKED}/><span className={`text`}>{'My'}</span></div>
-
-                            {activeBid ?
-                                <div onClick={event => this.activeBidsFilterHandler(event, false)} className={`tool-box-button-switch${activeBidsFilter ?  activeBidsFilterReversed ? ' reversed' : ' checked' : ''}`}><FontAwesomeIcon onClick={event => this.activeBidsFilterHandler(event, true)} className={'check'} icon={activeBidsFilter ? Icons.ICON_CHECKBOX_FILTER_CHECKED : Icons.ICON_CHECKBOX_FILTER_UNCHECKED}/><span className={`text${activeBidsFilterReversed ? ' reversed' : ''}`}>{'Active'}</span></div>
-                                :
-                                <Fragment>
-                                    <div onClick={event => this.activeFilterHandler(event, false)} className={`tool-box-button-switch${activeFilter ?  activeFilterReversed ? ' reversed' : ' checked' : ''}`}><FontAwesomeIcon onClick={event => this.activeFilterHandler(event, true)} className={'check'} icon={activeFilter ? Icons.ICON_CHECKBOX_FILTER_CHECKED : Icons.ICON_CHECKBOX_FILTER_UNCHECKED}/><span className={`text${activeFilterReversed ? ' reversed' : ''}`}>{'Active'}</span></div>
-                                    <div onClick={event => this.awardedFilterHandler(event, false)} className={`tool-box-button-switch${awardedFilter ? awardFilterReversed ? ' reversed ' : ' checked' : ''}`}><FontAwesomeIcon onClick={event => this.awardedFilterHandler(event, true)} className={'check'} icon={awardedFilter ? Icons.ICON_CHECKBOX_FILTER_CHECKED : Icons.ICON_CHECKBOX_FILTER_UNCHECKED}/><span className={`text${awardFilterReversed ? ' reversed' : ''}`}>{'Awarded'}</span></div>
-                                </Fragment>
-                            }
-                            {/* BID SWITCH */}
-                            <div onClick={this.toggleActiveBidMode} className={`tool-box-button-switch${activeBid ? ' checked' : ''}`}><FontAwesomeIcon className={'check'} icon={activeBid ? Icons.ICON_CHECKBOX_FILTER_CHECKED : Icons.ICON_CHECKBOX_FILTER_UNCHECKED}/><span className={`text`}>{'Bids'}</span></div>
-                        </div>
-                        {/* ------------------------------------ */}
-                    </div>
-                </div>
-                {/* ------------------ TABLE LIST ------------------ */}
+                <Toolbox
+                    add = {this.add}
+                    show = {this.show}
+                    edit = {this.edit}
+                    addToBox = {this.addToBox}
+                    searchTips = {searchTips}
+                    search = {search}
+                    selected = {selected}
+                    setSearch = {this.props.setSearch}
+                    activeBid = {activeBid}
+                    filter = {filter}
+                    setActiveBid = {this.props.setActiveBid}
+                    setFilter = {this.props.setFilter}
+                />
                 <Fragment>
                     {this.getHeader(activeBid ? ActiveBidsColumnDef : ProjectsColumnDef)}
                     <Scrollbars className={'body-scroll-content projects'} autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
@@ -167,37 +132,29 @@ export default class ProjectList extends React.PureComponent {
         //console.log('FILTER');
         return Object.keys(projects).map(id => id).filter(id => {
             const project = projects[id];
-            //filter
             for(const f of filter) {
                 switch (f) {
                     case FilterTypes.AWARDED_PROJECTS_FILTER:
                         if(!ProjectStatus[project.status] || !ProjectStatus[project.status].awarded) return false;
                         break;
-
                     case FilterTypes.NOT_AWARDED_PROJECTS_FILTER:
                         if(ProjectStatus[project.status] && ProjectStatus[project.status].awarded) return false;
                         break;
-
                     case FilterTypes.ACTIVE_PROJECTS_FILTER:
                         if(!ProjectStatus[project.status] || !ProjectStatus[project.status].active) return false;
                         break;
-
                     case FilterTypes.NON_ACTIVE_PROJECTS_FILTER:
                         if(ProjectStatus[project.status] && ProjectStatus[project.status].active) return false;
                         break;
-
                     case FilterTypes.ACTIVE_BIDS_FILTER:
                         if(!ProjectStatus[project.status] || !ProjectStatus[project.status].activeBid) return false;
                         break;
-
                     case FilterTypes.NON_ACTIVE_BIDS_FILTER:
                         if(ProjectStatus[project.status] && ProjectStatus[project.status].activeBid) return false;
                         break;
-
                     case FilterTypes.USER_FILTER:
                         if(!(project.team && project.team.some(member => member.id === this.props.user._id))) return false;
                         break;
-
                 }
             }
             return true;
@@ -207,7 +164,6 @@ export default class ProjectList extends React.PureComponent {
     sortList = memoize((projects, ids, sort) => {
         //console.log('SORT');
         if(!sort) {
-            //return ids.sort((a, b) => projects[b].created.localeCompare(projects[a].created)); //default sort - inquired
             return ids.sort((a, b) => { //default sort - inquired
                 let aTime = projects[a] && projects[a].inquired ? +new Date(projects[a].inquired) : 0;
                 let bTime = projects[b] && projects[b].inquired ? +new Date(projects[b].inquired) : 0;
@@ -253,17 +209,6 @@ export default class ProjectList extends React.PureComponent {
                     if(!Array.isArray(keysModified)) keysModified = [keysModified];
                     search = search.substring(index + 1);
                 }
-
-                /*
-                if(keys.indexOf(key) >= 0) {
-                    search = search.substring(index + 1);
-                    keysModified = [key];
-                    if(key === 'name') {
-                        keysModified.push('$name');
-                        keysModified.push('alias');
-                    }
-                }
-                */
             }
             let searchModified = search.trim().replace(/[^a-zA-Z ]/g, '').replace(/ +/g, '_');
             const data = ids.map(id => keysModified.reduce((mod, key) => ({...mod, [key]: this.getComputedField(key, projects[id], false, true)}) , {_id: id}));
@@ -310,59 +255,12 @@ export default class ProjectList extends React.PureComponent {
     // ***************************************************
     // HANDLERS
     // ***************************************************
-    toggleActiveBidMode = () => {
-        this.props.setActiveBid(!this.props.activeBid)
-    };
-
     rowClickHandler = (event, projectId) => {
         if(typeof event.target.className === 'string' && event.target.className.indexOf('control-select') < 0 && event.target.className.indexOf('table-button') < 0) this.select(projectId);
     };
 
     rowDoubleClickHandler = (event, projectId) => {
         if(typeof event.target.className === 'string' && event.target.className.indexOf('control-select') < 0 && event.target.className.indexOf('table-button') < 0) event.altKey ? this.edit(projectId, true) : this.show(projectId, true);
-    };
-
-    activeFilterHandler = (event, check) => {
-        if(check) event.stopPropagation();
-        if (this.props.filter.indexOf(FilterTypes.ACTIVE_PROJECTS_FILTER) >= 0) {
-            this.props.setFilter(FilterTypes.ACTIVE_PROJECTS_FILTER, false);
-            if(!check) this.props.setFilter(FilterTypes.NON_ACTIVE_PROJECTS_FILTER, true);
-        }
-        else if (this.props.filter.indexOf(FilterTypes.NON_ACTIVE_PROJECTS_FILTER) >= 0) this.props.setFilter(FilterTypes.NON_ACTIVE_PROJECTS_FILTER, false);
-        else this.props.setFilter(FilterTypes.ACTIVE_PROJECTS_FILTER, true);
-    };
-
-    activeBidsFilterHandler = (event, check) => {
-        if(check) event.stopPropagation();
-        if (this.props.filter.indexOf(FilterTypes.ACTIVE_BIDS_FILTER) >= 0) {
-            this.props.setFilter(FilterTypes.ACTIVE_BIDS_FILTER, false);
-            if(!check) this.props.setFilter(FilterTypes.NON_ACTIVE_BIDS_FILTER, true);
-        }
-        else if (this.props.filter.indexOf(FilterTypes.NON_ACTIVE_BIDS_FILTER) >= 0) this.props.setFilter(FilterTypes.NON_ACTIVE_BIDS_FILTER, false);
-        else this.props.setFilter(FilterTypes.ACTIVE_BIDS_FILTER, true);
-    };
-
-    awardedFilterHandler = (event, check) => {
-        if(check) event.stopPropagation();
-        if (this.props.filter.indexOf(FilterTypes.AWARDED_PROJECTS_FILTER) >= 0) {
-            this.props.setFilter(FilterTypes.AWARDED_PROJECTS_FILTER, false);
-            if(!check) this.props.setFilter(FilterTypes.NOT_AWARDED_PROJECTS_FILTER, true);
-        }
-        else if (this.props.filter.indexOf(FilterTypes.NOT_AWARDED_PROJECTS_FILTER) >= 0) this.props.setFilter(FilterTypes.NOT_AWARDED_PROJECTS_FILTER, false);
-        else this.props.setFilter(FilterTypes.AWARDED_PROJECTS_FILTER, true);
-    };
-
-    userFilterHandler = () => {
-        if(this.props.filter.indexOf(FilterTypes.USER_FILTER) >= 0) this.props.setFilter(FilterTypes.USER_FILTER, false);
-        else this.props.setFilter(FilterTypes.USER_FILTER, true);
-    };
-
-    searchInputHandler = (event) => {
-       this.props.setSearch(event.target.value);
-    };
-
-    clearSearchInputHandler = () => {
-       this.props.setSearch('');
     };
 
     handleSort = (sort) => {

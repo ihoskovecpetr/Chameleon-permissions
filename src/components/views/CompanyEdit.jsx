@@ -8,6 +8,8 @@ import CreatableSelect from 'react-select/lib/Creatable';
 import areEquivalent from '../../lib/compareObjects';
 import * as Constants from '../../constants/Constatnts';
 
+import Toolbox from '../toolbox/EditToolbox';
+
 import * as Icons from '../../constants/Icons';
 
 import * as CompanyBusiness from '../../constants/CompanyBusiness';
@@ -55,28 +57,16 @@ export default class CompanyEdit extends React.PureComponent {
 
         return (
             <div className={'app-body'}>
-                {/* ------------------ TOOLBOX ------------------ */}
-                <div className={'app-toolbox'}>
-                    <div className={'inner-container'}>
-                        <div className={'toolbox-group'}>
-                            <div onClick={this.close} className={`tool-box-button${dataChanged ? ' red' : ''}`}>{dataChanged ? 'Cancel' : 'Close'}</div>
-                            <div onClick={this.state.saveDisabled ? undefined : this.save} className={`tool-box-button${company ? ' orange' : ' green'}${this.state.saveDisabled ? ' disabled' : ''}`}>{company ? 'Save' : 'Create'}</div>
-                            <div className={'tool-box-validation'}>
-                                <FontAwesomeIcon className={`tool-box-validation-icon${Object.keys(this.state.validation).length > 0 ? ' active' : ''}`} icon={Icons.ICON_EDITOR_VALIDATION}/>
-                                <div className={'tool-box-validation-container'}>
-                                    {Object.keys(this.state.validation).map(validationField => <div key={validationField}>{`${this.state.validation[validationField].field}: ${this.state.validation[validationField].status}`}</div>)}
-                                </div>
-                            </div>
-                            {!company ? null :
-                                <Fragment>
-                                    <div onClick={!this.state.removeArmed ? undefined : this.remove} className={`tool-box-button remove red${!this.state.removeArmed ? ' disabled' : ''}`}>{'Remove Company'}</div>
-                                    <FontAwesomeIcon className={`tool-box-checkbox`} onClick={this.handleRemoveArmed} icon={this.state.removeArmed ? Icons.ICON_CHECKBOX_CHECKED : Icons.ICON_CHECKBOX_UNCHECKED} style={{cursor: 'pointer'}}/>
-                                </Fragment>
-                            }
-                        </div>
-                    </div>
-                </div>
-                {/* ------------------ FORM ------------------ */}
+                <Toolbox
+                    returnToPreviousView = {this.props.returnToPreviousView}
+                    save = {this.save}
+                    remove = {this.remove}
+                    dataChanged = {dataChanged}
+                    validation = {this.state.validation}
+                    saveDisabled = {this.state.saveDisabled}
+                    selected = {company && company._id}
+                    label = {'Company'}
+                />
                 <Scrollbars autoHide={true} autoHideTimeout={Constants.TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={Constants.TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                     <div className={'detail-body edit'}>
                         {/* ------------------ NAME, BUSINESS ------------------ */}
