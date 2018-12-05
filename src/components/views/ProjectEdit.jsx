@@ -102,7 +102,7 @@ export default class ProjectEdit extends React.PureComponent {
                     box = {this.props.box && this.props.box.length > 0}
                     selected = {project && project._id}
                     label = {'Project'}
-                    id = {projects && project.projectId ? project.projectId : null}
+                    id = {project && project.projectId ? project.projectId : null}
                 />
                 <Scrollbars  className={'body-scroll-content projects'} autoHide={true} autoHideTimeout={Constants.TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={Constants.TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                     <div className={'detail-body edit'}>
