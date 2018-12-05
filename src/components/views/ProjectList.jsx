@@ -30,6 +30,13 @@ import Tooltip  from 'rc-tooltip';
 
 const statusOptions = Object.keys(ProjectStatus).filter(key => ProjectStatus[key].bids).map(key => {return {value: ProjectStatus[key].id, label: ProjectStatus[key].label}});
 const searchKeysProjects = ['name', '$name', 'alias', 'client', 'team', 'status', 'statusNote', 'story', 'vipTagNote'];
+const searchKeysShort = {
+  name: {key: ['name', '$name', 'alias'], description: 'project name'},
+  client: {key: 'client', description: 'project UPP client'},
+  team: {key: 'team', description: 'project UPP team'},
+  status: {key: 'status', description: 'project status'},
+  text: {key: ['story', 'statusNote, vipTagNote'] , description: 'status and prestige notes and story'}
+};
 const searchKeysBids = searchKeysProjects;
 
 const CURRENCY_RATIO = {eur: 25.5, usd: 21.5};
@@ -59,6 +66,8 @@ export default class ProjectList extends React.PureComponent {
         const activeBidsFilter = filter.indexOf(FilterTypes.ACTIVE_BIDS_FILTER) >= 0 || filter.indexOf(FilterTypes.NON_ACTIVE_BIDS_FILTER) >= 0;
         const activeBidsFilterReversed = filter.indexOf(FilterTypes.NON_ACTIVE_BIDS_FILTER) >= 0;
 
+        const searchTips = Object.keys(searchKeysShort).map(key => `${key}: for search in ${searchKeysShort[key].description}`).join('\n');
+
         return (
             <div className={'app-body'}>
                 {/* ------------------ TOOLBOX ------------------ */}
@@ -76,7 +85,9 @@ export default class ProjectList extends React.PureComponent {
                         {/* ------------------ SEARCH ------------------ */}
                         <div className={'toolbox-group right-auto'}>
                             <div className={'tool-box-search-container'}>
-                                <div className={'icon search'}><FontAwesomeIcon icon={Icons.ICON_SEARCH}/></div>
+                                <Tooltip placement={"bottomLeft"} overlay={<span>{searchTips}</span>}>
+                                    <div className={'icon search'}><FontAwesomeIcon icon={Icons.ICON_SEARCH}/></div>
+                                </Tooltip>
                                 <Input value={search} onChange={this.searchInputHandler} className={`input-search`}/>
                                 <div className={'icon clear'} onClick={this.clearSearchInputHandler}><FontAwesomeIcon icon={Icons.ICON_SEARCH_CLEAR}/></div>
                             </div>
@@ -235,7 +246,15 @@ export default class ProjectList extends React.PureComponent {
             let tokenize = false;
             if(search.indexOf(':') > 1) {
                 const index = search.trim().indexOf(':');
-                const key = search.substring(0, index).trim();
+                const key = search.substring(0, index).trim().toLowerCase();
+
+                if(searchKeysShort[key]) {
+                    keysModified = searchKeysShort[key].key;
+                    if(!Array.isArray(keysModified)) keysModified = [keysModified];
+                    search = search.substring(index + 1);
+                }
+
+                /*
                 if(keys.indexOf(key) >= 0) {
                     search = search.substring(index + 1);
                     keysModified = [key];
@@ -244,6 +263,7 @@ export default class ProjectList extends React.PureComponent {
                         keysModified.push('alias');
                     }
                 }
+                */
             }
             let searchModified = search.trim().replace(/[^a-zA-Z ]/g, '').replace(/ +/g, '_');
             const data = ids.map(id => keysModified.reduce((mod, key) => ({...mod, [key]: this.getComputedField(key, projects[id], false, true)}) , {_id: id}));
@@ -584,7 +604,7 @@ export default class ProjectList extends React.PureComponent {
                         destroyTooltipOnHide={true}
                         overlay={<span>{`${project.vipTag.map(tag => VipTags[tag] ? VipTags[tag].label : tag).join(', ')}\n${project.vipTagNote}`}</span>}
                     >
-                        <FontAwesomeIcon style={{fontSize: '0.8em', color: '#636363'}} icon={'tag'}/>
+                        <FontAwesomeIcon style={{fontSize: '0.8em', color: '#636363'}} icon={Icons.ICON_VIP_TAG}/>
                     </Tooltip>);
 
             case 'vipTag-order':

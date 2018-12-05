@@ -77,3 +77,4 @@ export const ICON_VIP_TAG_SHOWREEL = 'film';
 export const ICON_VIP_TAG_AWARDED = 'trophy';
 export const ICON_VIP_TAG_FLEXIBLE = ['far', 'clock'];
 export const ICON_VIP_TAG_STRATEGIC = 'exclamation';
+export const ICON_VIP_TAG = 'tag';

@@ -132,7 +132,7 @@ $detail-client-person-padding-left: 1em;
             white-space: nowrap;
             display: flex;
             align-items: baseline;
-            flex: 0 0 20%;
+            flex: 0 0 21%;
             @include media("<=tablet") {
               flex: 0 0 33.333%;
             }
@@ -159,11 +159,15 @@ $detail-client-person-padding-left: 1em;
               &.first {
                 margin-left: 1em;
               }
+              &.vip {
+                margin-left: 0.8em;
+                color: #427fc3;
+              }
             }
           }
           .role {
             white-space: nowrap;
-            flex: 0 0 20%;
+            flex: 0 0 21%;
             @include media("<=tablet") {
               flex: 0 0 33.333%;
             }
@@ -178,7 +182,7 @@ $detail-client-person-padding-left: 1em;
             white-space: nowrap;
             display: flex;
             align-items: center;
-            flex: 0 0 20%;
+            flex: 0 0 21%;
             @include media("<=tablet") {
               flex: 0 0 33.333%;
             }
@@ -259,7 +263,7 @@ $detail-client-person-padding-left: 1em;
           }
           .budget {
             white-space: nowrap;
-            flex: 0 0 20%;
+            flex: 0 0 17%;
             @include media("<=tablet") {
               flex: 0 0 33.333%;
             }

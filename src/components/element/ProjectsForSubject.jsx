@@ -9,6 +9,10 @@ import * as StringFormatter from '../../lib/stringFormatHelper';
 import TeamMemberElement from '../element/TeamMemberElement';
 import * as TeamRole from '../../constants/TeamRole';
 import moment from "moment";
+import * as Icons from '../../constants/Icons';
+import * as VipTags from '../../constants/VipTag';
+
+import Tooltip  from 'rc-tooltip';
 
 export default function ProjectsForSubject(props) {
     const {projects, id, type, users} = props;
@@ -26,6 +30,7 @@ export default function ProjectsForSubject(props) {
         const team = project.team
             .filter(member => member.role.indexOf(TeamRole.PRODUCER.id) >= 0 || member.role.indexOf(TeamRole.MANAGER.id) >= 0 || member.role.indexOf(TeamRole.SUPERVISOR.id) >= 0 )
             .sort((a, b) => Math.min(...a.role.map(role => TeamRole[role].sort)) - Math.min(...b.role.map(role => TeamRole[role].sort)));
+        const vipTag = project.vipTag && project.vipTag.length > 0 ? <span>{`${project.vipTag.map(tag => VipTags[tag] ? VipTags[tag].label : tag).join(', ')}\n${project.vipTagNote}`}</span> : null;
         return {
             id: projectId,
             name: project.alias ? <Fragment><span>{project.name}</span><span className={'alias-name'}>{project.alias}</span></Fragment> : project.name,
@@ -35,7 +40,13 @@ export default function ProjectsForSubject(props) {
             budget: ballparkFrom ? `${ballparkTo ? `${StringFormatter.currencyFormat(ballparkFrom)} - ${StringFormatter.currencyFormat(ballparkTo, ballparkCurrency.toUpperCase())}` : StringFormatter.currencyFormat(ballparkFrom, ballparkCurrency.toUpperCase())}` : null,
             team: team && team.length > 0 ? <Fragment>{team.map((teamMember, i) => <div key={i} className={`team-member`}><TeamMemberElement teamMember={teamMember} users={users} shortName={true}/></div>)}</Fragment> : null,
             statusClass: statusClass,
-            inquired: inquired ? <span data-tooltip={`Inquired: ${inquired}`}>{inquired}</span> : ''
+            inquired: inquired ? <span data-tooltip={`Inquired: ${inquired}`}>{inquired}</span> : '',
+            vipTag: vipTag ?
+                <Tooltip
+                    align={{offset: [10, 0]}}
+                    destroyTooltipOnHide={true}
+                    overlay={vipTag}
+                ><div className={'flag-icon vip'}><FontAwesomeIcon icon={Icons.ICON_VIP_TAG}/></div></Tooltip> : null
         }
     });
     if(projectsForSubject.length > 0) {
@@ -50,6 +61,7 @@ export default function ProjectsForSubject(props) {
                                 <div className={`name`}>
                                     <div className={'clickable'} onClick={() => props.showProject(project.id, false, true)}>{project.name}</div>
                                     {project.flag}
+                                    {project.vipTag}
                                 </div>
                                 <div className={'role'}>{project.role.join(', ')}</div>
                                 <div className={'team'}>{project.team}</div>

@@ -14,8 +14,16 @@ import {TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT, TABLE_SCROLLBARS_AUTO_HIDE_DURATION}
 import memoize from 'memoize-one';
 
 import {PersonsColumnDef} from '../../constants/TableColumnsDef';
+import Tooltip from "rc-tooltip";
 
 const searchKeys = ['name', '$name', 'contact', 'profession', 'company', 'project'];
+const searchKeysShort = {
+    name: {key: ['name', '$name'], description: `person names`},
+    contact: {key: 'contact', description: `person contacts`},
+    profession: {key: 'profession', description: `person professions`},
+    company: {key: 'company', description: `person companies`},
+    project: {key: 'project', description: `projects participated by person on`},
+};
 
 export default class PersonList extends React.PureComponent {
 
@@ -31,6 +39,8 @@ export default class PersonList extends React.PureComponent {
         const searchedPersonIds = this.searchList(persons, filteredPersonIds, search, searchKeys);
         const sortedPersonIds = this.sortList(persons, searchedPersonIds, sort);
 
+        const searchTips = Object.keys(searchKeysShort).map(key => `${key}: for search in ${searchKeysShort[key].description}`).join('\n');
+
         return (
             <div className={'app-body'}>
                 <div className={'app-toolbox'}>
@@ -45,7 +55,9 @@ export default class PersonList extends React.PureComponent {
                     <div className={'inner-container flex'}>
                         <div className={'toolbox-group right-auto'}>
                             <div className={'tool-box-search-container'}>
-                                <div className={'icon search'}><FontAwesomeIcon icon={Icons.ICON_SEARCH}/></div>
+                                <Tooltip placement={"bottomLeft"} overlay={<span>{searchTips}</span>}>
+                                    <div className={'icon search'}><FontAwesomeIcon icon={Icons.ICON_SEARCH}/></div>
+                                </Tooltip>
                                 <Input value={search} onChange={this.searchInputHandler} className={`input-search`}/>
                                 <div className={'icon clear'} onClick={this.clearSearchInputHandler}><FontAwesomeIcon icon={Icons.ICON_SEARCH_CLEAR}/></div>
                             </div>
@@ -161,11 +173,18 @@ export default class PersonList extends React.PureComponent {
             if(search.indexOf(':') > 1) {
                 const index = search.trim().indexOf(':');
                 const key = search.substring(0, index).trim();
+                if(searchKeysShort[key]) {
+                    keysModified = searchKeysShort[key].key;
+                    if(!Array.isArray(keysModified)) keysModified = [keysModified];
+                    search = search.substring(index + 1);
+                }
+                /*
                 if(keys.indexOf(key) >= 0) {
                     search = search.substring(index + 1);
                     keysModified = [key];
                     if(key === 'name') keysModified.push('$name');
                 }
+                */
             }
             let searchModified = search.trim().replace(/[^a-zA-Z ]/g, '').replace(/ +/g, '_');
             //console.log(keysModified);
