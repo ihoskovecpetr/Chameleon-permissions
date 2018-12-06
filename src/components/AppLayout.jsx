@@ -23,9 +23,6 @@ import * as ViewTypes from '../constants/ViewTypes';
 import {name, version}  from '../../package.json';
 import * as FilterTypes from "../constants/FilterTypes";
 
-const PROJECTS_FILTERS = [FilterTypes.USER_FILTER, FilterTypes.ACTIVE_PROJECTS_FILTER, FilterTypes.NON_ACTIVE_PROJECTS_FILTER, FilterTypes.AWARDED_PROJECTS_FILTER, FilterTypes.NOT_AWARDED_PROJECTS_FILTER];
-const BIDS_FILTERS = [FilterTypes.USER_FILTER, FilterTypes.ACTIVE_BIDS_FILTER, FilterTypes.NON_ACTIVE_BIDS_FILTER];
-
 export default class AppLayout extends React.PureComponent {
     render() {
         let AppBody = null;
@@ -42,7 +39,7 @@ export default class AppLayout extends React.PureComponent {
 
                         selected={selected}
 
-                        filter={this.props.appState.activeBid ? this.props.appState.projectsFilter.filter(filter => BIDS_FILTERS.indexOf(filter) >= 0).concat([FilterTypes.ACTIVE_PROJECTS_FILTER, FilterTypes.NOT_AWARDED_PROJECTS_FILTER]) : this.props.appState.projectsFilter.filter(filter => PROJECTS_FILTERS.indexOf(filter) >= 0)}
+                        filter={this.props.appState.projectsFilter}
                         search={this.props.appState.activeBid ? this.props.appState.activeBidSearch : this.props.appState.projectsSearch}
                         sort={this.props.appState.activeBid ? this.props.appState.activeBidSort : this.props.appState.projectsSort}
 

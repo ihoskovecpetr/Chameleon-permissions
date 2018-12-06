@@ -30,16 +30,14 @@ const searchKeysShort = {
 export default class CompanyList extends React.PureComponent {
 
     componentDidUpdate(prevProps) { //remove selected company if doesn't exist in filtered set
-        if(this.props.selected && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.searchList(this.props.companies, this.filterList(this.props.companies, this.props.filter), this.props.search, searchKeys).indexOf(this.props.selected) < 0) this.props.select(null);
+        if(this.props.selected && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.getList(this.props.companies, this.props.search, this.props.sort).indexOf(this.props.selected) < 0) this.props.select(null);
     }
 
     render() {
         //console.log('RENDER COMPANIES LIST');
         const {selected, companies, filter, sort, search} = this.props;
 
-        const filteredCompanyIds = this.filterList(companies, filter);
-        const searchedCompanyIds = this.searchList(companies, filteredCompanyIds, search, searchKeys);
-        const sortedCompanyIds = this.sortList(companies, searchedCompanyIds, sort);
+        const finalListIds = this.getList(companies, search, sort);
 
         const searchTips = Object.keys(searchKeysShort).map(key => `${key}: for search in ${searchKeysShort[key].description}`).join('\n');
 
@@ -58,7 +56,7 @@ export default class CompanyList extends React.PureComponent {
                 <Fragment>
                     {this.getHeader(CompaniesColumnDef)}
                     <Scrollbars  className={'body-scroll-content companies'} autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
-                        {this.getTable(CompaniesColumnDef, sortedCompanyIds)}
+                        {this.getTable(CompaniesColumnDef, finalListIds)}
                     </Scrollbars>
                 </Fragment>
             </div>
@@ -105,19 +103,49 @@ export default class CompanyList extends React.PureComponent {
     };
 
     // ***************************************************
-    // FILTER AND SORT SOURCE LIST - MEMOIZE
+    // SEARCH AND SORT SOURCE LIST - MEMOIZE
     // ***************************************************
-    filterList = memoize((companies, filter) => {
-        //console.log('FILTER');
-        return Object.keys(companies).map(id => id).filter(id => {
-            const company = companies[id];
-            //filter
-            for(const f of filter) {
-                switch (f) {
+    getIds = memoize(companies => Object.keys(companies));
+
+    getList = memoize((companies, search, sort) => {
+        //console.log('GET LIST');
+        const companyIds = this.getIds(companies);
+        const searchedCompanyIds = this.searchList(companies, companyIds, search);
+        return this.sortList(companies, searchedCompanyIds, sort);
+    });
+
+    searchList = memoize((companies, ids, search) => {
+        //console.log('SEARCH');
+        if(search && search.trim()) {
+            let keysModified = [...searchKeys];
+            let tokenize = false;
+            if(search.indexOf(':') > 1) {
+                const index = search.trim().indexOf(':');
+                const key = search.substring(0, index).trim();
+                if(searchKeysShort[key]) {
+                    keysModified = searchKeysShort[key].key;
+                    if(!Array.isArray(keysModified)) keysModified = [keysModified];
+                    search = search.substring(index + 1);
                 }
             }
-            return true;
-        });
+            let searchModified = search.trim().replace(/[^a-zA-Z ]/g, '').replace(/ +/g, '_');
+
+            const data = ids.map(id => keysModified.reduce((mod, key) => ({...mod, [key]: this.getComputedField(key, companies[id], false, true)}) , {_id: id}));
+            const fuse = new Fuse(data, {
+                verbose: false,
+                id: '_id',
+                findAllMatches: true,
+                keys: keysModified,
+                tokenize: tokenize,
+                matchAllTokens: true,
+                threshold: 0.4,
+                location: 0,
+                distance: 100,
+                maxPatternLength: 32,
+                minMatchCharLength: 2
+            });
+            return fuse.search(searchModified.trim());
+        } else return ids;
     });
 
     sortList = memoize((companies, ids, sort) => {
@@ -140,40 +168,7 @@ export default class CompanyList extends React.PureComponent {
             })
         }
     });
-    searchList = memoize((projects, ids, search, keys) => {
-        //console.log('SEARCH');
-        if(search && search.trim()) {
-            let keysModified = keys;
-            let tokenize = false;
-            if(search.indexOf(':') > 1) {
-                const index = search.trim().indexOf(':');
-                const key = search.substring(0, index).trim();
-                if(searchKeysShort[key]) {
-                    keysModified = searchKeysShort[key].key;
-                    if(!Array.isArray(keysModified)) keysModified = [keysModified];
-                    search = search.substring(index + 1);
-                }
-            }
-            let searchModified = search.trim().replace(/[^a-zA-Z ]/g, '').replace(/ +/g, '_');
-            //console.log(keysModified);
-            //console.log(searchModified);
-            const data = ids.map(id => keysModified.reduce((mod, key) => ({...mod, [key]: this.getComputedField(key, projects[id], false, true)}) , {_id: id}));
-            const fuse = new Fuse(data, {
-                verbose: false,
-                id: '_id',
-                findAllMatches: true,
-                keys: keysModified,
-                tokenize: tokenize,
-                matchAllTokens: true,
-                threshold: 0.4,
-                location: 0,
-                distance: 100,
-                maxPatternLength: 32,
-                minMatchCharLength: 2
-            });
-            return fuse.search(searchModified.trim());
-        } else return ids;
-    });
+
 
     // ***************************************************
     // ROUTING

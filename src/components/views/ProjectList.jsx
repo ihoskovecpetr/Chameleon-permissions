@@ -26,6 +26,9 @@ import memoize from 'memoize-one';
 
 const TOOLTIP_SHOW_DELAY = 0.2;
 
+const PROJECTS_FILTERS = [FilterTypes.USER_FILTER, FilterTypes.ACTIVE_PROJECTS_FILTER, FilterTypes.NON_ACTIVE_PROJECTS_FILTER, FilterTypes.AWARDED_PROJECTS_FILTER, FilterTypes.NOT_AWARDED_PROJECTS_FILTER];
+const BIDS_FILTERS = [FilterTypes.USER_FILTER, FilterTypes.ACTIVE_BIDS_FILTER, FilterTypes.NON_ACTIVE_BIDS_FILTER];
+
 import {ProjectsColumnDef, ActiveBidsColumnDef} from '../../constants/TableColumnsDef';
 
 import Tooltip  from 'rc-tooltip';
@@ -47,16 +50,15 @@ export default class ProjectList extends React.PureComponent {
 
     componentDidUpdate(prevProps) { //remove selected project if doesn't exist in filtered set
         const searchKeys = this.props.activeBid ? searchKeysBids : searchKeysProjects;
-        if(this.props.selected && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.searchList(this.props.projects, this.filterList(this.props.projects, this.props.filter), this.props.search, searchKeys).indexOf(this.props.selected) < 0) this.props.select(null);
+        //if(this.props.selected && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.searchList(this.props.projects, this.filterList(this.props.projects, this.props.filter), this.props.search, searchKeys).indexOf(this.props.selected) < 0) this.props.select(null);
+        if(this.props.selected && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.getList(this.props.projects, this.props.filter, this.props.search, this.props.sort, this.props.activeBid).indexOf(this.props.selected) < 0) this.props.select(null);
     }
 
     render() {
         //console.log('RENDER PROJECTS LIST');
         const {selected, projects, activeBid, filter, sort, search} = this.props;
 
-        const filteredProjectIds = this.filterList(projects, filter);
-        const searchedProjectIds = this.searchList(projects, filteredProjectIds, search, this.props.activeBid ? searchKeysBids : searchKeysProjects);
-        const sortedProjectIds = this.sortList(projects, searchedProjectIds, sort);
+        const finalListIds = this.getList(projects, filter, search, sort, activeBid);
 
         const searchTips = Object.keys(searchKeysShort).map(key => `${key}: for search in ${searchKeysShort[key].description}`).join('\n');
 
@@ -79,7 +81,7 @@ export default class ProjectList extends React.PureComponent {
                 <Fragment>
                     {this.getHeader(activeBid ? ActiveBidsColumnDef : ProjectsColumnDef)}
                     <Scrollbars className={'body-scroll-content projects'} autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
-                        {this.getTable(activeBid ? ActiveBidsColumnDef : ProjectsColumnDef, sortedProjectIds)}
+                        {this.getTable(activeBid ? ActiveBidsColumnDef : ProjectsColumnDef, finalListIds)}
                     </Scrollbars>
                 </Fragment>
             </div>
@@ -126,8 +128,19 @@ export default class ProjectList extends React.PureComponent {
     };
 
     // ***************************************************
-    // FILTER AND SORT SOURCE LIST - MEMOIZE
+    // FILTER, SEARCH AND SORT SOURCE LIST - MEMOIZE
     // ***************************************************
+    getFilter = memoize((filter, activeBid) => {
+        return activeBid ? filter.filter(filter => BIDS_FILTERS.indexOf(filter) >= 0).concat([FilterTypes.ACTIVE_PROJECTS_FILTER, FilterTypes.NOT_AWARDED_PROJECTS_FILTER]) : filter.filter(filter => PROJECTS_FILTERS.indexOf(filter) >= 0);
+    });
+
+    getList = memoize((projects, filter, search, sort, activeBid) => {
+        //console.log('GET LIST');
+        const filteredProjectIds = this.filterList(projects, this.getFilter(filter, activeBid));
+        const searchedProjectIds = this.searchList(projects, filteredProjectIds, search, activeBid ? searchKeysBids : searchKeysProjects);
+        return this.sortList(projects, searchedProjectIds, sort);
+    });
+
     filterList = memoize((projects, filter) => {
         //console.log('FILTER');
         return Object.keys(projects).map(id => id).filter(id => {
@@ -159,40 +172,6 @@ export default class ProjectList extends React.PureComponent {
             }
             return true;
         });
-    });
-
-    sortList = memoize((projects, ids, sort) => {
-        //console.log('SORT');
-        if(!sort) {
-            return ids.sort((a, b) => { //default sort - inquired
-                let aTime = projects[a] && projects[a].inquired ? +new Date(projects[a].inquired) : 0;
-                let bTime = projects[b] && projects[b].inquired ? +new Date(projects[b].inquired) : 0;
-                if(aTime === bTime) {
-                    aTime = projects[a] && projects[a].created ? +new Date(projects[a].created) : 0;
-                    bTime = projects[b] && projects[b].created ? +new Date(projects[b].created) : 0;
-                }
-                return bTime - aTime;
-            });
-        } else {
-            return ids.sort((a, b) => {
-                let down = sort.indexOf('-') === 0;
-                let field = down ? sort.substr(1) : sort;
-                if(['last-contact', 'budget'].indexOf(field) >= 0) down = !down;
-                if(['name', 'status', 'go-ahead', 'last-contact', 'budget', 'vipTag', 'client'].indexOf(field) >= 0) field = `${field}-order`;
-                let dataA = down ? this.getComputedField(field, projects[a]) : this.getComputedField(field, projects[b]);
-                let dataB = down ? this.getComputedField(field, projects[b]) : this.getComputedField(field, projects[a]);
-                if (typeof dataA === 'undefined' && typeof dataB === 'undefined') return 0;
-                if (typeof dataA === 'undefined') return 1;
-                if (typeof dataB === 'undefined') return 0;
-                if (dataA === null) dataA = '';
-                if (dataB === null) dataB = '';
-                if(typeof dataA === 'string') {
-                    return dataA.localeCompare(dataB);
-                } else if(typeof dataA === 'number') {
-                    return dataA - dataB;
-                } else return 0;
-            })
-        }
     });
 
     searchList = memoize((projects, ids, search, keys) => {
@@ -227,6 +206,40 @@ export default class ProjectList extends React.PureComponent {
             });
             return fuse.search(searchModified.trim());
         } else return ids;
+    });
+
+    sortList = memoize((projects, ids, sort) => {
+        //console.log('SORT');
+        if(!sort) {
+            return ids.sort((a, b) => { //default sort - inquired
+                let aTime = projects[a] && projects[a].inquired ? +new Date(projects[a].inquired) : 0;
+                let bTime = projects[b] && projects[b].inquired ? +new Date(projects[b].inquired) : 0;
+                if(aTime === bTime) {
+                    aTime = projects[a] && projects[a].created ? +new Date(projects[a].created) : 0;
+                    bTime = projects[b] && projects[b].created ? +new Date(projects[b].created) : 0;
+                }
+                return bTime - aTime;
+            });
+        } else {
+            return ids.sort((a, b) => {
+                let down = sort.indexOf('-') === 0;
+                let field = down ? sort.substr(1) : sort;
+                if(['last-contact', 'budget'].indexOf(field) >= 0) down = !down;
+                if(['name', 'status', 'go-ahead', 'last-contact', 'budget', 'vipTag', 'client'].indexOf(field) >= 0) field = `${field}-order`;
+                let dataA = down ? this.getComputedField(field, projects[a]) : this.getComputedField(field, projects[b]);
+                let dataB = down ? this.getComputedField(field, projects[b]) : this.getComputedField(field, projects[a]);
+                if (typeof dataA === 'undefined' && typeof dataB === 'undefined') return 0;
+                if (typeof dataA === 'undefined') return 1;
+                if (typeof dataB === 'undefined') return 0;
+                if (dataA === null) dataA = '';
+                if (dataB === null) dataB = '';
+                if(typeof dataA === 'string') {
+                    return dataA.localeCompare(dataB);
+                } else if(typeof dataA === 'number') {
+                    return dataA - dataB;
+                } else return 0;
+            })
+        }
     });
 
     // ***************************************************

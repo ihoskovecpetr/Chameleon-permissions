@@ -30,16 +30,14 @@ const searchKeysShort = {
 export default class PersonList extends React.PureComponent {
 
     componentDidUpdate(prevProps) { //remove selected person if doesn't exist in filtered set
-        if(this.props.selected && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.searchList(this.props.persons, this.filterList(this.props.persons, this.props.filter), this.props.search, searchKeys).indexOf(this.props.selected) < 0) this.props.select(null);
+        if(this.props.selected && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.getList(this.props.persons, this.props.search, this.props.sort).indexOf(this.props.selected) < 0) this.props.select(null);
     }
 
     render() {
         //console.log('RENDER PERSONS LIST');
-        const {selected, persons, filter, sort, search} = this.props;
+        const {selected, persons, sort, filter, search} = this.props;
 
-        const filteredPersonIds = this.filterList(persons, filter);
-        const searchedPersonIds = this.searchList(persons, filteredPersonIds, search, searchKeys);
-        const sortedPersonIds = this.sortList(persons, searchedPersonIds, sort);
+        const finalListIds = this.getList(persons, search, sort);
 
         const searchTips = Object.keys(searchKeysShort).map(key => `${key}: for search in ${searchKeysShort[key].description}`).join('\n');
 
@@ -58,7 +56,7 @@ export default class PersonList extends React.PureComponent {
                 <Fragment>
                     {this.getHeader(PersonsColumnDef)}
                     <Scrollbars  className={'body-scroll-content people'} autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
-                        {this.getTable(PersonsColumnDef, sortedPersonIds)}
+                        {this.getTable(PersonsColumnDef, finalListIds)}
                     </Scrollbars>
                 </Fragment>
             </div>
@@ -105,19 +103,48 @@ export default class PersonList extends React.PureComponent {
     };
 
     // ***************************************************
-    // FILTER AND SORT SOURCE LIST - MEMOIZE
+    // SEARCH AND SORT SOURCE LIST - MEMOIZE
     // ***************************************************
-    filterList = memoize((persons, filter) => {
-        //console.log('FILTER');
-        return Object.keys(persons).map(id => id).filter(id => {
-            const person = persons[id];
-            //filter
-            for(const f of filter) {
-                switch (f) {
+    getIds = memoize(persons => Object.keys(persons));
+
+    getList = memoize((persons, search, sort) => {
+        //console.log('GET LIST');
+        const personIds = this.getIds(persons);
+        const searchedPersonIds = this.searchList(persons, personIds, search);
+        return this.sortList(persons, searchedPersonIds, sort);
+    });
+
+    searchList = memoize((persons, ids, search) => {
+        //console.log('SEARCH');
+        if(search && search.trim()) {
+            let keysModified = searchKeys;
+            let tokenize = false;
+            if(search.indexOf(':') > 1) {
+                const index = search.trim().indexOf(':');
+                const key = search.substring(0, index).trim();
+                if(searchKeysShort[key]) {
+                    keysModified = searchKeysShort[key].key;
+                    if(!Array.isArray(keysModified)) keysModified = [keysModified];
+                    search = search.substring(index + 1);
                 }
             }
-            return true;
-        });
+            let searchModified = search.trim().replace(/[^a-zA-Z ]/g, '').replace(/ +/g, '_');
+            const data = ids.map(id => keysModified.reduce((mod, key) => ({...mod, [key]: this.getComputedField(key, persons[id], false, true)}) , {_id: id}));
+            const fuse = new Fuse(data, {
+                verbose: false,
+                id: '_id',
+                findAllMatches: true,
+                keys: keysModified,
+                tokenize: tokenize,
+                matchAllTokens: true,
+                threshold: 0.4,
+                location: 0,
+                distance: 100,
+                maxPatternLength: 32,
+                minMatchCharLength: 2
+            });
+            return fuse.search(searchModified.trim());
+        } else return ids;
     });
 
     sortList = memoize((persons, ids, sort) => {
@@ -141,38 +168,7 @@ export default class PersonList extends React.PureComponent {
             })
         }
     });
-    searchList = memoize((projects, ids, search, keys) => {
-        //console.log('SEARCH');
-        if(search && search.trim()) {
-            let keysModified = keys;
-            let tokenize = false;
-            if(search.indexOf(':') > 1) {
-                const index = search.trim().indexOf(':');
-                const key = search.substring(0, index).trim();
-                if(searchKeysShort[key]) {
-                    keysModified = searchKeysShort[key].key;
-                    if(!Array.isArray(keysModified)) keysModified = [keysModified];
-                    search = search.substring(index + 1);
-                }
-            }
-            let searchModified = search.trim().replace(/[^a-zA-Z ]/g, '').replace(/ +/g, '_');
-            const data = ids.map(id => keysModified.reduce((mod, key) => ({...mod, [key]: this.getComputedField(key, projects[id], false, true)}) , {_id: id}));
-            const fuse = new Fuse(data, {
-                verbose: false,
-                id: '_id',
-                findAllMatches: true,
-                keys: keysModified,
-                tokenize: tokenize,
-                matchAllTokens: true,
-                threshold: 0.4,
-                location: 0,
-                distance: 100,
-                maxPatternLength: 32,
-                minMatchCharLength: 2
-            });
-            return fuse.search(searchModified.trim());
-        } else return ids;
-    });
+
 
     // ***************************************************
     // ROUTING
