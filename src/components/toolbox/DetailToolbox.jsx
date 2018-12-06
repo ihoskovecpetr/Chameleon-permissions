@@ -1,6 +1,8 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import * as Icons from "../../constants/Icons";
 import React, {Fragment} from "react";
+import Tooltip from "rc-tooltip";
+import * as KeyboardShortcut from "../../constants/KeyboardShortcuts";
 
 export default class PersonDetail extends React.PureComponent {
     constructor(props) {
@@ -8,6 +10,12 @@ export default class PersonDetail extends React.PureComponent {
         this.state = {
             removeArmed: false,
         };
+        this.keyboard = [
+            {...KeyboardShortcut.CLOSE, command: this.close},
+            {...KeyboardShortcut.EDIT, command: this.edit},
+            {...KeyboardShortcut.ADD_BOX, command: this.addToBox}
+        ];
+        this.keyboardHints = this.keyboard.map(key => `${key.keys.map(key => key.description).join(', ')}: ${key.name}`).join('\n');
     }
 
     componentDidMount() {
@@ -36,6 +44,9 @@ export default class PersonDetail extends React.PureComponent {
                                 <FontAwesomeIcon className={`tool-box-checkbox`} onClick={this.handleRemoveArmed} icon={this.state.removeArmed ? Icons.ICON_CHECKBOX_CHECKED : Icons.ICON_CHECKBOX_UNCHECKED} style={{cursor: 'pointer'}}/>
                             </Fragment>
                         : null}
+                        <Tooltip placement={"bottomLeft"} overlay={<span>{this.keyboardHints}</span>}>
+                            <div className={'icon-keyboard'}><FontAwesomeIcon icon={Icons.ICON_KEYBOARD_SHORTCUTS}/></div>
+                        </Tooltip>
                     </div>
                 </div>
                 {id ? <div className={'inner-container left-auto'}><div className={'toolbox-id'}>{id}</div></div> : null}
@@ -58,6 +69,9 @@ export default class PersonDetail extends React.PureComponent {
         this.close();
     };
 
+    addToBox = () => {
+        this.props.addToBox(this.props.selected);
+    };
     // *****************************************************************************************************************
     // HELPERS
     // *****************************************************************************************************************
@@ -65,24 +79,9 @@ export default class PersonDetail extends React.PureComponent {
         this.setState({removeArmed: !this.state.removeArmed})
     };
 
-    addToBox = () => {
-        this.props.addToBox(this.props.selected);
-    };
-
     handleKeyDown = event => {
-        switch(event.which) {
-            case 27: //ESC
-                this.close();
-                break;
-            case 81: // 'q'
-                if(event.ctrlKey) this.close();
-                break;
-            case 69: // 'e'
-                if(event.ctrlKey) this.edit();
-                break;
-            case 66: // 'b'
-                if(event.ctrlKey) this.addToBox();
-                break;
+        for(const shortcut of this.keyboard) {
+            for(const key of shortcut.keys) if(event.which === key.keyCode && key.ctrl === event.ctrlKey && key.alt === event.altKey && key.shift === event.shiftKey) shortcut.command();
         }
     }
 }

@@ -489,11 +489,9 @@ export default class ProjectEdit extends React.PureComponent {
     // *****************************************************************************************************************
     // CLOSE, SAVE, REMOVE, BOX
     // *****************************************************************************************************************
-    /*
     close = () => {
         this.props.returnToPreviousView();
     };
-    */
     save = async () => {
         if(this.setValidation()) return;
         try {

@@ -78,3 +78,6 @@ export const ICON_VIP_TAG_AWARDED = 'trophy';
 export const ICON_VIP_TAG_FLEXIBLE = ['far', 'clock'];
 export const ICON_VIP_TAG_STRATEGIC = 'exclamation';
 export const ICON_VIP_TAG = 'tag';
+
+//toolbox
+export const ICON_KEYBOARD_SHORTCUTS =  ['far', 'keyboard'];

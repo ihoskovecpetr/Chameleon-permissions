@@ -4,6 +4,7 @@ import React, {Fragment} from "react";
 import { Input } from 'reactstrap';
 import Tooltip from "rc-tooltip";
 import * as FilterTypes from "../../constants/FilterTypes";
+import * as KeyboardShortcut from "../../constants/KeyboardShortcuts";
 
 export default class PersonDetail extends React.PureComponent {
     constructor(props) {
@@ -11,6 +12,19 @@ export default class PersonDetail extends React.PureComponent {
         this.state = {
             removeArmed: false,
         };
+        this.keyboard = [
+            {...KeyboardShortcut.NEW, command: this.add},
+            {...KeyboardShortcut.SHOW, command: this.show},
+            {...KeyboardShortcut.EDIT, command: this.edit},
+            {...KeyboardShortcut.ADD_BOX, command: this.addToBox},
+            {...KeyboardShortcut.FILTER_MY, command: this.userFilterHandler, keep: 'projects'},
+            {...KeyboardShortcut.FILTER_MY, command: this.userFilterHandler, keep: 'bids'},
+            {...KeyboardShortcut.FILTER_ACTIVE, command: this.activeFilterHandler, keep: 'projects'},
+            {...KeyboardShortcut.FILTER_AWARDED, command: this.awardedFilterHandler, keep: 'projects'},
+            {...KeyboardShortcut.FILTER_ACTIVE, command: this.activeBidsFilterHandler, keep: 'bids'},
+            {...KeyboardShortcut.FILTER_BIDS, command: this.toggleActiveBidMode, keep: 'projects'},
+            {...KeyboardShortcut.FILTER_BIDS, command: this.toggleActiveBidMode, keep: 'bids'}
+        ];
     }
 
     componentDidMount() {
@@ -23,8 +37,9 @@ export default class PersonDetail extends React.PureComponent {
 
     render() {
         const {selected, searchTips, search, activeBid, filter} = this.props;
-
         const useFilters = typeof filter !== 'undefined';
+        const keep = useFilters ? activeBid ? 'bids' : 'projects' : null;
+        const keyboardHints = this.keyboard.filter(key => !key.keep || key.keep === keep).map(key => `${key.keys.map(key => key.description).join(', ')}: ${key.name}`).join('\n');
 
         const userFilter = useFilters ? filter.indexOf(FilterTypes.USER_FILTER) >= 0 : undefined;
         const activeFilter = useFilters ? filter.indexOf(FilterTypes.ACTIVE_PROJECTS_FILTER) >= 0 || filter.indexOf(FilterTypes.NON_ACTIVE_PROJECTS_FILTER) >= 0 : undefined;
@@ -39,7 +54,7 @@ export default class PersonDetail extends React.PureComponent {
             <div className={'app-toolbox'}>
                 <div className={'inner-container space'}>
                     <div className={'toolbox-group'}>
-                        <div onClick={this.props.add} className={'tool-box-button green'}>{'New'}</div>
+                        <div onClick={this.add} className={'tool-box-button green'}>{'New'}</div>
                         <div onClick={selected ? this.show : undefined} className={`tool-box-button${selected ? '' : ' disabled'}`}>{'Show'}</div>
                         <div onClick={selected ? this.edit : undefined} className={`tool-box-button orange${selected ? '' : ' disabled'}`}>{'Edit'}</div>
                         <div onClick={selected ? this.addToBox : undefined} className={`tool-box-button blue${selected ? '' : ' disabled'}`}><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/><FontAwesomeIcon icon={Icons.ICON_BOX}/></div>
@@ -54,8 +69,12 @@ export default class PersonDetail extends React.PureComponent {
                             <Input value={search} onChange={this.searchInputHandler} className={`input-search`}/>
                             <div className={'icon clear'} onClick={this.clearSearchInputHandler}><FontAwesomeIcon icon={Icons.ICON_SEARCH_CLEAR}/></div>
                         </div>
+                        <Tooltip placement={"bottomLeft"} overlay={<span>{keyboardHints}</span>}>
+                            <div className={'icon-keyboard'}><FontAwesomeIcon icon={Icons.ICON_KEYBOARD_SHORTCUTS}/></div>
+                        </Tooltip>
                     </div>
                 </div>
+
                 {/* ------------------ FILTER SWITCHES ------------------ */}
                 {useFilters ? <div className={'toolbox-group'}>
                     <div onClick={this.userFilterHandler} className={`tool-box-button-switch${userFilter ? ' checked' : ''}`}><FontAwesomeIcon className={'check'} icon={userFilter ? Icons.ICON_CHECKBOX_FILTER_CHECKED : Icons.ICON_CHECKBOX_FILTER_UNCHECKED}/><span className={`text`}>{'My'}</span></div>
@@ -93,6 +112,10 @@ export default class PersonDetail extends React.PureComponent {
     // *****************************************************************************************************************
     // HELPERS
     // *****************************************************************************************************************
+    add = () => {
+      this.props.add();
+    };
+
     show = () => {
         if(this.props.selected) this.props.show(this.props.selected);
     };
@@ -102,7 +125,7 @@ export default class PersonDetail extends React.PureComponent {
     };
 
     addToBox = () => {
-        this.props.addToBox(this.props.selected);
+        if(this.props.selected) this.props.addToBox(this.props.selected);
     };
 
     searchInputHandler = (event) => {
@@ -153,19 +176,9 @@ export default class PersonDetail extends React.PureComponent {
     };
 
     handleKeyDown = event => {
-        switch(event.which) {
-            case 78: // 'n'
-                if(event.ctrlKey) this.props.add();
-                break;
-            case 83: // 's'
-                if(event.ctrlKey && this.props.selected) this.show();
-                break;
-            case 69: // 'e'
-                if(event.ctrlKey  && this.props.selected) this.edit();
-                break;
-            case 66: // 'b'
-                if(event.ctrlKey && this.props.selected) this.addToBox();
-                break;
+        const keep = typeof this.props.filter !== 'undefined' ? this.props.activeBid ? 'bids' : 'projects' : null;
+        for(const shortcut of this.keyboard.filter(key => !key.keep || key.keep === keep)) {
+            for(const key of shortcut.keys) if(event.which === key.keyCode && key.ctrl === event.ctrlKey && key.alt === event.altKey && key.shift === event.shiftKey) shortcut.command();
         }
     }
 }
