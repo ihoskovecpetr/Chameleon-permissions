@@ -19,6 +19,10 @@ export default function ProjectsForSubject(props) {
     const projectsForSubject = Object.keys(projects).filter(projectId => {
         const filteredForId = projects[projectId][type].filter(item => item.id === id);
         return filteredForId.length > 0;
+    }).sort((a, b) => {
+        const inquiredA = projects[a] && projects[a].inquired ? new Date(projects[a].inquired) : 0;
+        const inquiredB = projects[b] && projects[b].inquired ? new Date(projects[b].inquired) : 0;
+        return inquiredB - inquiredA;
     }).map(projectId => {
         const project = projects[projectId];
         const person = project[type].find(item => item.id === id);
@@ -31,19 +35,42 @@ export default function ProjectsForSubject(props) {
             .filter(member => member.role.indexOf(TeamRole.PRODUCER.id) >= 0 || member.role.indexOf(TeamRole.MANAGER.id) >= 0 || member.role.indexOf(TeamRole.SUPERVISOR.id) >= 0 )
             .sort((a, b) => Math.min(...a.role.map(role => TeamRole[role].sort)) - Math.min(...b.role.map(role => TeamRole[role].sort)));
         const vipTag = project.vipTag && project.vipTag.length > 0 ? <span>{`${project.vipTag.map(tag => VipTags[tag] ? VipTags[tag].label : tag).join(', ')}\n${project.vipTagNote}`}</span> : null;
+        const name = project.alias ? <Fragment><span>{project.name}</span><span className={'alias-name'}>{project.alias}</span></Fragment> : project.name;
+        const status = project && project.status && ProjectStatus[project.status] ? ProjectStatus[project.status].label : 'Unknown Status';
         return {
             id: projectId,
-            name: project.alias ? <Fragment><span>{project.name}</span><span className={'alias-name'}>{project.alias}</span></Fragment> : project.name,
+            name: project && project.story ?
+                <Tooltip
+                    placement={"topLeft"}
+                    mouseEnterDelay={0.2}
+                    mouseLeaveDelay={0}
+                    align={{offset: [-7, -3]}}
+                    destroyTooltipOnHide={true}
+                    overlay={<span className={'mw40'}>{project.story}</span>}
+                ><span>{name}</span></Tooltip>
+                : name,
             flag: <Fragment>{person.flag.map((flag, i) => <div key={i} data-tooltip={getFlagTooltip(flag)} className={`flag-icon${i === 0 ? ' first' : ''}`}><FontAwesomeIcon icon={getFlagIcon(flag)}/></div>)}</Fragment>,
             role: type === 'person' ? person.profession.map(profession => PersonProfession[profession] ? PersonProfession[profession].label : profession) : person.business.map(business => CompanyBusiness[business] ? CompanyBusiness[business].label : business),
-            status: project.status && ProjectStatus[project.status] ? ProjectStatus[project.status].label : 'Unknown Status',
+            status: project && project.statusNote ?
+                <Tooltip
+                    placement={"topLeft"}
+                    mouseEnterDelay={0.2}
+                    mouseLeaveDelay={0}
+                    align={{offset: [-7, -3]}}
+                    destroyTooltipOnHide={true}
+                    overlay={<span className={'mw20'}>{project.statusNote}</span>}
+                ><span>{status}</span></Tooltip>
+                : status,
             budget: ballparkFrom ? `${ballparkTo ? `${StringFormatter.currencyFormat(ballparkFrom)} - ${StringFormatter.currencyFormat(ballparkTo, ballparkCurrency.toUpperCase())}` : StringFormatter.currencyFormat(ballparkFrom, ballparkCurrency.toUpperCase())}` : null,
             team: team && team.length > 0 ? <Fragment>{team.map((teamMember, i) => <div key={i} className={`team-member`}><TeamMemberElement teamMember={teamMember} users={users} shortName={true}/></div>)}</Fragment> : null,
             statusClass: statusClass,
             inquired: inquired ? <span data-tooltip={`Inquired: ${inquired}`}>{inquired}</span> : '',
             vipTag: vipTag ?
                 <Tooltip
-                    align={{offset: [10, 0]}}
+                    placement={"topLeft"}
+                    mouseEnterDelay={0.2}
+                    mouseLeaveDelay={0}
+                    align={{offset: [-7, -3]}}
                     destroyTooltipOnHide={true}
                     overlay={vipTag}
                 ><div className={'flag-icon vip'}><FontAwesomeIcon icon={Icons.ICON_VIP_TAG}/></div></Tooltip> : null

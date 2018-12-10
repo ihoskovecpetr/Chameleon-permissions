@@ -309,7 +309,7 @@ export default class ProjectList extends React.PureComponent {
                         mouseLeaveDelay={0}
                         align={{offset: [-7, -1]}}
                         destroyTooltipOnHide={true}
-                        overlay={<span className={'mw60'}>{project.story}</span>}
+                        overlay={<span className={'mw20'}>{project.story}</span>}
                     >
                         <span>{project.name}</span>
                     </Tooltip>);
