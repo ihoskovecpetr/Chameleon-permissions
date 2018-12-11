@@ -412,7 +412,7 @@ export default class ProjectEdit extends React.PureComponent {
                                                 />
                                                 <div className={`control-flags`}>
                                                     {Object.keys(PersonFlag).map(flag =>
-                                                        <div key={flag} data-tooltip={PersonFlag[flag]}>
+                                                        <div key={flag} data-tooltip={PersonFlag[flag].label}>
                                                             <FontAwesomeIcon
                                                                 onClick={() => this.personFlagClicked(i, personLine.flag, PersonFlag[flag].id)}
                                                                 className={`control-flag-icon${personLine.flag.indexOf(PersonFlag[flag].id) >= 0 ? ' active' : ''}`}
