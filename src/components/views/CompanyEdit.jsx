@@ -66,6 +66,7 @@ export default class CompanyEdit extends React.PureComponent {
                     saveDisabled = {this.state.saveDisabled}
                     selected = {company && company._id}
                     label = {'Company'}
+                    editable = {this.props.editable}
                 />
                 <Scrollbars autoHide={true} autoHideTimeout={Constants.TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={Constants.TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                     <div className={'detail-body edit'}>
@@ -182,7 +183,7 @@ export default class CompanyEdit extends React.PureComponent {
     remove = () => {
         try {
             this.props.remove(this.props.company._id);
-            this.close();
+            this.props.returnToPreviousView(true);
         } catch(e) {}
     };
 

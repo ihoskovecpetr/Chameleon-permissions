@@ -30,8 +30,9 @@ function AppStateReducer(state = null, action = null) {
             case ActionTypes.RETURN_TO_PREVIOUS_VIEW:
                 if(state.previousView && state.previousView.length > 0) {
                     const previousView = [...state.previousView];
-                    const view = previousView.pop();
-                    return {...state, view: view, previousView: previousView};
+                    let view = previousView.pop();
+                    if(action.toList && view.type !== ViewTypes.PROJECT_LIST && view.type !== ViewTypes.PERSON_LIST && view.type !== ViewTypes.COMPANY_LIST) view = previousView.pop();
+                    return {...state, view: {...view, selected: action.toList ?  null : view.selected}, previousView: previousView};
                 } else return {...state, view: {type: ViewTypes.PROJECT_LIST, selected: null, editable: false}, previousView: []};
 
             case ActionTypes.SET_FETCHING:
@@ -132,7 +133,7 @@ function AppStateReducer(state = null, action = null) {
                         const selectedProject = isSelected ? null : state.selectedProject;
                         const box = boxIndex >= 0 ? [...state.box] : state.box;
                         if(boxIndex >= 0 ) box.splice(boxIndex, 1);
-                        return {...state, selectedProject: selectedProject, box: box};
+                        return {...state, selectedProject: selectedProject, box: box, view: {...state.view, selected:selectedProject}};
                     } else return state;
                 } else return state;
 
@@ -208,7 +209,7 @@ function AppStateReducer(state = null, action = null) {
                         const selectedCompany = isSelected ? null : state.selectedCompany;
                         const box = boxIndex >= 0 ? [...state.box] : state.box;
                         if(boxIndex >= 0 ) box.splice(boxIndex, 1);
-                        return {...state, selectedCompany: selectedCompany, box: box};
+                        return {...state, selectedCompany: selectedCompany, box: box, view: {...state.view, selected:selectedCompany}};
                     } else return state;
                 } else return state;
 
@@ -280,10 +281,10 @@ function AppStateReducer(state = null, action = null) {
                     const boxIndex = state.box.indexOf(action.person);
                     const isSelected = state.selectedPerson === action.person;
                     if(boxIndex >= 0 || isSelected) {
-                        const selectedCompany = isSelected ? null : state.selectedPerson;
+                        const selectedPerson = isSelected ? null : state.selectedPerson;
                         const box = boxIndex >= 0 ? [...state.box] : state.box;
                         if(boxIndex >= 0 ) box.splice(boxIndex, 1);
-                        return {...state, selectedPerson: selectedCompany, box: box};
+                        return {...state, selectedPerson: selectedPerson, box: box, view: {...state.view, selected:selectedPerson}};
                     } else return state;
                 } else return state;
 

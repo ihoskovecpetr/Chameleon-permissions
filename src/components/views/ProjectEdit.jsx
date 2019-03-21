@@ -103,6 +103,7 @@ export default class ProjectEdit extends React.PureComponent {
                     selected = {project && project._id}
                     label = {'Project'}
                     id = {project && project.projectId ? project.projectId : null}
+                    editable = {this.props.editable}
                 />
                 <Scrollbars  className={'body-scroll-content projects'} autoHide={true} autoHideTimeout={Constants.TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={Constants.TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                     <div className={'detail-body edit'}>
@@ -504,7 +505,7 @@ export default class ProjectEdit extends React.PureComponent {
     remove = async () => {
         try {
             await this.props.remove(this.props.project._id);
-            this.close();
+            this.props.returnToPreviousView(true);
         } catch(e) {}
     };
 

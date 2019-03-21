@@ -84,7 +84,7 @@ export default class PersonDetail extends React.PureComponent {
 
     remove = () => {
         if(this.props.editable) this.props.remove();
-        this.cancel();
+        //this.cancel();
     };
 
     // *****************************************************************************************************************

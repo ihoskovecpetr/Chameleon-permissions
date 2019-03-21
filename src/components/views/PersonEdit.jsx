@@ -66,6 +66,7 @@ export default class PersonEdit extends React.PureComponent {
                     saveDisabled = {this.state.saveDisabled}
                     selected = {person && person._id}
                     label = {'Person'}
+                    editable = {this.props.editable}
                 />
                 <Scrollbars className={'body-scroll-content people'} className={'body-scroll-content people'} autoHide={true} autoHideTimeout={Constants.TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={Constants.TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
                     <div className={'detail-body edit'}>
@@ -182,7 +183,7 @@ export default class PersonEdit extends React.PureComponent {
     remove = async () => {
         try {
             this.props.remove(this.props.person._id);
-            this.close();
+            this.props.returnToPreviousView(true);
         } catch(e) {}
     };
 

@@ -47,7 +47,7 @@ function ProjectsReducer (state = null, action = null) {
                     const indexCompanyPerson =  newProjectCompany[projectId].person.findIndex(person => person.company === action.company);
                     if(indexCompanyPerson >= 0) {
                         hasChangedCompany = true;
-                        const newPerson = {...newProjectCompany[projectId].person};
+                        const newPerson = [...newProjectCompany[projectId].person];
                         newPerson[indexCompanyPerson] = {...newPerson[indexCompanyPerson], company: null};
                         newProjectCompany[projectId] = {...newProjectCompany[projectId], person: newPerson};
                     }

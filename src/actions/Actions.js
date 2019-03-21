@@ -20,8 +20,8 @@ export function setView(view) {
     return {type: ActionTypes.SET_VIEW, view: view};
 }
 
-export function returnToPreviousView() {
-    return {type: ActionTypes.RETURN_TO_PREVIOUS_VIEW};
+export function returnToPreviousView(toList) {
+    return {type: ActionTypes.RETURN_TO_PREVIOUS_VIEW, toList: toList};
 }
 
 export function setFetching(isFetching) {

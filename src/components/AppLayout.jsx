@@ -107,6 +107,7 @@ export default class AppLayout extends React.PureComponent {
 
                         justAdded = {this.props.appState.justAdded}
                         setJustAddedObject={this.props.setJustAddedObject}
+                        editable={editable}
                     />;
                 break;
             case ViewTypes.COMPANY_LIST:
@@ -181,6 +182,7 @@ export default class AppLayout extends React.PureComponent {
 
                         justAdded = {this.props.appState.justAdded}
                         setJustAddedObject={this.props.setJustAddedObject}
+                        editable={editable}
                     />;
                 break;
             case ViewTypes.PERSON_LIST:
@@ -256,6 +258,7 @@ export default class AppLayout extends React.PureComponent {
 
                         justAdded = {this.props.appState.justAdded}
                         setJustAddedObject={this.props.setJustAddedObject}
+                        editable={editable}
                     />;
                 break;
             case ViewTypes.BOX_LIST:
