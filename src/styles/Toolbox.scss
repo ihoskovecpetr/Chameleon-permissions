@@ -78,7 +78,7 @@ $tool-button-color-reversed: #7a4f8b;
     //justify-content: space-between;
     //flex: 1 1 auto;
     margin-right: 0.5rem;
-    &.space {margin-right: 2rem};
+    &.space {margin-right: 1rem};
     &:last-child {margin-right: 0;}
     &.flex {flex: 1 1 auto;}
     &.left-auto {margin-left: auto;}
@@ -95,6 +95,19 @@ $tool-button-color-reversed: #7a4f8b;
     &:last-child {margin-right: 0;}
     .active-bid-icon {
       cursor: pointer;
+    }
+    .toolbox-pages {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      //padding: 0.1rem 0.8rem;
+      text-align: center;
+      //border-radius: $tool-height / 2;
+      height: $tool-height;
+      min-height: $tool-height;
+      margin-left: 0.7rem;
+      min-width: 10rem;
+      font-size: 0.9rem;
     }
     .tool-box-button {
       display: flex;

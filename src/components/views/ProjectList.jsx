@@ -77,6 +77,10 @@ export default class ProjectList extends React.PureComponent {
                     filter = {filter}
                     setActiveBid = {this.props.setActiveBid}
                     setFilter = {this.props.setFilter}
+                    setSort = {this.props.setSort}
+                    page = {99}
+                    numOfPages = {99}
+                    numOfRows = {99999}
                 />
                 <Fragment>
                     {this.getHeader(activeBid ? ActiveBidsColumnDef : ProjectsColumnDef)}

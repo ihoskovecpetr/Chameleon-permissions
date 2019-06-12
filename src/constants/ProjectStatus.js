@@ -6,4 +6,7 @@ export const ONGOING = {id: 'ONGOING', sort: 5, label: 'ONGOING', active: true, 
 export const COMPLETED = {id: 'COMPLETED', sort: 6, label: 'COMPLETED', active: false, awarded: true, bids: false, activeBid: false};
 export const REFUSED = {id: 'REFUSED', sort: 7, label: 'REFUSED', active: false, awarded: false, bids: false, activeBid: false};
 export const LOST = {id: 'LOST', sort: 8, label: 'LOST', active: false, awarded: false, bids: false, activeBid: false};
+//export const CANCELED = {id: 'CANCELED', sort: 9, label: 'CANCELED', active: false, awarded: false, bids: false, activeBid: false, extension: 'CANCELED_HARD', extensionTxt: "During Production"};
+//export const CANCELED_HARD = {id: 'CANCELED_HARD', sort: 10, label: 'CANCELED', active: false, awarded: false, bids: false, activeBid: false, virtual: true};
+
 

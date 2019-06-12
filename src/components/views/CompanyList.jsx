@@ -52,6 +52,10 @@ export default class CompanyList extends React.PureComponent {
                     search = {search}
                     selected = {selected}
                     setSearch = {this.props.setSearch}
+                    setSort = {this.props.setSort}
+                    page = {99}
+                    numOfPages = {99}
+                    numOfRows = {99999}
                 />
                 <Fragment>
                     {this.getHeader(CompaniesColumnDef)}

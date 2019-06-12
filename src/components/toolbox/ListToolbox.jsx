@@ -58,6 +58,16 @@ export default class PersonDetail extends React.PureComponent {
                         <div onClick={selected ? this.show : undefined} className={`tool-box-button${selected ? '' : ' disabled'}`}>{'Show'}</div>
                         <div onClick={selected ? this.edit : undefined} className={`tool-box-button orange${selected ? '' : ' disabled'}`}>{'Edit'}</div>
                         <div onClick={selected ? this.addToBox : undefined} className={`tool-box-button blue${selected ? '' : ' disabled'}`}><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/><FontAwesomeIcon icon={Icons.ICON_BOX}/></div>
+                        {this.props.numOfRows
+                            ?
+                            <div className={'toolbox-pages'}>
+                                <span>{'<'}</span>
+                                <span style={{margin: '0 0.4rem'}}>{this.props.page}</span>
+                                <span style={{marginRight: '0.4rem'}}>{'>'}</span>
+                                <span>{`of ${this.props.numOfPages} [${this.props.numOfRows}]`}</span>
+                            </div>
+                            :
+                            <div className={'toolbox-pages'}/>}
                     </div>
                 </div>
                 <div className={'inner-container flex'}>
@@ -129,10 +139,13 @@ export default class PersonDetail extends React.PureComponent {
     };
 
     searchInputHandler = (event) => {
+        if(event.target.value) this.props.setSort('search');
+        else this.props.setSort('');
         this.props.setSearch(event.target.value);
     };
 
     clearSearchInputHandler = () => {
+        this.props.setSort('');
         this.props.setSearch('');
     };
 

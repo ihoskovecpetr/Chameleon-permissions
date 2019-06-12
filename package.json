@@ -1,6 +1,6 @@
 {
   "name": "projects",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "src/app.js",
   "author": "~mirek",
   "scripts": {
@@ -32,7 +32,8 @@
     "reactstrap": "^6.0.1",
     "redux": "^4.0.0",
     "redux-sessionstorage": "^0.4.0",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "throttle-debounce": "^2.1.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

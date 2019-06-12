@@ -26,7 +26,7 @@ import * as ProjectStatus from '../../constants/ProjectStatus';
 import * as TeamRole from '../../constants/TeamRole';
 import * as VipTag from '../../constants/VipTag';
 
-const statusOptions = Object.keys(ProjectStatus).map(key => ({value: ProjectStatus[key].id, label: ProjectStatus[key].label}));
+const statusOptions = Object.keys(ProjectStatus).filter(key => !ProjectStatus[key].virtual).map(key => ({value: ProjectStatus[key].id, label: ProjectStatus[key].label}));
 const timingOptions = [{value: ProjectClientTiming.GO_AHEAD.id, label: ProjectClientTiming.GO_AHEAD.label}]//Object.keys(ProjectClientTiming).map(key => ({value: ProjectClientTiming[key].id, label: ProjectClientTiming[key].label}));
 
 export default class ProjectEdit extends React.PureComponent {
@@ -62,6 +62,7 @@ export default class ProjectEdit extends React.PureComponent {
         const name = editedData.name !== undefined ? editedData.name : project ? project.name : '';
         const alias = editedData.alias !== undefined ? editedData.alias : project ? project.alias : '';
         const status = editedData.status !== undefined ? editedData.status : project && project.status ? project.status : null;
+        const statusExtension = null;
         const statusNote = editedData.statusNote !== undefined ? editedData.statusNote : project && project.statusNote ? project.statusNote : '';
         const company = editedData.company !== undefined ? editedData.company : project && project.company ? project.company : [];
         const person = editedData.person !== undefined ? editedData.person : project && project.person ? project.person : [];
@@ -79,6 +80,8 @@ export default class ProjectEdit extends React.PureComponent {
 
         const vipTag = editedData.vipTag !== undefined ? editedData.vipTag : project && project.vipTag ? project.vipTag : [];
         const vipTagNote = editedData.vipTagNote !== undefined ? editedData.vipTagNote : project && project.vipTagNote ? project.vipTagNote : '';
+
+        const projectStatus = {value: status, label: ProjectStatus[status] ? ProjectStatus[status].label : ''}
 
         if(Object.keys(editedData).length === 0) {
             team.sort((a, b) => (a.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)) - (b.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)));

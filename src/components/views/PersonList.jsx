@@ -11,35 +11,41 @@ import * as Icons from '../../constants/Icons';
 import * as ContactType from '../../constants/ContactType';
 import * as PersonProfession from '../../constants/PersonProfession';
 
-import {TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT, TABLE_SCROLLBARS_AUTO_HIDE_DURATION} from '../../constants/Constatnts';
+import {TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT, TABLE_SCROLLBARS_AUTO_HIDE_DURATION, TABLE_PAGE_SIZE} from '../../constants/Constatnts';
+
+//import { debounce } from 'throttle-debounce';
 
 import memoize from 'memoize-one';
 
 import {PersonsColumnDef} from '../../constants/TableColumnsDef';
 
 
-const searchKeys = ['name', '$name', 'contact', 'profession', 'company', 'project'];
+//const searchKeys = ['name', '$name', 'contact', 'profession', 'company', 'project'];
+const searchKeys = ['name', '$name', 'company', 'profession'];
 const searchKeysShort = {
     name: {key: ['name', '$name'], description: `person names`},
-    contact: {key: 'contact', description: `person contacts`},
-    profession: {key: 'profession', description: `person professions`},
     company: {key: 'company', description: `person companies`},
-    project: {key: 'project', description: `projects participated by person on`},
+    profession: {key: 'profession', description: `person professions`},
+    contact: {key: 'contact', description: `person contacts (*)`},
+    project: {key: 'project', description: `projects participated by person on (*)`}
 };
 
 export default class PersonList extends React.PureComponent {
-
     componentDidUpdate(prevProps) { //remove selected person if doesn't exist in filtered set
         if(this.props.selected && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.getList(this.props.persons, this.props.search, this.props.sort).indexOf(this.props.selected) < 0) this.props.select(null);
     }
 
     render() {
         //console.log('RENDER PERSONS LIST');
-        const {selected, persons, sort, filter, search} = this.props;
+        const {selected, persons, sort, search} = this.props;
 
         const finalListIds = this.getList(persons, search, sort);
 
         const searchTips = Object.keys(searchKeysShort).map(key => `${key}: for search in ${searchKeysShort[key].description}`).join('\n');
+
+        let page = 0;
+        const numOfPages = Math.floor(finalListIds.length / TABLE_PAGE_SIZE) + 1;
+        page = page >= numOfPages ? numOfPages - 1 : page;
 
         return (
             <div className={'app-body'}>
@@ -52,11 +58,15 @@ export default class PersonList extends React.PureComponent {
                     search = {search}
                     selected = {selected}
                     setSearch = {this.props.setSearch}
+                    setSort = {this.props.setSort}
+                    page = {page + 1}
+                    numOfPages = {numOfPages}
+                    numOfRows = {finalListIds.length}
                 />
                 <Fragment>
                     {this.getHeader(PersonsColumnDef)}
                     <Scrollbars  className={'body-scroll-content people'} autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
-                        {this.getTable(PersonsColumnDef, finalListIds)}
+                        {this.getTable(PersonsColumnDef, finalListIds, TABLE_PAGE_SIZE, page)}
                     </Scrollbars>
                 </Fragment>
             </div>
@@ -86,16 +96,16 @@ export default class PersonList extends React.PureComponent {
         )
     };
 
-    getTable = (columnDef, sortedPersonIds) => {
+    getTable = (columnDef, sortedPersonIds, pageSize, page) => {
         return (
             <Table className={`table-body`}>
                 <tbody style={{borderBottom: '1px solid #dee2e6'}}>
-                {sortedPersonIds.map(personId => <tr className={this.props.selected === personId ? 'selected' : ''} onClick = {event => this.rowClickHandler(event, personId)} onDoubleClick={event => this.rowDoubleClickHandler(event, personId)} key={personId}>
-                    {columnDef.map((column, i) =>
+                {sortedPersonIds.map((personId, i) => <tr className={this.props.selected === personId ? 'selected' : ''} onClick = {event => this.rowClickHandler(event, personId)} onDoubleClick={event => this.rowDoubleClickHandler(event, personId)} key={personId}>
+                    {(i >= pageSize * page) && (i < pageSize * (page + 1))  ? columnDef.map((column, i) =>
                         <td key={i} className={`${column.className}`}>
                             {this.getComputedField(column.field, this.props.persons[personId])}
                         </td>
-                    )}
+                    ) : null}
                 </tr>)}
                 </tbody>
             </Table>
@@ -105,17 +115,22 @@ export default class PersonList extends React.PureComponent {
     // ***************************************************
     // SEARCH AND SORT SOURCE LIST - MEMOIZE
     // ***************************************************
-    getIds = memoize(persons => Object.keys(persons));
-
     getList = memoize((persons, search, sort) => {
-        //console.log('GET LIST');
-        const personIds = this.getIds(persons);
-        const searchedPersonIds = this.searchList(persons, personIds, search);
-        return this.sortList(persons, searchedPersonIds, sort);
+        if(persons && Object.keys(persons).length) {
+            //console.log(`GET LIST [${Object.keys(persons).length}] [${search}] [${sort}]`);
+            const personIds = this.getIds(persons);
+            const searchedPersonIds = this.searchList(persons, personIds, search, sort === 'search');
+            return this.sortList(persons, searchedPersonIds, sort);
+        } else return [];
+    });
+
+    getIds = memoize(persons => {
+        //console.log('GET IDs');
+        return Object.keys(persons);
     });
 
     searchList = memoize((persons, ids, search) => {
-        //console.log('SEARCH');
+        //console.log(`SEARCH [${search}]`);
         if(search && search.trim()) {
             let keysModified = searchKeys;
             let tokenize = false;
@@ -128,9 +143,10 @@ export default class PersonList extends React.PureComponent {
                     search = search.substring(index + 1);
                 }
             }
-            let searchModified = search.trim().replace(/[^a-zA-Z ]/g, '').replace(/ +/g, '_');
+            let searchModified = search.trim().replace(/[^a-zA-Z ]/g, '');//.replace(/ +/g, '_');
             const data = ids.map(id => keysModified.reduce((mod, key) => ({...mod, [key]: this.getComputedField(key, persons[id], false, true)}) , {_id: id}));
             const fuse = new Fuse(data, {
+                shouldSort: true,
                 verbose: false,
                 id: '_id',
                 findAllMatches: true,
@@ -144,13 +160,17 @@ export default class PersonList extends React.PureComponent {
                 minMatchCharLength: 2
             });
             return fuse.search(searchModified.trim());
-        } else return ids;
+        } else {
+            return ids;
+        }
     });
 
     sortList = memoize((persons, ids, sort) => {
-        //console.log('SORT');
+        //console.log(`SORT [${sort}]`);
         if(!sort) {
             return ids.sort((a, b) => persons[b].created.localeCompare(persons[a].created)); //default sort - latest created first
+        } else if(sort === 'search') {
+            return ids; //keep order from search engine
         } else {
             return ids.sort((a, b) => {
                 let down = sort.indexOf('-') === 0;
@@ -205,9 +225,10 @@ export default class PersonList extends React.PureComponent {
     };
 
     handleSort = (sort) => {
-        let result = '';
+        let result = this.props.search && this.props.search.trim() ? 'search' : '';
         if(this.props.sort.indexOf(sort) < 0) result = `-${sort}`;
         else if(this.props.sort === `-${sort}`) result = sort;
+        ///console.log(`requested sort: ${sort}, result: ${result}, was: ${this.props.sort}`);
         this.props.setSort(result);
     };
 
