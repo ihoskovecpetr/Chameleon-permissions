@@ -108,6 +108,19 @@ $tool-button-color-reversed: #7a4f8b;
       margin-left: 0.7rem;
       min-width: 10rem;
       font-size: 0.9rem;
+      .arrow {
+        cursor: pointer;
+        &.left {
+          margin-right: 0.3rem;
+        }
+        &.right {
+          margin: 0 0.3rem;
+        }
+        &.disabled {
+          cursor: default;
+          color: #696969;
+        }
+      }
     }
     .tool-box-button {
       display: flex;

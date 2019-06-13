@@ -11,14 +11,11 @@ import * as Icons from '../../constants/Icons';
 import * as ContactType from '../../constants/ContactType';
 import * as PersonProfession from '../../constants/PersonProfession';
 
-import {TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT, TABLE_SCROLLBARS_AUTO_HIDE_DURATION, TABLE_PAGE_SIZE} from '../../constants/Constatnts';
-
-//import { debounce } from 'throttle-debounce';
+import {TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT, TABLE_SCROLLBARS_AUTO_HIDE_DURATION, TABLE_PAGE_SIZE_PERSON} from '../../constants/Constatnts';
 
 import memoize from 'memoize-one';
 
 import {PersonsColumnDef} from '../../constants/TableColumnsDef';
-
 
 //const searchKeys = ['name', '$name', 'contact', 'profession', 'company', 'project'];
 const searchKeys = ['name', '$name', 'company', 'profession'];
@@ -31,6 +28,13 @@ const searchKeysShort = {
 };
 
 export default class PersonList extends React.PureComponent {
+    constructor(props) {
+        super(props);
+        this.state = {
+            page: 0
+        };
+    }
+
     componentDidUpdate(prevProps) { //remove selected person if doesn't exist in filtered set
         if(this.props.selected && (this.props.filter !== prevProps.filter || this.props.search !== prevProps.search ) && this.getList(this.props.persons, this.props.search, this.props.sort).indexOf(this.props.selected) < 0) this.props.select(null);
     }
@@ -43,9 +47,7 @@ export default class PersonList extends React.PureComponent {
 
         const searchTips = Object.keys(searchKeysShort).map(key => `${key}: for search in ${searchKeysShort[key].description}`).join('\n');
 
-        let page = 0;
-        const numOfPages = Math.floor(finalListIds.length / TABLE_PAGE_SIZE) + 1;
-        page = page >= numOfPages ? numOfPages - 1 : page;
+        const numOfPages = Math.ceil(finalListIds.length / TABLE_PAGE_SIZE_PERSON);
 
         return (
             <div className={'app-body'}>
@@ -59,14 +61,15 @@ export default class PersonList extends React.PureComponent {
                     selected = {selected}
                     setSearch = {this.props.setSearch}
                     setSort = {this.props.setSort}
-                    page = {page + 1}
+                    page = {this.state.page + 1}
                     numOfPages = {numOfPages}
                     numOfRows = {finalListIds.length}
+                    changePage = {this.changePage}
                 />
                 <Fragment>
                     {this.getHeader(PersonsColumnDef)}
                     <Scrollbars  className={'body-scroll-content people'} autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
-                        {this.getTable(PersonsColumnDef, finalListIds, TABLE_PAGE_SIZE, page)}
+                        {this.getTable(PersonsColumnDef, finalListIds, TABLE_PAGE_SIZE_PERSON, this.state.page)}
                     </Scrollbars>
                 </Fragment>
             </div>
@@ -100,12 +103,12 @@ export default class PersonList extends React.PureComponent {
         return (
             <Table className={`table-body`}>
                 <tbody style={{borderBottom: '1px solid #dee2e6'}}>
-                {sortedPersonIds.map((personId, i) => <tr className={this.props.selected === personId ? 'selected' : ''} onClick = {event => this.rowClickHandler(event, personId)} onDoubleClick={event => this.rowDoubleClickHandler(event, personId)} key={personId}>
-                    {(i >= pageSize * page) && (i < pageSize * (page + 1))  ? columnDef.map((column, i) =>
-                        <td key={i} className={`${column.className}`}>
+                {sortedPersonIds.filter((personId, i) => (i >= pageSize * page) && (i < pageSize * (page + 1))).map(personId => <tr className={this.props.selected === personId ? 'selected' : ''} onClick = {event => this.rowClickHandler(event, personId)} onDoubleClick={event => this.rowDoubleClickHandler(event, personId)} key={personId}>
+                    {columnDef.map((column, key) =>
+                        <td key={key} className={`${column.className}`}>
                             {this.getComputedField(column.field, this.props.persons[personId])}
                         </td>
-                    ) : null}
+                    )}
                 </tr>)}
                 </tbody>
             </Table>
@@ -132,7 +135,7 @@ export default class PersonList extends React.PureComponent {
     searchList = memoize((persons, ids, search) => {
         //console.log(`SEARCH [${search}]`);
         if(search && search.trim()) {
-            let keysModified = searchKeys;
+            let keysModified = [...searchKeys];
             let tokenize = false;
             if(search.indexOf(':') > 1) {
                 const index = search.trim().indexOf(':');
@@ -173,9 +176,8 @@ export default class PersonList extends React.PureComponent {
             return ids; //keep order from search engine
         } else {
             return ids.sort((a, b) => {
-                let down = sort.indexOf('-') === 0;
+                const down = sort.indexOf('-') === 0;
                 let field = down ? sort.substr(1) : sort;
-                //if(['last-contact'].indexOf(field) >= 0) down = !down;
                 if(['company'].indexOf(field) >= 0) field = `${field}-order`;
                 let dataA = down ? this.getComputedField(field, persons[a], false, true) : this.getComputedField(field, persons[b], false, true);
                 let dataB = down ? this.getComputedField(field, persons[b], false, true) : this.getComputedField(field, persons[a], false, true);
@@ -228,8 +230,12 @@ export default class PersonList extends React.PureComponent {
         let result = this.props.search && this.props.search.trim() ? 'search' : '';
         if(this.props.sort.indexOf(sort) < 0) result = `-${sort}`;
         else if(this.props.sort === `-${sort}`) result = sort;
-        ///console.log(`requested sort: ${sort}, result: ${result}, was: ${this.props.sort}`);
         this.props.setSort(result);
+    };
+
+    changePage = (page, absolute) => {
+      if(absolute) this.setState({page: page});
+      else this.setState({page: this.state.page + page});
     };
 
     // ***************************************************

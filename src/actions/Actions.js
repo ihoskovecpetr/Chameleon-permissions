@@ -52,7 +52,7 @@ export function resetData() {
 }
 
 export function getData(scheduled) {
-    if(scheduled) logger.info(`Refresh data - scheduled`);
+    if(scheduled) logger.info(`Refresh data - scheduled ${new Date()}`);
     if(refreshTimer) clearTimeout(refreshTimer);
     return async (dispatch, getState) => {
         if(!scheduled) dispatch(setFetching(true));

@@ -61,9 +61,9 @@ export default class PersonDetail extends React.PureComponent {
                         {this.props.numOfRows
                             ?
                             <div className={'toolbox-pages'}>
-                                <span>{'<'}</span>
-                                <span style={{margin: '0 0.4rem'}}>{this.props.page}</span>
-                                <span style={{marginRight: '0.4rem'}}>{'>'}</span>
+                                <span onClick={this.props.page > 1 ? event => this.pageDown(event) : undefined} className={`arrow left${this.props.page <= 1 ? ' disabled' : ''}`}>{'<'}</span>
+                                <span>{this.props.page}</span>
+                                <span onClick={this.props.page < this.props.numOfPages ? event => this.pageUp(event, this.props.numOfPages) : undefined} className={`arrow right${this.props.page >= this.props.numOfPages ? ' disabled' : ''}`}>{'>'}</span>
                                 <span>{`of ${this.props.numOfPages} [${this.props.numOfRows}]`}</span>
                             </div>
                             :
@@ -142,11 +142,13 @@ export default class PersonDetail extends React.PureComponent {
         if(event.target.value) this.props.setSort('search');
         else this.props.setSort('');
         this.props.setSearch(event.target.value);
+        if((this.props.search ? this.props.search.trim() : '') !== event.target.value.trim()) this.props.changePage(0, true);
     };
 
     clearSearchInputHandler = () => {
         this.props.setSort('');
         this.props.setSearch('');
+        if(this.props.search) this.props.changePage(0, true);
     };
 
     toggleActiveBidMode = () => {
@@ -193,5 +195,15 @@ export default class PersonDetail extends React.PureComponent {
         for(const shortcut of this.keyboard.filter(key => !key.keep || key.keep === keep)) {
             for(const key of shortcut.keys) if(event.which === key.keyCode && key.ctrl === event.ctrlKey && key.alt === event.altKey && key.shift === event.shiftKey) shortcut.command();
         }
-    }
+    };
+
+    pageDown = event => {
+        if(event.shiftKey) this.props.changePage(0, true);
+        else this.props.changePage(-1);
+    };
+
+    pageUp = (event, numOfPages) => {
+        if(event.shiftKey) this.props.changePage(numOfPages - 1, true);
+        else this.props.changePage(1);
+    };
 }

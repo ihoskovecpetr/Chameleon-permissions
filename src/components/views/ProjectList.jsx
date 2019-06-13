@@ -16,7 +16,7 @@ import Toolbox from '../toolbox/ListToolbox';
 import * as ProjectClientTiming from '../../constants/ProjectClientTiming';
 import * as VipTags from '../../constants/VipTag';
 
-import {TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT, TABLE_SCROLLBARS_AUTO_HIDE_DURATION} from '../../constants/Constatnts';
+import {TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT, TABLE_SCROLLBARS_AUTO_HIDE_DURATION, TABLE_PAGE_SIZE_PROJECT} from '../../constants/Constatnts';
 
 import {daysToString} from '../../lib/dateHelper';
 import * as Icons from '../../constants/Icons';
@@ -34,19 +34,25 @@ import {ProjectsColumnDef, ActiveBidsColumnDef} from '../../constants/TableColum
 import Tooltip  from 'rc-tooltip';
 
 const statusOptions = Object.keys(ProjectStatus).filter(key => ProjectStatus[key].bids).map(key => {return {value: ProjectStatus[key].id, label: ProjectStatus[key].label}});
-const searchKeysProjects = ['name', '$name', 'alias', 'client', 'team', 'status', 'statusNote', 'story', 'vipTagNote'];
+const searchKeysProjects = ['name', '$name', 'alias', 'client', 'team', 'status'];
 const searchKeysShort = {
   name: {key: ['name', '$name', 'alias'], description: 'project name'},
   client: {key: 'client', description: 'project UPP client'},
   team: {key: 'team', description: 'project UPP team'},
   status: {key: 'status', description: 'project status'},
-  text: {key: ['story', 'statusNote, vipTagNote'] , description: 'status and prestige notes and story'}
+  text: {key: ['story', 'statusNote, vipTagNote'] , description: 'status and prestige notes and story (*)'}
 };
 const searchKeysBids = searchKeysProjects;
 
 const CURRENCY_RATIO = {eur: 25.5, usd: 21.5};
 
 export default class ProjectList extends React.PureComponent {
+    constructor(props) {
+        super(props);
+        this.state = {
+            page: 0
+        };
+    }
 
     componentDidUpdate(prevProps) { //remove selected project if doesn't exist in filtered set
         const searchKeys = this.props.activeBid ? searchKeysBids : searchKeysProjects;
@@ -61,6 +67,8 @@ export default class ProjectList extends React.PureComponent {
         const finalListIds = this.getList(projects, filter, search, sort, activeBid);
 
         const searchTips = Object.keys(searchKeysShort).map(key => `${key}: for search in ${searchKeysShort[key].description}`).join('\n');
+
+        const numOfPages = Math.ceil(finalListIds.length / TABLE_PAGE_SIZE_PROJECT);
 
         return (
             <div className={'app-body'}>
@@ -78,14 +86,15 @@ export default class ProjectList extends React.PureComponent {
                     setActiveBid = {this.props.setActiveBid}
                     setFilter = {this.props.setFilter}
                     setSort = {this.props.setSort}
-                    page = {99}
-                    numOfPages = {99}
-                    numOfRows = {99999}
+                    page = {this.state.page + 1}
+                    numOfPages = {numOfPages}
+                    numOfRows = {finalListIds.length}
+                    changePage = {this.changePage}
                 />
                 <Fragment>
                     {this.getHeader(activeBid ? ActiveBidsColumnDef : ProjectsColumnDef)}
                     <Scrollbars className={'body-scroll-content projects'} autoHide={true} autoHideTimeout={TABLE_SCROLLBARS_AUTO_HIDE_TIMEOUT} autoHideDuration={TABLE_SCROLLBARS_AUTO_HIDE_DURATION}>
-                        {this.getTable(activeBid ? ActiveBidsColumnDef : ProjectsColumnDef, finalListIds)}
+                        {this.getTable(activeBid ? ActiveBidsColumnDef : ProjectsColumnDef, finalListIds, TABLE_PAGE_SIZE_PROJECT, this.state.page)}
                     </Scrollbars>
                 </Fragment>
             </div>
@@ -115,13 +124,13 @@ export default class ProjectList extends React.PureComponent {
         )
     };
 
-    getTable = (columnDef, sortedProjectIds) => {
+    getTable = (columnDef, sortedProjectIds, pageSize, page) => {
         return (
             <Table className={`table-body`}>
                 <tbody style={{borderBottom: '1px solid #dee2e6'}}>
-                {sortedProjectIds.map(projectId => <tr className={this.props.selected === projectId ? 'selected' : ''} onClick = {event => this.rowClickHandler(event, projectId)} onDoubleClick={event => this.rowDoubleClickHandler(event, projectId)} key={projectId}>
-                    {columnDef.map((column, i) =>
-                        <td key={i} className={`${column.className}${column.inline ? ' inline' : ''}`}>
+                {sortedProjectIds.filter((projectId, i) => (i >= pageSize * page) && (i < pageSize * (page + 1))).map(projectId => <tr className={this.props.selected === projectId ? 'selected' : ''} onClick = {event => this.rowClickHandler(event, projectId)} onDoubleClick={event => this.rowDoubleClickHandler(event, projectId)} key={projectId}>
+                    {columnDef.map((column, key) =>
+                        <td key={key} className={`${column.className}${column.inline ? ' inline' : ''}`}>
                             {this.getComputedField(column.field, this.props.projects[projectId], this.props.activeBid)}
                         </td>
                     )}
@@ -139,9 +148,9 @@ export default class ProjectList extends React.PureComponent {
     });
 
     getList = memoize((projects, filter, search, sort, activeBid) => {
-        //console.log('GET LIST');
+        //console.log(`GET LIST [${Object.keys(projects).length}] [${search}] [${sort}]`);
         const filteredProjectIds = this.filterList(projects, this.getFilter(filter, activeBid));
-        const searchedProjectIds = this.searchList(projects, filteredProjectIds, search, activeBid ? searchKeysBids : searchKeysProjects);
+        const searchedProjectIds = this.searchList(projects, filteredProjectIds, search, activeBid ? searchKeysBids : searchKeysProjects, sort === 'search');
         return this.sortList(projects, searchedProjectIds, sort);
     });
 
@@ -193,9 +202,10 @@ export default class ProjectList extends React.PureComponent {
                     search = search.substring(index + 1);
                 }
             }
-            let searchModified = search.trim().replace(/[^a-zA-Z ]/g, '').replace(/ +/g, '_');
+            let searchModified = search.trim().replace(/[^a-zA-Z ]/g, '');//.replace(/ +/g, '_');
             const data = ids.map(id => keysModified.reduce((mod, key) => ({...mod, [key]: this.getComputedField(key, projects[id], false, true)}) , {_id: id}));
             const fuse = new Fuse(data, {
+                shouldSort: true,
                 verbose: false,
                 id: '_id',
                 findAllMatches: true,
@@ -281,7 +291,7 @@ export default class ProjectList extends React.PureComponent {
     };
 
     handleSort = (sort) => {
-        let result = '';
+        let result = this.props.search && this.props.search.trim() ? 'search' : '';
         if(this.props.sort.indexOf(sort) < 0) result = `-${sort}`;
         else if(this.props.sort === `-${sort}`) result = sort;
         this.props.setSort(result);
@@ -295,6 +305,11 @@ export default class ProjectList extends React.PureComponent {
         if(status !== this.props.projects[id].status) {
             this.props.update(id, {status: status});
         }
+    };
+
+    changePage = (page, absolute) => {
+        if(absolute) this.setState({page: page});
+        else this.setState({page: this.state.page + page});
     };
 
     // ***************************************************
