@@ -81,3 +81,5 @@ export const ICON_VIP_TAG = 'tag';
 
 //toolbox
 export const ICON_KEYBOARD_SHORTCUTS =  ['far', 'keyboard'];
+export const ICON_PAGE_PREV = 'caret-left';
+export const ICON_PAGE_NEXT = 'caret-right';

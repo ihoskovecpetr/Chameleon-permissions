@@ -63,7 +63,7 @@ export default class CompanyList extends React.PureComponent {
                     setSearch = {this.props.setSearch}
                     setSort = {this.props.setSort}
                     page = {this.state.page + 1}
-                    numOfPages = {numOfPages}
+                    numOfPages = {numOfPages ? numOfPages : 0}
                     numOfRows = {finalListIds.length}
                     changePage = {this.changePage}
                 />

@@ -58,16 +58,11 @@ export default class PersonDetail extends React.PureComponent {
                         <div onClick={selected ? this.show : undefined} className={`tool-box-button${selected ? '' : ' disabled'}`}>{'Show'}</div>
                         <div onClick={selected ? this.edit : undefined} className={`tool-box-button orange${selected ? '' : ' disabled'}`}>{'Edit'}</div>
                         <div onClick={selected ? this.addToBox : undefined} className={`tool-box-button blue${selected ? '' : ' disabled'}`}><FontAwesomeIcon icon={Icons.ICON_BOX_ARROW}/><FontAwesomeIcon icon={Icons.ICON_BOX}/></div>
-                        {this.props.numOfRows
-                            ?
-                            <div className={'toolbox-pages'}>
-                                <span onClick={this.props.page > 1 ? event => this.pageDown(event) : undefined} className={`arrow left${this.props.page <= 1 ? ' disabled' : ''}`}>{'<'}</span>
-                                <span>{this.props.page}</span>
-                                <span onClick={this.props.page < this.props.numOfPages ? event => this.pageUp(event, this.props.numOfPages) : undefined} className={`arrow right${this.props.page >= this.props.numOfPages ? ' disabled' : ''}`}>{'>'}</span>
-                                <span>{`of ${this.props.numOfPages} [${this.props.numOfRows}]`}</span>
-                            </div>
-                            :
-                            <div className={'toolbox-pages'}/>}
+                        <div className={'toolbox-pages'}>
+                            <FontAwesomeIcon icon={Icons.ICON_PAGE_PREV} onClick={this.props.page > 1 ? event => this.pageDown(event) : undefined} className={`arrow left${this.props.page <= 1 ? ' disabled' : ''}`}>{'<'}</FontAwesomeIcon>
+                            <FontAwesomeIcon icon={Icons.ICON_PAGE_NEXT} onClick={this.props.page < this.props.numOfPages ? event => this.pageUp(event, this.props.numOfPages) : undefined} className={`arrow right${this.props.page >= this.props.numOfPages ? ' disabled' : ''}`}>{'>'}</FontAwesomeIcon>
+                            <span>{`${this.props.page}/${this.props.numOfPages} [${this.props.numOfRows ? this.props.numOfRows : '-'}]`}</span>
+                        </div>
                     </div>
                 </div>
                 <div className={'inner-container flex'}>

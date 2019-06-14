@@ -62,7 +62,7 @@ export default class PersonList extends React.PureComponent {
                     setSearch = {this.props.setSearch}
                     setSort = {this.props.setSort}
                     page = {this.state.page + 1}
-                    numOfPages = {numOfPages}
+                    numOfPages = {numOfPages ? numOfPages : 0}
                     numOfRows = {finalListIds.length}
                     changePage = {this.changePage}
                 />
@@ -190,7 +190,6 @@ export default class PersonList extends React.PureComponent {
             })
         }
     });
-
 
     // ***************************************************
     // ROUTING

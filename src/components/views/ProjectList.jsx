@@ -87,7 +87,7 @@ export default class ProjectList extends React.PureComponent {
                     setFilter = {this.props.setFilter}
                     setSort = {this.props.setSort}
                     page = {this.state.page + 1}
-                    numOfPages = {numOfPages}
+                    numOfPages = {numOfPages ? numOfPages : 0}
                     numOfRows = {finalListIds.length}
                     changePage = {this.changePage}
                 />
@@ -234,6 +234,8 @@ export default class ProjectList extends React.PureComponent {
                 }
                 return bTime - aTime;
             });
+        } else if(sort === 'search') {
+            return ids; //keep order from search engine
         } else {
             return ids.sort((a, b) => {
                 let down = sort.indexOf('-') === 0;

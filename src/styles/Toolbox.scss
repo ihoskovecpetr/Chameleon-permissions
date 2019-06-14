@@ -98,27 +98,29 @@ $tool-button-color-reversed: #7a4f8b;
     }
     .toolbox-pages {
       display: flex;
-      justify-content: center;
+      //justify-content: center;
       align-items: center;
       //padding: 0.1rem 0.8rem;
-      text-align: center;
+      //text-align: center;
       //border-radius: $tool-height / 2;
       height: $tool-height;
       min-height: $tool-height;
       margin-left: 0.7rem;
-      min-width: 10rem;
+      min-width: 8rem;
       font-size: 0.9rem;
       .arrow {
         cursor: pointer;
+        font-size: 1.5rem;
+        color: #4b4b4b;
         &.left {
-          margin-right: 0.3rem;
+          //margin-right: 0.3rem;
         }
         &.right {
-          margin: 0 0.3rem;
+          margin: 0 0.4rem;
         }
         &.disabled {
           cursor: default;
-          color: #696969;
+          color: #787878;
         }
       }
     }
