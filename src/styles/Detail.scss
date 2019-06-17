@@ -256,9 +256,15 @@ $detail-client-person-padding-left: 1em;
                 background-color: #468c46;
                 color: #e3e3e3;
               }
-              &.refused, &.lost {
+              &.refused, &.lost, &.canceled {
                 background-color: #d55354;
                 color: #e3e3e3;
+              }
+              &.canceled_alt {
+                background-color: #ffa0a4;
+                color: #c70000;
+                //border: 2px solid #c70000;
+                box-shadow: 0 0 1px 2px #c70000;
               }
             }
           }

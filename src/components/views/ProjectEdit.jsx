@@ -26,6 +26,8 @@ import * as ProjectStatus from '../../constants/ProjectStatus';
 import * as TeamRole from '../../constants/TeamRole';
 import * as VipTag from '../../constants/VipTag';
 
+import memoize from 'memoize-one';
+
 const statusOptions = Object.keys(ProjectStatus).filter(key => !ProjectStatus[key].virtual).map(key => ({value: ProjectStatus[key].id, label: ProjectStatus[key].label}));
 const timingOptions = [{value: ProjectClientTiming.GO_AHEAD.id, label: ProjectClientTiming.GO_AHEAD.label}]//Object.keys(ProjectClientTiming).map(key => ({value: ProjectClientTiming[key].id, label: ProjectClientTiming[key].label}));
 
@@ -39,6 +41,7 @@ export default class ProjectEdit extends React.PureComponent {
         };
         this.validationTimer = null;
         this.lastValidation = 0;
+        this.today = moment().startOf('day');
     }
 
     componentDidMount() {
@@ -46,9 +49,15 @@ export default class ProjectEdit extends React.PureComponent {
         this.checkValidity();
     }
 
+    componentWillUpdate() {
+        //console.log('WILL UPDATE');
+        //console.time('UPDATE');
+    }
+
     componentDidUpdate(prevProps) {
-        //console.log('DID UPDATE')
+        //console.log('DID UPDATE');
         if(this.props.editedData !== prevProps.editedData || this.props.projects !== prevProps.projects) this.checkValidity();
+        //console.timeEnd('UPDATE');
     }
 
     componentWillUnmount() {
@@ -56,13 +65,28 @@ export default class ProjectEdit extends React.PureComponent {
     }
 
     render() {
-        //console.log('RENDER')
+        //console.log('RENDER');
         const {project, editedData, projects, companies, persons, users} = this.props;
 
         const name = editedData.name !== undefined ? editedData.name : project ? project.name : '';
         const alias = editedData.alias !== undefined ? editedData.alias : project ? project.alias : '';
-        const status = editedData.status !== undefined ? editedData.status : project && project.status ? project.status : null;
-        const statusExtension = null;
+        let status = editedData.status !== undefined ? editedData.status : project && project.status ? project.status : null;
+        // .............................................................................................................
+        let altStatus = null;
+        let altText = '';
+        if(status && ProjectStatus[status] && (ProjectStatus[status].virtual || ProjectStatus[status].alt)) {
+            if(ProjectStatus[status].virtual) {
+                status = Object.keys(ProjectStatus).find(s => ProjectStatus[s].alt === status);
+                if(status) {
+                    altStatus = true;
+                    altText = ProjectStatus[status].altTxt;
+                } else status = null;
+            } else if(ProjectStatus[status].alt) {
+                altStatus = false;
+                altText = ProjectStatus[status].altTxt;
+            }
+        }
+        // .............................................................................................................
         const statusNote = editedData.statusNote !== undefined ? editedData.statusNote : project && project.statusNote ? project.statusNote : '';
         const company = editedData.company !== undefined ? editedData.company : project && project.company ? project.company : [];
         const person = editedData.person !== undefined ? editedData.person : project && project.person ? project.person : [];
@@ -81,8 +105,6 @@ export default class ProjectEdit extends React.PureComponent {
         const vipTag = editedData.vipTag !== undefined ? editedData.vipTag : project && project.vipTag ? project.vipTag : [];
         const vipTagNote = editedData.vipTagNote !== undefined ? editedData.vipTagNote : project && project.vipTagNote ? project.vipTagNote : '';
 
-        const projectStatus = {value: status, label: ProjectStatus[status] ? ProjectStatus[status].label : ''}
-
         if(Object.keys(editedData).length === 0) {
             team.sort((a, b) => (a.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)) - (b.role.map(role => TeamRole[role] ? TeamRole[role].sort : 100).reduce((a, b) => Math.min(a, b), 100)));
             timing.sort((a, b) => 0);
@@ -91,7 +113,6 @@ export default class ProjectEdit extends React.PureComponent {
         }
 
         const dataChanged = !project || Object.keys(editedData).length > 0;
-
         return (
             <div className={'app-body'}>
                 <Toolbox
@@ -130,7 +151,7 @@ export default class ProjectEdit extends React.PureComponent {
                                     dateFormat={'D.M.YYYY'}
                                     className={`detail-date-picker${this.state.validation.inquired ? ' invalid' : ''}`}
                                     onChange={this.handleInquiredChange}
-                                    maxDate={moment().startOf('day')}
+                                    maxDate={this.today}
                                     placeholderText={'Project inquired...'}
                                     onChangeRaw={this.handleDateChangeRaw}
                                 />
@@ -142,7 +163,7 @@ export default class ProjectEdit extends React.PureComponent {
                                     dateFormat={'D.M.YYYY'}
                                     className={`detail-date-picker${this.state.validation.lastContact ? ' invalid' : ''}`}
                                     onChange={this.handleLastContactChange}
-                                    maxDate={moment().startOf('day')}
+                                    maxDate={this.today}
                                     placeholderText={'Last Contact...'}
                                     isClearable
                                     onChangeRaw={this.handleDateChangeRaw}
@@ -193,9 +214,15 @@ export default class ProjectEdit extends React.PureComponent {
                                     value={{value: status, label: ProjectStatus[status] ? ProjectStatus[status].label : ''}}
                                     onChange={this.handleStatusChange}
                                     isSearchable={false}
-                                    className={`control-select${this.state.validation.status ? ' invalid' : ''}`}
+                                    className={`control-select${this.state.validation.status ? ' invalid' : ''}${altStatus !== null ? ' alt' : ''}`}
                                     classNamePrefix={'control-select'}
                                 />
+                                {altStatus !== null ?
+                                    <div className={'detail-status-alt-box'} onClick={this.handleStatusAltChanged}>
+                                        <FontAwesomeIcon className={'alt-checkbox'} icon={altStatus ? Icons.ICON_CHECKBOX_CHECKED : Icons.ICON_CHECKBOX_UNCHECKED}/>
+                                        <span className={'alt-text'}>{altText}</span>
+                                    </div>
+                                    : null}
                             </div>
                             <div className={'detail-group size-8'}>
                                 <div className={`detail-label${editedData.statusNote !== undefined && project ? ' value-changed' : ''}`}>{'Status Note:'}</div>
@@ -633,12 +660,13 @@ export default class ProjectEdit extends React.PureComponent {
       }));
     };
 
-    getPersonOptions = persons => {
+    getPersonOptions = memoize(persons => {
+        //console.log('GET PERSONS OPTIONS');
         return Object.keys(persons).sort((a, b) => persons[a].name.localeCompare(persons[b].name)).map(personId => ({
             value: personId,
             label: persons[personId].name
         }));
-    };
+    });
 
     getProjectCompaniesOptions = company => {
         const companies = company.filter(company => company.id).map(company => company.id).filter((companyId, index, self) => self.indexOf(companyId) === index).map(companyId => ({
@@ -748,6 +776,14 @@ export default class ProjectEdit extends React.PureComponent {
         //} else {
             //this.props.editItem(this.updateEditedData({status: option.value}));
         //}
+    };
+
+    handleStatusAltChanged = event => {
+        const status = this.props.editedData.status || this.props.project.status;
+        if(status) {
+            if(status === ProjectStatus.CANCELED.id) this.props.editItem(this.updateEditedData({status: ProjectStatus.CANCELED_ALT.id}));
+            else if(status === ProjectStatus.CANCELED_ALT.id) this.props.editItem(this.updateEditedData({status: ProjectStatus.CANCELED.id}));
+        }
     };
 
     handleStatusNoteChange = event => {
@@ -979,5 +1015,5 @@ export default class ProjectEdit extends React.PureComponent {
 
     handleDateChangeRaw = event => {
         event.preventDefault();
-    }
+    };
 };

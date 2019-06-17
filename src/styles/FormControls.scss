@@ -47,8 +47,6 @@ $table-control-background-color: #f5f5f5;
   }
 }
 
-
-
 .detail-input, .detail-date-picker {
   width: 100%;
   font-size: $detail-font-size;
@@ -141,10 +139,31 @@ $table-control-background-color: #f5f5f5;
   }
 }
 
-
+.detail-status-alt-box {
+  flex: 85%;
+  display: flex;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  font-weight: lighter;
+  align-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  .alt-checkbox {
+    margin-left: 0.5rem;
+    margin-right: 0.3rem;
+  }
+  .alt-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
 
 .control-select {
   width: 100%;
+  &.alt {
+    min-width: 6em;
+  }
   font-size: $detail-font-size;
   .control-select__placeholder {
     white-space: nowrap;
