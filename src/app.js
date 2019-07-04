@@ -16,6 +16,8 @@ import * as Actions from './actions/Actions';
 import initialState from './reducers/InitialState';
 import createIconLibrary from './lib/createIconLibrary';
 
+import checkAuthToken from './lib/checkAuthToken';
+
 logger.setLevel('debug');
 
 createIconLibrary();
@@ -83,6 +85,7 @@ const rootElement = document.getElementById('app');
             </Provider>,
             rootElement
         );
+        checkAuthToken();
     } catch(e) {
         logger.warn('Error while getting initial data')
     }
