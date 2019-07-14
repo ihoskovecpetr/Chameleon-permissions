@@ -18,7 +18,18 @@ export async function getAuthenticatedUser() {
         throw 'Not Authenticated';
     }
 }
-
+//**********************************************************************************************************************
+// LOGOUT
+//**********************************************************************************************************************
+export async function logout() {
+    const options = {
+        method: 'DELETE',
+        credentials: 'same-origin',
+        headers: {'Content-Type': 'application/json', 'cache-control': 'no-cache','pragma': 'no-cache'}
+    };
+    const response = await fetch('/authenticate', options);
+    if(!response.ok) throw 'Not removed';
+}
 
 //**********************************************************************************************************************
 // PROJECTS

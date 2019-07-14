@@ -3,6 +3,7 @@ import moment from 'moment';
 import * as logger from 'loglevel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as ViewTypes from '../constants/ViewTypes';
+import {logout as dbLogout} from '../lib/serverData';
 
 import * as Icons from '../constants/Icons';
 
@@ -100,8 +101,13 @@ export default class AppHeader extends React.PureComponent {
         } catch(e) {}
     };
 
-    logout = () => {
-        window.location.assign('/logout');
+    logout = async () => {
+        try {
+            await dbLogout();
+        } catch (e) {
+            document.cookie = "auth_token=; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+        }
+        window.location.assign('/hub');
     };
 
     home = () => {
