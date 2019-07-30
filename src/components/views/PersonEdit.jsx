@@ -15,6 +15,8 @@ import * as PersonProfession from '../../constants/PersonProfession';
 import * as ContactType from '../../constants/ContactType';
 import CreatableSelect from "react-select/lib/Creatable";
 
+import memoize from 'memoize-one';
+
 const personProfessionOptions = Object.keys(PersonProfession).map(key => ({value: PersonProfession[key].id, label: PersonProfession[key].label}));
 const contactTypeOptions = Object.keys(ContactType).map(key => ({value: ContactType[key].type, label: ContactType[key].label}));
 
@@ -24,7 +26,8 @@ export default class PersonEdit extends React.PureComponent {
         this.state = {
             saveDisabled: true,
             validation: {},
-            removeArmed: false
+            removeArmed: false,
+            companyMenuOpen: false
         };
         this.validationTimer = null;
         this.lastValidation = 0;
@@ -54,6 +57,8 @@ export default class PersonEdit extends React.PureComponent {
         const note = editedData.note !== undefined ? editedData.note : person && person.note ? person.note : '';
 
         const dataChanged = !person || Object.keys(editedData).length > 0;
+
+        const companyOptions = this.getCompanyOptions(companies);
 
         return (
             <div className={'app-body'}>
@@ -128,7 +133,7 @@ export default class PersonEdit extends React.PureComponent {
                             <div className={'detail-group size-12'}>
                                 <div onClick={event => event.altKey ? this.createNewCompany('') : {}} className={`detail-label${typeof editedData.company !== 'undefined' && company  ? ' value-changed' : ''}`}>{'Companies:'}</div>
                                 <CreatableSelect
-                                    options={this.getCompaniesOption(companies)}
+                                    options={this.state.companyMenuOpen ? companyOptions : []}
                                     value={company.map(company => ({value: company, label: companies[company] ? companies[company].name : ''}))}
                                     onChange={this.handleCompanyChange}
                                     onCreateOption={name => this.createNewCompany(name)}
@@ -139,6 +144,8 @@ export default class PersonEdit extends React.PureComponent {
                                     className={`control-select wrap${this.state.validation.company ? ' invalid' : ''}`}
                                     classNamePrefix={'control-select'}
                                     placeholder={'Person Companies...'}
+                                    onMenuOpen={() => this.setState({companyMenuOpen: true})}
+                                    onMenuClose={() => this.setState({companyMenuOpen: false})}
                                 />
                             </div>
                         </div>
@@ -216,12 +223,12 @@ export default class PersonEdit extends React.PureComponent {
         return newData;
     };
 
-    getCompaniesOption = companies => {
+    getCompanyOptions = memoize(companies => {
         return Object.keys(companies).map(companyId => ({
             value: companyId,
             label: companies[companyId].name
         }))
-    };
+    });
 
     handleNoteChange = event => {
         this.props.editItem(this.updateEditedData({note: event.target.value}));

@@ -37,7 +37,9 @@ export default class ProjectEdit extends React.PureComponent {
         this.state = {
             saveDisabled: true,
             validation: {},
-            removeArmed: false
+            removeArmed: false,
+            companyLineFocused: null,
+            personLineFocused: null
         };
         this.validationTimer = null;
         this.lastValidation = 0;
@@ -65,7 +67,6 @@ export default class ProjectEdit extends React.PureComponent {
     }
 
     render() {
-        //console.log('RENDER');
         const {project, editedData, projects, companies, persons, users} = this.props;
 
         const name = editedData.name !== undefined ? editedData.name : project ? project.name : '';
@@ -113,6 +114,11 @@ export default class ProjectEdit extends React.PureComponent {
         }
 
         const dataChanged = !project || Object.keys(editedData).length > 0;
+
+        const personOptions = this.getPersonOptions(persons);
+        const companyOptions = this.getCompanyOptions(companies);
+        //console.log(this.state.companyLineFocused);
+        //console.log(this.state.personLineFocused);
         return (
             <div className={'app-body'}>
                 <Toolbox
@@ -363,7 +369,7 @@ export default class ProjectEdit extends React.PureComponent {
                                         <div className={'line-content'}>
                                             <div className={'wrapper company-name'}>
                                                 <CreatableSelect
-                                                    options={this.getCompanyOptions(companies)}
+                                                    options={this.state.companyLineFocused === i ? companyOptions : []}
                                                     value={companyLine.id ? {value: companyLine.id, label: companies[companyLine.id] ? companies[companyLine.id].name : companyLine.id  } : null}
                                                     autoFocus={!companyLine.id}
                                                     onChange={option => this.handleCompanyChange(i, {id: !option || !option.value ? null : option.value})}
@@ -375,6 +381,8 @@ export default class ProjectEdit extends React.PureComponent {
                                                     className={`control-select${companyLine.id === null || (this.state.validation['company-name-duplicity'] && this.state.validation['company-name-duplicity'].index.indexOf(i) >= 0) ? ' invalid' : ''}`}
                                                     classNamePrefix={'control-select'}
                                                     placeholder={'Company...'}
+                                                    onMenuOpen={() => this.setState({companyLineFocused: i})}
+                                                    onMenuClose={() => {if(this.state.companyLineFocused === i) this.setState({companyLineFocused: null})}}
                                                 />
                                                 <div className={`control-flags`}>
                                                     {Object.keys(CompanyFlag).map(flag =>
@@ -428,7 +436,7 @@ export default class ProjectEdit extends React.PureComponent {
                                         <div className={'line-content'}>
                                             <div className={'wrapper person-name'}>
                                                 <CreatableSelect
-                                                    options={this.getPersonOptions(persons)}
+                                                    options={this.state.personLineFocused === i ? personOptions : []}
                                                     value={personLine.id ? {value: personLine.id, label: persons[personLine.id] ? persons[personLine.id].name : personLine.id  } : null}
                                                     autoFocus={!personLine.id}
                                                     onChange={option => this.handlePersonChange(i, {id: !option || !option.value ? null : option.value})}
@@ -440,6 +448,8 @@ export default class ProjectEdit extends React.PureComponent {
                                                     className={`control-select${personLine.id === null || (this.state.validation['person-name-duplicity'] && this.state.validation['person-name-duplicity'].index.indexOf(i) >= 0)? ' invalid' : ''}`}
                                                     classNamePrefix={'control-select'}
                                                     placeholder={'Person...'}
+                                                    onMenuOpen={() => this.setState({personLineFocused: i})}
+                                                    onMenuClose={() => {if(this.state.personLineFocused === i) this.setState({personLineFocused: null})}}
                                                 />
                                                 <div className={`control-flags`}>
                                                     {Object.keys(PersonFlag).map(flag =>
@@ -561,6 +571,9 @@ export default class ProjectEdit extends React.PureComponent {
     };
 
     updateEditedData = updateData => {
+        //console.log('Update edit data');
+        //console.log(updateData);
+        //console.time('UPDATE_EDIT_DATA');
         const object = this.props.project ? this.props.project : undefined;
         const newData = {...this.props.editedData, ...updateData};
         for (const key of Object.keys(newData)) {
@@ -574,6 +587,8 @@ export default class ProjectEdit extends React.PureComponent {
             }
 
         }
+        //console.timeEnd('UPDATE_EDIT_DATA');
+        //console.log(newData);
         return newData;
     };
 
@@ -653,12 +668,13 @@ export default class ProjectEdit extends React.PureComponent {
         }).map(role => ({value: role, label: TeamRole[role] ? TeamRole[role].label : role}));
     };
 
-    getCompanyOptions = companies => {
-      return Object.keys(companies).sort((a, b) => companies[a].name.localeCompare(companies[b].name)).map(companyId => ({
+    getCompanyOptions = memoize(companies => {
+        //console.log('GET COMPANY OPTIONS');
+        return Object.keys(companies).sort((a, b) => companies[a].name.localeCompare(companies[b].name)).map(companyId => ({
           value: companyId,
           label: companies[companyId].name
-      }));
-    };
+        }));
+    });
 
     getPersonOptions = memoize(persons => {
         //console.log('GET PERSONS OPTIONS');
@@ -787,7 +803,10 @@ export default class ProjectEdit extends React.PureComponent {
     };
 
     handleStatusNoteChange = event => {
+        //console.log('handleStatusNoteChange');
+        //console.time('handleStatusNoteChange');
         this.props.editItem(this.updateEditedData({statusNote: event.target.value}));
+        //console.timeEnd('handleStatusNoteChange');
     };
 
     handleVipTagNoteChange = event => {
