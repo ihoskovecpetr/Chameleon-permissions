@@ -1,5 +1,5 @@
 const CHAMELEON_API = `/api/v1/chameleon`;
-const APPLICATION_NAME = 'projects';
+const APPLICATION_NAME = 'permissions';
 const API_VERSION = 'v1';
 const APPLICATION_API = `/api/${API_VERSION}/${APPLICATION_NAME}`;
 
@@ -38,22 +38,58 @@ export async function getProjects() {
     return await fetchServer('GET', '/');
 }
 
-export async function createProject(project) {
-    return await fetchServer('POST', '/', project);
+export async function getK2Projects() {
+    console.time("Pre getK2Projects")
+    const a = await fetchServer('GET', '/k2_projects');
+    console.timeEnd("Pre getK2Projects")
+    return a
 }
 
-export async function updateProject(id, project) {
-    return await fetchServer('PUT', `/${id}`, project);
+
+//**********************************************************************************************************************
+// AD GROUPS
+//**********************************************************************************************************************
+export async function getMyGroups() {
+    return await fetchServer('GET', '/my_groups');
 }
 
-export async function removeProject(id) {
-    return await fetchServer('DELETE', `/${id}`);
+export async function getGroupMembers(groupName) {
+    return await fetchServer('POST', '/group_members', groupName);
 }
+
+export async function getGroupsMembers(groupsNamesArr) {
+    return await fetchServer('POST', '/groups_members', groupsNamesArr);
+}
+
+export async function getProjectGroupsMembers(project_name) {
+    return await fetchServer('POST', '/project/groups_with_members', {project_name: project_name});
+}
+//SAVE NEW MEMBERS to group 
+
+export async function saveGroupMembers(group_name, currentEditMemb) {
+    return await fetchServer('POST', `/save/${group_name}`, {users: currentEditMemb});
+}
+
+// export async function addGroupMembers(groupName, usersArr) {
+//     return await fetchServer('POST', '/add_members', {group: groupName, usersArr: usersArr});
+// }
+
+// export async function removeGroupMembers(groupName, user) {
+//     console.log("removeGroupMembers: BODY: ", groupName, user)
+//     return await fetchServer('POST', '/remove_members', {group: groupName, user: user});
+// }
+
+
+
 //**********************************************************************************************************************
 // USERS
 //**********************************************************************************************************************
 export async function getUsers() {
     return await fetchServer('GET', '/users/role');
+}
+
+export async function getUsersByRole(roleArr) {
+    return await fetchServer('POST', `/users/by_role`, {rolesArr: roleArr});
 }
 
 //**********************************************************************************************************************
@@ -97,7 +133,7 @@ export async function removeCompany(id) {
 //**********************************************************************************************************************
 // FETCH SERVER
 //**********************************************************************************************************************
-async function fetchServer(method, path, data) {
+export async function fetchServer(method, path, data) {
     const body = data ?  JSON.stringify(data) : undefined;
     let error;
     try {
@@ -111,7 +147,9 @@ async function fetchServer(method, path, data) {
             options.headers['Content-Type'] = 'application/json';
             options.body = body;
         }
+        console.time("fetchX" + path)
         const response = await fetch(`${APPLICATION_API}${path}`, options);
+        console.timeEnd("fetchX" + path)
         const contentType = response.headers.get("content-type");
         const data = contentType && contentType.indexOf("application/json") !== -1 ? await response.json() : null;
         if (response.ok) {

@@ -2,9 +2,9 @@ import React from 'react';
 import moment from 'moment';
 import * as logger from 'loglevel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 import * as ViewTypes from '../constants/ViewTypes';
 import {logout as dbLogout} from '../lib/serverData';
-
 import * as Icons from '../constants/Icons';
 
 export default class AppHeader extends React.PureComponent {
@@ -67,24 +67,7 @@ export default class AppHeader extends React.PureComponent {
                     </div>
 
                     <div className={'header-group center header-switch'}>
-                        <div onClick={() => switchesEnabled && this.props.view !== ViewTypes.PROJECT_LIST ? this.props.setView(ViewTypes.PROJECT_LIST) : undefined} className={`switch${activeSwitch === 'projects' ? ' active' : ''}${switchesEnabled && this.props.view !== ViewTypes.PROJECT_LIST ? ' clickable' : ''}`}>
-                            <FontAwesomeIcon icon={Icons.ICON_PROJECTS}/>
-                            <span className={'switch-text'}>{'Projects'}</span>
-                            {this.props.activeBid ? <FontAwesomeIcon className={'dot'} icon={'circle'}/> : null}
-                        </div>
-                        <div onClick={() => switchesEnabled && this.props.view !== ViewTypes.COMPANY_LIST ? this.props.setView(ViewTypes.COMPANY_LIST) : undefined} className={`switch${activeSwitch === 'companies' ? ' active' : ''}${switchesEnabled && this.props.view !== ViewTypes.COMPANY_LIST ? ' clickable' : ''}`}>
-                            <FontAwesomeIcon icon={Icons.ICON_COMPANIES}/>
-                            <span className={'switch-text'}>{'Companies'}</span>
-                        </div>
-                        <div onClick={() => switchesEnabled && this.props.view !== ViewTypes.PERSON_LIST ? this.props.setView(ViewTypes.PERSON_LIST) : undefined} className={`switch${activeSwitch === 'persons' ? ' active' : ''}${switchesEnabled && this.props.view !== ViewTypes.PERSON_LIST ? ' clickable' : ''}`}>
-                            <FontAwesomeIcon icon={Icons.ICON_PERSONS}/>
-                            <span className={'switch-text'}>{'People'}</span>
-                        </div>
-                    </div>
-
-                    <div onClick={switchesEnabled && this.props.view !== ViewTypes.BOX_LIST && this.props.box && this.props.box.length > 0 ? () => this.props.setView(ViewTypes.BOX_LIST) : undefined} className={`header-group box${activeSwitch === 'box' ? ' active' : ''}${switchesEnabled && this.props.view !== ViewTypes.BOX_LIST && this.props.box && this.props.box.length > 0 ? ' clickable' : ''}`}>
-                        <FontAwesomeIcon className={'icon-box'} icon={Icons.ICON_BOX}/>
-                        {this.props.box && this.props.box.length > 0 ? <span className="badge">{this.props.box.length}</span> : null}
+                            
                     </div>
 
                     <div className={'header-group right header-date'}>

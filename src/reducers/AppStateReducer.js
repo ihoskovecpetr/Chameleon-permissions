@@ -1,5 +1,5 @@
 import * as ViewTypes from '../constants/ViewTypes';
-import * as ActionTypes from '../actions/ActionTypes';
+import * as ActionTypes from '../actions_redux/ActionTypes';
 import * as ProjectStatus from '../constants/ProjectStatus';
 import moment from 'moment';
 

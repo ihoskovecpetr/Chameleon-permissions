@@ -19,3 +19,50 @@ export function getShortName(fullName) {
     const name = split.shift();
     return `${name.charAt(0)}. ${split.join(' ')}`;
 }
+
+export function getCnFromAdString(AdString) {
+    
+if(typeof AdString === "string"){
+
+    const CN = AdString.split(',')[0]
+    return [CN.split('=')[1]];
+
+  }else if(typeof AdString === "array"){
+        return [`Arrray on results`];
+      }
+}
+
+export function getProjectNamesFromArr(AdArr) {
+
+
+    console.log(">>>>> 1: ", AdArr)
+
+    const fullGroups = AdArr[0].managedObjects.map(group => {
+        const CN = group.split(',')[0]
+        return CN.split('=')[1];
+
+    })
+
+    const result = AdArr[0].managedObjects.map(group => {
+        const CN = group.split(',')[0]
+        const fullName = CN.split('=')[1];
+        return fullName.split('_adv_')[0];
+
+    })
+
+
+    const originalResult = result.filter((v,i) => result.indexOf(v) === i)
+
+    const resultObj = {}
+
+    originalResult.map(origGroup => {
+        resultObj[origGroup] = fullGroups.filter((anyGroup,index) => anyGroup.includes(origGroup))
+    })
+
+    console.log("resultObj:::>>>> ", resultObj)
+
+
+    return resultObj
+    
+
+    }

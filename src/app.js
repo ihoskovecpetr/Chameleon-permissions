@@ -10,8 +10,10 @@ import { getAuthenticatedUser } from './lib/serverData';
 
 import Reducer from './reducers/Reducer';
 
+import AppRouter from './app_router';
 import AppLayout from './components/AppLayout';
-import * as Actions from './actions/Actions';
+import * as Actions from './actions_redux/Actions';
+import * as ProjectActions from './components/modules/ProjectModule';
 
 import initialState from './reducers/InitialState';
 import createIconLibrary from './lib/createIconLibrary';
@@ -25,6 +27,8 @@ createIconLibrary();
 import './app.scss';
 
 const appStatePath = 'appState';
+
+console.log("appStatePath: ", appStatePath)
 
 const finalCreateStore = compose(
     persistState(appStatePath, {
@@ -62,7 +66,7 @@ const store = finalCreateStore(Reducer, initialState);
 const mapStateToProps = state => state;
 const mapDispatchToProps = dispatch => bindActionCreators(Actions, dispatch);
 
-const AppLayoutConnected = connect(mapStateToProps, mapDispatchToProps)(AppLayout);
+const AppRouterConnected = connect(mapStateToProps, mapDispatchToProps)(AppRouter);
 const rootElement = document.getElementById('app');
 
 (async () => {
@@ -78,14 +82,15 @@ const rootElement = document.getElementById('app');
     }
 
     try {
-        store.dispatch(Actions.getData());
+        store.dispatch(ProjectActions.fetchADProjects());
+        store.dispatch(ProjectActions.fetchK2Projects());
         ReactDOM.render(
             <Provider store={store}>
-                <AppLayoutConnected/>
+                <AppRouterConnected/>
             </Provider>,
             rootElement
         );
-        checkAuthToken();
+        // checkAuthToken();
     } catch(e) {
         logger.warn('Error while getting initial data')
     }

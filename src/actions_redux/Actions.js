@@ -1,9 +1,10 @@
-import * as ActionTypes from '../actions/ActionTypes';
+import * as ActionTypes from './ActionTypes';
 import * as Constants from '../constants/Constatnts';
 
 import * as logger from 'loglevel';
 
 import * as server from '../lib/serverData';
+import * as StringFormatter from '../lib/stringFormatHelper';
 
 let refreshTimer = null;
 
@@ -13,6 +14,11 @@ let refreshTimer = null;
 export function setUser(user) {
     return {type: ActionTypes.SET_USER, user: user};
 }
+
+
+
+
+
 // *********************************************************************************************************************
 // ROUTING, INFO, ...
 // *********************************************************************************************************************
@@ -58,12 +64,11 @@ export function getData(scheduled) {
         if(!scheduled) dispatch(setFetching(true));
         if(!scheduled) dispatch(setMessage(null));
         try {
-            const projects = await server.getProjects();
-            const persons = await server.getPersons();
-            const companies = await server.getCompanies();
-            const users = await server.getUsers();
+            // const projects = await server.getProjects();
+            // const persons = await server.getPersons();
+            // const users = await server.getUsers();
 
-            dispatch(setData({projects, persons, companies, users}));
+            dispatch(setData({projects })); //persons, users
             if (!scheduled && Constants.SHOW_MESSAGE_ON_SUCCESS) dispatch(setMessage({
                 type: 'info',
                 text: 'Fetching done successfully!',
