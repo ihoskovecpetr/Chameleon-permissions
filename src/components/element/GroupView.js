@@ -41,8 +41,7 @@ function Group({  group_name,
   const openPop = Boolean(anchorEl);
 
   return (
-            <div>
-              <ExpansionPanelDetails className={classes.details}>
+            <Grid item>
                 <div className={classes.column}>
                   <Typography variant="caption">
                     {group_name.split(`${project_name}_adv_`)[1]}
@@ -93,29 +92,30 @@ function Group({  group_name,
                     </ Grid>
                     )
                   })}
-
-                    <Grid item>
-                      <Chip 
-                          label="Add"
-                          aria-owns='mouse-over-popover' 
-                          // onDelete={() => {}} 
-                          onClick={handleOpenAddCand}
-                          icon={<AddIcon />}
-                          />
-                    </ Grid>
-                {isEditting && <Grid item>
+                  </ Grid>
+                  <Grid container direction="row">
+                      <Grid item>
                         <Chip 
-                            label="Save"
+                            label="Add"
                             aria-owns='mouse-over-popover' 
                             // onDelete={() => {}} 
-                            className={classes.saveChip}
-                            onClick={handleSaveEditToAD}
-                            icon={<SaveIcon />}
+                            onClick={handleOpenAddCand}
+                            icon={<AddIcon />}
                             />
-                      </ Grid>}
-                  </ Grid>
+                      </ Grid>
+                      {isEditting && <Grid item>
+                          <Chip 
+                              label="Save"
+                              aria-owns='mouse-over-popover' 
+                              // onDelete={() => {}} 
+                              className={classes.saveChip}
+                              onClick={handleSaveEditToAD}
+                              icon={<SaveIcon />}
+                              />
+                        </ Grid>}
+                    </Grid>
                 </div>
-                </ExpansionPanelDetails>
+                
                 <Divider className={classes.divider} />
 
 
@@ -140,7 +140,7 @@ function Group({  group_name,
                           togglePopover={togglePopover} />
               </Popover>
 
-            </div>
+            </Grid>
   );
 }
 

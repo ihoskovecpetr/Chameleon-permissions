@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -35,11 +36,13 @@ export default function ProjectView({project_id, project_name, company_name, pro
 
         <Divider className={classes.divider} />
       
+      <Grid container className={classes.gridGroups}>
         {projectGroups && projectGroups.map((item, index) => {
          console.log("Project group iterated")
          return <GroupContainer group_name={item} project_name={project_name} key={index} />
         }
         )}
+        </Grid>
     </div>
   );
 }
@@ -48,24 +51,9 @@ const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
   },
-  heading: {
-    position: "relative",
-    flexBasis: '20%',
-    fontSize: theme.typography.pxToRem(15),
-    overflow: "hidden",
-    whiteSpace: "nowrap",
-    textOverflow: "ellipsis"
-  },
-  secondaryHeading: {
-    fontSize: theme.typography.pxToRem(15),
-    color: theme.palette.text.secondary,
-  },
-  column: {
-    flexBasis: '20%',
-    // width: 180,
-    overflow: "hidden",
-    // whiteSpace: "nowrap",
-    // borderRight: '1px solid grey'
+  gridGroups: {
+    backgroundColor: "white",
+    width: '100%',
   },
   divider: {
     marginLeft: 10,
