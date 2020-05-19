@@ -6,26 +6,23 @@ import { useHistory } from "react-router-dom"
 import { connect } from "react-redux";
 import { createSelector } from 'reselect'
 
-import { setActiveProject, cleanActiveProject } from "../modules/ProjectModule"
-import { fetchADGroupsMembers, fetchProjectGroupsMembers } from "../modules/GroupModule"
+import { setActiveProject, cleanActiveProject } from "../../modules/ProjectModule"
+import { fetchADGroupsMembers, fetchProjectGroupsMembers } from "../../modules/GroupModule"
 import ProjectView from "./ProjectView"
 
-function ProjectsWrap(props){
+function ProjectContainer(props){
     const classes = useStyles();
     const [selected, setSelected] = useState(0);
     let history = useHistory();
 
-
     useEffect(() => {
-        console.log("ProjectContainer: location ", location)
+
         if(!props.loadingSpinner){
-          console.log("split: ", location.pathname.split("project/")[1])
           console.log("p[rojectGroup: ", props.projectGroups )
           // props.getGroupsMembers({namesArr: props.projectGroups})
           props.getProjectGroupsMembers("test_project_adv")
         }
     }, [props.loadingSpinner, props.projectGroups])
-
 
 
     const handleURLChange = (id) => {
@@ -75,7 +72,7 @@ const mapDispatchToProps = dispatch => {
 
 
 
-export default connect(StateToProps, mapDispatchToProps)(ProjectsWrap)
+export default connect(StateToProps, mapDispatchToProps)(ProjectContainer)
 
 const useStyles = makeStyles((theme) => ({
     root: {

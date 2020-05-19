@@ -132,7 +132,6 @@ export function fetchADGroupsMembers(groupsNamesArr) {
       .then(json => {
         console.log("json fetchADGroupsMembersProjects: ", json)
         dispatch(fetchADGroupsMembersSuccess(json.data))
-      //   fetchGroupMembers(StringFormatter.getProjectNamesFromArr(json.userData))
         return json;
       })
       .catch(err =>
@@ -159,7 +158,6 @@ export function fetchProjectGroupsMembers(project_name) {
       .then(json => {
         console.log("json fetchADGroupsMembersProjects: ", json)
         dispatch(fetchADGroupsMembersSuccess(json.data))
-        // fetchGroupMembers(StringFormatter.getProjectNamesFromArr(json.userData))
         return json;
       })
       .catch(err =>
@@ -235,8 +233,6 @@ export function saveNewGroupMembers(currentEditMemb, group_name) {
             dispatch(stopEditingGroup(group_name))
 
         }
-      // dispatch(fetchProjectsSuccess(StringFormatter.getProjectNamesFromArr(json.userData)))
-    //   fetchGroupMembers(StringFormatter.getProjectNamesFromArr(json.userData))
       return json;
     })
     .catch(error =>

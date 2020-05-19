@@ -45,7 +45,6 @@ export default function reducer(state = initialState, action = {}) {
   
     case FETCH_K2_PROJECTS_SUCCESS:
 
-      console.log("K2 payload: ", action.payload)
   
         return {
           ...state,
@@ -148,7 +147,6 @@ export function fetchK2Projects() {
           console.timeEnd("Pre call");
 
         dispatch(fetchK2ProjectsSuccess(json))
-      //   fetchGroupMembers(StringFormatter.getProjectNamesFromArr(json.userData))
         return json;
       })
       .catch(error =>
@@ -181,8 +179,7 @@ return dispatch => {
   return server.getMyGroups()
     .then(json => {
         console.log("json fetchADProjects getMyGroups:  ", json)
-      dispatch(fetchProjectsSuccess(StringFormatter.getProjectNamesFromArr(json.userData)))
-    //   fetchGroupMembers(StringFormatter.getProjectNamesFromArr(json.userData))
+      dispatch(fetchProjectsSuccess(StringFormatter.getSeparatedManagedObjects(json.userData[0])))
       return json;
     })
     .catch(error =>

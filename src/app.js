@@ -14,6 +14,7 @@ import AppRouter from './app_router';
 import AppLayout from './components/AppLayout';
 import * as Actions from './actions_redux/Actions';
 import * as ProjectActions from './components/modules/ProjectModule';
+import * as PersonActions from './components/modules/PersonModule';
 
 import initialState from './reducers/InitialState';
 import createIconLibrary from './lib/createIconLibrary';
@@ -84,6 +85,7 @@ const rootElement = document.getElementById('app');
     try {
         store.dispatch(ProjectActions.fetchADProjects());
         store.dispatch(ProjectActions.fetchK2Projects());
+        store.dispatch(PersonActions.fetchAllPerson());
         ReactDOM.render(
             <Provider store={store}>
                 <AppRouterConnected/>

@@ -79,13 +79,22 @@ export async function saveGroupMembers(group_name, currentEditMemb) {
 //     return await fetchServer('POST', '/remove_members', {group: groupName, user: user});
 // }
 
-
+//**********************************************************************************************************************
+// AD USER INFO
+//**********************************************************************************************************************
+export async function getAdUserInfo(sAMAccountName) {
+    return await fetchServer('GET', `/ad/person_info/${sAMAccountName}`);
+}
 
 //**********************************************************************************************************************
 // USERS
 //**********************************************************************************************************************
 export async function getUsers() {
     return await fetchServer('GET', '/users/role');
+}
+
+export async function getSingleUser(_id) {
+    return await fetchServer('GET', `/user/${_id}`);
 }
 
 export async function getUsersByRole(roleArr) {

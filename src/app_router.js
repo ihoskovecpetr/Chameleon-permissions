@@ -8,42 +8,45 @@ import {
     BrowserRouter as Router
   } from "react-router-dom";
 import AppLayout from './components/AppLayout';
-import AppBody from './components/AppBody';
 
 import './app.scss';
-import SearchListContainer from './components/element/SearchListContainer';
+import SearchListProjectsContainer from './components/element/SearchListProjectsContainer';
+import SearchListPersonContainer from './components/element/SearchListPersonContainer';
+import AllProjectsContainer from './components/element/Project/AllProjectsContainer';
+import PersonContainer from './components/element/Person/PersonContainer';
 
 export default function App_router(props){
 
-    console.log("AppRouteer location: ", location)
 
 return(
     <Router>
         <Switch>
-        {/* <Route exact path="/permissions"> */}
+            {/* <Route exact path="/permissions"> */}
             <Route exact path="/">
                 <AppLayout {...props}>
+                    <SearchListProjectsContainer location={location} />
                 </AppLayout>
-            </Route>
-            {/* <Route path="/permissions/search/:id"> */}
-            <Route path="/search/:id">
+            </Route>  
+            {/* <Route path="/permissions/search_people">    */}
+            <Route path="/search_people">
                     <AppLayout {...props}>
-                        "List of searches"
+                        <SearchListPersonContainer location={location} />
                     </AppLayout>
-            </Route>    
+            </Route>  
             {/* <Route path="/permissions/project/:id"> */}
             <Route path="/project/:id">
                     <AppLayout {...props}>
-                        <AppBody />
+                        <AllProjectsContainer />
                     </AppLayout>
             
             </Route>
-            {/* <Route path="/permissions/searchlist">    */}
-            <Route path="/searchlist">
+            {/* <Route path="/permissions/person/:id"> */}
+            <Route path="/person/:id">
                     <AppLayout {...props}>
-                        <SearchListContainer location={location} />
+                        <PersonContainer />
                     </AppLayout>
-            </Route>   
+            
+            </Route> 
         </Switch>
     </Router>)
 }

@@ -10,9 +10,6 @@ import {name, version}  from '../../package.json';
 
 export default function App(props){
 
-
-    console.log("AppLayout: props.children ", props.children)
-
         return (
             <div className={'app-layout'}>
                 <AppHeader
@@ -30,20 +27,9 @@ export default function App(props){
 
                     box = {props.appState.box}
                 />
-                <Toolbox
-                    // returnToPreviousView = {this.props.returnToPreviousView}
-                    // edit = {this.props.edit}
-                    // edit = {false}
-                    // remove = {this.props.remove}
-                    // addToBox = {this.props.addToBox}
-                    // selected = {company._id}
-                    // label = {'Company'}
-                    // editable={this.props.editable}
-                />
+                <Toolbox />
                 <MessageBox message = {props.appState.message} setMessage = {props.setMessage}/>
-                {/* <AppBodyComponent /> */}
                 {props.children}
-                {/* {AppBody} */}
                 {/* <FetchingIndicator open={this.props.appState.fetching}/> */}
             </div>
         )

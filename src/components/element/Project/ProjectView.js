@@ -1,19 +1,13 @@
 import React, {useState, useEffect} from 'react';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
-import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Divider from '@material-ui/core/Divider';
 
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
-import * as server from '../../lib/serverData';
+import * as server from '../../../lib/serverData';
 
 import ProjectHeaderView from "./ProjectHeaderView"
-import GroupContainer from "./GroupContainer"
+import GroupContainer from "../GroupContainer"
 
 export default function ProjectView({project_id, project_name, company_name, producer_name, director_name, 
       activeProject, getGroupsMembers, 
@@ -31,31 +25,13 @@ export default function ProjectView({project_id, project_name, company_name, pro
   return (
     <div className={classes.root}>
 
-          <div className={classes.column}>
-            <p className={classes.heading}>
-              {project_name}
-            </p>
-          </div>
-          <div className={classes.column}>
-            <p className={classes.heading}>
-              {company_name}
-            </p>
-          </div>
-
-          <div className={classes.column}>
-            <p className={classes.heading}>
-              {producer_name}
-            </p>
-          </div>
-
-          <div className={classes.column}>
-            <p className={classes.heading}>
-              {director_name}
-            </p>
-          </div>
-          {loadingSpinner ? 
-            loadingSpinner : <p className={classes.secondaryHeading}>{"K2 Project"}</p>
-            }
+      <ProjectHeaderView 
+          project_id={project_id} 
+          project_name={project_name} 
+          company_name={company_name} 
+          producer_name={producer_name} 
+          director_name={director_name} 
+          loadingSpinner={loadingSpinner} />
 
         <Divider className={classes.divider} />
       

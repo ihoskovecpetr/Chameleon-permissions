@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react"
+import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -6,12 +7,12 @@ import { useHistory } from "react-router-dom"
 import { connect } from "react-redux";
 import { createSelector } from 'reselect'
 
-import { fetchK2Projects , fetchADProjects, setActiveProject, cleanActiveProject } from "../modules/ProjectModule"
-import { fetchADGroupsMembers } from "../modules/GroupModule"
+import { fetchK2Projects , fetchADProjects, setActiveProject, cleanActiveProject } from "../../modules/ProjectModule"
+import { fetchADGroupsMembers } from "../../modules/GroupModule"
 import ProjectView from "./ProjectView"
 import ProjectContainer from "./ProjectContainer"
 
-function ProjectsWrap({loadingAD, errorAD, groupsAD, loadingK2, errorK2, projectsK2, activeProject, activateProject, deactivateProject, dispatch}){
+function AllProjectsContainer({loadingAD, errorAD, groupsAD, loadingK2, errorK2, projectsK2, activeProject, activateProject, deactivateProject, dispatch}){
     const classes = useStyles();
     const [selected, setSelected] = useState(0);
     let history = useHistory();
@@ -23,8 +24,13 @@ function ProjectsWrap({loadingAD, errorAD, groupsAD, loadingK2, errorK2, project
     }, [projectsK2])
 
     useEffect(() => {
-        activateProject({K2name: "Random", _id: 100546546})
-      }, [])
+      console.log("AllProjectsCont: ", activeProject)
+      if(activeProject && !activeProject._id){
+        console.log("Get data for active project:")
+        activateProject({K2name: "Random", _id: 100546546}) 
+        //TODO: find data about project from url param info.       
+      }
+      }, [activeProject])
 
     // useEffect(() => {
     //     formatedProjects = useFormateK2Object(projectsK2.slice(0, 10))
@@ -33,9 +39,9 @@ function ProjectsWrap({loadingAD, errorAD, groupsAD, loadingK2, errorK2, project
 
     let components = []
 
-    if(loadingK2){components.push(<ProjectView name={"Loading..."} loadingSpinner={<CircularProgress color="secondary" />} />)} 
+    if(loadingK2){components.push(<ProjectView name={"Loading..."} key="2" loadingSpinner={<CircularProgress color="secondary" />} />)} 
     if(errorK2){components.push("Error")}
-    if(activeProject){components.push(<p>Active Project: {activeProject.K2name}:  {activeProject._id}</p>)}
+    if(activeProject){components.push(<p key={activeProject.K2name}>Active Project: {activeProject.K2name}:  {activeProject._id}</p>)}
     
     if(activeProject){
         console.log()
@@ -60,9 +66,12 @@ function ProjectsWrap({loadingAD, errorAD, groupsAD, loadingK2, errorK2, project
     }
 
     if(components.length != 0){
-        return components.map((component, index) => {
-            return component
-         })
+        return  <Container maxWidth="lg" style={{marginTop: 10, height: '100vh', overflow: 'scroll'}}>
+                {components.map((component, index) => {
+                    return component
+                    })}
+            </ Container>
+
     }
 
     return(
@@ -97,8 +106,7 @@ const mapDispatchToProps = dispatch => {
   }
 
 
-
-export default connect(StateToProps, mapDispatchToProps)(ProjectsWrap)
+export default connect(StateToProps, mapDispatchToProps)(AllProjectsContainer)
 
 const useStyles = makeStyles((theme) => ({
     root: {

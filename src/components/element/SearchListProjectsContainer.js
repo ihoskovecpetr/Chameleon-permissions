@@ -9,18 +9,21 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
-import FolderIcon from '@material-ui/icons/Folder';
+import FolderSharedIcon from '@material-ui/icons/FolderShared';
 
 import { NavLink, useHistory } from "react-router-dom"
 import { connect } from "react-redux";
 import { createSelector } from 'reselect'
 
-import { fetchK2Projects , fetchADProjects, setActiveProject, cleanActiveProject } from "../modules/ProjectModule"
-import { fetchADGroupsMembers } from "../modules/GroupModule"
 import useFilterSearchResults from "../../Hooks/useFilterSearchResults"
 import { usePaintMatches } from "../../Hooks/usePaintMatches"
 
-function ProjectsWrap({loadingAD, errorAD, groupsAD, loadingK2, errorK2, projectsK2, activeProject, activateProject, deactivateProject, dispatch}){
+import { fetchK2Projects , fetchADProjects, setActiveProject, cleanActiveProject } from "../modules/ProjectModule"
+import { fetchADGroupsMembers } from "../modules/GroupModule"
+import ProjectView from "./Project/ProjectView"
+
+
+function SearchListProjectsContainer({loadingAD, errorAD, groupsAD, loadingK2, errorK2, projectsK2, activeProject, activateProject, deactivateProject, dispatch}){
     const classes = useStyles();
     const [selected, setSelected] = useState(0);
     let history = useHistory();
@@ -29,11 +32,13 @@ function ProjectsWrap({loadingAD, errorAD, groupsAD, loadingK2, errorK2, project
 
 
     useEffect(() => {
-        console.log("SearchList ", location, history)
 
     }, [projectsK2])
 
-
+    const handleDoubleClickProject = (project) => {
+        activateProject(project)
+        history.push(`/project/${project.K2name}`)
+    }
 
     let components = []
 
@@ -46,21 +51,20 @@ function ProjectsWrap({loadingAD, errorAD, groupsAD, loadingK2, errorK2, project
         let count = 0
         components.push(
             <li>
-                Search Results COUNT: {filteredResults.length} for {location.search.split('=')[1]}
+                Search Results PROJECTS count: {filteredResults.length} for " {location.search.split('=')[1]} "
              </li>
              )
-            // console.log("Rerendering AppProjectsContainer")
-            filteredResults.map((result, index) => {
-                console.log("SINGLE RESULT: ", result)
-                    result.item && components.push(
-                //     <ListItem onDoubleClick={() => {history.push(`/permissions/project/${result.item.K2name}`)}} key={index} className={classes.listItem} >
-                    <ListItem onDoubleClick={() => {history.push(`/project/${result.item.K2name}`)}} key={index} className={classes.listItem} >
+            filteredResults.map((project, index) => {
+                console.log("SINGLE RESULT: ", project)
+                project.item && components.push(
+                //     <ListItem onDoubleClick={() => {history.push(`/permissions/project/${project.item.K2name}`)}} key={index} className={classes.listItem} >
+                    <ListItem onDoubleClick={() => {handleDoubleClickProject(project)}} key={index} className={classes.listItem} >
                         <ListItemAvatar>
-                            <Avatar>
-                                <FolderIcon />
+                            <Avatar className={classes.avatarIcon}>
+                                <FolderSharedIcon />
                             </Avatar>
                         </ListItemAvatar>
-                            {paintMatch(result.item.K2name, result.matches)} - {paintMatch(result.item.K2client, result.matches)}
+                            {paintMatch(project.item.K2name, project.matches)} - {paintMatch(project.item.K2client, project.matches)}
                     </ListItem>
                 )     
             })
@@ -78,9 +82,23 @@ function ProjectsWrap({loadingAD, errorAD, groupsAD, loadingK2, errorK2, project
         )}
 
     return(
-        <p>
-            searching..
-        </p>
+        <Container maxWidth="lg" style={{marginTop: 10, height: '100vh', overflow: 'scroll'}}>
+        <List dense={false}>
+            {projectsK2 && projectsK2.map((project, index) => {
+                    if(project && index <= 20){ return(
+                //     <ListItem onDoubleClick={() => {history.push(`/permissions/project/${project.item.K2name}`)}} key={index} className={classes.listItem} >
+                    <ListItem onDoubleClick={() => {handleDoubleClickProject(project)}} key={index} className={classes.listItem} >
+                        <ListItemAvatar>
+                            <Avatar className={classes.avatarIcon}>
+                                <FolderSharedIcon />
+                            </Avatar>
+                        </ListItemAvatar>
+                            {project.K2name} - {project.K2client}
+                    </ListItem>
+                )}     
+            })}  
+        </List>
+    </Container>
     )
 }
  
@@ -109,15 +127,21 @@ const mapDispatchToProps = dispatch => {
 
 
 
-export default connect(StateToProps, mapDispatchToProps)(ProjectsWrap)
+export default connect(StateToProps, mapDispatchToProps)(SearchListProjectsContainer)
 
 const useStyles = makeStyles((theme) => ({
     root: {
       width: '100%',
     },
+    avatarIcon: {
+        backgroundColor: "#5F7D95",
+        color: "beige"
+    },
     listItem: {
+        backgroundColor: "white",
+        marginBottom: 2,
     '&:hover': {
-        background: "#ffffff",
+        background: "lightBlue",
         },
     }
   }));

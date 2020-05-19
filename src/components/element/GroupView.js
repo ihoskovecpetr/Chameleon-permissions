@@ -21,53 +21,22 @@ import useSortGroupMembers from "../../Hooks/useSortGroupMembers"
 import { setEditingGroupMembers, deleteMemberEditGroup , saveNewGroupMembers} from "../modules/GroupModule"
 
 import GroupView from "./GroupView"
-import CandidateBodyWrap from "./CandidateWrap"
+import CandidateContainer from "./CandidateContainer"
 
 
-function Group({  group_name, 
-                  project_name, 
-                  isEditting, 
-                  currentEditMemb, 
-                  confirmedADMemb,
-                  deleteMembrEditGroup,
-                  saveEditToAD,
-                  startEditingGroup}) {
+function Group({  group_name,
+                  project_name,
+                  anchorEl,
+                  stable,
+                  newOnes,
+                  deleted,
+                  handleOpenAddCand,
+                  handleDeleting,
+                  isEditting,
+                  handleSaveEditToAD,
+                  togglePopover}) {
 
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const {stable, newOnes, deleted} = useSortGroupMembers(confirmedADMemb , currentEditMemb, isEditting)
-
-
-  
-  console.log("Group HOOK sorted: stable, newOnes, deleted ", stable, newOnes, deleted)
-
-
-  const togglePopover = (event) => {
-    if(!anchorEl) handlePopoverOpen(event)
-    if(anchorEl) handlePopoverClose()
-  }
-
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  }; 
-
-
-  const handleDeleting = async (sAMAccountName) => {
-    deleteMembrEditGroup(currentEditMemb ? currentEditMemb : confirmedADMemb , sAMAccountName, group_name)
-  }; 
-
-  const handleOpenAddCand = (e) => {
-    startEditingGroup(group_name)
-    togglePopover(e)
-  }
-
-  const handleSaveEditToAD = () => {
-    saveEditToAD( currentEditMemb, group_name )
-  }
 
   const openPop = Boolean(anchorEl);
 
@@ -81,7 +50,7 @@ function Group({  group_name,
                   </Typography>
                 </div>
                 <div className={clsx(classes.column, classes.helper)} >
-                <Grid container direction="column" spacing={2}>
+                <Grid container direction="row" spacing={2}>
                 {/* {data && data.loading && <Grid item>
                       loading members...  <CircularProgress color="secondary" />
                     </ Grid>
@@ -92,6 +61,7 @@ function Group({  group_name,
                       <Chip 
                           label={`${item.displayName}`}
                           key={item.displayName}
+                          className={classes.anyChip}
                           color="primary"
                           onDelete={() => {handleDeleting(item.sAMAccountName)}} 
                           />
@@ -103,7 +73,8 @@ function Group({  group_name,
                       <Grid item key={item.sAMAccountName}>
                       <Chip 
                           label={`${item.displayName}`}
-                          className={classes.newOneChip}
+                          key={item.sAMAccountName}
+                          className={clsx(classes.newOneChip, classes.anyChip)}
                           onDelete={() => {handleDeleting(item.sAMAccountName)}} 
                           />
                     </ Grid>
@@ -114,9 +85,10 @@ function Group({  group_name,
                       <Grid item key={item.displayName}>
                       <Chip 
                           label={`${item.displayName}`}
+                          key={item.displayName}
+                          className={classes.anyChip}
                           color="secondary"
                           disabled={true}
-                          // onDelete={() => {handleDeleting(item.sAMAccountName)}} 
                           />
                     </ Grid>
                     )
@@ -162,7 +134,7 @@ function Group({  group_name,
                     onClick={togglePopover}
                   >
 
-                    <CandidateBodyWrap 
+                    <CandidateContainer 
                           roleName={group_name} 
                           // fetchDataGroup={fetchDataGroup} 
                           togglePopover={togglePopover} />
@@ -240,6 +212,9 @@ const useStyles = makeStyles((theme) => ({
   divider: {
     marginLeft: 10,
     marginRight: 10,
+  },
+  anyChip: {
+    // display: "inline-block",
   },
   newOneChip: {
     backgroundColor: '#4caf50'

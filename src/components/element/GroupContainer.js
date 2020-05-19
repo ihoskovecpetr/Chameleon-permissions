@@ -12,14 +12,12 @@ import AddIcon from '@material-ui/icons/Add';
 import SaveIcon from '@material-ui/icons/Save';
 import { makeStyles } from '@material-ui/core/styles';
 
-import clsx from 'clsx';
 import { connect } from "react-redux";
 import { createSelector } from 'reselect'
 
 import useSortGroupMembers from "../../Hooks/useSortGroupMembers"
 import { setEditingGroupMembers, deleteMemberEditGroup , saveNewGroupMembers} from "../modules/GroupModule"
-import CandidateContainer from "./CandidateContainer"
-
+import GroupView from "./GroupView"
 
 
 function Group({  group_name, 
@@ -69,102 +67,17 @@ function Group({  group_name,
   const openPop = Boolean(anchorEl);
 
   return (
-            <div className={classes.root}>
-              <ExpansionPanelDetails className={classes.details}>
-                <div className={classes.column}>
-                  <Typography variant="caption">
-                    {group_name.split(`${project_name}_adv_`)[1]}
-                    {group_name}
-                  </Typography>
-                </div>
-                <div className={clsx(classes.column, classes.helper)} >
-                <Grid container direction="column" spacing={2}>
-                {/* {data && data.loading && <Grid item>
-                      loading members...  <CircularProgress color="secondary" />
-                    </ Grid>
-                   } */}
-                  {stable && stable.map(item => {
-                    return(
-                      <Grid item key={item.displayName}>
-                      <Chip 
-                          label={`${item.displayName}`}
-                          color="primary"
-                          onDelete={() => {handleDeleting(item.sAMAccountName)}} 
-                          />
-                    </ Grid>
-                    )
-                  })}
-                  {newOnes && newOnes.map(item => {
-                    return(
-                      <Grid item key={item.sAMAccountName}>
-                      <Chip 
-                          label={`${item.displayName}`}
-                          className={classes.newOneChip}
-                          onDelete={() => {handleDeleting(item.sAMAccountName)}} 
-                          />
-                    </ Grid>
-                    )
-                  })}
-                  {deleted && deleted.map(item => {
-                    return(
-                      <Grid item key={item.displayName}>
-                      <Chip 
-                          label={`${item.displayName}`}
-                          color="secondary"
-                          disabled={true}
-                          // onDelete={() => {handleDeleting(item.sAMAccountName)}} 
-                          />
-                    </ Grid>
-                    )
-                  })}
-
-                    <Grid item>
-                      <Chip 
-                          label="Add"
-                          aria-owns='mouse-over-popover' 
-                          // onDelete={() => {}} 
-                          onClick={handleOpenAddCand}
-                          icon={<AddIcon />}
-                          />
-                    </ Grid>
-                {isEditting && <Grid item>
-                        <Chip 
-                            label="Save"
-                            aria-owns='mouse-over-popover' 
-                            // onDelete={() => {}} 
-                            className={classes.saveChip}
-                            onClick={handleSaveEditToAD}
-                            icon={<SaveIcon />}
-                            />
-                      </ Grid>}
-                  </ Grid>
-                </div>
-                </ExpansionPanelDetails>
-                <Divider className={classes.divider} />
-
-
-                <Popover 
-                    anchorOrigin={{
-                      vertical: 'center',
-                      horizontal: 'right',
-                    }}
-                    transformOrigin={{
-                      vertical: 'center',
-                      horizontal: 'left',
-                    }}
-                    id="mouse-over-popover"
-                    open={openPop}
-                    anchorEl={anchorEl}
-                    onClick={togglePopover}
-                  >
-
-                    <CandidateContainer 
-                          roleName={group_name} 
-                          // fetchDataGroup={fetchDataGroup} 
-                          togglePopover={togglePopover} />
-              </Popover>
-
-            </div>
+            <GroupView group_name={group_name} 
+                      project_name={project_name} 
+                      anchorEl={anchorEl}
+                      stable={stable} 
+                      newOnes={newOnes} 
+                      deleted={deleted}
+                      handleOpenAddCand={handleOpenAddCand}
+                      handleDeleting={handleDeleting}
+                      isEditting={isEditting}
+                      handleSaveEditToAD={handleSaveEditToAD}
+                      togglePopover={togglePopover}/>
   );
 }
 
