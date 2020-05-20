@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react"
-import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import List from '@material-ui/core/List';
@@ -19,7 +18,6 @@ import useFilterSearchPeople from "../../Hooks/useFilterSearchPeople"
 import { usePaintMatches } from "../../Hooks/usePaintMatches"
 
 import { fetchK2Projects , fetchADProjects, setActiveProject, cleanActiveProject } from "../modules/ProjectModule"
-import { fetchADGroupsMembers } from "../modules/GroupModule"
 import ProjectView from "./Project/ProjectView"
 
 
@@ -52,7 +50,6 @@ function SearchListPersonContainer({allPersons, activeProject, activateProject, 
              </li>
              )
             filteredResults.map((result, index) => {
-                console.log("SINGLE RESULT: ", result)
                     result.item && components.push(
                 //     <ListItem onDoubleClick={() => {history.push(`/permissions/person/${result.item.K2name}`)}} key={index} className={classes.listItem} >
                     <ListItem onDoubleClick={() => {history.push(`/person/${result.item._id}`)}} key={index} className={classes.listItem} >
@@ -84,7 +81,6 @@ function SearchListPersonContainer({allPersons, activeProject, activateProject, 
             SEARCH LIST PERSON
         <List dense={false}>
             {filteredResults.map((result, index) => {
-                console.log("SINGLE RESULT: ", result)
                     result && components.push(
                 //     <ListItem onDoubleClick={() => {history.push(`/permissions/person/${result.item.K2name}`)}} key={index} className={classes.listItem} >
                     <ListItem onDoubleClick={() => {history.push(`/person/${result.item.K2name}`)}} key={index} className={classes.listItem} >

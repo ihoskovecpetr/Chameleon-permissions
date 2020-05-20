@@ -14,7 +14,8 @@ const initialState = {
   allPersons: {
     loading: false,
     error: null,
-    persons: []
+    persons: [],
+    mapUsrResource: {}
   },
   activePerson: {
     _id: null,
@@ -41,8 +42,9 @@ export default function reducer(state = initialState, action = {}) {
           allPersons: {
             loading: false,
             error: null,
-            persons: action.payload.presonArr
-          }
+            persons: action.payload.presonArr,
+            mapUsrResource: action.payload.mapUsrResource
+          },
         };
     case FETCH_ALL_USERS_FAILURE:
         return {
@@ -92,7 +94,7 @@ export function fetchAllPerson() {
   return dispatch => {
     // dispatch(fetchK2ProjectsBegin());
     // console.time("Pre call")
-    return server.getUsers()
+    return server.getAllActiveUsers()
       .then(json => {
           console.log("AllPersons HERE ", json)
           console.timeEnd("Pre call");
@@ -111,10 +113,21 @@ export function fetchAllPerson() {
 // type: FETCH_K2_PROJECTS_BEGIN
 // });
 
-export const fetchAllPersonSuccess = data => ({
-type: FETCH_ALL_USERS_SUCCESS,
-payload: { presonArr: data }
-});
+export const fetchAllPersonSuccess = data => {
+
+  const mapUsrResource = data.reduce((acum, current) => {
+    acum[current.resource] = current
+    return acum
+  }, {})
+
+      return ({
+    type: FETCH_ALL_USERS_SUCCESS,
+    payload: { 
+      presonArr: data, 
+      mapUsrResource: mapUsrResource
+    }
+    })
+};
 
 // export const fetchK2ProjectsFailure = error => ({
 // type: FETCH_K2_PROJECTS_FAILURE,

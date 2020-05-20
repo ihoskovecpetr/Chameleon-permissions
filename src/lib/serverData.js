@@ -45,6 +45,18 @@ export async function getK2Projects() {
     return a
 }
 
+//**********************************************************************************************************************
+// BOOKING EVENTS
+//**********************************************************************************************************************
+
+export async function getBookingEvents(_id) {
+
+    const a = await fetchServer('GET', `/booking_events/${_id}`);
+    console.log("Pre getBookingEvents : ", a)
+    return a
+}
+
+
 
 //**********************************************************************************************************************
 // AD GROUPS
@@ -89,8 +101,8 @@ export async function getAdUserInfo(sAMAccountName) {
 //**********************************************************************************************************************
 // USERS
 //**********************************************************************************************************************
-export async function getUsers() {
-    return await fetchServer('GET', '/users/role');
+export async function getAllActiveUsers() {
+    return await fetchServer('GET', '/users/all_active');
 }
 
 export async function getSingleUser(_id) {

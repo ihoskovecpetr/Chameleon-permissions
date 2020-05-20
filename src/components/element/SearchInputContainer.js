@@ -11,13 +11,13 @@ import { connect } from "react-redux";
 import { createSelector } from 'reselect'
 
 import { setActiveProject, cleanActiveProject, setSearchText } from "../modules/ProjectModule"
-import { fetchADGroupsMembers } from "../modules/GroupModule"
 
 function SearchInputContainer({k2Projects, allPersons, activateProject, setSearchtextDisp}){
     const classes = useStyles();
     let history = useHistory();
     const [scoop, setScoop] = useState('projects')
     const [buttonCont, setButtonCont] = useState(<span><b>projects</b> people </span>)
+    var stopEnter = false
 
     useEffect(() => {
         console.log("Search Container history: ", history)
@@ -34,28 +34,34 @@ function SearchInputContainer({k2Projects, allPersons, activateProject, setSearc
       }
     }
     const handleSelectProject = (_, projectObj) => {
+      stopEnter = true
       console.log("Handle ACTIVATE THIS: ", projectObj)
-      activateProject(projectObj)
-      // history.push(`/permissions/project/${projectObj.K2name}`)
-      history.push(`/project/${projectObj.K2name}`)
+      if(projectObj){
+        activateProject(projectObj)
+        // history.push(`/permissions/project/${projectObj.K2name}`)
+        history.push(`/project/${projectObj.K2name}`)
+      }
     }
 
     const handleSelectPerson = (_, personObj) => {
+      stopEnter = true
       // activateProject(projectObj)
       // history.push(`/permissions/project/${projectObj.K2name}`)
       history.push(`/person/${personObj._id}`)
     }
 
     const handleSearchList = (event) => {
-      console.log("onKeyDown: ", event)
+      console.log("onKeyDown: stopEnter ", stopEnter)
       
-      if (event.keyCode === 13) {
+      if (event.keyCode === 13 && !stopEnter) {
+        console.log("Key DOWN in ENTER: ")
         setSearchtextDisp(event.target.value)
         // history.replace(`/permissions/search_projects?q=${event.target.value}`)
         console.log("history.location.pathname: ", history.location.pathname)
         if(scoop === "projects") history.push(`/?q=${event.target.value}`)
         if(scoop === "people") history.push(`/search_people?q=${event.target.value}`)
     }
+    stopEnter = false // >> every time to false, true only when folows handleSelectProject 
     }
 
     const AutComponent = {
@@ -68,7 +74,7 @@ function SearchInputContainer({k2Projects, allPersons, activateProject, setSearc
       onKeyDown={handleSearchList}
       clearOnBlur={false}
       blurOnSelect={true}
-      renderInput={(params) => <TextField {...params} label="Find projects" variant="outlined" />}
+      renderInput={(params) => <TextField {...params} label="Find projects" variant="outlined" autoFocus/>}
     />,
     people: <Autocomplete
     id="combo-box-demo"
@@ -80,7 +86,7 @@ function SearchInputContainer({k2Projects, allPersons, activateProject, setSearc
     placeholder="Place"
     clearOnBlur={false}
     blurOnSelect={true}
-    renderInput={(params) => <TextField {...params} label="Find people" variant="outlined" />}
+    renderInput={(params) => <TextField {...params} label="Find people" variant="outlined" autoFocus/>}
   />,
     }
 
@@ -122,7 +128,6 @@ const mapDispatchToProps = dispatch => {
         dispatch: (x) => dispatch(x),
         activateProject: (projectObj) => dispatch(setActiveProject(projectObj)),
         deactivateProject: () => dispatch(cleanActiveProject()) ,
-        // getGroupsMembers: (Arr) => dispatch(fetchADGroupsMembers(Arr))
         setSearchtextDisp: (searchtext) => dispatch(setSearchText(searchtext))
     }
   }

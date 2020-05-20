@@ -10,7 +10,7 @@ import clsx from 'clsx';
 
 import * as server from '../../../lib/serverData';
 
-import GroupContainer from "../GroupContainer"
+import GroupContainer from "../Group/GroupContainer"
 
 export default function ProjectHeaderView({project_id, project_name, company_name, producer_name, director_name, 
       activeProject, getGroupsMembers, 

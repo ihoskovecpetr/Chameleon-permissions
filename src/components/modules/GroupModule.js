@@ -6,11 +6,21 @@ const ADD_EDIT_GROUP_MEMBERS = 'my-app/group/ADD_EDIT_GROUP_MEMBERS';
 const SET_EDITING_GROUP_MEMBERS = 'my-app/group/SET_EDITING_GROUP_MEMBERS';
 const STOP_EDITING_GROUP = 'my-app/group/STOP_EDITING_GROUP';
 const DELETE_MEMBER_EDIT_GROUP = 'my-app/group/DELETE_MEMBER_EDIT_GROUP';
+
+const FETCH_AD_GROUPS_MEMBERS_BEGIN = 'my-app/group/FETCH_AD_GROUPS_MEMBERS_BEGIN';
 const FETCH_AD_GROUPS_MEMBERS_SUCCESS = 'my-app/group/FETCH_AD_GROUPS_MEMBERS_SUCCESS';
+
+const FETCH_BOOKING_EVENTS_BEGIN = 'my-app/group/FETCH_BOOKING_EVENTS_BEGIN';
+const FETCH_BOOKING_EVENTS_SUCCESS = 'my-app/group/FETCH_BOOKING_EVENTS_SUCCESS';
+
 
 const initialState = {
       confirmedGroupMembers: {test_Skupina: [{name: "jan.tester"}]},
-      editingGroupMembers: {copy_skupina: [{name: "jan.copy.tester"}]}
+      editingGroupMembers: {copy_skupina: [{name: "jan.copy.tester"}]},
+      bookingEventsUsers: {
+        loading: null,
+        resources: []
+      }
   };
 
 // Reducer
@@ -38,7 +48,7 @@ export default function reducer(state = initialState, action = {}) {
             ))
             )
 
-            console.log("NO DUPLICIT: ", mergeMbs)
+            console.log("FINAL EDITTING mbs no DUPLICIT: ", mergeMbs)
             // console.log("ADD_ONE_EDIT_GROUP_MEMBER: DATA ", state.editingGroupMembers[action.payload.group_name])
             // console.log("ADD_ONE_EDIT_GROUP_MEMBER: PAYLOAD ", state.editingGroupMembers[action.payload.group_name])
     
@@ -50,25 +60,49 @@ export default function reducer(state = initialState, action = {}) {
                             }
                     };
 
+    case FETCH_AD_GROUPS_MEMBERS_BEGIN:
+          return {
+              ...state,
+              confirmedGroupMembersLoading: true,
+          };
+
     case FETCH_AD_GROUPS_MEMBERS_SUCCESS:
 
-        console.log("DUCT case 2 reducer: ", action.payload.data)
-
         const confWork = state.confirmedGroupMembers
-
         action.payload.data.map(group => {
             const k = Object.keys(group)[0]
             confWork[k] = group[k]
         })
+          return {
+              ...state,
+              confirmedGroupMembersLoading: false,
+              confirmedGroupMembers: confWork
+          };
 
-            return {
-                ...state,
-                confirmedGroupMembers: confWork
-            };
+    //GET BOOKING EVENTS
 
+    case FETCH_BOOKING_EVENTS_BEGIN:
+          return {
+              ...state,
+              bookingEventsUsers: {
+                loading: true
+              },
+          };
+
+    case FETCH_BOOKING_EVENTS_SUCCESS:
+
+        console.log("Payload: ", action.payload)
+
+          return {
+              ...state,
+              bookingEventsUsers: {
+                loading: false,
+                resources: action.payload.resources
+              },
+          };
+  
 
     case SET_EDITING_GROUP_MEMBERS:
-        console.log("DUCK SET_EDITING_GROUP_MEMBERS")
 
         let prevDataEditGroups
         if(state.editingGroupMembers){
@@ -92,12 +126,10 @@ export default function reducer(state = initialState, action = {}) {
               };
     case STOP_EDITING_GROUP:
 
-        console.log("DUCK STOP_EDITING_GROUP")
 
         let newEditGroups = state.editingGroupMembers
             delete newEditGroups[action.payload.group_name]
         
-        console.log("Groups after closing: ", newEditGroups)
 
               return {
                   ...state,
@@ -108,7 +140,6 @@ export default function reducer(state = initialState, action = {}) {
 
     case DELETE_MEMBER_EDIT_GROUP:
 
-            console.log("DELETING EDIT GRP NEW: ", action.payload.newEditGroup)
 
             return {
                 ...state,
@@ -123,14 +154,13 @@ export default function reducer(state = initialState, action = {}) {
 // Action Creators
 
 // FETCH AD Groups Members
-export function fetchADGroupsMembers(groupsNamesArr) {
+export function fetchProjectGroupsMembers(project_name) {
 
-  console.log("fetchADGroupsMembers MODULE", groupsNamesArr)
  
   return dispatch => {
-    return server.getGroupsMembers(groupsNamesArr)
+    dispatch(fetchADGroupsMembersBegin())
+    return server.getProjectGroupsMembers(project_name)
       .then(json => {
-        console.log("json fetchADGroupsMembersProjects: ", json)
         dispatch(fetchADGroupsMembersSuccess(json.data))
         return json;
       })
@@ -140,24 +170,29 @@ export function fetchADGroupsMembers(groupsNamesArr) {
   };
 }
 
+export function fetchADGroupsMembersBegin(){
+  return ({
+      type: FETCH_AD_GROUPS_MEMBERS_BEGIN,
+  }); 
+} 
 export function fetchADGroupsMembersSuccess(data){
-        return ({
-            type: FETCH_AD_GROUPS_MEMBERS_SUCCESS,
-            payload: { data: data }
-        }); 
+  return ({
+      type: FETCH_AD_GROUPS_MEMBERS_SUCCESS,
+      payload: { data: data }
+  }); 
 } 
 
 
 // FETCH AD Groups Members
-export function fetchProjectGroupsMembers(project_name) {
+export function fetchBookingEvents(project_id) {
 
-  console.log("fetchProjectGroupsMembers MODULE", project_name)
- 
+ console.log("fetchBookingEvents???")
   return dispatch => {
-    return server.getProjectGroupsMembers(project_name)
+    dispatch(fetchBookingEventsBegin())
+    return server.getBookingEvents(project_id)
       .then(json => {
-        console.log("json fetchADGroupsMembersProjects: ", json)
-        dispatch(fetchADGroupsMembersSuccess(json.data))
+        console.log("FETCH_BOOKING_EVENTS_SUCCESS ", json)
+        dispatch(fetchBookingEventsSuccess(json))
         return json;
       })
       .catch(err =>
@@ -166,18 +201,22 @@ export function fetchProjectGroupsMembers(project_name) {
   };
 }
 
-// export function fetchADGroupsMembersSuccess(data){
-//         return ({
-//             type: FETCH_AD_GROUPS_MEMBERS_SUCCESS,
-//             payload: { data: data }
-//         }); 
-// } 
+export function fetchBookingEventsBegin(){
+  return ({
+      type: FETCH_BOOKING_EVENTS_BEGIN,
+  }); 
+} 
+export function fetchBookingEventsSuccess(data){
+  return ({
+      type: FETCH_BOOKING_EVENTS_SUCCESS,
+      payload: { resources: data }
+  }); 
+} 
 
 
 
 // ADD members to edit group
 export function addEditGroupMbrs(candidateObj, group_name){
-  console.log("addEditGroupMbrs: ", candidateObj, group_name)
  return ({
       type: ADD_EDIT_GROUP_MEMBERS,
       payload: { 
@@ -194,7 +233,6 @@ export function addEditGroupMbrs(candidateObj, group_name){
 
 // Set Group to start being Edited
 export function setEditingGroupMembers(group_name){
-    console.log("setEditingGroupMembers: ", group_name)
    return ({
     type: SET_EDITING_GROUP_MEMBERS,
     payload: {  
@@ -205,7 +243,6 @@ export function setEditingGroupMembers(group_name){
 
 // Stop Editing Group
 export function stopEditingGroup(group_name){
-  console.log("stopEditingGroup: ", group_name)
 
  return ({
   type: STOP_EDITING_GROUP,
@@ -223,7 +260,6 @@ export function saveNewGroupMembers(currentEditMemb, group_name) {
   return dispatch => {
   return server.saveGroupMembers(group_name, currentEditMemb)
     .then(json => {
-        console.log("json setNewGroupMembers MODULE: ", json)
         if(json.new_mbs_success === true){
             //Fetch newly added members from AD
             dispatch(fetchADGroupsMembersSuccess([
@@ -243,11 +279,7 @@ export function saveNewGroupMembers(currentEditMemb, group_name) {
 
 export function deleteMemberEditGroup(editGroupOriginal, sAMAccountName, group_name){
 
-    console.log("deleteMemberEditGroup type of act: ", sAMAccountName)
-
     const newEditGroup = editGroupOriginal.filter(item => item.sAMAccountName != sAMAccountName)
-
-    console.log("deleteMemberEditGroup bez sAMAccountName ", newEditGroup)
 
     return ({
         type: DELETE_MEMBER_EDIT_GROUP,

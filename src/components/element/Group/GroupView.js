@@ -1,13 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
-import Typography from '@material-ui/core/Typography';
-import Chip from '@material-ui/core/Chip';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import Popover from '@material-ui/core/Popover';
+import Chip from '@material-ui/core/Chip';
+import TextField from '@material-ui/core/TextField';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import AddIcon from '@material-ui/icons/Add';
 import SaveIcon from '@material-ui/icons/Save';
 import { makeStyles } from '@material-ui/core/styles';
@@ -16,12 +13,10 @@ import clsx from 'clsx';
 import { connect } from "react-redux";
 import { createSelector } from 'reselect'
 
-import useSortGroupMembers from "../../Hooks/useSortGroupMembers"
+import { setEditingGroupMembers, deleteMemberEditGroup , saveNewGroupMembers} from "../../modules/GroupModule"
 
-import { setEditingGroupMembers, deleteMemberEditGroup , saveNewGroupMembers} from "../modules/GroupModule"
-
-import GroupView from "./GroupView"
-import CandidateContainer from "./CandidateContainer"
+import CandidateContainer from "../Candidate/CandidateContainer"
+import CandidateAutofillContainer from "../Candidate/CandidateAutofillContainer"
 
 
 function Group({  group_name,
@@ -30,9 +25,12 @@ function Group({  group_name,
                   stable,
                   newOnes,
                   deleted,
+                  allCandidates,
                   handleOpenAddCand,
                   handleDeleting,
                   isEditting,
+                  loadingMembers,
+                  autoFocus,
                   handleSaveEditToAD,
                   togglePopover}) {
 
@@ -41,19 +39,23 @@ function Group({  group_name,
   const openPop = Boolean(anchorEl);
 
   return (
-            <Grid item>
-                <div className={classes.column}>
-                  <Typography variant="caption">
-                    {group_name.split(`${project_name}_adv_`)[1]}
-                    {group_name}
-                  </Typography>
-                </div>
-                <div className={clsx(classes.column, classes.helper)} >
-                <Grid container direction="row" spacing={2}>
-                {/* {data && data.loading && <Grid item>
+            <Grid item xs={12}> 
+            <Grid container className={classes.groupMainContainer}>
+                <Grid item xs={4}> 
+                  <Grid container justify="center" alignItems="center" className={classes.nameContainer}> 
+                    <Grid item> 
+                          {group_name.split(`${project_name}_adv_`)[1]}
+                          {group_name}
+                    </Grid>
+                  </Grid>
+                </Grid>
+                  <Grid item xs={8}>
+                    <div className={classes.helper} >
+                <Grid container direction="row">
+                {loadingMembers && <Grid item>
                       loading members...  <CircularProgress color="secondary" />
                     </ Grid>
-                   } */}
+                   }
                   {stable && stable.map((item, index) => {
                     return(
                       <Grid item key={item.displayName}>
@@ -81,7 +83,7 @@ function Group({  group_name,
                   })}
                   {deleted && deleted.map(item => {
                     return(
-                      <Grid item key={item.displayName}>
+                    <Grid item key={item.displayName}>
                       <Chip 
                           label={`${item.displayName}`}
                           key={item.displayName}
@@ -93,7 +95,11 @@ function Group({  group_name,
                     )
                   })}
                   </ Grid>
-                  <Grid container direction="row">
+                  <Grid container justify="flex-start" alignItems="center">
+                      {/* <TextField type="text" autoFocus={autoFocus} /> */}
+                      <Grid item>
+                          <CandidateAutofillContainer autoFocus={autoFocus} group_name={group_name} />
+                      </Grid>
                       <Grid item>
                         <Chip 
                             label="Add"
@@ -115,6 +121,8 @@ function Group({  group_name,
                         </ Grid>}
                     </Grid>
                 </div>
+                  </ Grid>
+                </ Grid>
                 
                 <Divider className={classes.divider} />
 
@@ -135,7 +143,7 @@ function Group({  group_name,
                   >
 
                     <CandidateContainer 
-                          roleName={group_name} 
+                          group_name={group_name} 
                           // fetchDataGroup={fetchDataGroup} 
                           togglePopover={togglePopover} />
               </Popover>
@@ -199,11 +207,11 @@ export default connect(StateToProps, mapDispatchToProps)(Group)
 
 
 const useStyles = makeStyles((theme) => ({
-  details: {
-    alignItems: 'center',
+  groupMainContainer:{
+    minHeight: 80,
   },
-  column: {
-    flexBasis: '50%',
+  nameContainer: {
+    height: '100%',
   },
   helper: {
     borderLeft: `2px solid lightGrey`,

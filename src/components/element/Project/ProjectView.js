@@ -8,16 +8,16 @@ import clsx from 'clsx';
 import * as server from '../../../lib/serverData';
 
 import ProjectHeaderView from "./ProjectHeaderView"
-import GroupContainer from "../GroupContainer"
+import GroupContainer from "../Group/GroupContainer"
 
 export default function ProjectView({project_id, project_name, company_name, producer_name, director_name, 
-      activeProject, getGroupsMembers, 
+      activeProject, 
       handleURLChange, handleCleanURL, 
       loadingSpinner, projectGroups, 
-      activateProject, deactivateProject}) {
+      activateProject, deactivateProject, bookingUserResources, mapUsrResource}) {
   const classes = useStyles();
 
-  console.log("ProjectView rendered activeProject: ", activeProject)
+  console.log("ProjectView rendered activeProject: ", bookingUserResources, mapUsrResource)
 
   useEffect(() => {
 
@@ -35,11 +35,14 @@ export default function ProjectView({project_id, project_name, company_name, pro
           loadingSpinner={loadingSpinner} />
 
         <Divider className={classes.divider} />
+        {bookingUserResources && Object.keys(bookingUserResources).map(function(key, index) {
+          console.log("DERER: ", key, mapUsrResource[key])
+        return <p>{bookingUserResources[key]} - {key} - {mapUsrResource && mapUsrResource[key] && mapUsrResource[key].ssoId}</p>
+        })}
       
       <Grid container className={classes.gridGroups}>
         {projectGroups && projectGroups.map((item, index) => {
-         console.log("Project group iterated")
-         return <GroupContainer group_name={item} project_name={project_name} key={index} />
+         return <GroupContainer group_name={item} project_name={project_name} key={index} autoFocus={index === 0} />
         }
         )}
         </Grid>
@@ -56,7 +59,6 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
   },
   divider: {
-    marginLeft: 10,
-    marginRight: 10,
+    margin: 10
   },
 }));

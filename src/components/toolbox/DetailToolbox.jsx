@@ -57,14 +57,14 @@ export default class PersonDetail extends React.PureComponent {
                         </Grid>
                         <Grid item xs={1}>
                             <Grid container justify="center">
-                                <Tooltip placement={"bottomLeft"} overlay={<span>{this.keyboardHints}</span>}>
+                                {/* <Tooltip placement={"bottomLeft"} overlay={<span>{this.keyboardHints}</span>}>
                                     <div className={'icon-keyboard'}><FontAwesomeIcon icon={Icons.ICON_KEYBOARD_SHORTCUTS}/></div>
-                                </Tooltip>
+                                </Tooltip> */}
                             </Grid>
                         </Grid>
                         <Grid item xs={5}>
                             <Grid container justify="center" spacing={2}>
-                                <Grid item>
+                                {/* <Grid item>
                                     <Chip
                                         icon={<FaceIcon />}
                                         label="My own"
@@ -83,7 +83,7 @@ export default class PersonDetail extends React.PureComponent {
                                         variant="outlined"
                                         color="secondary"
                                     />  
-                                </Grid>
+                                </Grid> */}
 
                             </Grid>
                         </Grid>

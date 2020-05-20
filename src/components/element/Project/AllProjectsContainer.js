@@ -8,7 +8,6 @@ import { connect } from "react-redux";
 import { createSelector } from 'reselect'
 
 import { fetchK2Projects , fetchADProjects, setActiveProject, cleanActiveProject } from "../../modules/ProjectModule"
-import { fetchADGroupsMembers } from "../../modules/GroupModule"
 import ProjectView from "./ProjectView"
 import ProjectContainer from "./ProjectContainer"
 

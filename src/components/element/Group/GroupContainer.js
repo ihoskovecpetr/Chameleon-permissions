@@ -15,14 +15,17 @@ import { makeStyles } from '@material-ui/core/styles';
 import { connect } from "react-redux";
 import { createSelector } from 'reselect'
 
-import useSortGroupMembers from "../../Hooks/useSortGroupMembers"
-import { setEditingGroupMembers, deleteMemberEditGroup , saveNewGroupMembers} from "../modules/GroupModule"
+import useSortGroupMembers from "../../../Hooks/useSortGroupMembers"
+import { setEditingGroupMembers, deleteMemberEditGroup , saveNewGroupMembers} from "../../modules/GroupModule"
 import GroupView from "./GroupView"
 
 
 function Group({  group_name, 
                   project_name, 
                   isEditting, 
+                  loadingMembers,
+                  allCandidates,
+                  autoFocus,
                   currentEditMemb, 
                   confirmedADMemb,
                   deleteMembrEditGroup,
@@ -33,7 +36,7 @@ function Group({  group_name,
   const [anchorEl, setAnchorEl] = useState(null);
   const {stable, newOnes, deleted} = useSortGroupMembers(confirmedADMemb , currentEditMemb, isEditting)
 
-  // console.log("PRE Group HOOK sorted: group_name project_name,", group_name, project_name)
+  // console.log("group_name ,", group_name)
   // console.log("Group HOOK sorted: stable, newOnes, deleted ", stable, newOnes, deleted)
 
 
@@ -73,9 +76,12 @@ function Group({  group_name,
                       stable={stable} 
                       newOnes={newOnes} 
                       deleted={deleted}
+                      allCandidates={allCandidates}
                       handleOpenAddCand={handleOpenAddCand}
                       handleDeleting={handleDeleting}
                       isEditting={isEditting}
+                      loadingMembers={loadingMembers}
+                      autoFocus={autoFocus}
                       handleSaveEditToAD={handleSaveEditToAD}
                       togglePopover={togglePopover}/>
   );
@@ -116,7 +122,9 @@ const StateToProps = () => {
       return {
         isEditting: getIsEdit(state, ownProps),
         currentEditMemb: getEditMmbs(state, ownProps),
-        confirmedADMemb: getADMmbs(state, ownProps)
+        confirmedADMemb: getADMmbs(state, ownProps),
+        loadingMembers: state.group_state.confirmedGroupMembersLoading,
+        allCandidates: state.candidate_state.allCandidates.candidates
       }
 
 

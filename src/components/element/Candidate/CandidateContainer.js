@@ -8,13 +8,13 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import { connect } from "react-redux";
 
-import { addEditGroupMbrs } from "../modules/GroupModule"
-import { fetchCandidates } from "../modules/CandidateModule"
-import * as server from '../../lib/serverData';
+import { addEditGroupMbrs } from "../../modules/GroupModule"
+import { fetchCandidates } from "../../modules/CandidateModule"
+import * as server from '../../../lib/serverData';
 import CandidateView from "./CandidateView"
 
 
-function CandidateBodyWrap({roleName, fetchDataGroup, togglePopover, loading, error, members, startEditingGroup, addEditingMbs, dispatch}) {
+function CandidateContainer({group_name, fetchDataGroup, togglePopover, loading, error, members, startEditingGroup, addEditingMbs, dispatch}) {
   const classes = useStyles();
   const [choosenCand, setChoosenCand] = useState([])
   const [filter, setFilter] = useState({
@@ -70,7 +70,8 @@ function CandidateBodyWrap({roleName, fetchDataGroup, togglePopover, loading, er
   const handleAddMembers = (e) => {
     e.preventDefault()
     e.stopPropagation()
-    dispatch(addEditingMbs(choosenCand ,roleName))
+    console.log("choosenCand + group_name ", choosenCand ,group_name)
+    dispatch(addEditingMbs(choosenCand ,group_name))
     togglePopover()
   }
 
@@ -97,7 +98,7 @@ function CandidateBodyWrap({roleName, fetchDataGroup, togglePopover, loading, er
                   handleAddMembers={handleAddMembers}
                   choosenCand={choosenCand}
                   setChoosenCand={setChoosenCand}
-                  groupName={roleName} 
+                  groupName={group_name} 
                   />
   );
 }
@@ -125,4 +126,4 @@ const StateToProps = (state) => {
 }
 
 
-export default connect(StateToProps, mapDispatchToProps)(CandidateBodyWrap)
+export default connect(StateToProps, mapDispatchToProps)(CandidateContainer)

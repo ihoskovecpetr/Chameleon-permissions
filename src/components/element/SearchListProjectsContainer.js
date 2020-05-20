@@ -19,7 +19,6 @@ import useFilterSearchResults from "../../Hooks/useFilterSearchResults"
 import { usePaintMatches } from "../../Hooks/usePaintMatches"
 
 import { fetchK2Projects , fetchADProjects, setActiveProject, cleanActiveProject } from "../modules/ProjectModule"
-import { fetchADGroupsMembers } from "../modules/GroupModule"
 import ProjectView from "./Project/ProjectView"
 
 
@@ -55,7 +54,6 @@ function SearchListProjectsContainer({loadingAD, errorAD, groupsAD, loadingK2, e
              </li>
              )
             filteredResults.map((project, index) => {
-                console.log("SINGLE RESULT: ", project)
                 project.item && components.push(
                 //     <ListItem onDoubleClick={() => {history.push(`/permissions/project/${project.item.K2name}`)}} key={index} className={classes.listItem} >
                     <ListItem onDoubleClick={() => {handleDoubleClickProject(project)}} key={index} className={classes.listItem} >

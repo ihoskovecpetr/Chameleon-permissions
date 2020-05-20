@@ -57,7 +57,7 @@ const mapDispatchToProps = dispatch => {
         dispatch: (x) => dispatch(x),
         // activateProject: (_id, name) => dispatch(setActiveProject(_id, name)),
         deactivateProject: () => dispatch(cleanActiveProject()) ,
-        getProjectGroupsMembers: (group_name) => dispatch(fetchProjectGroupsMembers(group_name))
+        // getProjectGroupsMembers: (group_name) => dispatch(fetchProjectGroupsMembers(group_name))
     }
   }
 

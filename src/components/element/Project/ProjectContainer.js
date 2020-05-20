@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 import { createSelector } from 'reselect'
 
 import { setActiveProject, cleanActiveProject } from "../../modules/ProjectModule"
-import { fetchADGroupsMembers, fetchProjectGroupsMembers } from "../../modules/GroupModule"
+import { fetchProjectGroupsMembers, fetchBookingEvents } from "../../modules/GroupModule"
 import ProjectView from "./ProjectView"
 
 function ProjectContainer(props){
@@ -15,11 +15,21 @@ function ProjectContainer(props){
     const [selected, setSelected] = useState(0);
     let history = useHistory();
 
+    console.log("ProjectContainer: bookingUserResources ", props.bookingUserResources)
+
+    useEffect(() => {
+    console.log("Project CONTTT", props.activeProjectId)
+//       if(props.activeProjectId){
+//         console.log("GET BOOK EVENT fr this event ", props.activeProjectId)
+//         props.getBookingEvents(props.activeProjectId)
+//       }
+      props.getBookingEvents(props.activeProjectId)
+  }, [props.activeProjectId])
+
     useEffect(() => {
 
         if(!props.loadingSpinner){
           console.log("p[rojectGroup: ", props.projectGroups )
-          // props.getGroupsMembers({namesArr: props.projectGroups})
           props.getProjectGroupsMembers("test_project_adv")
         }
     }, [props.loadingSpinner, props.projectGroups])
@@ -34,7 +44,6 @@ function ProjectContainer(props){
     }
 
     return( <ProjectView 
-                getGroupsMembers={(w) => props.getGroupsMembers(w)}
                 {...props}
                 handleURLChange={handleURLChange}
                 handleCleanURL={handleCleanURL}
@@ -43,7 +52,7 @@ function ProjectContainer(props){
 
 
 const isProjectActive = () => createSelector(
-    (state, props) => state.project_state.activeProjectId === props.project_id,
+    (state, props) => state.project_state.activeProject._id === props.project_id,
     (activeBool) => {
       return activeBool
     }
@@ -53,7 +62,10 @@ const StateToProps = () => {
     const getIsProjectActive = isProjectActive()
       return (state, ownProps) => {
         return {
-            activeProject: getIsProjectActive(state, ownProps)
+            activeProject: getIsProjectActive(state, ownProps),
+            activeProjectId: state.project_state.activeProject._id,
+            mapUsrResource: state.person_state.allPersons.mapUsrResource,
+            bookingUserResources: state.group_state.bookingEventsUsers.resources
         }
   
   
@@ -65,8 +77,8 @@ const mapDispatchToProps = dispatch => {
         dispatch: (x) => dispatch(x),
         // activateProject: (_id, name) => dispatch(setActiveProject(_id, name)),
         deactivateProject: () => dispatch(cleanActiveProject()) ,
-        getGroupsMembers: (Arr) => dispatch(fetchADGroupsMembers(Arr)),
-        getProjectGroupsMembers: (group_name) => dispatch(fetchProjectGroupsMembers(group_name))
+        getProjectGroupsMembers: (group_name) => dispatch(fetchProjectGroupsMembers(group_name)),
+        getBookingEvents: (project_id) => dispatch(fetchBookingEvents(project_id))
     }
   }
 
