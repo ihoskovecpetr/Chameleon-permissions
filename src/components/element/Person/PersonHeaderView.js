@@ -40,18 +40,6 @@ export default function PersonHeaderView({person_id, person_name}) {
       </Grid>
     <Grid item xs={3}>
   
-
-          {/* <p className={classes.heading}>
-              {project_name}
-            </p>
-          <div className={classes.column}>
-            <p className={classes.heading}>
-              {director_name}
-            </p>
-          </div>
-          {loadingSpinner ? 
-            loadingSpinner : <p className={classes.secondaryHeading}>{"K2 Project"}</p>
-            } */}
         </Grid>
     </Grid>
     </div>

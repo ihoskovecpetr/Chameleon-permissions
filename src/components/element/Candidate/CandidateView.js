@@ -47,7 +47,6 @@ const roleNames = [
                           >
               <ListItemIcon>
               <Checkbox
-                  // checked={checked.indexOf(value) !== -1}
                   tabIndex={-1}
                   disableRipple
                   inputProps={{ 'aria-labelledby': labelId }}

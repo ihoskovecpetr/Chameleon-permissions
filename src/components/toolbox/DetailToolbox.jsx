@@ -50,7 +50,7 @@ export default class PersonDetail extends React.PureComponent {
                                 <FontAwesomeIcon className={`tool-box-checkbox`} onClick={this.handleRemoveArmed} icon={this.state.removeArmed ? Icons.ICON_CHECKBOX_CHECKED : Icons.ICON_CHECKBOX_UNCHECKED} style={{cursor: 'pointer'}}/>
                             </Fragment>
                         : null} */}
-                        <Grid item xs={4} style={{ padding: 8}}>
+                        <Grid item xs={8} style={{ padding: 8}}>
                             <Grid container justify="center">
                                 <SearchInputContainer />
                             </Grid>

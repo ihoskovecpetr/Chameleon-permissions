@@ -38,30 +38,35 @@ function SearchInputContainer({k2Projects, allPersons, activateProject, setSearc
       console.log("Handle ACTIVATE THIS: ", projectObj)
       if(projectObj){
         activateProject(projectObj)
-        // history.push(`/permissions/project/${projectObj.K2name}`)
-        history.push(`/project/${projectObj.K2name}`)
+        history.push(`/permissions/project/${projectObj.K2name}`)
+        //history.push(`/project/${projectObj.K2name}`)
       }
     }
 
     const handleSelectPerson = (_, personObj) => {
       stopEnter = true
       // activateProject(projectObj)
-      // history.push(`/permissions/project/${projectObj.K2name}`)
-      history.push(`/person/${personObj._id}`)
+      history.push(`/permissions/person/${personObj._id}`)
+      // history.push(`/person/${personObj._id}`)
     }
 
     const handleSearchList = (event) => {
-      console.log("onKeyDown: stopEnter ", stopEnter)
-      
-      if (event.keyCode === 13 && !stopEnter) {
-        console.log("Key DOWN in ENTER: ")
-        setSearchtextDisp(event.target.value)
-        // history.replace(`/permissions/search_projects?q=${event.target.value}`)
-        console.log("history.location.pathname: ", history.location.pathname)
-        if(scoop === "projects") history.push(`/?q=${event.target.value}`)
-        if(scoop === "people") history.push(`/search_people?q=${event.target.value}`)
-    }
-    stopEnter = false // >> every time to false, true only when folows handleSelectProject 
+        
+        if (event.keyCode === 13 && !stopEnter) {
+          console.log("Key DOWN in ENTER: ")
+          setSearchtextDisp(event.target.value)
+          // history.replace(`/permissions/search_projects?q=${event.target.value}`)
+          console.log("history.location.pathname: ", history.location.pathname)
+          if(scoop === "projects") {
+            history.push(`/permissions/?q=${event.target.value}`)
+            // history.push(`/?q=${event.target.value}`)
+          }
+          if(scoop === "people") {
+            // history.push(`/search_people?q=${event.target.value}`)
+            history.push(`/permissions/search_people?q=${event.target.value}`)
+      }
+      stopEnter = false // >> every time to false, true only when folows handleSelectProject 
+      }
     }
 
     const AutComponent = {
@@ -131,7 +136,6 @@ const mapDispatchToProps = dispatch => {
         setSearchtextDisp: (searchtext) => dispatch(setSearchText(searchtext))
     }
   }
-
 
 
 export default connect(StateToProps, mapDispatchToProps)(SearchInputContainer)

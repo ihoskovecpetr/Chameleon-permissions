@@ -51,8 +51,8 @@ function SearchListPersonContainer({allPersons, activeProject, activateProject, 
              )
             filteredResults.map((result, index) => {
                     result.item && components.push(
-                //     <ListItem onDoubleClick={() => {history.push(`/permissions/person/${result.item.K2name}`)}} key={index} className={classes.listItem} >
-                    <ListItem onDoubleClick={() => {history.push(`/person/${result.item._id}`)}} key={index} className={classes.listItem} >
+                        // <ListItem onDoubleClick={() => {history.push(`/person/${result.item._id}`)}} key={index} className={classes.listItem} >
+                    <ListItem onDoubleClick={() => {history.push(`/permissions/person/${result.item._id}`)}} key={index} className={classes.listItem} >
                         <ListItemAvatar>
                             <Avatar className={classes.avatarIcon}>
                                 <PersonIcon />
@@ -82,8 +82,8 @@ function SearchListPersonContainer({allPersons, activeProject, activateProject, 
         <List dense={false}>
             {filteredResults.map((result, index) => {
                     result && components.push(
-                //     <ListItem onDoubleClick={() => {history.push(`/permissions/person/${result.item.K2name}`)}} key={index} className={classes.listItem} >
-                    <ListItem onDoubleClick={() => {history.push(`/person/${result.item.K2name}`)}} key={index} className={classes.listItem} >
+                    // <ListItem onDoubleClick={() => {history.push(`/person/${result.item.K2name}`)}} key={index} className={classes.listItem} >
+                    <ListItem onDoubleClick={() => {history.push(`/permissions/person/${result.item.K2name}`)}} key={index} className={classes.listItem} >
                         <ListItemAvatar>
                             <Avatar className={classes.avatarIcon}>
                                 <PersonIcon />
@@ -102,10 +102,9 @@ function SearchListPersonContainer({allPersons, activeProject, activateProject, 
 const StateToProps = ({project_state, person_state}) => {
     // const getIsProjectActive = isProjectActive()
         return {
-            allPersons: person_state.allPersons.users,
+            allPersons: person_state.allPersons.persons,
             // loadingAD: project_state.ADProjects.loading,
             // errorAD: project_state.ADProjects.error,
-
             searchText: project_state.searchText // this is here just to force rerender on URL query change
         }
   }

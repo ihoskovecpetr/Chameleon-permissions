@@ -20,9 +20,10 @@ import { setEditingGroupMembers, deleteMemberEditGroup , saveNewGroupMembers} fr
 import GroupView from "./GroupView"
 
 
-function Group({  group_name, 
+function GroupContainer({  group_name, 
                   project_name, 
                   isEditting, 
+                  isSaving,
                   loadingMembers,
                   allCandidates,
                   autoFocus,
@@ -36,7 +37,7 @@ function Group({  group_name,
   const [anchorEl, setAnchorEl] = useState(null);
   const {stable, newOnes, deleted} = useSortGroupMembers(confirmedADMemb , currentEditMemb, isEditting)
 
-  // console.log("group_name ,", group_name)
+  console.log("GroupContainer rerender ,", group_name, isSaving)
   // console.log("Group HOOK sorted: stable, newOnes, deleted ", stable, newOnes, deleted)
 
 
@@ -80,6 +81,7 @@ function Group({  group_name,
                       handleOpenAddCand={handleOpenAddCand}
                       handleDeleting={handleDeleting}
                       isEditting={isEditting}
+                      isSaving={isSaving}
                       loadingMembers={loadingMembers}
                       autoFocus={autoFocus}
                       handleSaveEditToAD={handleSaveEditToAD}
@@ -87,21 +89,36 @@ function Group({  group_name,
   );
 }
 
-const makeGetisEditting = () => createSelector(
+const makeGetIsEditting = () => createSelector(
   (state, props) => props.group_name,
   (state) => state.group_state.editingGroupMembers,
   (group_name, editingGroupMembers) => {
     if(editingGroupMembers[group_name]) return true
     return false
   }
-)  
+) 
+
+const makeGetIsSaving = () => createSelector(
+  (state, props) => props.group_name,
+  (state, {group_name}) => {
+    console.log("OK je to tady: ", state.group_state.currentlySavingGroups)
+    // return state.group_state.currentlySavingGroups
+    if(state.group_state.currentlySavingGroups.indexOf(group_name) != -1) return true
+    return false
+  },
+  (group_name, result) => {
+    console.log("currentlySavingGroups CHeck: ")
+    return result
+  }
+) 
 
 const makeGetEditMemb = () => createSelector(
   (state, props) => state.group_state.editingGroupMembers[props.group_name],
   (state) => state.group_state.editingGroupMembers,
   (editActualmemb, xx) => {
     // if(editingGroupMembers[group_name] && editingGroupMembers[group_name].length != 0) return true
-    return editActualmemb
+    // console.log("makeGetEditMemb: ")
+    return editActualmemb //? editActualmemb : []
   }
 ) 
 
@@ -115,20 +132,20 @@ const makeGetConfADMemb = () => createSelector(
 
 
 const StateToProps = () => {
-  const getIsEdit = makeGetisEditting()
+  const getIsEdit = makeGetIsEditting()
+  const getIsSaving = makeGetIsSaving()
   const getEditMmbs = makeGetEditMemb()
   const getADMmbs = makeGetConfADMemb()
     return (state, ownProps) => {
       return {
         isEditting: getIsEdit(state, ownProps),
+        isSaving: getIsSaving(state, ownProps),
         currentEditMemb: getEditMmbs(state, ownProps),
         confirmedADMemb: getADMmbs(state, ownProps),
         loadingMembers: state.group_state.confirmedGroupMembersLoading,
-        allCandidates: state.candidate_state.allCandidates.candidates
-      }
-
-
-}
+        allCandidates: state.candidate_state.allCandidates.candidates,
+      } 
+  }
 }
 
 const mapDispatchToProps = dispatch => {
@@ -140,7 +157,7 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-export default connect(StateToProps, mapDispatchToProps)(Group)
+export default connect(StateToProps, mapDispatchToProps)(GroupContainer)
 
 
 const useStyles = makeStyles((theme) => ({

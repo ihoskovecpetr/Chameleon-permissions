@@ -116,6 +116,11 @@ export function fetchAllPerson() {
 export const fetchAllPersonSuccess = data => {
 
   const mapUsrResource = data.reduce((acum, current) => {
+
+    //Just to bring correct format of AD members
+    current.displayName = current.name
+    current.sAMAccountName = current.ssoId
+
     acum[current.resource] = current
     return acum
   }, {})

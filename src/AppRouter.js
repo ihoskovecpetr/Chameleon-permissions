@@ -15,36 +15,41 @@ import SearchListPersonContainer from './components/element/SearchListPersonCont
 import AllProjectsContainer from './components/element/Project/AllProjectsContainer';
 import PersonContainer from './components/element/Person/PersonContainer';
 
-export default function App_router(props){
+export default function AppRouter(props){
 
 
 return(
     <Router>
         <Switch>
             {/* <Route exact path="/permissions"> */}
-            <Route exact path="/">
+            <Route exact path="/permissions">
                 <AppLayout {...props}>
                     <SearchListProjectsContainer location={location} />
                 </AppLayout>
             </Route>  
             {/* <Route path="/permissions/search_people">    */}
-            <Route path="/search_people">
+            <Route path="/permissions/search_people">
                     <AppLayout {...props}>
                         <SearchListPersonContainer location={location} />
                     </AppLayout>
             </Route>  
             {/* <Route path="/permissions/project/:id"> */}
-            <Route path="/project/:id">
+            <Route path="/permissions/project/:id">
                     <AppLayout {...props}>
                         <AllProjectsContainer />
                     </AppLayout>
             
             </Route>
             {/* <Route path="/permissions/person/:id"> */}
-            <Route path="/person/:id">
+            <Route path="/permissions/person/:id">
                     <AppLayout {...props}>
                         <PersonContainer />
                     </AppLayout>
+            
+            </Route> 
+            <Route path="">
+
+            <NavLink to="/permissions"><p>Router did not match anything, click to go to root</p></NavLink>
             
             </Route> 
         </Switch>

@@ -54,13 +54,6 @@ export default function ProjectHeaderView({project_id, project_name, company_nam
           <Grid item xs={12}>
             {company_name}
           </Grid> 
-
-          <Grid item xs={12} className={classes.greySubtitle}>
-          Producer
-          </Grid>   
-          <Grid item xs={12}>
-            {producer_name}
-          </Grid> 
         </Grid> 
       </Grid>
 
@@ -68,10 +61,10 @@ export default function ProjectHeaderView({project_id, project_name, company_nam
         <Grid container justify="center" alignContent="center">
 
           <Grid item xs={12} className={classes.greySubtitle}>
-            Director
+            Producer
           </Grid>   
           <Grid item xs={12}>
-            {director_name}
+            {producer_name}
           </Grid> 
 
         </Grid> 

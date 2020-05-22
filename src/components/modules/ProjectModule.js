@@ -45,7 +45,6 @@ export default function reducer(state = initialState, action = {}) {
   
     case FETCH_K2_PROJECTS_SUCCESS:
 
-  
         return {
           ...state,
           k2Projects: {
@@ -80,11 +79,13 @@ export default function reducer(state = initialState, action = {}) {
 
     case FETCH_AD_PROJECTS_SUCCESS:
     console.log("SAVIBNG TO RET: ", action.payload.projects)
+
+    
       return {
         ...state,
         ADProjects: {
           loading: false,
-          items: action.payload.projects
+          items: action.payload.projects,
         }
       };
 
@@ -102,10 +103,12 @@ export default function reducer(state = initialState, action = {}) {
 // mark ACTIVE project reducer
 
       case SET_ACTIVE_PROJECT:
+    const obj = action.payload.projectObj
+          obj.projectADGroups = state.ADProjects.items['test_project'] // MOCK state.ADProjects.items[action.payload.projectObj.K2name]
 
         return {
             ...state,
-            activeProject: action.payload.projectObj
+            activeProject: obj
         };
 
     case CLEAN_ACTIVE_PROJECT:

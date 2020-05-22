@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Fuse from 'fuse.js';
 
-export default function useSortGroupMembers(projects, searchText) {
+export default function useFilterSearchPeople(projects, searchText) {
   const [filtered, setFiltered] = useState([{id: 1}]);
 
 
@@ -13,7 +13,12 @@ export default function useSortGroupMembers(projects, searchText) {
       includeMatches: true
     })
 
-    const results = fuse.search(searchText)
+    console.log("Searching by this:  ef : ", searchText)
+    // if(searchText){
+    var results = fuse.search(searchText)
+    // }else{
+    //  var results = projects
+    // }
 
     console.log("useFilterSreach ef : ", results)
 

@@ -36,7 +36,8 @@ function ProjectContainer(props){
 
 
     const handleURLChange = (id) => {
-        history.push(`/${id}`)
+        // history.push(`/${id}`)
+        history.push(`/permissions/${id}`)
     }
 
     const handleCleanURL = () => {

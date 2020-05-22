@@ -1,18 +1,20 @@
 import { useState, useEffect } from 'react';
 import Fuse from 'fuse.js';
 
-export default function useSortGroupMembers(projects, searchText) {
+export default function useFilterSearchPeople(allPerson, searchText) {
   const [filtered, setFiltered] = useState([{id: 1}]);
 
 
 
   useEffect(() => {
 
-    const fuse = new Fuse(projects, {
+    const fuse = new Fuse(allPerson, {
       keys: ['name'],
       includeMatches: true
     })
 
+    console.log("useFilterPeople srch TXT ", searchText, allPerson)
+    
     const results = fuse.search(searchText)
 
     console.log("useFilterPeople ", results)
@@ -22,7 +24,7 @@ export default function useSortGroupMembers(projects, searchText) {
     return () => {
       //ChatAPI.unsubscribeFromFriendStatus(friendID, handleStatusChange);
     };
-  }, [projects, searchText] );
+  }, [allPerson, searchText] );
 
   return filtered;
 }

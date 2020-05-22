@@ -34,13 +34,14 @@ export default function reducer(state = initialState, action = {}) {
 
     case FETCH_ALL_CANDIDATES_SUCCESS:
 
-    console.log("Reduces setting membres: ", action.payload.members)
+    console.log("Reduces setting membres: ", action.payload.members, action.payload.mapCandidByRole)
 
       return {
         ...state,
         allCandidates: {
           loading: false,
-          candidates: action.payload.members
+          candidates: action.payload.members,
+          mapCandidByRole: action.payload.mapCandidByRole
         }
       };
 
@@ -104,7 +105,26 @@ export function fetchAllCandidates(ArrRole) {
                   sAMAccountName: item.ssoId
               })
           })
-        dispatch(fetchAllCandidatesSuccess(formatedMembers));
+          console.log("formatedMembers: pre ", formatedMembers)
+
+        //HEREEE ???????????
+
+        const mapCandidByRole = formatedMembers.reduce((acumul, currentValue) => {
+
+          currentValue.role.map((item, index) => {
+            if(acumul[currentValue.role[index]]){
+              acumul[currentValue.role[index]].push(currentValue)
+            }else{
+              acumul[currentValue.role[index]] = [currentValue]
+            }
+            }
+          )
+          return acumul
+        }, {})
+
+        console.log("formatedMembers: ", mapCandidByRole, formatedMembers)
+
+        dispatch(fetchAllCandidatesSuccess(formatedMembers, mapCandidByRole));
 
       //   return json.managedObjects;
       })
@@ -118,9 +138,9 @@ export const fetchAllCandidatesBegin = () => ({
   type: FETCH_ALL_CANDIDATES_BEGIN
 });
 
-export const fetchAllCandidatesSuccess = data => ({
+export const fetchAllCandidatesSuccess = (formatedMembers, mapCandidByRole) => ({
 type: FETCH_ALL_CANDIDATES_SUCCESS,
-payload: { members: data }
+payload: { members: formatedMembers, mapCandidByRole: mapCandidByRole }
 });
 
 export const fetchAllCandidatesFailure = error => ({

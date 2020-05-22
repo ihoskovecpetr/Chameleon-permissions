@@ -1,12 +1,15 @@
 import React, {useState, useEffect} from 'react';
 import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography'; 
 import Divider from '@material-ui/core/Divider';
+import Chip from '@material-ui/core/Chip';
 
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
 import * as server from '../../../lib/serverData';
 
+import ProjectManageAllContainer from "./ProjectManageAllContainer"
 import ProjectHeaderView from "./ProjectHeaderView"
 import GroupContainer from "../Group/GroupContainer"
 
@@ -35,11 +38,26 @@ export default function ProjectView({project_id, project_name, company_name, pro
           loadingSpinner={loadingSpinner} />
 
         <Divider className={classes.divider} />
+
+        <ProjectManageAllContainer projectGroups={projectGroups} />
+
+        <Grid container direction="row">
+        <Grid item xs={12} alignContent="flex-start">
+          <Typography >BOOKING RESOURCES</Typography>
+        </Grid>
         {bookingUserResources && Object.keys(bookingUserResources).map(function(key, index) {
-          console.log("DERER: ", key, mapUsrResource[key])
-        return <p>{bookingUserResources[key]} - {key} - {mapUsrResource && mapUsrResource[key] && mapUsrResource[key].ssoId}</p>
+        return <Grid item key={key}> <Chip 
+                    label={`${mapUsrResource && mapUsrResource[key] && mapUsrResource[key].ssoId}`}
+                    key={key}
+                    className={classes.anyChip}
+                    color="secondary"
+                    disabled={true}
+                    />
+                <p>Resource : {key} <br/> Type: {bookingUserResources[key]} - {mapUsrResource && mapUsrResource[key] && mapUsrResource[key].ssoId}</p>
+              </ Grid>
         })}
-      
+      </ Grid>
+
       <Grid container className={classes.gridGroups}>
         {projectGroups && projectGroups.map((item, index) => {
          return <GroupContainer group_name={item} project_name={project_name} key={index} autoFocus={index === 0} />

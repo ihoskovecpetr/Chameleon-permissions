@@ -82,14 +82,11 @@ export async function saveGroupMembers(group_name, currentEditMemb) {
     return await fetchServer('POST', `/save/${group_name}`, {users: currentEditMemb});
 }
 
-// export async function addGroupMembers(groupName, usersArr) {
-//     return await fetchServer('POST', '/add_members', {group: groupName, usersArr: usersArr});
-// }
+export async function saveMultipleGroupsMembers(groupsObjArr) {
+    console.log("SRVR POST save_multiple_groups")
+    return await fetchServer('POST', `/save_multiple_groups`, {groupsObjArr: groupsObjArr});
+}
 
-// export async function removeGroupMembers(groupName, user) {
-//     console.log("removeGroupMembers: BODY: ", groupName, user)
-//     return await fetchServer('POST', '/remove_members', {group: groupName, user: user});
-// }
 
 //**********************************************************************************************************************
 // AD USER INFO

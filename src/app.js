@@ -10,7 +10,7 @@ import { getAuthenticatedUser } from './lib/serverData';
 
 import Reducer from './reducers/Reducer';
 
-import AppRouter from './app_router';
+import AppRouter from './AppRouter';
 import AppLayout from './components/AppLayout';
 import * as Actions from './actions_redux/Actions';
 import * as ProjectActions from './components/modules/ProjectModule';

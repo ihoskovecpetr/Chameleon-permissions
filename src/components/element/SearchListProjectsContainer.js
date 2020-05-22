@@ -29,14 +29,20 @@ function SearchListProjectsContainer({loadingAD, errorAD, groupsAD, loadingK2, e
     const paintMatch = usePaintMatches();
     let filteredResults = useFilterSearchResults(projectsK2, history.location.search.split('=')[1])
 
-
+    
     useEffect(() => {
 
     }, [projectsK2])
 
+    useEffect(() => {
+        console.log("SearchListProjectsContainer: filteredResults ", filteredResults)
+    },)
+
     const handleDoubleClickProject = (project) => {
         activateProject(project)
-        history.push(`/project/${project.K2name}`)
+        console.log("handleDoubleClickProject: ", project)
+        // history.push(`/project/${project.K2name}`)
+        history.push(`/permissions/project/${project.K2name}`)
     }
 
     let components = []
@@ -54,8 +60,8 @@ function SearchListProjectsContainer({loadingAD, errorAD, groupsAD, loadingK2, e
              </li>
              )
             filteredResults.map((project, index) => {
+                console.log("Podminka pushing COMPDS:L ", project)
                 project.item && components.push(
-                //     <ListItem onDoubleClick={() => {history.push(`/permissions/project/${project.item.K2name}`)}} key={index} className={classes.listItem} >
                     <ListItem onDoubleClick={() => {handleDoubleClickProject(project)}} key={index} className={classes.listItem} >
                         <ListItemAvatar>
                             <Avatar className={classes.avatarIcon}>
@@ -69,6 +75,7 @@ function SearchListProjectsContainer({loadingAD, errorAD, groupsAD, loadingK2, e
     }
 
     if(components.length != 0){
+        console.log("Printing Components: ", components)
         return (
             <Container maxWidth="lg" style={{marginTop: 10, height: '100vh', overflow: 'scroll'}}>
                 <List dense={false}>
@@ -84,7 +91,6 @@ function SearchListProjectsContainer({loadingAD, errorAD, groupsAD, loadingK2, e
         <List dense={false}>
             {projectsK2 && projectsK2.map((project, index) => {
                     if(project && index <= 20){ return(
-                //     <ListItem onDoubleClick={() => {history.push(`/permissions/project/${project.item.K2name}`)}} key={index} className={classes.listItem} >
                     <ListItem onDoubleClick={() => {handleDoubleClickProject(project)}} key={index} className={classes.listItem} >
                         <ListItemAvatar>
                             <Avatar className={classes.avatarIcon}>

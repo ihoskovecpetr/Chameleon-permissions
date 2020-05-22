@@ -28,46 +28,11 @@ function CandidateAutofillContainer({AllCandidates, autoFocus, group_name, roleN
 
   const rolesArr = []
 
-
-  // useEffect(() => {
-
-  //   for (var key in filter) {
-  //     switch(key) {
-  //       case "Director":
-  //         if (filter[key]) {
-  //           rolesArr.push("Director")
-  //         }else{
-  //           rolesArr.filter(item => item != "Director")
-  //         }
-  //         break;
-  //       case "threeD":
-  //         if (filter[key]) {
-  //           rolesArr.push("3D")
-  //         }else{
-  //           rolesArr.filter(item => item != "3D")
-  //         }
-  //         break;
-  //       case "twoD":
-  //         if (filter[key]) {
-  //           rolesArr.push("2D")
-  //         }else{
-  //           rolesArr.filter(item => item != "2D")
-  //         }
-  //         break;
-  //       default:
-  //     }
-  //   }
-
-  //   console.log("RolesArr: ", rolesArr)
-
-  //   dispatch(fetchCandidates(rolesArr))
-
-  // }, [filter])
-
   const handleSelectCandidate = (e, personObj) => {
     if(personObj){
+      dispatch(setEditingGroupMembers(group_name))
       console.log("Autofill: personObj ,group_name: ", [personObj] ,group_name)
-        dispatch(addEditingMbs([personObj] ,group_name))
+      dispatch(addEditingMbs([personObj] ,group_name))
     }
   }
 
@@ -77,9 +42,9 @@ function CandidateAutofillContainer({AllCandidates, autoFocus, group_name, roleN
 
       console.log("CandAutofill KeyDown")
 
-      if (true) {
-        dispatch(setEditingGroupMembers(group_name))
-    }
+    //   if (true) {
+    //     dispatch(setEditingGroupMembers(group_name))
+    // }
 
   }
 
@@ -102,6 +67,19 @@ function CandidateAutofillContainer({AllCandidates, autoFocus, group_name, roleN
 //   }
 // }
 
+  console.log("CAndid Options: ", AllCandidates)
+
+  useEffect(() => {
+    const newCandidates = AllCandidates.reduce((acumul, currentValue) => {
+      currentValue.sorter = currentValue.role[0]
+      acumul.push(currentValue)
+      return acumul
+    }, [])
+
+    console.log("New Curr Value: ", newCandidates)
+  }, [AllCandidates])
+
+
   return (
     <Autocomplete
       id={`combo-box-demo${group_name}`}
@@ -110,8 +88,18 @@ function CandidateAutofillContainer({AllCandidates, autoFocus, group_name, roleN
       className={classes.autocompleteInput}
       onChange={handleSelectCandidate}
       onKeyDown={handleKeyDown}
+      renderGroup={(option) => {
+        console.log("renderGroup: ", option)
+      return <span>
+                <p className={classes.greyGroup}>{option.group.split(":")[1]}</p>
+                {option.children}
+              </span>
+      }}
+      groupBy={(option) => option.sorter}
       clearOnBlur={false}
       blurOnSelect={false}
+      // multiple={true}
+      disableCloseOnSelect={true}
       renderInput={(params) => <TextField {...params} label="Find projects" variant="standard" autoFocus={autoFocus}/>}
     />
     // <CandidateView loading={loading} 
@@ -153,5 +141,11 @@ const useStyles = makeStyles((theme) => ({
   },
   autocompleteInput: {
     width: 200
+  },
+  greyGroup:{
+    color: "lightGrey",
+    fontWeight: 600,
+    paddingLeft: 10,
+    margin: 0
   }
 }));

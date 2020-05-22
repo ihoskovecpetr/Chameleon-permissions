@@ -18,8 +18,7 @@ import { setEditingGroupMembers, deleteMemberEditGroup , saveNewGroupMembers} fr
 import CandidateContainer from "../Candidate/CandidateContainer"
 import CandidateAutofillContainer from "../Candidate/CandidateAutofillContainer"
 
-
-function Group({  group_name,
+function GroupView({  group_name,
                   project_name,
                   anchorEl,
                   stable,
@@ -29,14 +28,16 @@ function Group({  group_name,
                   handleOpenAddCand,
                   handleDeleting,
                   isEditting,
+                  isSaving,
                   loadingMembers,
                   autoFocus,
                   handleSaveEditToAD,
                   togglePopover}) {
 
   const classes = useStyles();
-
   const openPop = Boolean(anchorEl);
+
+  // console.log("GroupView rerender")
 
   return (
             <Grid item xs={12}> 
@@ -119,6 +120,7 @@ function Group({  group_name,
                               icon={<SaveIcon />}
                               />
                         </ Grid>}
+                        {isSaving && <p>Saving..</p>}
                     </Grid>
                 </div>
                   </ Grid>
@@ -152,58 +154,8 @@ function Group({  group_name,
   );
 }
 
-const makeGetisEditting = () => createSelector(
-  (state, props) => props.group_name,
-  (state) => state.group_state.editingGroupMembers,
-  (group_name, editingGroupMembers) => {
-    if(editingGroupMembers[group_name]) return true
-    return false
-  }
-)  
 
-const makeGetEditMemb = () => createSelector(
-  (state, props) => state.group_state.editingGroupMembers[props.group_name],
-  (state) => state.group_state.editingGroupMembers,
-  (editActualmemb, xx) => {
-    // if(editingGroupMembers[group_name] && editingGroupMembers[group_name].length != 0) return true
-    return editActualmemb
-  }
-) 
-
-const makeGetConfADMemb = () => createSelector(
-  (state, props) => state.group_state.confirmedGroupMembers[props.group_name],
-  (confADMemb) => {
-    return confADMemb
-  }
-) 
-
-
-
-const StateToProps = () => {
-  const getIsEdit = makeGetisEditting()
-  const getEditMmbs = makeGetEditMemb()
-  const getADMmbs = makeGetConfADMemb()
-    return (state, ownProps) => {
-      return {
-        isEditting: getIsEdit(state, ownProps),
-        currentEditMemb: getEditMmbs(state, ownProps),
-        confirmedADMemb: getADMmbs(state, ownProps)
-      }
-
-
-}
-}
-
-const mapDispatchToProps = dispatch => {
-  return {
-      dispatch: (action) => dispatch(action),
-      startEditingGroup: (group_name) => dispatch(setEditingGroupMembers(group_name)),
-      deleteMembrEditGroup: (editGroupOriginal, sAMAccountName, group_name) => dispatch(deleteMemberEditGroup(editGroupOriginal, sAMAccountName, group_name)),
-      saveEditToAD: (currentEditMemb, group_name) => dispatch(saveNewGroupMembers(currentEditMemb, group_name)),
-  }
-}
-
-export default connect(StateToProps, mapDispatchToProps)(Group)
+export default GroupView
 
 
 const useStyles = makeStyles((theme) => ({

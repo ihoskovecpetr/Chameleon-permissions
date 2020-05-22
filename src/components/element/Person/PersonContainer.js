@@ -22,11 +22,13 @@ function PersonContainer({activePerson, dispatch}){
 
 
     const handleURLChange = (id) => {
-        history.push(`/${id}`)
+      // history.push(`/permissions/${id}`)
+      history.push(`/permissions/${id}`)
     }
 
     const handleCleanURL = () => {
-        history.replace(`/`)
+        // history.replace(`/`)
+        history.replace(`/permissions`)
     }
 
     return( <PersonView 

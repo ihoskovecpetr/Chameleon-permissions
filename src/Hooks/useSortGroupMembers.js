@@ -41,6 +41,9 @@ function inSecondOnly(list1, list2) {
 }
 
   useEffect(() => {
+
+    console.log("useSortGroupMembers: confAD a editMbs: ", confADMembs, editMembers)
+    if(!editMembers){editMembers = []}
       if(isEditting){
             const newStable = inBoth(confADMembs, editMembers)
             const newDeleted = inFirstOnly(confADMembs, editMembers)
@@ -50,7 +53,7 @@ function inSecondOnly(list1, list2) {
             console.log("newNewOnes: ", newNewOnes)
             setMembers({stable: newStable, deleted: newDeleted, newOnes: newNewOnes})
       } else{
-            setMembers(prev => { return { ...prev ,stable: confADMembs}})
+            setMembers(prev => { return { ...prev ,stable: confADMembs, deleted: [], newOnes: []}})
       }
 
     return () => {
