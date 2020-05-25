@@ -9,7 +9,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
-import FolderSharedIcon from '@material-ui/icons/FolderShared';
+import MovieFilterIcon from '@material-ui/icons/MovieFilter';
 
 import { NavLink, useHistory } from "react-router-dom"
 import { connect } from "react-redux";
@@ -62,13 +62,13 @@ function SearchListProjectsContainer({loadingAD, errorAD, groupsAD, loadingK2, e
             filteredResults.map((project, index) => {
                 console.log("Podminka pushing COMPDS:L ", project)
                 project.item && components.push(
-                    <ListItem onDoubleClick={() => {handleDoubleClickProject(project)}} key={index} className={classes.listItem} >
+                    <ListItem onClick={() => {handleDoubleClickProject(project)}} key={index} className={classes.listItem} >
                         <ListItemAvatar>
                             <Avatar className={classes.avatarIcon}>
-                                <FolderSharedIcon />
+                                <MovieFilterIcon />
                             </Avatar>
                         </ListItemAvatar>
-                            {paintMatch(project.item.K2name, project.matches)} - {paintMatch(project.item.K2client, project.matches)}
+                        <ListItemText primary={`${paintMatch(project.item.K2name, project.matches)} - ${paintMatch(project.item.K2client, project.matches)}`} />
                     </ListItem>
                 )     
             })
@@ -91,13 +91,14 @@ function SearchListProjectsContainer({loadingAD, errorAD, groupsAD, loadingK2, e
         <List dense={false}>
             {projectsK2 && projectsK2.map((project, index) => {
                     if(project && index <= 20){ return(
-                    <ListItem onDoubleClick={() => {handleDoubleClickProject(project)}} key={index} className={classes.listItem} >
+                    <ListItem onClick={() => {handleDoubleClickProject(project)}} key={index} className={classes.listItem} >
                         <ListItemAvatar>
                             <Avatar className={classes.avatarIcon}>
-                                <FolderSharedIcon />
+                                <MovieFilterIcon />
                             </Avatar>
                         </ListItemAvatar>
-                            {project.K2name} - {project.K2client}
+                        <ListItemText primary={`${project.K2name} - ${project.K2client}`} />
+                            
                     </ListItem>
                 )}     
             })}  

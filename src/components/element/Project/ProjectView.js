@@ -42,7 +42,7 @@ export default function ProjectView({project_id, project_name, company_name, pro
         <ProjectManageAllContainer projectGroups={projectGroups} />
 
         <Grid container direction="row">
-        <Grid item xs={12} alignContent="flex-start">
+        <Grid item xs={12}>
           <Typography >BOOKING RESOURCES</Typography>
         </Grid>
         {bookingUserResources && Object.keys(bookingUserResources).map(function(key, index) {

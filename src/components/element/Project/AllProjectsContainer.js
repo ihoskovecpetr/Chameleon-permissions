@@ -51,7 +51,7 @@ function AllProjectsContainer({loadingAD, errorAD, groupsAD, loadingK2, errorK2,
                         project_id={activeProject.K2rid}
                         project_name={activeProject.K2name} 
                         company_name={activeProject.K2client ? activeProject.K2client : "company_name"}
-                        producer_name={activeProject.person && activeProject.person[0].id ? activeProject.person[0].id.name : "No producer"}
+                        producer_name={activeProject.person && activeProject.person[0] && activeProject.person[0].id ? activeProject.person[0].id.name : "No producer"}
                         director_name={activeProject.person && activeProject.person[1] && activeProject.person[1].id ? activeProject.person[1].id.name : "No director"}
                         idx={count} 
                         key={activeProject.K2rid} 

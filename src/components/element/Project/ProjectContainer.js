@@ -9,6 +9,7 @@ import { createSelector } from 'reselect'
 import { setActiveProject, cleanActiveProject } from "../../modules/ProjectModule"
 import { fetchProjectGroupsMembers, fetchBookingEvents } from "../../modules/GroupModule"
 import ProjectView from "./ProjectView"
+import * as CandidateActions from "../../modules/CandidateModule"
 
 function ProjectContainer(props){
     const classes = useStyles();
@@ -16,6 +17,10 @@ function ProjectContainer(props){
     let history = useHistory();
 
     console.log("ProjectContainer: bookingUserResources ", props.bookingUserResources)
+
+    useEffect(() => {
+      props.getAllCandidates(["3D", "2D","MP","GR"])
+    }, [])
 
     useEffect(() => {
     console.log("Project CONTTT", props.activeProjectId)
@@ -43,6 +48,8 @@ function ProjectContainer(props){
     const handleCleanURL = () => {
         history.replace(`/`)
     }
+
+    // return(<p>ProjectView</p>)
 
     return( <ProjectView 
                 {...props}
@@ -79,7 +86,8 @@ const mapDispatchToProps = dispatch => {
         // activateProject: (_id, name) => dispatch(setActiveProject(_id, name)),
         deactivateProject: () => dispatch(cleanActiveProject()) ,
         getProjectGroupsMembers: (group_name) => dispatch(fetchProjectGroupsMembers(group_name)),
-        getBookingEvents: (project_id) => dispatch(fetchBookingEvents(project_id))
+        getBookingEvents: (project_id) => dispatch(fetchBookingEvents(project_id)),
+        getAllCandidates: (roles_arr) => dispatch(CandidateActions.fetchAllCandidates(roles_arr))
     }
   }
 

@@ -15,7 +15,6 @@ import AppLayout from './components/AppLayout';
 import * as Actions from './actions_redux/Actions';
 import * as ProjectActions from './components/modules/ProjectModule';
 import * as PersonActions from './components/modules/PersonModule';
-import * as CandidateActions from "./components/modules/CandidateModule"
 
 import initialState from './reducers/InitialState';
 import createIconLibrary from './lib/createIconLibrary';
@@ -85,7 +84,6 @@ const rootElement = document.getElementById('app');
         store.dispatch(ProjectActions.fetchADProjects());
         store.dispatch(ProjectActions.fetchK2Projects());
         store.dispatch(PersonActions.fetchAllPerson());
-        store.dispatch(CandidateActions.fetchAllCandidates(["3D", "2D"]))
         ReactDOM.render(
             <Provider store={store}>
                 <AppRouterConnected/>

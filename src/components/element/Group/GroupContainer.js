@@ -16,7 +16,7 @@ import { connect } from "react-redux";
 import { createSelector } from 'reselect'
 
 import useSortGroupMembers from "../../../Hooks/useSortGroupMembers"
-import { setEditingGroupMembers, deleteMemberEditGroup , saveNewGroupMembers} from "../../modules/GroupModule"
+import { setEditingGroupMembers, deleteMemberEditGroup , saveNewGroupMembers, stopEditingGroup} from "../../modules/GroupModule"
 import GroupView from "./GroupView"
 
 
@@ -31,6 +31,7 @@ function GroupContainer({  group_name,
                   confirmedADMemb,
                   deleteMembrEditGroup,
                   saveEditToAD,
+                  stopEditingGroupDisp,
                   startEditingGroup}) {
 
   const classes = useStyles();
@@ -68,6 +69,10 @@ function GroupContainer({  group_name,
     saveEditToAD( currentEditMemb, group_name )
   }
 
+  const handleStopEditingGroup = () => {
+    stopEditingGroupDisp(group_name)
+  }
+
   const openPop = Boolean(anchorEl);
 
   return (
@@ -84,6 +89,7 @@ function GroupContainer({  group_name,
                       isSaving={isSaving}
                       loadingMembers={loadingMembers}
                       autoFocus={autoFocus}
+                      handleStopEditingGroup={handleStopEditingGroup}
                       handleSaveEditToAD={handleSaveEditToAD}
                       togglePopover={togglePopover}/>
   );
@@ -154,6 +160,7 @@ const mapDispatchToProps = dispatch => {
       startEditingGroup: (group_name) => dispatch(setEditingGroupMembers(group_name)),
       deleteMembrEditGroup: (editGroupOriginal, sAMAccountName, group_name) => dispatch(deleteMemberEditGroup(editGroupOriginal, sAMAccountName, group_name)),
       saveEditToAD: (currentEditMemb, group_name) => dispatch(saveNewGroupMembers(currentEditMemb, group_name)),
+      stopEditingGroupDisp: (group_name) => dispatch(stopEditingGroup(group_name))
   }
 }
 

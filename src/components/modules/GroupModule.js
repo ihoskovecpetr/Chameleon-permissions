@@ -135,6 +135,7 @@ export default function reducer(state = initialState, action = {}) {
                     [action.payload.groupName]: groupMembers}
               };
     case STOP_EDITING_GROUP:
+      console.log("Stop Editing GROUP: pre", )
 
         let newEditGroups = state.editingGroupMembers
             delete newEditGroups[action.payload.group_name]
@@ -303,6 +304,8 @@ export function setEditingGroupMembers(group_name){
 // Stop Editing Group
 export function stopEditingGroup(group_name){
 
+  console.log("Stop Editing this group: ", group_name)
+
  return ({
   type: STOP_EDITING_GROUP,
   payload: {  
@@ -382,6 +385,7 @@ console.log("groupsObjObj: ", groupsObjObj)
                 ]))
                 //Close (delete) Editting group
                 dispatch(stopEditingGroup(groupName))
+                dispatch(stopSavingStageGroup(groupName))
 
             }
           return json;

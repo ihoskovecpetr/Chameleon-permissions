@@ -2,9 +2,13 @@ import React, {useState, useEffect} from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import BlockIcon from '@material-ui/icons/Block';
+import SaveIcon from '@material-ui/icons/Save';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -40,7 +44,6 @@ export default function ProjectManageAllView({
           <Grid container justify="center" alignContent="center" className={classes.iconContainer}>
             <Grid item>
               {/* {group_name} */}
-              -
             </Grid>
           </Grid>
         </Grid>
@@ -53,9 +56,9 @@ export default function ProjectManageAllView({
         />
         <Button variant="contained" color="primary" onClick={handlePopulateFromBooking}> Populate from BOOKING </ Button>
         <Button variant="contained" className={classes.buttonFillAll} onClick={handleFillAll}> Fill All </ Button>
-        <Button variant="contained" color="secondary" onClick={handleDeleteAllEditGroupsMbs}> Clear All </ Button>
-        <Button variant="contained" color="primary" onClick={stopEditingAllGroups}>Cancel</ Button>
-        <Button variant="contained" className={classes.buttonSave} onClick={handleSaveAll} > Save All </ Button>
+        <Button variant="contained" color="secondary" startIcon={<DeleteIcon />} onClick={handleDeleteAllEditGroupsMbs}> Clear All </ Button>
+        <Button variant="contained" startIcon={<BlockIcon />}  className={classes.buttonCancelChanges} onClick={stopEditingAllGroups}>Cancel changes</ Button>
+        <Button variant="contained" startIcon={<SaveIcon />} className={classes.buttonSave} onClick={handleSaveAll} > Save All </ Button>
         </ FormGroup>
       </Grid>
     </div>
@@ -72,6 +75,10 @@ const useStyles = makeStyles((theme) => ({
   },
   buttonFillAll: {
     backgroundColor: "#4caf50"
+  },
+  buttonCancelChanges: {
+    backgroundColor: '#58B3BF',
+    color: "white"
   },
   avatarIcon: {
     backgroundColor: "#5F7D95",

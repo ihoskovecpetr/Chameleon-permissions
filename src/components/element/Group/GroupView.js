@@ -4,9 +4,16 @@ import Divider from '@material-ui/core/Divider';
 import Popover from '@material-ui/core/Popover';
 import Chip from '@material-ui/core/Chip';
 import TextField from '@material-ui/core/TextField';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import ListItemText from '@material-ui/core/ListItemText';
+import Avatar from '@material-ui/core/Avatar';
+import FolderSharedIcon from '@material-ui/icons/FolderShared';
+
 import CircularProgress from '@material-ui/core/CircularProgress';
 import AddIcon from '@material-ui/icons/Add';
 import SaveIcon from '@material-ui/icons/Save';
+import BlockIcon from '@material-ui/icons/Block';
 import { makeStyles } from '@material-ui/core/styles';
 
 import clsx from 'clsx';
@@ -31,22 +38,27 @@ function GroupView({  group_name,
                   isSaving,
                   loadingMembers,
                   autoFocus,
+                  handleStopEditingGroup,
                   handleSaveEditToAD,
                   togglePopover}) {
 
   const classes = useStyles();
   const openPop = Boolean(anchorEl);
 
-  // console.log("GroupView rerender")
-
   return (
             <Grid item xs={12}> 
             <Grid container className={classes.groupMainContainer}>
                 <Grid item xs={4}> 
-                  <Grid container justify="center" alignItems="center" className={classes.nameContainer}> 
+                  <Grid container justify="flex-start" alignItems="center" className={classes.nameContainer}> 
                     <Grid item> 
-                          {group_name.split(`${project_name}_adv_`)[1]}
-                          {group_name}
+                        <ListItem>
+                          <ListItemAvatar>
+                              <Avatar className={classes.avatarIcon}>
+                                  <FolderSharedIcon />
+                              </Avatar>
+                          </ListItemAvatar>
+                            <ListItemText primary={`${group_name}`} />
+                        </ListItem>
                     </Grid>
                   </Grid>
                 </Grid>
@@ -88,7 +100,7 @@ function GroupView({  group_name,
                       <Chip 
                           label={`${item.displayName}`}
                           key={item.displayName}
-                          className={classes.anyChip}
+                          className={classes.disabledChip}
                           color="secondary"
                           disabled={true}
                           />
@@ -118,6 +130,17 @@ function GroupView({  group_name,
                               className={classes.saveChip}
                               onClick={handleSaveEditToAD}
                               icon={<SaveIcon />}
+                              />
+                        </ Grid>}
+                        {isEditting && <Grid item>
+                          <Chip 
+                              label="Cancel changes"
+                              aria-owns='mouse-over-popover' 
+                              // onDelete={() => {}} 
+                              className={classes.cancelChip}
+                              color="primary"
+                              onClick={handleStopEditingGroup}
+                              icon={<BlockIcon />}
                               />
                         </ Grid>}
                         {isSaving && <p>Saving..</p>}
@@ -173,6 +196,13 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 10,
     marginRight: 10,
   },
+  disabledChip:{
+    backgroundColor: '#CE6F6F',
+    textDecoration: "line-through"
+  },
+  cancelChip:{
+    backgroundColor: '#58B3BF',
+  },
   anyChip: {
     // display: "inline-block",
   },
@@ -181,5 +211,10 @@ const useStyles = makeStyles((theme) => ({
   },
   saveChip: {
     backgroundColor: '#daaa4b'
-  }
+  },
+  avatarIcon: {
+    backgroundColor: "beige",
+    color: "#5F7D95",
+    border: "1px solid #5F7D95"
+  },
 }));

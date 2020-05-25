@@ -12,6 +12,11 @@ const FETCH_ALL_CANDIDATES_FAILURE = 'my-app/project/FETCH_ALL_CANDIDATES_FAILUR
 
 
 const initialState = {
+    allCandidates: {
+      loading: false,
+      error: null,
+      candidates: null
+    },
     loading: false,
     error: null,
     candidates: null
@@ -112,6 +117,7 @@ export function fetchAllCandidates(ArrRole) {
         const mapCandidByRole = formatedMembers.reduce((acumul, currentValue) => {
 
           currentValue.role.map((item, index) => {
+            currentValue.sorter = currentValue.role[0]
             if(acumul[currentValue.role[index]]){
               acumul[currentValue.role[index]].push(currentValue)
             }else{
