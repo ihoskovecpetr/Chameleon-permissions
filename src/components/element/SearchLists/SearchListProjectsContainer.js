@@ -15,11 +15,11 @@ import { NavLink, useHistory } from "react-router-dom"
 import { connect } from "react-redux";
 import { createSelector } from 'reselect'
 
-import useFilterSearchResults from "../../Hooks/useFilterSearchResults"
-import { usePaintMatches } from "../../Hooks/usePaintMatches"
+import useFilterSearchResults from "../../../Hooks/useFilterSearchResults"
+import { usePaintMatches } from "../../../Hooks/usePaintMatches"
 
-import { fetchK2Projects , fetchADProjects, setActiveProject, cleanActiveProject } from "../modules/ProjectModule"
-import ProjectView from "./Project/ProjectView"
+import { fetchK2Projects , fetchADProjects, setActiveProject, cleanActiveProject } from "../../modules/ProjectModule"
+import ProjectView from "../Project/ProjectView"
 
 
 function SearchListProjectsContainer({loadingAD, errorAD, groupsAD, loadingK2, errorK2, projectsK2, activeProject, activateProject, deactivateProject, dispatch}){
@@ -74,10 +74,29 @@ function SearchListProjectsContainer({loadingAD, errorAD, groupsAD, loadingK2, e
             })
     }
 
+    if(filteredResults.length === 0){
+                
+    console.log("Default return all projects 0-20")
+
+            {projectsK2.map((project, index) => {
+                    if(project && index <= 20){ components.push(
+                    <ListItem onClick={() => {handleDoubleClickProject(project)}} key={index} className={classes.listItem} >
+                        <ListItemAvatar>
+                            <Avatar className={classes.avatarIcon}>
+                                <MovieFilterIcon />
+                            </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText primary={`${project.K2name} - ${project.K2client}`} />    
+                    </ListItem>
+                    )}
+                })
+            } 
+    }
+
     if(components.length != 0){
         console.log("Printing Components: ", components)
         return (
-            <Container maxWidth="lg" style={{marginTop: 10, height: '100vh', overflow: 'scroll'}}>
+            <Container maxWidth="lg" className={classes.mainContainer}>
                 <List dense={false}>
                     {components.map((component, index) => {
                         return component
@@ -86,25 +105,6 @@ function SearchListProjectsContainer({loadingAD, errorAD, groupsAD, loadingK2, e
             </Container>
         )}
 
-    return(
-        <Container maxWidth="lg" style={{marginTop: 10, height: '100vh', overflow: 'scroll'}}>
-        <List dense={false}>
-            {projectsK2 && projectsK2.map((project, index) => {
-                    if(project && index <= 20){ return(
-                    <ListItem onClick={() => {handleDoubleClickProject(project)}} key={index} className={classes.listItem} >
-                        <ListItemAvatar>
-                            <Avatar className={classes.avatarIcon}>
-                                <MovieFilterIcon />
-                            </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary={`${project.K2name} - ${project.K2client}`} />
-                            
-                    </ListItem>
-                )}     
-            })}  
-        </List>
-    </Container>
-    )
 }
  
 
@@ -135,8 +135,8 @@ const mapDispatchToProps = dispatch => {
 export default connect(StateToProps, mapDispatchToProps)(SearchListProjectsContainer)
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-      width: '100%',
+    mainContainer: {
+        marginTop: 10, 
     },
     avatarIcon: {
         backgroundColor: "#5F7D95",

@@ -10,13 +10,14 @@ import {
 import AppLayout from './components/AppLayout';
 
 import './app.scss';
-import SearchListProjectsContainer from './components/element/SearchListProjectsContainer';
-import SearchListPersonContainer from './components/element/SearchListPersonContainer';
+import SearchListProjectsContainer from './components/element/SearchLists/SearchListProjectsContainer';
+import SearchListPersonContainer from './components/element/SearchLists/SearchListPersonContainer';
 import AllProjectsContainer from './components/element/Project/AllProjectsContainer';
 import PersonContainer from './components/element/Person/PersonContainer';
 
 export default function AppRouter(props){
 
+    console.log("App Router location: ", props)
 
 return(
     <Router>

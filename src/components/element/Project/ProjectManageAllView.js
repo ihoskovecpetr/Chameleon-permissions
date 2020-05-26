@@ -38,28 +38,20 @@ export default function ProjectManageAllView({
 
   return (
     <div>
-      <Typography>Whole Project managing Panel</Typography>
-      <Grid container className={classes.root}>
-        <Grid item xs={3}>
-          <Grid container justify="center" alignContent="center" className={classes.iconContainer}>
-            <Grid item>
-              {/* {group_name} */}
-            </Grid>
+      <Grid container justify="center" className={classes.root}>
+        <Grid item>
+          <FormGroup row>
+            <FormControlLabel
+              control={<Switch checked={syncState} onChange={handleSyncWithBooking} name="checkedA" />}
+              label="Sync with BOOKING"
+            />
+              <Button variant="contained" color="primary" onClick={handlePopulateFromBooking}> Populate from BOOKING </ Button>
+              <Button variant="contained" className={classes.buttonFillAll} onClick={handleFillAll}> Fill All </ Button>
+              <Button variant="contained" color="secondary" startIcon={<DeleteIcon />} onClick={handleDeleteAllEditGroupsMbs}> Clear All </ Button>
+              <Button variant="contained" startIcon={<BlockIcon />}  className={classes.buttonCancelChanges} onClick={stopEditingAllGroups}>Cancel changes</ Button>
+              <Button variant="contained" startIcon={<SaveIcon />} className={classes.buttonSave} onClick={handleSaveAll} > Save All </ Button>
+          </ FormGroup>
           </Grid>
-        </Grid>
-
-
-        <FormGroup row>
-        <FormControlLabel
-          control={<Switch checked={syncState} onChange={handleSyncWithBooking} name="checkedA" />}
-          label="Sync with BOOKING"
-        />
-        <Button variant="contained" color="primary" onClick={handlePopulateFromBooking}> Populate from BOOKING </ Button>
-        <Button variant="contained" className={classes.buttonFillAll} onClick={handleFillAll}> Fill All </ Button>
-        <Button variant="contained" color="secondary" startIcon={<DeleteIcon />} onClick={handleDeleteAllEditGroupsMbs}> Clear All </ Button>
-        <Button variant="contained" startIcon={<BlockIcon />}  className={classes.buttonCancelChanges} onClick={stopEditingAllGroups}>Cancel changes</ Button>
-        <Button variant="contained" startIcon={<SaveIcon />} className={classes.buttonSave} onClick={handleSaveAll} > Save All </ Button>
-        </ FormGroup>
       </Grid>
     </div>
   );

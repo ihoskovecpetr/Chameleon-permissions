@@ -9,11 +9,12 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import FolderSharedIcon from '@material-ui/icons/FolderShared';
-
-import CircularProgress from '@material-ui/core/CircularProgress';
+import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
 import SaveIcon from '@material-ui/icons/Save';
 import BlockIcon from '@material-ui/icons/Block';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 import { makeStyles } from '@material-ui/core/styles';
 
 import clsx from 'clsx';
@@ -34,6 +35,7 @@ function GroupView({  group_name,
                   allCandidates,
                   handleOpenAddCand,
                   handleDeleting,
+                  handleRemoveAll,
                   isEditting,
                   isSaving,
                   loadingMembers,
@@ -57,7 +59,7 @@ function GroupView({  group_name,
                                   <FolderSharedIcon />
                               </Avatar>
                           </ListItemAvatar>
-                            <ListItemText primary={`${group_name}`} />
+                            <ListItemText primary={`${group_name.split('_adv_')[1]}`} />
                         </ListItem>
                     </Grid>
                   </Grid>
@@ -78,6 +80,7 @@ function GroupView({  group_name,
                           className={classes.anyChip}
                           color="primary"
                           onDelete={() => {handleDeleting(item.sAMAccountName)}} 
+                          // onClick={() => {handleDeleting(item.sAMAccountName)}}
                           />
                     </ Grid>
                     )
@@ -89,6 +92,7 @@ function GroupView({  group_name,
                           label={`${item.displayName}`}
                           key={item.sAMAccountName}
                           className={clsx(classes.newOneChip, classes.anyChip)}
+                          // onClick={() => {handleDeleting(item.sAMAccountName)}} 
                           onDelete={() => {handleDeleting(item.sAMAccountName)}} 
                           />
                     </ Grid>
@@ -143,6 +147,17 @@ function GroupView({  group_name,
                               icon={<BlockIcon />}
                               />
                         </ Grid>}
+                        <Grid item>
+                          <Chip 
+                              label="Remove mbs"
+                              variant="outlined"
+                              aria-owns='mouse-over-popover' 
+                              // onDelete={() => {}} 
+                              className={classes.removeAllChip}
+                              onClick={handleRemoveAll}
+                              icon={<DeleteIcon />}
+                              />
+                        </ Grid>
                         {isSaving && <p>Saving..</p>}
                     </Grid>
                 </div>
@@ -211,6 +226,9 @@ const useStyles = makeStyles((theme) => ({
   },
   saveChip: {
     backgroundColor: '#daaa4b'
+  },
+  removeAllChip: {
+    borderColor: '#f50057',
   },
   avatarIcon: {
     backgroundColor: "beige",

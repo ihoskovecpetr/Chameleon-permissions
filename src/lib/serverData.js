@@ -165,9 +165,7 @@ export async function fetchServer(method, path, data) {
             options.headers['Content-Type'] = 'application/json';
             options.body = body;
         }
-        console.time("fetchX" + path)
         const response = await fetch(`${APPLICATION_API}${path}`, options);
-        console.timeEnd("fetchX" + path)
         const contentType = response.headers.get("content-type");
         const data = contentType && contentType.indexOf("application/json") !== -1 ? await response.json() : null;
         if (response.ok) {

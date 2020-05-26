@@ -16,7 +16,7 @@ import { connect } from "react-redux";
 import { createSelector } from 'reselect'
 
 import useSortGroupMembers from "../../../Hooks/useSortGroupMembers"
-import { setEditingGroupMembers, deleteMemberEditGroup , saveNewGroupMembers, stopEditingGroup} from "../../modules/GroupModule"
+import { setEditingGroupMembers, deleteMemberEditGroup , saveNewGroupMembers, stopEditingGroup, deleteAllMembsEditGroup} from "../../modules/GroupModule"
 import GroupView from "./GroupView"
 
 
@@ -30,6 +30,7 @@ function GroupContainer({  group_name,
                   currentEditMemb, 
                   confirmedADMemb,
                   deleteMembrEditGroup,
+                  deleteGroupMbsDisp,
                   saveEditToAD,
                   stopEditingGroupDisp,
                   startEditingGroup}) {
@@ -73,6 +74,10 @@ function GroupContainer({  group_name,
     stopEditingGroupDisp(group_name)
   }
 
+  const handleRemoveAll = () => {
+    deleteGroupMbsDisp(group_name)
+  }
+
   const openPop = Boolean(anchorEl);
 
   return (
@@ -85,6 +90,7 @@ function GroupContainer({  group_name,
                       allCandidates={allCandidates}
                       handleOpenAddCand={handleOpenAddCand}
                       handleDeleting={handleDeleting}
+                      handleRemoveAll={handleRemoveAll}
                       isEditting={isEditting}
                       isSaving={isSaving}
                       loadingMembers={loadingMembers}
@@ -107,13 +113,11 @@ const makeGetIsEditting = () => createSelector(
 const makeGetIsSaving = () => createSelector(
   (state, props) => props.group_name,
   (state, {group_name}) => {
-    console.log("OK je to tady: ", state.group_state.currentlySavingGroups)
-    // return state.group_state.currentlySavingGroups
     if(state.group_state.currentlySavingGroups.indexOf(group_name) != -1) return true
     return false
   },
   (group_name, result) => {
-    console.log("currentlySavingGroups CHeck: ")
+    console.log("currentlySavingGroups CHeck MEMOIZED: ")
     return result
   }
 ) 
@@ -160,7 +164,8 @@ const mapDispatchToProps = dispatch => {
       startEditingGroup: (group_name) => dispatch(setEditingGroupMembers(group_name)),
       deleteMembrEditGroup: (editGroupOriginal, sAMAccountName, group_name) => dispatch(deleteMemberEditGroup(editGroupOriginal, sAMAccountName, group_name)),
       saveEditToAD: (currentEditMemb, group_name) => dispatch(saveNewGroupMembers(currentEditMemb, group_name)),
-      stopEditingGroupDisp: (group_name) => dispatch(stopEditingGroup(group_name))
+      stopEditingGroupDisp: (group_name) => dispatch(stopEditingGroup(group_name)),
+      deleteGroupMbsDisp: (group_name) => dispatch(deleteAllMembsEditGroup(group_name))
   }
 }
 

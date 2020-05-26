@@ -8,8 +8,9 @@ const SET_EDITING_GROUP_MEMBERS = 'my-app/group/SET_EDITING_GROUP_MEMBERS';
 const STOP_EDITING_GROUP = 'my-app/group/STOP_EDITING_GROUP';
 const STOP_EDITING_ALL_GROUPS = 'my-app/group/STOP_EDITING_ALL_GROUPS';
 
-const DELETE_MEMBER_EDIT_GROUP = 'my-app/group/DELETE_MEMBER_EDIT_GROUP';
-const DELETE_EDIT_GROUPS_MEMBERS = 'my-app/group/DELETE_EDIT_GROUPS_MEMBERS';
+const DELETE_EDIT_GROUP_MEMBER = 'my-app/group/DELETE_EDIT_GROUP_MEMBER';
+const DELETE_EDIT_SINGLE_GROUP = 'my-app/group/DELETE_EDIT_SINGLE_GROUP';
+const DELETE_EDIT_PROJECT_GROUPS_MEMBERS = 'my-app/group/DELETE_EDIT_PROJECT_GROUPS_MEMBERS';
 
 const FETCH_AD_CONFIRMED_MEMBERS_BEGIN = 'my-app/group/FETCH_AD_CONFIRMED_MEMBERS_BEGIN';
 const FETCH_AD_CONFIRMED_MEMBERS_SUCCESS = 'my-app/group/FETCH_AD_CONFIRMED_MEMBERS_SUCCESS';
@@ -154,13 +155,19 @@ export default function reducer(state = initialState, action = {}) {
                 editingGroupMembers: {}
             };
 
-    case DELETE_MEMBER_EDIT_GROUP:
+    case DELETE_EDIT_GROUP_MEMBER:
             return {
                 ...state,
                 editingGroupMembers: {...state.editingGroupMembers , [action.payload.group_name]: action.payload.newEditGroup}
             };
 
-    case DELETE_EDIT_GROUPS_MEMBERS:
+    case DELETE_EDIT_SINGLE_GROUP:
+            return {
+                ...state,
+                editingGroupMembers: {...state.editingGroupMembers, [action.payload.group_name]: []}
+            };
+
+    case DELETE_EDIT_PROJECT_GROUPS_MEMBERS:
 
         const editObj = action.payload.projectObj.projectADGroups.reduce((acumul, currentValue) => {
           if(state.confirmedGroupMembers[currentValue]){
@@ -284,7 +291,7 @@ export function deleteAllEditGroupsMbs(projectObj){
   console.log("DELETE THIS Project MBS: ", projectObj)
 
   return ({
-       type: DELETE_EDIT_GROUPS_MEMBERS,
+       type: DELETE_EDIT_PROJECT_GROUPS_MEMBERS,
        payload: { projectObj }
        });
  }  
@@ -386,7 +393,6 @@ console.log("groupsObjObj: ", groupsObjObj)
                 //Close (delete) Editting group
                 dispatch(stopEditingGroup(groupName))
                 dispatch(stopSavingStageGroup(groupName))
-
             }
           return json;
         })
@@ -405,12 +411,22 @@ export function deleteMemberEditGroup(editGroupOriginal, sAMAccountName, group_n
     const newEditGroup = editGroupOriginal.filter(item => item.sAMAccountName != sAMAccountName)
 
     return ({
-        type: DELETE_MEMBER_EDIT_GROUP,
+        type: DELETE_EDIT_GROUP_MEMBER,
         payload: {  
             group_name: group_name,
             newEditGroup: newEditGroup
                 }
         });
+} 
+
+export function deleteAllMembsEditGroup(group_name){
+
+  return ({
+      type: DELETE_EDIT_SINGLE_GROUP,
+      payload: {
+          group_name: group_name
+              }
+      });
 } 
 
 

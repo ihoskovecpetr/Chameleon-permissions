@@ -1,4 +1,5 @@
 import React, {useEffect} from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 
 import AppHeader from './AppHeader';
 import MessageBox from './MessageBox';
@@ -9,9 +10,10 @@ import FetchingIndicator from './FetchingIndicator';
 import {name, version}  from '../../package.json';
 
 export default function App(props){
+    const classes = useStyles();
 
         return (
-            <div className={'app-layout'}>
+            <div className={classes.appLayout}>
                 <AppHeader
                     appName = {name}
                     appVersion = {version}
@@ -29,9 +31,46 @@ export default function App(props){
                 />
                 <Toolbox />
                 <MessageBox message = {props.appState.message} setMessage = {props.setMessage}/>
+                <div className={classes.bodyWrap}>
                 {props.children}
                 {/* <FetchingIndicator open={this.props.appState.fetching}/> */}
+                </div>
             </div>
         )
 
 }
+
+const useStyles = makeStyles((theme) => ({
+    appLayout: {
+        height: '100%',
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: '#dcdcdc',
+    },
+    bodyWrap: {
+        overflow: 'scroll',
+    },
+    details: {
+      alignItems: 'center',
+    },
+    column: {
+      flexBasis: '50%',
+    },
+    helper: {
+      borderLeft: `2px solid lightGrey`,
+      padding: theme.spacing(1, 2),
+    },
+    divider: {
+      marginLeft: 10,
+      marginRight: 10,
+    },
+    newOneChip: {
+      backgroundColor: '#4caf50'
+    },
+    saveChip: {
+      backgroundColor: '#daaa4b'
+    }
+  }));

@@ -40,8 +40,6 @@ function AllProjectsContainer({loadingAD, errorAD, groupsAD, loadingK2, errorK2,
 
     if(loadingK2){components.push(<ProjectView name={"Loading..."} key="2" loadingSpinner={<CircularProgress color="secondary" />} />)} 
     if(errorK2){components.push("Error")}
-    if(activeProject){components.push(<p key={activeProject.K2name}>Active Project: {activeProject.K2name}:  {activeProject._id}</p>)}
-    
     if(activeProject){
         console.log()
         let count = 0
@@ -65,7 +63,7 @@ function AllProjectsContainer({loadingAD, errorAD, groupsAD, loadingK2, errorK2,
     }
 
     if(components.length != 0){
-        return  <Container maxWidth="lg" style={{marginTop: 10, height: '100vh', overflow: 'scroll'}}>
+        return  <Container maxWidth="lg" style={{marginTop: 10}}>
                 {components.map((component, index) => {
                     return component
                     })}

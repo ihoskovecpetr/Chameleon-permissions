@@ -6,23 +6,63 @@ import FormGroup from '@material-ui/core/FormGroup';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { connect } from "react-redux";
+import { createSelector } from 'reselect'
 
 import { setEditingGroupMembers, addEditGroupMbrs } from "../../modules/GroupModule"
 
 import FilterCheckView from "../sub_elements/FilterCheckView"
 
-function CandidateAutofillContainer({allCandidates, autoFocus, group_name, roleName, fetchDataGroup, togglePopover, loading, error, members, startEditingGroup, addEditingMbs, dispatch}) {
+const roleNames = [
+  {label: "GR", name: "GR"},
+  {label: "MP", name: "MP"},
+  {label: "3D", name: "3D"},
+  {label: "2D", name: "2D"},
+]
+
+function CandidateAutofillContainer({allCandidates, thisEdittingGroup, autoFocus, group_name, roleName, fetchDataGroup, togglePopover, loading, error, members, startEditingGroup, addEditingMbs, dispatch}) {
   const classes = useStyles();
-  const [choosenCand, setChoosenCand] = useState([])
   const [filter, setFilter] = useState({
-    GR: false,
-    MP: false,
+    'GR': false,
+    'MP': false,
     '3D': true,
     '2D': true,
   });
   const [filteredCand, setFilteredCand] = useState([])
 
-  const rolesArr = []
+
+  useEffect(() => {
+
+    console.log("Candidated Arr recreation")
+
+    let choosenRolesCandidates = []    
+    
+    for (var key in filter) {
+      if(filter[key] && allCandidates && allCandidates[`booking:${key}`]){
+        choosenRolesCandidates.push(...allCandidates[`booking:${key}`])
+      }
+    }
+
+    console.log("Candidated Arr recreation unfiler? ", thisEdittingGroup)
+    if(thisEdittingGroup){
+      choosenRolesCandidates = choosenRolesCandidates.filter(candidate => {
+        console.log("Candidate: ", candidate)
+        console.log("current edit group: ", thisEdittingGroup)
+        console.log("findIndex of membr: ", thisEdittingGroup.findIndex(i => i.sAMAccountName === candidate.sAMAccountName))
+        if( thisEdittingGroup.findIndex(i => i.sAMAccountName === candidate.sAMAccountName) != -1){
+          console.log("Found you, : ", candidate.sAMAccountName)
+          return false
+        }else{
+          return true
+        }
+        
+      })
+
+      // choosenRolesCandidates.findIndex(i => i.sAMAccountName === candidate.sAMAccountName)
+    }
+
+    setFilteredCand(choosenRolesCandidates)
+
+  }, [filter, allCandidates, thisEdittingGroup])
 
   const handleSelectCandidate = (e, personObj) => {
     if(personObj){
@@ -32,19 +72,6 @@ function CandidateAutofillContainer({allCandidates, autoFocus, group_name, roleN
     }
   }
 
-  useEffect(() => {
-
-    let choosenRolesCandidates = []    
-    
-    for (var key in filter) {
-      if(filter[key] && allCandidates && allCandidates[`booking:${key}`]){
-        choosenRolesCandidates.push(...allCandidates[`booking:${key}`])
-      }
-    }
-    setFilteredCand(choosenRolesCandidates)
-    // dispatch(fetchCandidates(rolesArr))
-
-  }, [filter, allCandidates])
 
   const handleChangeFilter = (e) => {
       e.preventDefault()
@@ -59,15 +86,13 @@ function CandidateAutofillContainer({allCandidates, autoFocus, group_name, roleN
     }
   }
 
-  const roleNames = [
-    {label: "GR", name: "GR"},
-    {label: "MP", name: "MP"},
-    {label: "3D", name: "3D"},
-    {label: "2D", name: "2D"},
-  ]
+  const handleAutocompleteOnOpen = () => {
+    console.log("handleAutocompleteKeyDown")
+    dispatch(setEditingGroupMembers(group_name))
+  }
 
   return (
-    <Grid container direction="row">
+    <Grid container direction="row" spacing={2}>
       <Grid item>
         <Autocomplete
           id={`combo-box-demo${group_name}`}
@@ -75,8 +100,8 @@ function CandidateAutofillContainer({allCandidates, autoFocus, group_name, roleN
           getOptionLabel={(option) => option.name}
           className={classes.autocompleteInput}
           onChange={handleSelectCandidate}
+          onOpen={handleAutocompleteOnOpen}
           renderGroup={(option) => {
-            console.log("renderGroup: ", option)
           return <span>
                     <p className={classes.greyGroup}>{option.group.split(":")[1]}</p>
                     {option.children}
@@ -110,19 +135,35 @@ function CandidateAutofillContainer({allCandidates, autoFocus, group_name, roleN
   );
 }
 
+const makeGetEditGroup = () => createSelector(
+  (state, props) => props.group_name,
+  (state, {group_name}) => {
+    if(state.group_state.editingGroupMembers[group_name]) return state.group_state.editingGroupMembers[group_name]
+    return false
+  },
+  (group_name, group) => {
+    console.log("currentlySavingGroups CHeck MEMOIZED: for: ", group_name)
+    return group
+  }
+) 
+
+const StateToProps = () => {
+  const getEditGroup = makeGetEditGroup()
+
+    return (state, ownProps) => {
+      return {
+        thisEdittingGroup: getEditGroup(state, ownProps),
+        allCandidates: state.candidate_state.allCandidates.mapCandidByRole,
+        // currentEditingCand: state.group_state.editingGroupMembers
+      } 
+  }
+}
+
+
 const mapDispatchToProps = dispatch => {
   return {
       dispatch: (x) => dispatch(x),
       addEditingMbs: (candidateObj, group_name) => dispatch(addEditGroupMbrs(candidateObj, group_name)),
-  }
-}
-
-const StateToProps = (state) => {
-
-  return{
-      allCandidates: state.candidate_state.allCandidates.mapCandidByRole,
-      // loading: state.candidate_state.loading,
-      // error: state.candidate_state.error,
   }
 }
 
@@ -137,7 +178,7 @@ const useStyles = makeStyles((theme) => ({
     width: 200
   },
   greyGroup:{
-    color: "lightGrey",
+    color: "#52499A",
     fontWeight: 600,
     paddingLeft: 10,
     margin: 0

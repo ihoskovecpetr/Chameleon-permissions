@@ -3,6 +3,14 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography'; 
 import Divider from '@material-ui/core/Divider';
 import Chip from '@material-ui/core/Chip';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import Collapse from '@material-ui/core/Collapse';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import FaceIcon from '@material-ui/icons/Face';
 
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -19,7 +27,7 @@ export default function ProjectView({project_id, project_name, company_name, pro
       loadingSpinner, projectGroups, 
       activateProject, deactivateProject, bookingUserResources, mapUsrResource}) {
   const classes = useStyles();
-
+  const [openRes, setOpenRes] = useState(false)
   console.log("ProjectView rendered activeProject: ", bookingUserResources, mapUsrResource)
 
   useEffect(() => {
@@ -36,30 +44,42 @@ export default function ProjectView({project_id, project_name, company_name, pro
           producer_name={producer_name} 
           director_name={director_name} 
           loadingSpinner={loadingSpinner} />
-
-        <Divider className={classes.divider} />
-
         <ProjectManageAllContainer projectGroups={projectGroups} />
 
         <Grid container direction="row">
-        <Grid item xs={12}>
-          <Typography >BOOKING RESOURCES</Typography>
-        </Grid>
-        {bookingUserResources && Object.keys(bookingUserResources).map(function(key, index) {
-        return <Grid item key={key}> <Chip 
-                    label={`${mapUsrResource && mapUsrResource[key] && mapUsrResource[key].ssoId}`}
-                    key={key}
-                    className={classes.anyChip}
-                    color="secondary"
-                    disabled={true}
-                    />
-                <p>Resource : {key} <br/> Type: {bookingUserResources[key]} - {mapUsrResource && mapUsrResource[key] && mapUsrResource[key].ssoId}</p>
-              </ Grid>
-        })}
+
+      <List>
+        <ListItem button onClick={() => setOpenRes(!openRes)}>
+          <ListItemText primary="Show Booking Resources" />
+          {openRes ? <ExpandLess /> : <ExpandMore />}
+        </ListItem>
+        <Collapse in={openRes} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+
+          {bookingUserResources && Object.keys(bookingUserResources).map(function(key, index) {
+            return <ListItem button key={key}>
+                  <ListItemIcon>
+                    <Chip 
+                        label={`${mapUsrResource && mapUsrResource[key] && mapUsrResource[key].ssoId}`}
+                        key={key}
+                        className={classes.anyChip}
+                        color="secondary"
+                        disabled={true}
+                        icon={<FaceIcon />}
+                        />
+                  </ListItemIcon>
+                  <ListItemText primary="Starred" />
+                  <p>Resource : {key} <br/> Type: {bookingUserResources[key]} - {mapUsrResource && mapUsrResource[key] && mapUsrResource[key].ssoId}</p>
+                </ListItem>
+            })}
+          </List>
+        </Collapse>
+      </List>
+
       </ Grid>
 
       <Grid container className={classes.gridGroups}>
-        {projectGroups && projectGroups.map((item, index) => {
+        {projectGroups && [projectGroups[0], projectGroups[1], projectGroups[2]].map((item, index) => {
          return <GroupContainer group_name={item} project_name={project_name} key={index} autoFocus={index === 0} />
         }
         )}

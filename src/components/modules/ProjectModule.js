@@ -196,7 +196,7 @@ type: FETCH_AD_PROJECTS_BEGIN
 });
 
 export const fetchProjectsSuccess = data => {
-  console.log("I got data from AD here: ", data)
+
   return ({
       type: FETCH_AD_PROJECTS_SUCCESS,
       payload: { projects: data }

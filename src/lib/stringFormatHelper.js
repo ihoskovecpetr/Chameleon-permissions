@@ -52,8 +52,6 @@ export function getSeparatedManagedObjects(AdObj) {
         resultObj[origGroup] = fullGroups.filter((anyGroup,index) => anyGroup.includes(origGroup))
     })
 
-    console.log("resultObj:::>>>> ", resultObj)
-
     return resultObj
     }
 
