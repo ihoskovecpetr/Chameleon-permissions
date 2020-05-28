@@ -61,8 +61,17 @@ export async function getBookingEvents(_id) {
 //**********************************************************************************************************************
 // AD GROUPS
 //**********************************************************************************************************************
-export async function getMyGroups() {
-    return await fetchServer('GET', '/my_groups');
+export async function getAllGroups() {
+    return await fetchServer('GET', '/all_groups');
+}
+
+export async function getAllManagerGroups() {
+    console.log("server getAllManagerGroups")
+    return await fetchServer('GET', '/all_manager_groups');
+}
+
+export async function getMyGroups() { // switched to getAllUsers()
+    return await fetchServer('GET', '/my_groups'); 
 }
 
 export async function getGroupMembers(groupName) {
@@ -73,11 +82,15 @@ export async function getGroupsMembers(groupsNamesArr) {
     return await fetchServer('POST', '/groups_members', groupsNamesArr);
 }
 
-export async function getProjectGroupsMembers(project_name) {
-    return await fetchServer('POST', '/project/groups_with_members', {project_name: project_name});
+export async function getProjectGroupsMembers(project_id) {
+    return await fetchServer('POST', '/project/groups_with_members', {project_id: project_id});
 }
-//SAVE NEW MEMBERS to group 
 
+export async function getProjectManagerGroup(project_id) {
+    return await fetchServer('POST', '/project/manager_group', {project_id: project_id});
+}
+
+//SAVE NEW MEMBERS to group 
 export async function saveGroupMembers(group_name, currentEditMemb) {
     return await fetchServer('POST', `/save/${group_name}`, {users: currentEditMemb});
 }

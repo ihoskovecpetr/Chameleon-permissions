@@ -11,15 +11,12 @@ import { getAuthenticatedUser } from './lib/serverData';
 import Reducer from './reducers/Reducer';
 
 import AppRouter from './appRouter';
-import AppLayout from './components/AppLayout';
 import * as Actions from './actions_redux/Actions';
 import * as ProjectActions from './components/modules/ProjectModule';
 import * as PersonActions from './components/modules/PersonModule';
 
 import initialState from './reducers/InitialState';
 import createIconLibrary from './lib/createIconLibrary';
-
-import checkAuthToken from './lib/checkAuthToken';
 
 logger.setLevel('debug');
 
@@ -81,7 +78,8 @@ const rootElement = document.getElementById('app');
     }
 
     try {
-        store.dispatch(ProjectActions.fetchADProjects());
+        store.dispatch(ProjectActions.fetchADGroups());
+        store.dispatch(ProjectActions.fetchADManagerGroups());
         store.dispatch(ProjectActions.fetchK2Projects());
         store.dispatch(PersonActions.fetchAllPerson());
         ReactDOM.render(

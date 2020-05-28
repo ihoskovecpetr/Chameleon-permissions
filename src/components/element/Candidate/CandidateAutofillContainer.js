@@ -13,22 +13,60 @@ import { setEditingGroupMembers, addEditGroupMbrs } from "../../modules/GroupMod
 import FilterCheckView from "../sub_elements/FilterCheckView"
 
 const roleNames = [
+  {label: "MA", name: "MA"},
+  {label: "SV", name: "SV"},
   {label: "GR", name: "GR"},
   {label: "MP", name: "MP"},
   {label: "3D", name: "3D"},
   {label: "2D", name: "2D"},
 ]
 
-function CandidateAutofillContainer({allCandidates, thisEdittingGroup, autoFocus, group_name, roleName, fetchDataGroup, togglePopover, loading, error, members, startEditingGroup, addEditingMbs, dispatch}) {
+function CandidateAutofillContainer({allCandidates, 
+                                  thisEdittingGroup, 
+                                  autoFocus, 
+                                  group_name,
+                                  groupObj, 
+                                  addEditingMbs, 
+                                  dispatch}) {
   const classes = useStyles();
   const [filter, setFilter] = useState({
+    'MA': false,
+    'SV': false,
     'GR': false,
     'MP': false,
-    '3D': true,
-    '2D': true,
+    '3D': false,
+    '2D': false,
   });
   const [filteredCand, setFilteredCand] = useState([])
 
+
+  useEffect(() => {
+    if(groupObj && groupObj.uppAdvGroupAttribute){
+
+      let rolesRaster = {
+        'MA': false,
+        'SV': false,
+        'GR': false,
+        'MP': false,
+        '3D': false,
+        '2D': false,
+      }
+
+      const availRoles = ["MA","SV","GR","MP","3D","2D"]
+      
+      const defaultRolesArr = groupObj.uppAdvGroupAttribute.split(':')
+      console.log("Separated roles??", defaultRolesArr)
+      availRoles.map(role => {
+          if(defaultRolesArr.indexOf(role) != -1){
+            console.log("Setting Ddefault ROLE")
+              rolesRaster[role] = true
+            }
+          }
+        )
+        setFilter(rolesRaster) 
+      
+    }
+  },[groupObj])
 
   useEffect(() => {
 

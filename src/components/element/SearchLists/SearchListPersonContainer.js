@@ -22,8 +22,8 @@ import { setActiveProject, cleanActiveProject } from "../../modules/ProjectModul
 
 function SearchListPersonContainer({allPersons, activeProject, activateProject, deactivateProject, dispatch}){
     const classes = useStyles();
-
     let history = useHistory();
+    const [componentsState, setComponentsState] = useState([]);
     const paintMatch = usePaintMatches();
     let filteredResults = useFilterSearchPeople(allPersons, history.location.search.split('=')[1])
     let {currentRange, handlePagination, handleChangeSize } = usePaginationLogic(filteredResults)
@@ -51,10 +51,8 @@ function SearchListPersonContainer({allPersons, activeProject, activateProject, 
     }
 
     if(filteredResults.length === 0){
-            console.log("NO RESULTS??")
             components.push(<h1> No Results for {history.location.search.split('=')[1]}</h1>)
                 allPersons.map((result, index) => {
-                    console.log("Person result: ", result)
                         result && components.push(
                         // <ListItem onDoubleClick={() => {history.push(`/person/${result.item.K2name}`)}} key={index} className={classes.listItem} >
                         <ListItem onClick={() => {history.push(`/permissions/person/${result._id}`)}} key={index} className={classes.listItem} >
@@ -70,13 +68,16 @@ function SearchListPersonContainer({allPersons, activeProject, activateProject, 
                 })
     }
 
+    useEffect(() => {
+        setComponentsState(components)
+    }, [filteredResults])
+
         return (
             <Container maxWidth="lg" classname={classes.mainContainer}>
-                SEARCH LIST PERSON
                 <Grid Container>
                     <Grid item>
                         <List>
-                           <p>Search Results PEOPLE count: <b>{filteredResults.length}</b> for phrase: <b>{location.search.split('=')[1]}</b></p>
+                           <p>Search Results <b>PEOPLE</b> count: <b>{filteredResults.length}</b> for phrase: <b>{location.search.split('=')[1]}</b></p>
                            <p>Current Range: <b>{currentRange.from} - {currentRange.from + currentRange.size}</b></p>
                         </List>
                     </Grid>
@@ -88,7 +89,7 @@ function SearchListPersonContainer({allPersons, activeProject, activateProject, 
 
                     <Grid item xs={12}>
                         <List dense={false}>
-                            {components.slice(currentRange.from, (currentRange.from + currentRange.size)).map((component, index) => {
+                            {componentsState.slice(currentRange.from, (currentRange.from + currentRange.size)).map((component, index) => {
                                 return component
                             })}
                         </List>
@@ -109,8 +110,8 @@ const StateToProps = ({project_state, person_state}) => {
     // const getIsProjectActive = isProjectActive()
         return {
             allPersons: person_state.allPersons.persons,
-            // loadingAD: project_state.ADProjects.loading,
-            // errorAD: project_state.ADProjects.error,
+            // loadingAD: project_state.ADGroups.loading,
+            // errorAD: project_state.ADGroups.error,
             searchText: project_state.searchText // this is here just to force rerender on URL query change
         }
   }

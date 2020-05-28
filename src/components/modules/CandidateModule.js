@@ -196,13 +196,3 @@ type: FETCH_CANDIDATES_FAILURE,
 payload: { error }
 });
 
-
-// export function removeWidget(widget) {
-//   return { type: REMOVE, widget };
-// }
-
-// side effects, only as applicable
-// e.g. thunks, epics, etc
-export function getWidget () {
-  return dispatch => get('/widget').then(widget => dispatch(updateWidget(widget)))
-}

@@ -26,7 +26,6 @@ export default function ProjectHeaderView({project_id, project_name, company_nam
   }, [projectGroups])
 
   return (
-    <div>
     <Grid container className={classes.root}>
       <Grid item xs={3}>
         <Grid container justify="center" alignContent="center" className={classes.iconContainer}>
@@ -70,14 +69,14 @@ export default function ProjectHeaderView({project_id, project_name, company_nam
         </Grid> 
       </Grid>
     </Grid>
-    </div>
   );
 }
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
-    backgroundColor: "white"
+    backgroundColor: "white",
+    marginBottom: 5
   },
   iconContainer: {
     height: '100%'

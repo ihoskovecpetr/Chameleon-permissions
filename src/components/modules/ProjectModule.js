@@ -6,9 +6,13 @@ const FETCH_K2_PROJECTS_BEGIN = 'my-app/project/FETCH_K2_PROJECTS_BEGIN';
 const FETCH_K2_PROJECTS_SUCCESS = 'my-app/project/FETCH_K2_PROJECTS_SUCCESS';
 const FETCH_K2_PROJECTS_FAILURE = 'my-app/project/FETCH_K2_PROJECTS_FAILURE';
 
-const FETCH_AD_PROJECTS_BEGIN = 'my-app/project/FETCH_AD_PROJECTS_BEGIN';
-const FETCH_AD_PROJECTS_SUCCESS = 'my-app/project/FETCH_AD_PROJECTS_SUCCESS';
-const FETCH_AD_PROJECTS_FAILURE = 'my-app/project/FETCH_AD_PROJECTS_FAILURE';
+const FETCH_AD_GROUPS_BEGIN = 'my-app/project/FETCH_AD_GROUPS_BEGIN';
+const FETCH_AD_GROUPS_SUCCESS = 'my-app/project/FETCH_AD_GROUPS_SUCCESS';
+const FETCH_AD_GROUPS_FAILURE = 'my-app/project/FETCH_AD_GROUPS_FAILURE';
+
+const FETCH_AD_MANAGER_GROUPS_BEGIN = 'my-app/project/FETCH_AD_MANAGER_GROUPS_BEGIN';
+const FETCH_AD_MANAGER_GROUPS_SUCCESS = 'my-app/project/FETCH_AD_MANAGER_GROUPS_SUCCESS';
+const FETCH_AD_MANAGER_GROUPS_FAILURE = 'my-app/project/FETCH_AD_MANAGER_GROUPS_FAILURE';
 
 const SET_ACTIVE_PROJECT = 'my-app/project/SET_ACTIVE_PROJECT';
 const CLEAN_ACTIVE_PROJECT = 'my-app/project/CLEAN_ACTIVE_PROJECT';
@@ -21,7 +25,7 @@ const initialState = {
     error: null,
     projects: []
   },
-  ADProjects:{
+  ADGroups:{
     loading: false,
     error: null,
     projects: []
@@ -67,36 +71,92 @@ export default function reducer(state = initialState, action = {}) {
 
 // FETCH AD projects reducer
 
-    case FETCH_AD_PROJECTS_BEGIN:
+    case FETCH_AD_GROUPS_BEGIN:
       return {
         ...state,
-        ADProjects: {
+        ADGroups: {
           loading: true,
           error: null,
           items: null
         }
       };
 
-    case FETCH_AD_PROJECTS_SUCCESS:
-    console.log("SAVIBNG TO RET: ", action.payload.projects)
+    case FETCH_AD_GROUPS_SUCCESS:
 
-    
+      const mapItms = action.payload.projects.reduce((acumul, currentValue) => {
+        const projectId = currentValue.name.split('_')[1]
+        if(acumul[projectId]){
+          acumul[projectId] = [...acumul[projectId], currentValue]
+        }else{
+          acumul[projectId] = [currentValue]
+        }
+          return acumul
+      }, {})
+
+
       return {
         ...state,
-        ADProjects: {
+        ADGroups: {
           loading: false,
           items: action.payload.projects,
+          mapItemsByProjectId: mapItms
         }
       };
 
-    case FETCH_AD_PROJECTS_FAILURE:
+    case FETCH_AD_GROUPS_FAILURE:
 
       return {
         ...state,
-        ADProjects: {
+        ADGroups: {
           loading: false,
           error: action.payload.error,
           items: []
+        }
+      };
+
+
+// FETCH AD MANAGER GROUPS
+
+    case FETCH_AD_MANAGER_GROUPS_BEGIN:
+      return {
+        ...state,
+        ADManagerGroups: {
+          loading: true,
+          error: null,
+          XXgroups: []
+        }
+      };
+
+    case FETCH_AD_MANAGER_GROUPS_SUCCESS:
+
+      const mapGrps = action.payload.projects.reduce((acumul, currentValue) => {
+        const projectId = currentValue.name.split('_')[1]
+        if(acumul[projectId]){
+          acumul[projectId] = [...acumul[projectId], currentValue]
+        }else{
+          acumul[projectId] = [currentValue]
+        }
+          return acumul
+      }, {})
+
+
+      return {
+        ...state,
+        ADManagerGroups: {
+          loading: false,
+          XXgroups: action.payload.projects,
+          mapGroupsByProjectId: mapGrps
+        }
+      };
+
+    case FETCH_AD_MANAGER_GROUPS_FAILURE:
+
+      return {
+        ...state,
+        ADManagerGroups: {
+          loading: false,
+          error: action.payload.error,
+          XXgroups: []
         }
       };
 
@@ -104,7 +164,7 @@ export default function reducer(state = initialState, action = {}) {
 
       case SET_ACTIVE_PROJECT:
     const obj = action.payload.projectObj
-          obj.projectADGroups = state.ADProjects.items['test_project'] // MOCK state.ADProjects.items[action.payload.projectObj.K2name]
+          obj.projectADGroups = state.ADGroups.items['test_project'] // MOCK state.ADGroups.items[action.payload.projectObj.K2name]
 
         return {
             ...state,
@@ -174,39 +234,75 @@ payload: { error }
 
 
 
-// FETCH my AD projects 
-export function fetchADProjects() {
+// FETCH all AD Groups 
+export function fetchADGroups() {
+
   console.log("fetchProjects: START ")
 return dispatch => {
-  dispatch(fetchProjectsBegin());
-  return server.getMyGroups()
+  dispatch(fetchADGroupsBegin());
+  return server.getAllGroups() // was: getMyGroups()
     .then(json => {
-        console.log("json fetchADProjects getMyGroups:  ", json)
-      dispatch(fetchProjectsSuccess(StringFormatter.getSeparatedManagedObjects(json.userData[0])))
+        console.log("json fetchADGroups getMyGroups:  ", json)
+        dispatch(fetchADGroupsSuccess(json.allGroups))
+        // dispatch(fetchADGroupsSuccess(StringFormatter.getSeparatedManagedObjects(json.allGroups)))
       return json;
     })
     .catch(error =>
-      dispatch(fetchProjectsFailure(error))
+      dispatch(fetchADGroupsFailure(error))
     );
 };
 }
 
-export const fetchProjectsBegin = () => ({
-type: FETCH_AD_PROJECTS_BEGIN
-});
-
-export const fetchProjectsSuccess = data => {
-
+export const fetchADGroupsBegin = () => ({
+      type: FETCH_AD_GROUPS_BEGIN
+    });
+export const fetchADGroupsSuccess = data => {
   return ({
-      type: FETCH_AD_PROJECTS_SUCCESS,
+      type: FETCH_AD_GROUPS_SUCCESS,
       payload: { projects: data }
     });
 } 
+export const fetchADGroupsFailure = error => ({
+      type: FETCH_AD_GROUPS_FAILURE,
+      payload: { error }
+    });
 
-export const fetchProjectsFailure = error => ({
-type: FETCH_AD_PROJECTS_FAILURE,
-payload: { error }
-});
+
+
+    
+// FETCH all AD manager Groups 
+export function fetchADManagerGroups() {
+  
+  console.log("fetchADManagerGroups: START ")
+  return dispatch => {
+    dispatch(fetchADManagerGroupsBegin());
+    return server.getAllManagerGroups() // was: getMyGroups()
+      .then(json => {
+          console.log("json fetchADGroups getMyGroups:  ", json)
+          dispatch(fetchADManagerGroupsSuccess(json.allGroups))
+          // dispatch(fetchADGroupsSuccess(StringFormatter.getSeparatedManagedObjects(json.allGroups)))
+        return json;
+      })
+      .catch(error =>
+        dispatch(fetchADManagerGroupsFailure(error))
+      );
+  };
+}
+
+export const fetchADManagerGroupsBegin = () => ({
+      type: FETCH_AD_MANAGER_GROUPS_BEGIN
+    });
+export const fetchADManagerGroupsSuccess = data => {
+  return ({
+      type: FETCH_AD_MANAGER_GROUPS_SUCCESS,
+      payload: { projects: data }
+    });
+} 
+export const fetchADManagerGroupsFailure = error => ({
+      type: FETCH_AD_MANAGER_GROUPS_FAILURE,
+      payload: { error }
+    });
+
 
 
 // marking of ACTIVE project
@@ -228,15 +324,3 @@ export const setSearchText = (searchText) => {
   type: SET_SEARCH_TEXT,
   payload: { searchText: searchText }
 });}
-
-
-
-// export function removeWidget(widget) {
-//   return { type: REMOVE, widget };
-// }
-
-// side effects, only as applicable
-// e.g. thunks, epics, etc
-export function getWidget () {
-  return dispatch => get('/widget').then(widget => dispatch(updateWidget(widget)))
-}

@@ -47,7 +47,7 @@ export default function ProjectManageAllView({
             />
               <Button variant="contained" color="primary" onClick={handlePopulateFromBooking}> Populate from BOOKING </ Button>
               <Button variant="contained" className={classes.buttonFillAll} onClick={handleFillAll}> Fill All </ Button>
-              <Button variant="contained" color="secondary" startIcon={<DeleteIcon />} onClick={handleDeleteAllEditGroupsMbs}> Clear All </ Button>
+              <Button variant="contained" color="secondary" startIcon={<DeleteIcon />} onClick={handleDeleteAllEditGroupsMbs}> Remove All </ Button>
               <Button variant="contained" startIcon={<BlockIcon />}  className={classes.buttonCancelChanges} onClick={stopEditingAllGroups}>Cancel changes</ Button>
               <Button variant="contained" startIcon={<SaveIcon />} className={classes.buttonSave} onClick={handleSaveAll} > Save All </ Button>
           </ FormGroup>

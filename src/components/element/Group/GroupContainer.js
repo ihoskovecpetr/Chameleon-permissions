@@ -21,6 +21,7 @@ import GroupView from "./GroupView"
 
 
 function GroupContainer({  group_name, 
+                  groupObj,
                   project_name, 
                   isEditting, 
                   isSaving,
@@ -39,7 +40,7 @@ function GroupContainer({  group_name,
   const [anchorEl, setAnchorEl] = useState(null);
   const {stable, newOnes, deleted} = useSortGroupMembers(confirmedADMemb , currentEditMemb, isEditting)
 
-  console.log("GroupContainer rerender ,", group_name, isSaving)
+  console.log("GroupContainer rerender ,",confirmedADMemb , currentEditMemb,)
   // console.log("Group HOOK sorted: stable, newOnes, deleted ", stable, newOnes, deleted)
 
 
@@ -82,6 +83,7 @@ function GroupContainer({  group_name,
 
   return (
             <GroupView group_name={group_name} 
+                      groupObj={groupObj}
                       project_name={project_name} 
                       anchorEl={anchorEl}
                       stable={stable} 

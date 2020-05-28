@@ -10,14 +10,12 @@ import { fetchSinglePerson, fetchAdPersonInfo } from "../../modules/PersonModule
 import PersonView from "./PersonView"
 
 function PersonContainer({activePerson, dispatch}){
-    const classes = useStyles();
-    const [selected, setSelected] = useState(0);
     let history = useHistory();
 
     useEffect(() => {
         console.log("Pwerson: location ", location)
           console.log("split person ID: ", location.pathname.split("person/")[1])
-          dispatch(fetchSinglePerson(location.pathname.split("person/")[1]))
+          dispatch(fetchSinglePerson(location.pathname.split("person/")[1]))  //Activating person after fetching it.
     }, [location.pathname])
 
 
@@ -57,18 +55,10 @@ const StateToProps = ({person_state}) => {
 const mapDispatchToProps = dispatch => {
     return {
         dispatch: (x) => dispatch(x),
-        // activateProject: (_id, name) => dispatch(setActiveProject(_id, name)),
         deactivateProject: () => dispatch(cleanActiveProject()) ,
-        // getProjectGroupsMembers: (group_name) => dispatch(fetchProjectGroupsMembers(group_name))
     }
   }
 
 
 
 export default connect(StateToProps, mapDispatchToProps)(PersonContainer)
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-      width: '100%',
-    },
-  }));

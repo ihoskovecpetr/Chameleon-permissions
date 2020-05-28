@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react"
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
@@ -17,31 +18,29 @@ import { createSelector } from 'reselect'
 
 import useFilterSearchResults from "../../../Hooks/useFilterSearchResults"
 import { usePaintMatches } from "../../../Hooks/usePaintMatches"
+import { usePaginationLogic } from "../../../Hooks/usePaginationLogic"
 
-import { fetchK2Projects , fetchADProjects, setActiveProject, cleanActiveProject } from "../../modules/ProjectModule"
+import { setActiveProject, cleanActiveProject } from "../../modules/ProjectModule"
 import ProjectView from "../Project/ProjectView"
+import PaginationElement from './PaginationElement'
 
 
-function SearchListProjectsContainer({loadingAD, errorAD, groupsAD, loadingK2, errorK2, projectsK2, activeProject, activateProject, deactivateProject, dispatch}){
+function SearchListProjectsContainer({loadingAD, errorAD, groupsAD, mapItemsByProjectId, loadingK2, errorK2, projectsK2, activeProject, activateProject, deactivateProject, dispatch}){
     const classes = useStyles();
-    const [selected, setSelected] = useState(0);
     let history = useHistory();
     const paintMatch = usePaintMatches();
+    const [componentsState, setComponentsState] = useState([]);
     let filteredResults = useFilterSearchResults(projectsK2, history.location.search.split('=')[1])
+    let {currentRange, handlePagination, handleChangeSize } = usePaginationLogic(componentsState)
 
-    
-    useEffect(() => {
-
-    }, [projectsK2])
 
     useEffect(() => {
         console.log("SearchListProjectsContainer: filteredResults ", filteredResults)
-    },)
+    })
 
-    const handleDoubleClickProject = (project) => {
+    const handleOpenProject = (project) => {
+
         activateProject(project)
-        console.log("handleDoubleClickProject: ", project)
-        // history.push(`/project/${project.K2name}`)
         history.push(`/permissions/project/${project.K2name}`)
     }
 
@@ -62,46 +61,72 @@ function SearchListProjectsContainer({loadingAD, errorAD, groupsAD, loadingK2, e
             filteredResults.map((project, index) => {
                 console.log("Podminka pushing COMPDS:L ", project)
                 project.item && components.push(
-                    <ListItem onClick={() => {handleDoubleClickProject(project)}} key={index} className={classes.listItem} >
+                    <ListItem onClick={() => {handleOpenProject(project)}} key={index} className={classes.listItem} >
                         <ListItemAvatar>
                             <Avatar className={classes.avatarIcon}>
                                 <MovieFilterIcon />
                             </Avatar>
                         </ListItemAvatar>
-                        <ListItemText primary={`${paintMatch(project.item.K2name, project.matches)} - ${paintMatch(project.item.K2client, project.matches)}`} />
+                        {paintMatch(project.item.K2name, project.matches)} - {paintMatch(project.item.K2client, project.matches)}
                     </ListItem>
                 )     
             })
     }
 
     if(filteredResults.length === 0){
-                
-    console.log("Default return all projects 0-20")
-
             {projectsK2.map((project, index) => {
-                    if(project && index <= 20){ components.push(
-                    <ListItem onClick={() => {handleDoubleClickProject(project)}} key={index} className={classes.listItem} >
+                    if(project){ components.push(
+                    <ListItem onClick={() => {handleOpenProject(project)}} key={index} className={classes.listItem} >
                         <ListItemAvatar>
                             <Avatar className={classes.avatarIcon}>
                                 <MovieFilterIcon />
                             </Avatar>
                         </ListItemAvatar>
-                        <ListItemText primary={`${project.K2name} - ${project.K2client}`} />    
+                        <ListItemText primary={`${project.K2name} - ${project.K2client}`} /> 
+                        {mapItemsByProjectId[project.K2projectId] ? "AD connected" : ""}   
                     </ListItem>
                     )}
                 })
             } 
     }
 
+    useEffect(() => {
+        setComponentsState(components)
+    }, [filteredResults])
+
     if(components.length != 0){
         console.log("Printing Components: ", components)
         return (
             <Container maxWidth="lg" className={classes.mainContainer}>
-                <List dense={false}>
-                    {components.map((component, index) => {
-                        return component
-                    })}    
-                </List>
+                <Grid Container>
+                    <Grid item>
+                        <List>
+                           <p>Search Results <b>PROJECTS</b> count: <b>{filteredResults.length}</b> for phrase: <b>{location.search.split('=')[1]}</b></p>
+                           <p>Current Range: <b>{currentRange.from} - {currentRange.from + currentRange.size}</b></p>
+                        </List>
+                    </Grid>
+                    <Grid item>
+                        <PaginationElement  
+                            currentRange={currentRange} 
+                            handleChangeSize={handleChangeSize} 
+                            handlePagination={handlePagination}/>
+                    </Grid>
+                    <Grid item>
+                        <List dense={false}>
+                            {componentsState.slice(currentRange.from, (currentRange.from + currentRange.size)).map((component, index) => {
+                                return component
+                            })}    
+                        </List>                        
+                    </Grid>
+
+                    <Grid item>
+                        <PaginationElement  
+                            currentRange={currentRange} 
+                            handleChangeSize={handleChangeSize} 
+                            handlePagination={handlePagination}/>
+                    </Grid>
+              
+                </Grid>
             </Container>
         )}
 
@@ -111,9 +136,10 @@ function SearchListProjectsContainer({loadingAD, errorAD, groupsAD, loadingK2, e
 const StateToProps = ({project_state}) => {
     // const getIsProjectActive = isProjectActive()
         return {
-            groupsAD: project_state.ADProjects.items,
-            loadingAD: project_state.ADProjects.loading,
-            errorAD: project_state.ADProjects.error,
+            groupsAD: project_state.ADGroups.items,
+            mapItemsByProjectId: project_state.ADGroups.mapItemsByProjectId,
+            loadingAD: project_state.ADGroups.loading,
+            errorAD: project_state.ADGroups.error,
             projectsK2: project_state.k2Projects.projects,
             loadingK2: project_state.k2Projects.loading,
             errorK2: project_state.k2Projects.error,

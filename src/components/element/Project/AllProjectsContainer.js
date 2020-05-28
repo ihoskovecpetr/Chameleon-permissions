@@ -1,72 +1,129 @@
 import React, {useEffect, useState} from "react"
 import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { useHistory } from "react-router-dom"
+import { NavLink, useHistory, useRouteMatch } from "react-router-dom";
 import { connect } from "react-redux";
 import { createSelector } from 'reselect'
 
-import { fetchK2Projects , fetchADProjects, setActiveProject, cleanActiveProject } from "../../modules/ProjectModule"
+import { setActiveProject, cleanActiveProject } from "../../modules/ProjectModule"
 import ProjectView from "./ProjectView"
 import ProjectContainer from "./ProjectContainer"
+import ProjectOverviewContainer from "./ProjectOverviewContainer"
 
-function AllProjectsContainer({loadingAD, errorAD, groupsAD, loadingK2, errorK2, projectsK2, activeProject, activateProject, deactivateProject, dispatch}){
-    const classes = useStyles();
-    const [selected, setSelected] = useState(0);
-    let history = useHistory();
+function AllProjectsContainer({ projectGroups, activeProject, activateProject, dispatch}){
+  let history = useHistory();
+  let match = useRouteMatch()
 
-    
-    useEffect(() => {
-        console.log("Got data K2: ", projectsK2)
+  console.log("AllProjectsContainer: projectGroups: ", projectGroups)
+  console.log("AllProjectsContainer: history: ", history)
+  console.log("AllProjectsContainer: match: ", match)
 
-    }, [projectsK2])
-
-    useEffect(() => {
+  useEffect(() => {
       console.log("AllProjectsCont: ", activeProject)
       if(activeProject && !activeProject._id){
         console.log("Get data for active project:")
         activateProject({K2name: "Random", _id: 100546546}) 
         //TODO: find data about project from url param info.       
       }
-      }, [activeProject])
-
-    // useEffect(() => {
-    //     formatedProjects = useFormateK2Object(projectsK2.slice(0, 10))
-    // }, [projectsK2])
-
+    }, [activeProject])
 
     let components = []
 
-    if(loadingK2){components.push(<ProjectView name={"Loading..."} key="2" loadingSpinner={<CircularProgress color="secondary" />} />)} 
-    if(errorK2){components.push("Error")}
-    if(activeProject){
-        console.log()
-        let count = 0
-            // console.log("Rerendering AppProjectsContainer")
-           components.push(
-                <ProjectContainer 
-                        project_id={activeProject.K2rid}
-                        project_name={activeProject.K2name} 
-                        company_name={activeProject.K2client ? activeProject.K2client : "company_name"}
-                        producer_name={activeProject.person && activeProject.person[0] && activeProject.person[0].id ? activeProject.person[0].id.name : "No producer"}
-                        director_name={activeProject.person && activeProject.person[1] && activeProject.person[1].id ? activeProject.person[1].id.name : "No director"}
-                        idx={count} 
-                        key={activeProject.K2rid} 
-                        projectGroups={groupsAD && groupsAD['test_project']} //activeProject.name
-                        activateProject={activateProject}
-                        deactivateProject={deactivateProject}
-                        k2={true}/> 
-           ) 
- 
+    components.push(
+      <div>
+      {/* <Grid container justify="flex-start">
+        <Grid item>
+          <Grid container justify="center">
+            <Grid item>
+            <div onClick={() => {history.push(`/permissions/project/${activeProject.K2name}`)}}> Groups </div>
+            <Grid>
+          </Grid>
+          <Grid container justify="center">
+            <Grid item>
+            <NavLink to={`${history.location.pathname}/overview`}><p>overview</p></NavLink>
+            <Grid>
+          </Grid>
+        <Grid>
+      </Grid> */}
 
+      <ButtonGroup size="large" aria-label="outlined contained button group">
+        <Button variant="contained" 
+                color={projectGroups ? "primary" : ""} 
+                onClick={() => {history.push(`/permissions/project/${activeProject.K2name}`)}}>
+                  Groups
+        </Button>
+        <Button variant="contained" 
+                color={projectGroups ? "" : "primary"} 
+                onClick={() => {history.push(`/permissions/project/${activeProject.K2name}/overview`)}}>
+                  OVERVIEW
+        </Button>
+      </ButtonGroup>
+    </div>
+    )
+
+    if(activeProject && projectGroups){
+           components.push(
+             <div>
+                <p>Project - Group</p>
+                <ProjectContainer 
+                        // project_id={activeProject.K2rid}
+                        // projectK2Id={activeProject.K2projectId}
+                        // project_name={activeProject.K2name} 
+                        // company_name={activeProject.K2client ? activeProject.K2client : "company_name"}
+                        // producer_name={activeProject.person && activeProject.person[0] && activeProject.person[0].id ? activeProject.person[0].id.name : "No producer"}
+                        // director_name={activeProject.person && activeProject.person[1] && activeProject.person[1].id ? activeProject.person[1].id.name : "No director"}
+        
+                        // key={activeProject.K2rid} 
+                        // // projectGroups={groupsAD && groupsAD['test_project']} //activeProject.name
+                        // projectGroups={mapItemsByProjectId && mapItemsByProjectId[activeProject.K2projectId]} //activeProject.name
+                        /> 
+              </div>
+           ) 
     }
+
+      if(activeProject && !projectGroups){
+        components.push(
+          <div>
+            <p>Project - Overview</p>
+            <ProjectOverviewContainer 
+                    // project_id={activeProject.K2rid}
+                    // projectK2Id={activeProject.K2projectId}
+                    // project_name={activeProject.K2name} 
+                    // company_name={activeProject.K2client ? activeProject.K2client : "company_name"}
+                    // producer_name={activeProject.person && activeProject.person[0] && activeProject.person[0].id ? activeProject.person[0].id.name : "No producer"}
+                    // director_name={activeProject.person && activeProject.person[1] && activeProject.person[1].id ? activeProject.person[1].id.name : "No director"}
+    
+                    // key={activeProject.K2rid} 
+                    // // projectGroups={groupsAD && groupsAD['test_project']} //activeProject.name
+                    // projectGroups={mapItemsByProjectId && mapItemsByProjectId[activeProject.K2projectId]} //activeProject.name
+                    /> 
+          </div>
+        ) 
+  }
 
     if(components.length != 0){
         return  <Container maxWidth="lg" style={{marginTop: 10}}>
-                {components.map((component, index) => {
-                    return component
-                    })}
+                  <Grid container>
+                    <Grid item xs={3}>
+                    <Grid container style={{padding: 5, height: '100%'}}>
+                    <Grid item xs={12} style={{backgroundColor: 'white'}}>
+                      
+                      Projects l;st
+                    </Grid>
+                    </Grid>
+                    </Grid>
+                    <Grid item xs={9}>
+                      {components.map((component, index) => {
+                                  return component
+                                  })}
+                    </Grid>
+        
+                </Grid>
             </ Container>
 
     }
@@ -83,12 +140,6 @@ const StateToProps = ({}) => {
     // const getIsProjectActive = isProjectActive()
       return (state, ownProps) => {
         return {
-            groupsAD: state.project_state.ADProjects.items,
-            loadingAD: state.project_state.ADProjects.loading,
-            errorAD: state.project_state.ADProjects.error,
-            projectsK2: state.project_state.k2Projects.projects,
-            loadingK2: state.project_state.k2Projects.loading,
-            errorK2: state.project_state.k2Projects.error,
             activeProject: state.project_state.activeProject
         }
     }

@@ -8,14 +8,13 @@ import { createSelector } from 'reselect'
 
 import { setActiveProject, cleanActiveProject } from "../../modules/ProjectModule"
 import { fetchProjectGroupsMembers, fetchBookingEvents } from "../../modules/GroupModule"
-import { fetchProjectManagerGroup } from "../../modules/GroupManagerModule"
-import ProjectView from "./ProjectView"
+import ProjectOverviewView from "./ProjectOverviewView"
 import * as CandidateActions from "../../modules/CandidateModule"
 
 function ProjectContainer(props){
     const classes = useStyles();
     let history = useHistory();
-    const {activeProject, mapItemsByProjectId} = props
+    const {activeProject, mapGroupsByProjectId} = props
 
     console.log("ProjectContainer ", props)
 
@@ -39,7 +38,6 @@ function ProjectContainer(props){
 
         if(!props.loadingSpinner){
           props.getProjectGroupsMembers(activeProject.K2projectId)
-          props.getProjectManagerGroup(activeProject.K2projectId)
         }
     }, [props.loadingSpinner, activeProject.K2projectId])
 
@@ -55,7 +53,7 @@ function ProjectContainer(props){
 
     // return(<p>ProjectView</p>)
 
-    return( <ProjectView 
+    return( <ProjectOverviewView 
                 {...props}
                 project_id={activeProject.K2rid}
                 projectK2Id={activeProject.K2projectId}
@@ -66,7 +64,7 @@ function ProjectContainer(props){
 
                 key={activeProject.K2rid} 
                 // projectGroups={groupsAD && groupsAD['test_project']} //activeProject.name
-                projectGroups={mapItemsByProjectId && mapItemsByProjectId[activeProject.K2projectId]} //activeProject.name
+                projectGroups={mapGroupsByProjectId && mapGroupsByProjectId[activeProject.K2projectId]} //activeProject.name
                 />)   
 }
 
@@ -86,7 +84,7 @@ const StateToProps = () => {
             activeProject: state.project_state.activeProject,
             activeProjectId: state.project_state.activeProject._id,
             mapUsrResource: state.person_state.allPersons.mapUsrResource,
-            mapItemsByProjectId: state.project_state.ADGroups.mapItemsByProjectId,
+            mapGroupsByProjectId: state.project_state.ADManagerGroups.mapGroupsByProjectId,
             bookingUserResources: state.group_state.bookingEventsUsers.resources
         }
   
@@ -97,10 +95,7 @@ const StateToProps = () => {
 const mapDispatchToProps = dispatch => {
     return {
         dispatch: (x) => dispatch(x),
-        // activateProject: (_id, name) => dispatch(setActiveProject(_id, name)),
-        deactivateProject: () => dispatch(cleanActiveProject()) ,
         getProjectGroupsMembers: (k2ProjectId) => dispatch(fetchProjectGroupsMembers(k2ProjectId)),
-        getProjectManagerGroup: (k2ProjectId) => dispatch(fetchProjectManagerGroup(k2ProjectId)),
         getBookingEvents: (project_id) => dispatch(fetchBookingEvents(project_id)),
         getAllCandidates: (roles_arr) => dispatch(CandidateActions.fetchAllCandidates(roles_arr))
     }

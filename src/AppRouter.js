@@ -14,6 +14,7 @@ import SearchListProjectsContainer from './components/element/SearchLists/Search
 import SearchListPersonContainer from './components/element/SearchLists/SearchListPersonContainer';
 import AllProjectsContainer from './components/element/Project/AllProjectsContainer';
 import PersonContainer from './components/element/Person/PersonContainer';
+import ProjectContainer from "./components/element/Project/ProjectContainer"
 
 export default function AppRouter(props){
 
@@ -35,9 +36,15 @@ return(
                     </AppLayout>
             </Route>  
             {/* <Route path="/permissions/project/:id"> */}
-            <Route path="/permissions/project/:id">
+            <Route exact path="/permissions/project/:id">
                     <AppLayout {...props}>
-                        <AllProjectsContainer />
+                        <AllProjectsContainer projectGroups={true}/>
+                    </AppLayout>
+            
+            </Route>
+            <Route path="/permissions/project/:id/overview">
+                    <AppLayout {...props}>
+                        <AllProjectsContainer projectGroups={false}/>
                     </AppLayout>
             
             </Route>
@@ -49,9 +56,9 @@ return(
             
             </Route> 
             <Route path="">
-
-            <NavLink to="/permissions"><p>Router did not match anything, click to go to root</p></NavLink>
-            
+                <AppLayout {...props}>
+                    <NavLink to="/permissions"><p>Router did not match anything, click to go to root</p></NavLink>
+                </AppLayout>
             </Route> 
         </Switch>
     </Router>)

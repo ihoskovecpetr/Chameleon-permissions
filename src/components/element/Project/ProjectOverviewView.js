@@ -28,21 +28,21 @@ export default function ProjectView({
       bookingUserResources, mapUsrResource}) {
   const classes = useStyles();
   const [openRes, setOpenRes] = useState(false)
-
+  
   console.log("ProjectView rendered projectGroups: ", projectGroups)
 
 
   return (
     <div className={classes.root}>
 
-      {/* <ProjectHeaderView 
+      <ProjectHeaderView 
           project_id={project_id} 
           project_name={project_name} 
           company_name={company_name} 
           producer_name={producer_name} 
           director_name={director_name} 
-          loadingSpinner={loadingSpinner} /> */}
-        <ProjectManageAllContainer projectGroups={projectGroups} />
+          loadingSpinner={loadingSpinner} />
+        {/* <ProjectManageAllContainer projectGroups={projectGroups} />
 
         <Grid container direction="row">
 
@@ -74,12 +74,12 @@ export default function ProjectView({
         </Collapse>
       </List>
 
-      </ Grid>
+      </ Grid>*/}
 
       <Grid container className={classes.gridGroups}>
-        {projectGroups && projectGroups.map((item, index) => {
-          console.log("Iter project Groups: ", item)
-         return <GroupContainer group_name={item.name} groupObj={item} project_name={project_name} key={index} autoFocus={index === 0} />
+        {projectGroups && projectGroups.map((group, index) => {
+          console.log("Iter project Groups: ", group)
+         return <GroupContainer group_name={group.name} groupObj={group} project_name={project_name} key={index} autoFocus={index === 0} />
         }
         )}
         {!projectGroups && <p>No AD data</p> }

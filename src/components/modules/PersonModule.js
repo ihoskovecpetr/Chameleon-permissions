@@ -92,13 +92,9 @@ export default function reducer(state = initialState, action = {}) {
 export function fetchAllPerson() {
 
   return dispatch => {
-    // dispatch(fetchK2ProjectsBegin());
-    // console.time("Pre call")
+    dispatch(fetchAllPersonBegin());
     return server.getAllActiveUsers()
       .then(json => {
-          console.log("AllPersons HERE ", json)
-          console.timeEnd("Pre call");
-
         dispatch(fetchAllPersonSuccess(json))
         return json;
       })
@@ -109,9 +105,9 @@ export function fetchAllPerson() {
   };
 }
 
-// export const fetchK2ProjectsBegin = () => ({
-// type: FETCH_K2_PROJECTS_BEGIN
-// });
+export const fetchAllPersonBegin = () => ({
+  type: FETCH_ALL_USERS_BEGIN,
+});
 
 export const fetchAllPersonSuccess = data => {
 
@@ -120,17 +116,16 @@ export const fetchAllPersonSuccess = data => {
     //Just to bring correct format of AD members
     current.displayName = current.name
     current.sAMAccountName = current.ssoId
-
     acum[current.resource] = current
     return acum
   }, {})
 
-      return ({
-    type: FETCH_ALL_USERS_SUCCESS,
-    payload: { 
-      presonArr: data, 
-      mapUsrResource: mapUsrResource
-    }
+    return ({
+      type: FETCH_ALL_USERS_SUCCESS,
+      payload: { 
+        presonArr: data, 
+        mapUsrResource: mapUsrResource
+      }
     })
 };
 
@@ -145,11 +140,9 @@ export const fetchAllPersonSuccess = data => {
 export function fetchSinglePerson(_id) {
 
   return dispatch => {
-    // dispatch(fetchK2ProjectsBegin());
+    dispatch(fetchSinglePersonBegin());
     return server.getSingleUser(_id)
       .then(json => {
-          console.log("One Person HERE ", json)
-          console.log("One Person CUTTED: ", StringFormatter.getSeparatedManagedObjects(json[0].ad))
         dispatch(fetchSinglePersonSuccess(json, ))
         return json;
       })
@@ -161,7 +154,7 @@ export function fetchSinglePerson(_id) {
 }
 
 export const fetchSinglePersonBegin = () => ({
-type: FETCH_SINGLE_PERSON_SUCCESS
+type: FETCH_SINGLE_PERSON_BEGIN
 });
 
 export const fetchSinglePersonSuccess = data => ({
@@ -177,11 +170,3 @@ payload: {  personObj: data[0],
 // payload: { error }
 // });
 
-
-
-
-// side effects, only as applicable
-// e.g. thunks, epics, etc
-export function getWidget () {
-  return dispatch => get('/widget').then(widget => dispatch(updateWidget(widget)))
-}

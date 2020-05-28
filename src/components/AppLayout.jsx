@@ -1,15 +1,15 @@
 import React, {useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
+import { connect } from "react-redux";
+
 import AppHeader from './AppHeader';
 import MessageBox from './MessageBox';
 import Toolbox from './toolbox/DetailToolbox';
-
 import FetchingIndicator from './FetchingIndicator';
-
 import {name, version}  from '../../package.json';
 
-export default function App(props){
+function App(props){
     const classes = useStyles();
 
         return (
@@ -33,12 +33,31 @@ export default function App(props){
                 <MessageBox message = {props.appState.message} setMessage = {props.setMessage}/>
                 <div className={classes.bodyWrap}>
                 {props.children}
-                {/* <FetchingIndicator open={this.props.appState.fetching}/> */}
                 </div>
+                <FetchingIndicator open={(props.loadingAD || props.loadingADManagers || props.loadingK2 || props.loadingPerson)}/>
             </div>
         )
 
 }
+
+const StateToProps = () => {
+    return (state, ownProps) => {
+      return {
+          loadingAD: state.project_state.ADGroups &&  state.project_state.ADGroups.loading,
+          loadingADManagers: state.project_state.ADManagerGroups &&  state.project_state.ADManagerGroups.loading,
+          loadingK2: state.project_state.k2Projects && state.project_state.k2Projects.loading,
+          loadingPerson: state.person_state.allPersons && state.person_state.allPersons.loading,
+      }
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+      dispatch: (x) => dispatch(x),
+  }
+}
+
+export default connect(StateToProps, mapDispatchToProps)(App)
 
 const useStyles = makeStyles((theme) => ({
     appLayout: {

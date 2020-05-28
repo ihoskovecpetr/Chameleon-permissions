@@ -15,9 +15,6 @@ const DELETE_EDIT_PROJECT_GROUPS_MEMBERS = 'my-app/group/DELETE_EDIT_PROJECT_GRO
 const FETCH_AD_CONFIRMED_MEMBERS_BEGIN = 'my-app/group/FETCH_AD_CONFIRMED_MEMBERS_BEGIN';
 const FETCH_AD_CONFIRMED_MEMBERS_SUCCESS = 'my-app/group/FETCH_AD_CONFIRMED_MEMBERS_SUCCESS';
 
-const SAVING_MULTI_GROUPS_MBS_BEGIN = 'my-app/group/SAVING_MULTI_GROUPS_MBS_BEGIN';
-const SAVING_MULTI_GROUPS_MBS_SUCCESS = 'my-app/group/SAVING_MULTI_GROUPS_MBS_SUCCESS';
-
 const START_SAVING_GROUP_MEMBERS = 'my-app/group/START_SAVING_GROUP_MEMBERS';
 const STOP_SAVING_GROUP_MEMBERS = 'my-app/group/STOP_SAVING_GROUP_MEMBERS';
 
@@ -26,7 +23,7 @@ const FETCH_BOOKING_EVENTS_SUCCESS = 'my-app/group/FETCH_BOOKING_EVENTS_SUCCESS'
 
 
 const initialState = {
-      confirmedGroupMembers: {test_skupina: [{name: "jan.tester"}]},
+      confirmedGroupMembers: {},
       editingGroupMembers: {},
       currentlySavingGroups: [],
       bookingEventsUsers: {
@@ -212,11 +209,11 @@ export default function reducer(state = initialState, action = {}) {
 // Action Creators
 
 // FETCH AD Groups Members
-export function fetchProjectGroupsMembers(project_name) {
+export function fetchProjectGroupsMembers(project_id) {
 
   return dispatch => {
     dispatch(fetchADGroupsMembersBegin())
-    return server.getProjectGroupsMembers(project_name)
+    return server.getProjectGroupsMembers(project_id)
       .then(json => {
         dispatch(fetchADGroupsMembersSuccess(json.data))
         return json;
@@ -429,13 +426,3 @@ export function deleteAllMembsEditGroup(group_name){
       });
 } 
 
-
-// export function removeWidget(widget) {
-//   return { type: REMOVE, widget };
-// }
-
-// side effects, only as applicable
-// e.g. thunks, epics, etc
-export function getWidget () {
-  return dispatch => get('/widget').then(widget => dispatch(updateWidget(widget)))
-}

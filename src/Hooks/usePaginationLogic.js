@@ -10,7 +10,9 @@ export const usePaginationLogic = (filteredResults) => {
 
   
   useEffect(() => {
-    setCurrentRange(prev => {return(
+    setCurrentRange(prev => {
+        console.log("Math.floor(filteredResults.length/prev.size) + 1: ", Math.floor(filteredResults.length/prev.size) + 1)
+        return(
         {
             ...prev,
             from: 0,

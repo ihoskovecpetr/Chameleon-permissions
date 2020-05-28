@@ -27,6 +27,7 @@ import CandidateContainer from "../Candidate/CandidateContainer"
 import CandidateAutofillContainer from "../Candidate/CandidateAutofillContainer"
 
 function GroupView({  group_name,
+                  groupObj,
                   project_name,
                   anchorEl,
                   stable,
@@ -47,6 +48,8 @@ function GroupView({  group_name,
   const classes = useStyles();
   const openPop = Boolean(anchorEl);
 
+  console.log("Group View: stable: ", stable)
+
   return (
             <Grid item xs={12}> 
             <Grid container className={classes.groupMainContainer}>
@@ -59,7 +62,7 @@ function GroupView({  group_name,
                                   <FolderSharedIcon />
                               </Avatar>
                           </ListItemAvatar>
-                            <ListItemText primary={`${group_name.split('_adv_')[1]}`} />
+                            <ListItemText primary={`${group_name}`} />
                         </ListItem>
                     </Grid>
                   </Grid>
@@ -75,10 +78,11 @@ function GroupView({  group_name,
                     return(
                       <Grid item key={item.displayName}>
                       <Chip 
-                          label={`${item.displayName}`}
+                          label={`${item.displayName ? item.displayName : item.sAMAccountName}`}
                           key={item.displayName}
                           className={classes.anyChip}
                           color="primary"
+                          disabled={item.sAMAccountName == 'adv.test.hoskovec'}
                           onDelete={() => {handleDeleting(item.sAMAccountName)}} 
                           // onClick={() => {handleDeleting(item.sAMAccountName)}}
                           />
@@ -115,7 +119,7 @@ function GroupView({  group_name,
                   <Grid container justify="flex-start" alignItems="center">
                       {/* <TextField type="text" autoFocus={autoFocus} /> */}
                       <Grid item>
-                          <CandidateAutofillContainer autoFocus={autoFocus} group_name={group_name} />
+                          <CandidateAutofillContainer autoFocus={autoFocus} group_name={group_name} groupObj={groupObj} />
                       </Grid>
                       <Grid item>
                         <Chip 
