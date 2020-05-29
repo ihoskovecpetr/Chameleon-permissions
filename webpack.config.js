@@ -7,7 +7,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 
-const PROXY_REMOTE_USER = 'miroslav.kozel';
+const PROXY_REMOTE_USER = 'petr.hoskovec';
 
 module.exports = {
     entry: [

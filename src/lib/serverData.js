@@ -74,9 +74,9 @@ export async function getMyGroups() { // switched to getAllUsers()
     return await fetchServer('GET', '/my_groups'); 
 }
 
-export async function getGroupMembers(groupName) {
-    return await fetchServer('POST', '/group_members', groupName);
-}
+// export async function getGroupMembers(groupName) {
+//     return await fetchServer('POST', '/group_members', groupName);
+// }
 
 export async function getGroupsMembers(groupsNamesArr) {
     return await fetchServer('POST', '/groups_members', groupsNamesArr);
@@ -98,6 +98,12 @@ export async function saveGroupMembers(group_name, currentEditMemb) {
 export async function saveMultipleGroupsMembers(groupsObjArr) {
     console.log("SRVR POST save_multiple_groups")
     return await fetchServer('POST', `/save_multiple_groups`, {groupsObjArr: groupsObjArr});
+}
+
+
+//SAVE NEW MANAGERS to group 
+export async function saveGroupManagers(group_name, currentEditMmgs) {
+    return await fetchServer('POST', `/save_managers/${group_name}`, {users: currentEditMmgs});
 }
 
 

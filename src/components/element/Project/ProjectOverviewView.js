@@ -13,13 +13,9 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import FaceIcon from '@material-ui/icons/Face';
 
 import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
 
-import * as server from '../../../lib/serverData';
-
-import ProjectManageAllContainer from "./ProjectManageAllContainer"
 import ProjectHeaderView from "./ProjectHeaderView"
-import GroupContainer from "../Group/GroupContainer"
+import GroupManagerContainer from "../GroupManager/GroupManagerContainer"
 
 export default function ProjectView({
       project_id, project_name, 
@@ -42,9 +38,8 @@ export default function ProjectView({
           producer_name={producer_name} 
           director_name={director_name} 
           loadingSpinner={loadingSpinner} />
-        {/* <ProjectManageAllContainer projectGroups={projectGroups} />
 
-        <Grid container direction="row">
+       <Grid container direction="row">
 
       <List>
         <ListItem button onClick={() => setOpenRes(!openRes)}>
@@ -74,12 +69,12 @@ export default function ProjectView({
         </Collapse>
       </List>
 
-      </ Grid>*/}
+      </ Grid>
 
       <Grid container className={classes.gridGroups}>
         {projectGroups && projectGroups.map((group, index) => {
           console.log("Iter project Groups: ", group)
-         return <GroupContainer group_name={group.name} groupObj={group} project_name={project_name} key={index} autoFocus={index === 0} />
+         return <GroupManagerContainer group_name={group.name} groupObj={group} project_name={project_name} key={index} autoFocus={index === 0} />
         }
         )}
         {!projectGroups && <p>No AD data</p> }

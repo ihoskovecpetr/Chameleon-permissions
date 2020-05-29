@@ -9,6 +9,7 @@ import { connect } from "react-redux";
 import { createSelector } from 'reselect'
 
 import { setEditingGroupMembers, addEditGroupMbrs } from "../../modules/GroupModule"
+import { setEditingGroupManagers, addEditGroupManagers } from "../../modules/GroupManagerModule"
 
 import FilterCheckView from "../sub_elements/FilterCheckView"
 
@@ -21,12 +22,14 @@ const roleNames = [
   {label: "2D", name: "2D"},
 ]
 
-function CandidateAutofillContainer({allCandidates, 
+function CandidateAutofillContainer({managerGroup,
+                                  allCandidates, 
                                   thisEdittingGroup, 
                                   autoFocus, 
                                   group_name,
                                   groupObj, 
-                                  addEditingMbs, 
+                                  addEditingMbsDisp, 
+                                  addEditingManagers,
                                   dispatch}) {
   const classes = useStyles();
   const [filter, setFilter] = useState({
@@ -70,8 +73,6 @@ function CandidateAutofillContainer({allCandidates,
 
   useEffect(() => {
 
-    console.log("Candidated Arr recreation")
-
     let choosenRolesCandidates = []    
     
     for (var key in filter) {
@@ -80,14 +81,9 @@ function CandidateAutofillContainer({allCandidates,
       }
     }
 
-    console.log("Candidated Arr recreation unfiler? ", thisEdittingGroup)
     if(thisEdittingGroup){
       choosenRolesCandidates = choosenRolesCandidates.filter(candidate => {
-        console.log("Candidate: ", candidate)
-        console.log("current edit group: ", thisEdittingGroup)
-        console.log("findIndex of membr: ", thisEdittingGroup.findIndex(i => i.sAMAccountName === candidate.sAMAccountName))
         if( thisEdittingGroup.findIndex(i => i.sAMAccountName === candidate.sAMAccountName) != -1){
-          console.log("Found you, : ", candidate.sAMAccountName)
           return false
         }else{
           return true
@@ -104,9 +100,21 @@ function CandidateAutofillContainer({allCandidates,
 
   const handleSelectCandidate = (e, personObj) => {
     if(personObj){
-      dispatch(setEditingGroupMembers(group_name))
-      console.log("Autofill: personObj ,group_name: ", [personObj] ,group_name)
-      dispatch(addEditingMbs([personObj] ,group_name))
+
+    switch(managerGroup) {
+      case true:
+        dispatch(setEditingGroupManagers(group_name))
+        console.log("Autofill: personObj ,group_name: ", [personObj] ,group_name)
+        addEditingManagers([personObj] ,group_name)
+        break;
+      case false:
+        dispatch(setEditingGroupMembers(group_name))
+        console.log("Autofill: personObj ,group_name: ", [personObj] ,group_name)
+        addEditingMbsDisp([personObj] ,group_name)
+        break;
+      default:
+        // code block
+    }
     }
   }
 
@@ -175,8 +183,12 @@ function CandidateAutofillContainer({allCandidates,
 
 const makeGetEditGroup = () => createSelector(
   (state, props) => props.group_name,
-  (state, {group_name}) => {
-    if(state.group_state.editingGroupMembers[group_name]) return state.group_state.editingGroupMembers[group_name]
+  (state, props) => {
+    if(!props.managerGroup && state.group_state.editingGroupMembers[props.group_name]) {
+      return state.group_state.editingGroupMembers[props.group_name]
+    }else if(props.managerGroup && state.group_manager_state.editingGroupsManagers[props.group_name]){
+      return state.group_manager_state.editingGroupsManagers[props.group_name] 
+    }
     return false
   },
   (group_name, group) => {
@@ -192,7 +204,6 @@ const StateToProps = () => {
       return {
         thisEdittingGroup: getEditGroup(state, ownProps),
         allCandidates: state.candidate_state.allCandidates.mapCandidByRole,
-        // currentEditingCand: state.group_state.editingGroupMembers
       } 
   }
 }
@@ -201,7 +212,9 @@ const StateToProps = () => {
 const mapDispatchToProps = dispatch => {
   return {
       dispatch: (x) => dispatch(x),
-      addEditingMbs: (candidateObj, group_name) => dispatch(addEditGroupMbrs(candidateObj, group_name)),
+      addEditingMbsDisp: (candidateObj, group_name) => dispatch(addEditGroupMbrs(candidateObj, group_name)),
+      addEditingManagers: (candidateObj, group_name) => dispatch(addEditGroupManagers(candidateObj, group_name)),
+
   }
 }
 

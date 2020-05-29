@@ -3,20 +3,20 @@ import * as server from '../../lib/serverData';
 // Action types
 const SET_ALL_EDITING_GROUP_MEMBERS = 'my-app/group/SET_ALL_EDITING_GROUP_MEMBERS';
 const ADD_EDIT_MANAGER = 'my-app/group/ADD_EDIT_MANAGER';
-const SET_EDITING_GROUP = 'my-app/group/SET_EDITING_GROUP_MEMBERS';
+const SET_EDITING_GROUP_MANAGER = 'my-app/group/SET_EDITING_GROUP_MANAGER';
 
 const STOP_EDITING_GROUP = 'my-app/group/STOP_EDITING_GROUP';
 const STOP_EDITING_ALL_GROUPS = 'my-app/group/STOP_EDITING_ALL_GROUPS';
 
-const DELETE_EDIT_GROUP_MEMBER = 'my-app/group/DELETE_EDIT_GROUP_MEMBER';
+const DELETE_EDIT_GROUP_MANAGER = 'my-app/group/DELETE_EDIT_GROUP_MANAGER';
 const DELETE_EDIT_SINGLE_GROUP = 'my-app/group/DELETE_EDIT_SINGLE_GROUP';
 const DELETE_EDIT_PROJECT_GROUPS_MEMBERS = 'my-app/group/DELETE_EDIT_PROJECT_GROUPS_MEMBERS';
 
 const FETCH_AD_CONFIRMED_MANAGERS_BEGIN = 'my-app/group/FETCH_AD_CONFIRMED_MANAGERS_BEGIN';
 const FETCH_AD_CONFIRMED_MANAGERS_SUCCESS = 'my-app/group/FETCH_AD_CONFIRMED_MANAGERS_SUCCESS';
 
-const START_SAVING_GROUP_MEMBERS = 'my-app/group/START_SAVING_GROUP_MEMBERS';
-const STOP_SAVING_GROUP_MEMBERS = 'my-app/group/STOP_SAVING_GROUP_MEMBERS';
+const START_SAVING_GROUP_MANAGERS = 'my-app/group/START_SAVING_GROUP_MANAGERS';
+const STOP_SAVING_GROUP_MANAGERS = 'my-app/group/STOP_SAVING_GROUP_MANAGERS';
 
 
 const initialState = {
@@ -79,91 +79,93 @@ export default function reducer(state = initialState, action = {}) {
           mapConfGroupsByProjectId: mapGrps
       };
 
-    // case ADD_EDIT_MANAGER:
+    case ADD_EDIT_MANAGER:
       
-    //   //Sort out all UNDEFINED users
-    //   const noUndefCandidates = action.payload.candidateObjArr.filter(item => item ? true : false)
+        //Sort out all UNDEFINED users
+        const noUndefCandidates = action.payload.candidateObjArr.filter(item => item ? true : false)
 
-    //   let oldMbs
-    //   if(state.editingGroupMembers[action.payload.group_name]){
-    //     oldMbs = [...state.editingGroupMembers[action.payload.group_name]]
-    //   }else{ oldMbs = [] }
-    //   console.log("Old Mbs: ", oldMbs)
+        let oldMbs
+        if(state.editingGroupsManagers[action.payload.group_name]){
+          oldMbs = [...state.editingGroupsManagers[action.payload.group_name]]
+        }else{ oldMbs = [] }
+        console.log("Old Mbs: ", oldMbs)
 
-    //   let mergeMbs
-    //   if(oldMbs.length === 0) { 
-    //     mergeMbs = noUndefCandidates
-    //   } else{  mergeMbs = [ ...oldMbs, ...noUndefCandidates] }
-      
-    //   console.log("mergeMbs: ", mergeMbs)
+        let mergeMbs
+        if(oldMbs.length === 0) { 
+          mergeMbs = noUndefCandidates
+        } else{  mergeMbs = [ ...oldMbs, ...noUndefCandidates] }
+        
+        console.log("mergeMbs: ", mergeMbs)
 
-    //   mergeMbs = mergeMbs.filter((member, index, self) =>
-    //   index === self.findIndex((t) => (
-    //       t.displayName === member.displayName
-    //   ))
-    //   )
+        mergeMbs = mergeMbs.filter((member, index, self) =>
+        index === self.findIndex((t) => (
+            t.displayName === member.displayName
+        ))
+        )
 
-    //         return {
-    //             ...state,
-    //             editingGroupMembers: {
-    //                 ...state.editingGroupMembers, 
-    //                 [action.payload.group_name]: mergeMbs
-    //                 }
-    //         };
+              return {
+                  ...state,
+                  editingGroupsManagers: {
+                      ...state.editingGroupsManagers, 
+                      [action.payload.group_name]: mergeMbs
+                      }
+              };
 
 
-    // case SET_EDITING_GROUP_MEMBERS:
+    case SET_EDITING_GROUP_MANAGER:
 
-    //     let prevDataEditGroups
-    //     if(state.editingGroupMembers){
-    //       prevDataEditGroups = state.editingGroupMembers
-    //     } else{
-    //       prevDataEditGroups = []
-    //     }
+        let prevDataEditGroups
+        if(state.editingGroupsManagers){
+          prevDataEditGroups = state.editingGroupsManagers
+        } else{
+          prevDataEditGroups = []
+        }
 
-    //     let groupMembers
-    //     if(!state.editingGroupMembers[action.payload.groupName]){
-    //       groupMembers = state.confirmedGroupMembers[action.payload.groupName]
-    //     } else{
-    //       groupMembers = state.editingGroupMembers[action.payload.groupName]
-    //     }
+        let groupMembers
+        if(!state.editingGroupsManagers[action.payload.groupName]){
+          groupMembers = state.confirmedGroupsManagers[action.payload.groupName]
+        } else{
+          groupMembers = state.editingGroupsManagers[action.payload.groupName]
+        }
 
-    //           return {
-    //               ...state,
-    //               editingGroupMembers: {
-    //                 ...prevDataEditGroups,
-    //                 [action.payload.groupName]: groupMembers}
-    //           };
-    // case STOP_EDITING_GROUP:
-    //   console.log("Stop Editing GROUP: pre", )
+              return {
+                  ...state,
+                  editingGroupsManagers: {
+                    ...prevDataEditGroups,
+                    [action.payload.groupName]: groupMembers}
+              };
 
-    //     let newEditGroups = state.editingGroupMembers
-    //         delete newEditGroups[action.payload.group_name]
+
+    case STOP_EDITING_GROUP:
+      console.log("Stop Editing GROUP: pre", )
+
+        let newEditGroups = state.editingGroupsManagers
+            delete newEditGroups[action.payload.group_name]
         
 
-    //           return {
-    //               ...state,
-    //               editingGroupMembers: {
-    //                 ...newEditGroups
-    //               }
-    //           };
+              return {
+                  ...state,
+                  editingGroupsManagers: {
+                    ...newEditGroups
+                  }
+              };
 
     // case STOP_EDITING_ALL_GROUPS:
     //         return {
     //             ...state,
-    //             editingGroupMembers: {}
+    //             editingGroupsManagers: {}
     //         };
 
-    // case DELETE_EDIT_GROUP_MEMBER:
-    //         return {
-    //             ...state,
-    //             editingGroupMembers: {...state.editingGroupMembers , [action.payload.group_name]: action.payload.newEditGroup}
-    //         };
+    case DELETE_EDIT_GROUP_MANAGER:
+            return {
+                ...state,
+                editingGroupsManagers: {...state.editingGroupsManagers , [action.payload.group_name]: action.payload.newEditGroup}
+            };
 
     // case DELETE_EDIT_SINGLE_GROUP:
     //         return {
     //             ...state,
-    //             editingGroupMembers: {...state.editingGroupMembers, [action.payload.group_name]: []}
+    //             editingGroupsManagers: {...state.editingGroupsManagers, [action.payload.group_name]: []}
     //         };
 
     // case DELETE_EDIT_PROJECT_GROUPS_MEMBERS:
@@ -177,31 +179,31 @@ export default function reducer(state = initialState, action = {}) {
 
     //         return {
     //             ...state,
-    //             editingGroupMembers: editObj
+    //             editingGroupsManagers: editObj
     //         };
 
-    // case START_SAVING_GROUP_MEMBERS:
+    case START_SAVING_GROUP_MANAGERS:
 
-    //     const  newArr = state.currentlySavingGroups
-    //     if(state.currentlySavingGroups.indexOf(action.payload.group_name) === -1){
-    //       newArr.push(action.payload.group_name)
-    //     }
+        const  newArr = state.currentlySavingGroups
+        if(state.currentlySavingGroups.indexOf(action.payload.group_name) === -1){
+          newArr.push(action.payload.group_name)
+        }
             
-    //       return {
-    //           ...state,
-    //           currentlySavingGroups: newArr
-    //       };
+          return {
+              ...state,
+              currentlySavingGroups: newArr
+          };
 
-    // case STOP_SAVING_GROUP_MEMBERS:
+    case STOP_SAVING_GROUP_MANAGERS:
 
-    //   const group_name_index = state.currentlySavingGroups.indexOf(action.payload.group_name)
-    //   const  newArrSpliced = state.currentlySavingGroups
-    //   newArrSpliced.splice(group_name_index, 1)
+      const group_name_index = state.currentlySavingGroups.indexOf(action.payload.group_name)
+      const  newArrSpliced = state.currentlySavingGroups
+      newArrSpliced.splice(group_name_index, 1)
 
-    //         return {
-    //             ...state,
-    //             currentlySavingGroups: newArrSpliced
-    //         };
+            return {
+                ...state,
+                currentlySavingGroups: newArrSpliced
+            };
 
     default: 
         return state;
@@ -214,12 +216,12 @@ export default function reducer(state = initialState, action = {}) {
 export function fetchProjectManagerGroup(project_id) {
 
   return dispatch => {
-    dispatch(fetchADGroupsMembersBegin())
+    dispatch(fetchADGroupsManagersBegin())
     return server.getProjectManagerGroup(project_id)
       .then(json => {
 
         console.log("ONLY managers: ", json)
-        dispatch(fetchADGroupsMembersSuccess(json.data))
+        dispatch(fetchADGroupsManagersSuccess(json.data))
         return json;
       })
       .catch(err =>
@@ -228,12 +230,12 @@ export function fetchProjectManagerGroup(project_id) {
   };
 }
 
-export function fetchADGroupsMembersBegin(){
+export function fetchADGroupsManagersBegin(){
   return ({
       type: FETCH_AD_CONFIRMED_MANAGERS_BEGIN,
   }); 
 } 
-export function fetchADGroupsMembersSuccess(data){
+export function fetchADGroupsManagersSuccess(data){
 
   return ({
       type: FETCH_AD_CONFIRMED_MANAGERS_SUCCESS,
@@ -244,16 +246,16 @@ export function fetchADGroupsMembersSuccess(data){
 
 
 // // ADD members to edit group
-// export function addEditGroupMbrs(candidateObjArr, group_name){
+export function addEditGroupManagers(candidateObjArr, group_name){
 
-//  return ({
-//       type: ADD_EDIT_MANAGER,
-//       payload: { 
-//         candidateObjArr: candidateObjArr,
-//           group_name: group_name
-//               }
-//       });
-// } 
+ return ({
+      type: ADD_EDIT_MANAGER,
+      payload: { 
+        candidateObjArr: candidateObjArr,
+          group_name: group_name
+              }
+      });
+} 
 
 
 // // Clear ALL Edit group members
@@ -269,28 +271,28 @@ export function fetchADGroupsMembersSuccess(data){
 
 
 
-// // Set Group to start being Edited
-// export function setEditingGroupMembers(group_name){
-//    return ({
-//     type: SET_EDITING_GROUP_MEMBERS,
-//     payload: {  
-//         groupName: group_name
-//             }
-//     });
-// } 
+// Set Group to start being Edited
+export function setEditingGroupManagers(group_name){
+   return ({
+    type: SET_EDITING_GROUP_MANAGER,
+    payload: {  
+        groupName: group_name
+            }
+    });
+} 
 
 // // Stop Editing Group
-// export function stopEditingGroup(group_name){
+export function stopEditingGroup(group_name){
 
-//   console.log("Stop Editing this group: ", group_name)
+  console.log("Stop Editing this group: ", group_name)
 
-//  return ({
-//   type: STOP_EDITING_GROUP,
-//   payload: {  
-//     group_name: group_name
-//           }
-//   });
-// } 
+ return ({
+  type: STOP_EDITING_GROUP,
+  payload: {  
+    group_name: group_name
+          }
+  });
+} 
 
 // // Stop Editing All Groups
 // export function stopEditingAllGroups(){
@@ -301,45 +303,45 @@ export function fetchADGroupsMembersSuccess(data){
 //    });
 //  } 
 
-//  // Set Saving group members
-// export function startSavingStageGroup(group_name){
-//   return ({
-//    type: START_SAVING_GROUP_MEMBERS,
-//    payload: {group_name}
-//    });
-//  } 
+ // Set Saving group members
+export function startSavingStageGroup(group_name){
+  return ({
+   type: START_SAVING_GROUP_MANAGERS,
+   payload: {group_name}
+   });
+ } 
 
-//  export function stopSavingStageGroup(group_name){
-//   return ({
-//    type: STOP_SAVING_GROUP_MEMBERS,
-//    payload: {group_name}
-//    });
-//  } 
-// // SAVE new members to AD
+ export function stopSavingStageGroup(group_name){
+  return ({
+   type: STOP_SAVING_GROUP_MANAGERS,
+   payload: {group_name}
+   });
+ } 
 
-// export function saveNewGroupMembers(currentEditMemb, group_name) {
+// SAVE new members to AD
+export function saveNewGroupManagers(currentEditMemb, group_name) {
 
-//   return dispatch => {
-//     dispatch(startSavingStageGroup(group_name))
-//   return server.saveGroupMembers(group_name, currentEditMemb)
-//     .then(json => {
-//         if(json.new_mbs_success === true){
-//             //Fetch newly added members from AD
-//             dispatch(fetchADGroupsMembersSuccess([
-//               {[group_name]: currentEditMemb}
-//             ]))
-//             //Close (delete) Editting group
-//             dispatch(stopSavingStageGroup(group_name))
-//             dispatch(stopEditingGroup(group_name))
+  return dispatch => {
+    dispatch(startSavingStageGroup(group_name))
+  return server.saveGroupManagers(group_name, currentEditMemb)
+    .then(json => {
+        if(json.new_mbs_success === true){
+            //Fetch newly added members from AD
+            dispatch(fetchADGroupsManagersSuccess([
+              {[group_name]: currentEditMemb}
+            ]))
+            //Close (delete) Editting group
+            dispatch(stopSavingStageGroup(group_name))
+            dispatch(stopEditingGroup(group_name))
 
-//         }
-//       return json;
-//     })
-//     .catch(error =>
-//       console.log("saving members err: ", error)
-//     );
-// };
-// }
+        }
+      return json;
+    })
+    .catch(error =>
+      console.log("saving members err: ", error)
+    );
+};
+}
 
 // SAVE new members to AD
 
@@ -358,7 +360,7 @@ export function fetchADGroupsMembersSuccess(data){
 //             console.log("Response: ", json)
 //             if(json.new_mbs_success === true){
 //                 //Fetch newly added members from AD
-//                 dispatch(fetchADGroupsMembersSuccess([
+//                 dispatch(fetchADGroupsManagersSuccess([
 //                   {[groupName]: groupMbsArr}
 //                 ]))
 //                 //Close (delete) Editting group
@@ -377,18 +379,18 @@ export function fetchADGroupsMembersSuccess(data){
 
 
 
-// export function deleteMemberEditGroup(editGroupOriginal, sAMAccountName, group_name){
+export function deleteManagerEditGroup(editGroupOriginal, sAMAccountName, group_name){
 
-//     const newEditGroup = editGroupOriginal.filter(item => item.sAMAccountName != sAMAccountName)
+    const newEditGroup = editGroupOriginal.filter(item => item.sAMAccountName != sAMAccountName)
 
-//     return ({
-//         type: DELETE_EDIT_GROUP_MEMBER,
-//         payload: {  
-//             group_name: group_name,
-//             newEditGroup: newEditGroup
-//                 }
-//         });
-// } 
+    return ({
+        type: DELETE_EDIT_GROUP_MANAGER,
+        payload: {  
+            group_name: group_name,
+            newEditGroup: newEditGroup
+                }
+        });
+} 
 
 // export function deleteAllMembsEditGroup(group_name){
 

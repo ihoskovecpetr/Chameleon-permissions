@@ -13,6 +13,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
 import SaveIcon from '@material-ui/icons/Save';
 import BlockIcon from '@material-ui/icons/Block';
+import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -28,15 +29,13 @@ import CandidateAutofillContainer from "../Candidate/CandidateAutofillContainer"
 
 function GroupView({  group_name,
                   groupObj,
-                  project_name,
                   anchorEl,
                   stable,
                   newOnes,
                   deleted,
-                  allCandidates,
-                  handleOpenAddCand,
                   handleDeleting,
                   handleRemoveAll,
+                  handlePopulateGroupFromBooking,
                   isEditting,
                   isSaving,
                   loadingMembers,
@@ -52,6 +51,7 @@ function GroupView({  group_name,
 
   return (
             <Grid item xs={12}> 
+            MANAGER GROUP
             <Grid container className={classes.groupMainContainer}>
                 <Grid item xs={4}> 
                   <Grid container justify="flex-start" alignItems="center" className={classes.nameContainer}> 
@@ -81,7 +81,7 @@ function GroupView({  group_name,
                           label={`${item.displayName ? item.displayName : item.sAMAccountName}`}
                           key={item.displayName}
                           className={classes.anyChip}
-                          color="primary"
+                          color={item.sAMAccountName == 'adv.test.hoskovec' ? "" : "secondary"}
                           disabled={item.sAMAccountName == 'adv.test.hoskovec'}
                           onDelete={() => {handleDeleting(item.sAMAccountName)}} 
                           // onClick={() => {handleDeleting(item.sAMAccountName)}}
@@ -106,7 +106,7 @@ function GroupView({  group_name,
                     return(
                     <Grid item key={item.displayName}>
                       <Chip 
-                          label={`${item.displayName}`}
+                          label={`${item.displayName ? item.displayName : item.sAMAccountName}`}
                           key={item.displayName}
                           className={classes.disabledChip}
                           color="secondary"
@@ -119,17 +119,20 @@ function GroupView({  group_name,
                   <Grid container justify="flex-start" alignItems="center">
                       {/* <TextField type="text" autoFocus={autoFocus} /> */}
                       <Grid item>
-                          <CandidateAutofillContainer managerGroup={false} autoFocus={autoFocus} group_name={group_name} groupObj={groupObj} />
+                          <CandidateAutofillContainer managerGroup={true} autoFocus={autoFocus} group_name={group_name} groupObj={groupObj} />
                       </Grid>
+                      
                       <Grid item>
-                        <Chip 
-                            label="Add"
-                            aria-owns='mouse-over-popover' 
-                            // onDelete={() => {}} 
-                            onClick={handleOpenAddCand}
-                            icon={<AddIcon />}
-                            />
-                      </ Grid>
+                          <Chip 
+                              label="Populate from Booking"
+                              aria-owns='mouse-over-popover' 
+                              // onDelete={() => {}} 
+                              className={classes.populateChip}
+                              onClick={handlePopulateGroupFromBooking}
+                              icon={<GroupAddIcon />}
+                              />
+                        </ Grid>
+
                       {isEditting && <Grid item>
                           <Chip 
                               label="Save"
@@ -151,17 +154,6 @@ function GroupView({  group_name,
                               icon={<BlockIcon />}
                               />
                         </ Grid>}
-                        <Grid item>
-                          <Chip 
-                              label="Remove mbs"
-                              variant="outlined"
-                              aria-owns='mouse-over-popover' 
-                              // onDelete={() => {}} 
-                              className={classes.removeAllChip}
-                              onClick={handleRemoveAll}
-                              icon={<DeleteIcon />}
-                              />
-                        </ Grid>
                         {isSaving && <p>Saving..</p>}
                     </Grid>
                 </div>
@@ -230,6 +222,9 @@ const useStyles = makeStyles((theme) => ({
   },
   saveChip: {
     backgroundColor: '#daaa4b'
+  },
+  populateChip: {
+    backgroundColor: 'green'
   },
   removeAllChip: {
     borderColor: '#f50057',

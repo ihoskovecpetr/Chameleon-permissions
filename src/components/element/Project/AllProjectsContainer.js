@@ -60,7 +60,7 @@ function AllProjectsContainer({ projectGroups, activeProject, activateProject, d
         <Button variant="contained" 
                 color={projectGroups ? "" : "primary"} 
                 onClick={() => {history.push(`/permissions/project/${activeProject.K2name}/overview`)}}>
-                  OVERVIEW
+                  MANAGERS
         </Button>
       </ButtonGroup>
     </div>
@@ -113,7 +113,7 @@ function AllProjectsContainer({ projectGroups, activeProject, activateProject, d
                     <Grid container style={{padding: 5, height: '100%'}}>
                     <Grid item xs={12} style={{backgroundColor: 'white'}}>
                       
-                      Projects l;st
+                      Projects list
                     </Grid>
                     </Grid>
                     </Grid>

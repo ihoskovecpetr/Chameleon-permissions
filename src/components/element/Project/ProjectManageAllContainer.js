@@ -16,7 +16,7 @@ function ProjectManageAllContainer({
     mapUsrResource,
     bookingUserResources,
     edittingGroups,
-
+    mapItemsByProjectId,
     deleteAllEditGroupsMbs,
     addEditGroupMbrs,
     stopEditingAllGroups, 
@@ -42,18 +42,29 @@ function ProjectManageAllContainer({
     }
 
     const handlePopulateFromBooking = () => {
-      console.log("bookingUserResources: ", bookingUserResources)
-      let candidatesObjArr = []
+      console.log("bookingUserResources: I was here ", bookingUserResources)
+      const projectGroups = mapItemsByProjectId[projectObj.K2projectId]
+      console.log("bookingUserResources: groups", projectGroups)
+
+      projectGroups.map(group => {
+
+             let candidatesObjArr = []
         bookingUserResources && Object.keys(bookingUserResources).map(function(key, index) {
           console.log("candidatesObjArr ", candidatesObjArr)
           console.log("mapUsrResource[key]: ", mapUsrResource[key])
-          candidatesObjArr.push(mapUsrResource[key])
+          if(group.roles.indexOf(bookingUserResources[key][0]) != -1){
+            console.log("Tady je toto: ", group.roles, bookingUserResources[key][0])
+            candidatesObjArr.push(mapUsrResource[key])
+          }
+          
         })
 
         console.log("Just Candidates from Booking to be Pushed: ", candidatesObjArr)
 
         //MOCK
-        addEditGroupMbrs(candidatesObjArr, "test_project_adv_VFX_BREAKDOWN")
+        addEditGroupMbrs(candidatesObjArr, group.name)
+      })
+ 
     }
 
 
@@ -88,6 +99,7 @@ const StateToProps = () => {
             // activeProjectId: state.project_state.activeProject._id,
             mapUsrResource: state.person_state.allPersons.mapUsrResource,
             bookingUserResources: state.group_state.bookingEventsUsers.resources,
+            mapItemsByProjectId: state.project_state.ADGroups.mapItemsByProjectId,
             projectObj: state.project_state.activeProject,
             edittingGroups: state.group_state.editingGroupMembers
         }

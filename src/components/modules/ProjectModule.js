@@ -84,12 +84,41 @@ export default function reducer(state = initialState, action = {}) {
     case FETCH_AD_GROUPS_SUCCESS:
 
       const mapItms = action.payload.projects.reduce((acumul, currentValue) => {
-        const projectId = currentValue.name.split('_')[1]
-        if(acumul[projectId]){
-          acumul[projectId] = [...acumul[projectId], currentValue]
-        }else{
-          acumul[projectId] = [currentValue]
-        }
+          const projectId = currentValue.name.split('_')[1]
+          if(acumul[projectId]){
+            acumul[projectId] = [...acumul[projectId], currentValue]
+          }else{
+            acumul[projectId] = [currentValue]
+          }
+            return acumul
+      }, {})
+
+
+      const mapGroupsName = action.payload.projects.reduce((acumul, currentValue) => {
+          const groupName = currentValue.name
+          currentValue.roles = currentValue.uppAdvGroupAttribute.split(':')
+          if(acumul[groupName]){
+            acumul[groupName] = [...acumul[groupName], currentValue]
+          }else{
+            acumul[groupName] = [currentValue]
+          }
+            return acumul
+      }, {})
+
+
+      const mapGrpRoles = action.payload.projects.reduce((acumul, currentValue) => {
+        console.log("MapRole tohle:: ", currentValue)
+        const projectRoles = currentValue.uppAdvGroupAttribute.split(':')
+
+        projectRoles.map(role => {
+          if(acumul[role]){
+            acumul[role] = [...acumul[role], currentValue]
+          }else{
+            acumul[role] = [currentValue]
+          }
+        } )
+
+
           return acumul
       }, {})
 
@@ -99,7 +128,9 @@ export default function reducer(state = initialState, action = {}) {
         ADGroups: {
           loading: false,
           items: action.payload.projects,
-          mapItemsByProjectId: mapItms
+          mapItemsByProjectId: mapItms,
+          mapGroupsByName: mapGroupsName,
+          mapGroupsByRoles: mapGrpRoles
         }
       };
 
@@ -140,12 +171,25 @@ export default function reducer(state = initialState, action = {}) {
       }, {})
 
 
+      const mapGrpsName = action.payload.projects.reduce((acumul, currentValue) => {
+        const grpName = currentValue.name
+        currentValue.roles = currentValue.uppAdvGroupAttribute.split(':')
+        if(acumul[grpName]){
+          acumul[grpName] = [...acumul[grpName], currentValue]
+        }else{
+          acumul[grpName] = [currentValue]
+        }
+          return acumul
+      }, {})
+
+
       return {
         ...state,
         ADManagerGroups: {
           loading: false,
           XXgroups: action.payload.projects,
-          mapGroupsByProjectId: mapGrps
+          mapGroupsByProjectId: mapGrps,
+          mapGroupsByName: mapGrpsName
         }
       };
 

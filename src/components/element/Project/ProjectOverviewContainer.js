@@ -27,10 +27,6 @@ function ProjectContainer(props){
 
     useEffect(() => {
     console.log("Project CONTTT", props.activeProjectId)
-//       if(props.activeProjectId){
-//         console.log("GET BOOK EVENT fr this event ", props.activeProjectId)
-//         props.getBookingEvents(props.activeProjectId)
-//       }
       props.getBookingEvents(props.activeProjectId)
   }, [props.activeProjectId])
 
@@ -41,17 +37,6 @@ function ProjectContainer(props){
         }
     }, [props.loadingSpinner, activeProject.K2projectId])
 
-
-    // const handleURLChange = (id) => {
-    //     // history.push(`/${id}`)
-    //     history.push(`/permissions/${id}`)
-    // }
-
-    // const handleCleanURL = () => {
-    //     history.replace(`/`)
-    // }
-
-    // return(<p>ProjectView</p>)
 
     return( <ProjectOverviewView 
                 {...props}
