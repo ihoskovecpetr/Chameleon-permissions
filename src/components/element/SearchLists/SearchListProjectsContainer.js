@@ -39,7 +39,7 @@ function SearchListProjectsContainer({loadingAD, errorAD, groupsAD, mapItemsByPr
     })
 
     const handleOpenProject = (project) => {
-
+        console.log("")
         activateProject(project)
         history.push(`/permissions/project/${project.K2name}`)
     }
@@ -83,7 +83,7 @@ function SearchListProjectsContainer({loadingAD, errorAD, groupsAD, mapItemsByPr
                             </Avatar>
                         </ListItemAvatar>
                         <ListItemText primary={`${project.K2name} - ${project.K2client}`} /> 
-                        {mapItemsByProjectId[project.K2projectId] ? "AD connected" : ""}   
+                        {mapItemsByProjectId && mapItemsByProjectId[project.K2projectId] ? "AD connected" : ""}   
                     </ListItem>
                     )}
                 })

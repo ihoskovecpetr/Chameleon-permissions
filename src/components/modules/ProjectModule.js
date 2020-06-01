@@ -28,8 +28,12 @@ const initialState = {
   ADGroups:{
     loading: false,
     error: null,
-    projects: []
-  }
+    projects: [],
+    mapItemsByProjectId: {},
+    mapGroupsByName: {},
+    mapGroupsByRoles: {}
+  },
+  activeProject: {}
   };
 
 // Reducer
@@ -75,9 +79,13 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         ADGroups: {
+          ...state.ADGroups,
           loading: true,
           error: null,
-          items: null
+          items: null,
+          mapItemsByProjectId: {},
+          mapGroupsByName: {},
+          mapGroupsByRoles: {}
         }
       };
 
@@ -126,6 +134,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         ADGroups: {
+          ...state.ADGroups,
           loading: false,
           items: action.payload.projects,
           mapItemsByProjectId: mapItms,
@@ -139,6 +148,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         ADGroups: {
+          ...state.ADGroups,
           loading: false,
           error: action.payload.error,
           items: []
@@ -207,8 +217,9 @@ export default function reducer(state = initialState, action = {}) {
 // mark ACTIVE project reducer
 
       case SET_ACTIVE_PROJECT:
-    const obj = action.payload.projectObj
-          obj.projectADGroups = state.ADGroups.items['test_project'] // MOCK state.ADGroups.items[action.payload.projectObj.K2name]
+        const obj = action.payload.projectObj
+        console.log("Activating this PRJ obj to Id: ",state.ADGroups.mapItemsByProjectId[action.payload.projectObj.K2projectId], action.payload.projectObj.K2projectId)
+        obj.projectADGroups = state.ADGroups.mapItemsByProjectId[action.payload.projectObj.K2projectId] // MOCK state.ADGroups.items[action.payload.projectObj.K2name]
 
         return {
             ...state,
@@ -219,7 +230,7 @@ export default function reducer(state = initialState, action = {}) {
 
         return {
             ...state,
-            activeProject: null,
+            activeProject: {},
         };
 
 //Set Search Text

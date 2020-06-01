@@ -44,6 +44,7 @@ function SearchInputContainer({k2Projects, allPersons, activateProject, setSearc
     }
 
     const handleSelectPerson = (_, personObj) => {
+      console.log("New Person: ", personObj)
       stopEnter = true
       // activateProject(projectObj)
       history.push(`/permissions/person/${personObj._id}`)

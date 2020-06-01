@@ -41,6 +41,11 @@ function ProjectManageAllContainer({
       
     }
 
+
+  const handleDeleteAllEditGroupsMbs = () => {
+    deleteAllEditGroupsMbs(projectObj)
+  }
+
     const handlePopulateFromBooking = () => {
       console.log("bookingUserResources: I was here ", bookingUserResources)
       const projectGroups = mapItemsByProjectId[projectObj.K2projectId]
@@ -73,11 +78,11 @@ function ProjectManageAllContainer({
                 projectObj={projectObj}
                 handleSyncWithBooking={handleSyncWithBooking}
                 syncState={syncState}
-                deleteAllEditGroupsMbs={deleteAllEditGroupsMbs}
                 stopEditingAllGroups={stopEditingAllGroups}
                 handlePopulateFromBooking={handlePopulateFromBooking}
                 handleSaveAll={handleSaveAll}
                 handleFillAll={handleFillAll}
+                handleDeleteAllEditGroupsMbs={handleDeleteAllEditGroupsMbs}
                 // handleCleanURL={handleCleanURL}
                 k2={true}/>)   
 }

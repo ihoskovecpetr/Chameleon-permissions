@@ -21,7 +21,7 @@ function ProjectContainer(props){
 
 
     useEffect(() => {
-      props.getAllCandidates(["3D", "2D","MP","GR"])
+      props.getAllCandidates(["3D", "2D","MP","GR","manager","lead2D","lead3D","hr-manager","supervisor","producer","tech-lead2D","tech-leadMP"])
       console.log("Proj Cont push loc: ", history.location.pathname)
       // history.push(`${123}/overview`)
     }, [])
@@ -58,7 +58,7 @@ function ProjectContainer(props){
     return( <ProjectView 
                 {...props}
                 project_id={activeProject.K2rid}
-                projectK2Id={activeProject.K2projectId}
+                K2projectId={activeProject.K2projectId}
                 project_name={activeProject.K2name} 
                 company_name={activeProject.K2client ? activeProject.K2client : "company_name"}
                 producer_name={activeProject.person && activeProject.person[0] && activeProject.person[0].id ? activeProject.person[0].id.name : "No producer"}
@@ -87,7 +87,8 @@ const StateToProps = () => {
             activeProjectId: state.project_state.activeProject._id,
             mapUsrResource: state.person_state.allPersons.mapUsrResource,
             mapItemsByProjectId: state.project_state.ADGroups.mapItemsByProjectId,
-            bookingUserResources: state.group_state.bookingEventsUsers.resources
+            bookingUserResources: state.group_state.bookingEventsUsers.resources,
+            projectManagers: state.group_manager_state.mapConfGroupsByProjectId
         }
   
   

@@ -28,7 +28,8 @@ const initialState = {
       currentlySavingGroups: [],
       bookingEventsUsers: {
         loading: null,
-        resources: []
+        resources: [],
+        resourcesMngs: []
       }
   };
 
@@ -99,13 +100,14 @@ export default function reducer(state = initialState, action = {}) {
 
     case FETCH_BOOKING_EVENTS_SUCCESS:
 
-        console.log("Payload: ", action.payload)
+        console.log("Payload, FETCH_BOOKING_EVENTS_SUCCESS: ", action.payload)
 
           return {
               ...state,
               bookingEventsUsers: {
                 loading: false,
-                resources: action.payload.resources
+                resources: action.payload.resources ? action.payload.resources : state.bookingEventsUsers.resources,
+                resourcesMngs: action.payload.resourcesMngs ? action.payload.resourcesMngs : state.bookingEventsUsers.resourcesMngs, 
               },
           };
   
@@ -165,13 +167,15 @@ export default function reducer(state = initialState, action = {}) {
             };
 
     case DELETE_EDIT_PROJECT_GROUPS_MEMBERS:
-
+        console.log("action.DELETE_EDIT_PROJECT_GROUPS_MEMBERS.projectObj: ", action.payload.projectObj)
         const editObj = action.payload.projectObj.projectADGroups.reduce((acumul, currentValue) => {
-          if(state.confirmedGroupMembers[currentValue]){
-            acumul[currentValue] = []
+          console.log("Current Value: ", currentValue)
+          if(state.confirmedGroupMembers[currentValue.name]){
+            acumul[currentValue.name] = []
           }
           return acumul
         }, {})
+        console.log("Acumulated: ", editObj)
 
             return {
                 ...state,
@@ -236,6 +240,24 @@ export function fetchADGroupsMembersSuccess(data){
   }); 
 } 
 
+// FETCH AD Groups Members
+export function fetchBookingProjectMngs(k2projectId) {
+
+  console.log("fetchBookingEvents???")
+   return dispatch => {
+    //  dispatch(fetchBookingEventsBegin())
+     return server.getBookingProjectMngs(k2projectId)
+       .then(json => {
+         console.log("FETCH_BOOKING_EVENTS_SUCCESS ", json)
+         dispatch(fetchBookingProjectMngsSuccess(json))
+         return json;
+       })
+       .catch(err =>
+         console.log("ERR: ", err)
+       );
+   };
+ }
+ 
 
 // FETCH AD Groups Members
 export function fetchBookingEvents(project_id) {
@@ -264,6 +286,13 @@ export function fetchBookingEventsSuccess(data){
   return ({
       type: FETCH_BOOKING_EVENTS_SUCCESS,
       payload: { resources: data }
+  }); 
+} 
+
+export function fetchBookingProjectMngsSuccess(data){
+  return ({
+      type: FETCH_BOOKING_EVENTS_SUCCESS,
+      payload: { resourcesMngs: data }
   }); 
 } 
 

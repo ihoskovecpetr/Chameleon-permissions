@@ -22,7 +22,7 @@ const STOP_SAVING_GROUP_MANAGERS = 'my-app/group/STOP_SAVING_GROUP_MANAGERS';
 const initialState = {
       confirmedGroupsManagers: {},
       confirmedGroupsManagersLoading: false,
-
+      mapConfGroupsByProjectId: {},
       editingGroupsManagers: {},
 
       currentlySavingGroups: [],
@@ -258,17 +258,6 @@ export function addEditGroupManagers(candidateObjArr, group_name){
 } 
 
 
-// // Clear ALL Edit group members
-// export function deleteAllEditGroupsMbs(projectObj){
-
-//   console.log("DELETE THIS Project MBS: ", projectObj)
-
-//   return ({
-//        type: DELETE_EDIT_PROJECT_GROUPS_MEMBERS,
-//        payload: { projectObj }
-//        });
-//  }  
-
 
 
 // Set Group to start being Edited
@@ -277,7 +266,7 @@ export function setEditingGroupManagers(group_name){
     type: SET_EDITING_GROUP_MANAGER,
     payload: {  
         groupName: group_name
-            }
+      }
     });
 } 
 

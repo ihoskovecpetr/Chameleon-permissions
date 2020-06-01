@@ -24,6 +24,7 @@ const roleNames = [
 
 function CandidateAutofillContainer({managerGroup,
                                   allCandidates, 
+                                  mapCandidByRoleSeparated,
                                   thisEdittingGroup, 
                                   autoFocus, 
                                   group_name,
@@ -167,17 +168,6 @@ function CandidateAutofillContainer({managerGroup,
         </FormGroup>
       </Grid>
     </Grid>
-    // <CandidateView loading={loading} 
-    //               error={error} 
-    //               members={members} 
-    //               addingState={addingState} 
-    //               filter={filter} 
-    //               handleChangeFilter={handleChangeFilter} 
-    //               handleAddMembers={handleAddMembers}
-    //               choosenCand={choosenCand}
-    //               setChoosenCand={setChoosenCand}
-    //               groupName={roleName} 
-    //               />
   );
 }
 
@@ -204,6 +194,7 @@ const StateToProps = () => {
       return {
         thisEdittingGroup: getEditGroup(state, ownProps),
         allCandidates: state.candidate_state.allCandidates.mapCandidByRole,
+        mapCandidByRoleSeparated: state.candidate_state.allCandidates.mapCandidByRoleSeparated,
       } 
   }
 }

@@ -21,7 +21,7 @@ export default function ProjectView({
       project_id, project_name, 
       company_name, producer_name, director_name, 
       loadingSpinner, projectGroups, 
-      bookingUserResources, mapUsrResource}) {
+      bookingUserResourcesMngs, mapUsrById}) {
   const classes = useStyles();
   const [openRes, setOpenRes] = useState(false)
   
@@ -49,11 +49,11 @@ export default function ProjectView({
         <Collapse in={openRes} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
 
-          {bookingUserResources && Object.keys(bookingUserResources).map(function(key, index) {
+          {bookingUserResourcesMngs && Object.keys(bookingUserResourcesMngs).map(function(key, index) {
             return <ListItem button key={key}>
                   <ListItemIcon>
                     <Chip 
-                        label={`${mapUsrResource && mapUsrResource[key] && mapUsrResource[key].ssoId}`}
+                        label={`${mapUsrById && mapUsrById[key] && mapUsrById[key].ssoId}`}
                         key={key}
                         className={classes.anyChip}
                         color="secondary"
@@ -62,7 +62,7 @@ export default function ProjectView({
                         />
                   </ListItemIcon>
                   <ListItemText primary="Starred" />
-                  <p>Resource : {key} <br/> Type: {bookingUserResources[key]} - {mapUsrResource && mapUsrResource[key] && mapUsrResource[key].ssoId}</p>
+                  <p>Resource : {key} <br/> Type: {bookingUserResourcesMngs[key]} - {mapUsrById && mapUsrById[key] && mapUsrById[key].ssoId}</p>
                 </ListItem>
             })}
           </List>

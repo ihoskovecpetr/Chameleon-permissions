@@ -15,7 +15,9 @@ const initialState = {
     allCandidates: {
       loading: false,
       error: null,
-      candidates: null
+      candidates: null,
+      mapCandidByRole: null,
+      mapCandidByRoleSeparated: null
     },
     loading: false,
     error: null,
@@ -39,14 +41,13 @@ export default function reducer(state = initialState, action = {}) {
 
     case FETCH_ALL_CANDIDATES_SUCCESS:
 
-    console.log("Reduces setting membres: ", action.payload.members, action.payload.mapCandidByRole)
-
       return {
         ...state,
         allCandidates: {
           loading: false,
           candidates: action.payload.members,
-          mapCandidByRole: action.payload.mapCandidByRole
+          mapCandidByRole: action.payload.mapCandidByRole,
+          mapCandidByRoleSeparated: action.payload.mapCandidByRoleSeparated
         }
       };
 
@@ -128,9 +129,24 @@ export function fetchAllCandidates(ArrRole) {
           return acumul
         }, {})
 
-        console.log("formatedMembers: ", mapCandidByRole, formatedMembers)
+        const mapCandidByRoleSeparated = formatedMembers.reduce((acumul, currentValue) => {
 
-        dispatch(fetchAllCandidatesSuccess(formatedMembers, mapCandidByRole));
+          currentValue.role.map((item, index) => {
+            currentValue.sorter = currentValue.role[0]
+            var justRole = item.split(':')[1]
+            if(acumul[justRole]){
+              acumul[justRole].push(currentValue)
+            }else{
+              acumul[justRole] = [currentValue]
+            }
+            }
+          )
+          return acumul
+        }, {})
+
+        console.log("mapCandidByRoleSeparated: ", mapCandidByRoleSeparated)
+
+        dispatch(fetchAllCandidatesSuccess(formatedMembers, mapCandidByRole, mapCandidByRoleSeparated));
 
       //   return json.managedObjects;
       })
@@ -144,9 +160,13 @@ export const fetchAllCandidatesBegin = () => ({
   type: FETCH_ALL_CANDIDATES_BEGIN
 });
 
-export const fetchAllCandidatesSuccess = (formatedMembers, mapCandidByRole) => ({
+export const fetchAllCandidatesSuccess = (formatedMembers, mapCandidByRole, mapCandidByRoleSeparated) => ({
 type: FETCH_ALL_CANDIDATES_SUCCESS,
-payload: { members: formatedMembers, mapCandidByRole: mapCandidByRole }
+payload: { 
+  members: formatedMembers, 
+  mapCandidByRole: mapCandidByRole,
+  mapCandidByRoleSeparated: mapCandidByRoleSeparated 
+}
 });
 
 export const fetchAllCandidatesFailure = error => ({

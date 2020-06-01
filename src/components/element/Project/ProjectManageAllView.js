@@ -24,6 +24,7 @@ export default function ProjectManageAllView({
   deleteAllEditGroupsMbs,
   stopEditingAllGroups,
   handlePopulateFromBooking,
+  handleDeleteAllEditGroupsMbs,
   handleSaveAll,
   handleFillAll,
     }) {
@@ -31,9 +32,6 @@ export default function ProjectManageAllView({
 
   console.log("ProjectManageAllView rendered: ", projectObj && projectObj.K2name)
 
-  const handleDeleteAllEditGroupsMbs = () => {
-    deleteAllEditGroupsMbs(projectObj)
-  }
 
 
   return (
@@ -46,7 +44,7 @@ export default function ProjectManageAllView({
               label="Sync with BOOKING"
             />
               <Button variant="contained" color="primary" onClick={handlePopulateFromBooking}> Populate from BOOKING </ Button>
-              <Button variant="contained" className={classes.buttonFillAll} onClick={handleFillAll}> Fill All </ Button>
+              <Button variant="contained" disabled className={classes.buttonFillAll} onClick={handleFillAll}> Fill All </ Button>
               <Button variant="contained" color="secondary" startIcon={<DeleteIcon />} onClick={handleDeleteAllEditGroupsMbs}> Remove All </ Button>
               <Button variant="contained" startIcon={<BlockIcon />}  className={classes.buttonCancelChanges} onClick={stopEditingAllGroups}>Cancel changes</ Button>
               <Button variant="contained" startIcon={<SaveIcon />} className={classes.buttonSave} onClick={handleSaveAll} > Save All </ Button>

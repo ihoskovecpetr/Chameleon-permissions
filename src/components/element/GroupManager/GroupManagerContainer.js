@@ -31,7 +31,7 @@ function GroupContainer({  group_name,
                   currentEditMemb, 
                   confirmedADMemb,
                   mapMngGroupByName,
-                  mapUsrResource,
+                  mapUsrById,
                   bookingUserResources,
                   deleteMngrEditGroupDisp,
                   addEditGroupMngsDisp,
@@ -91,10 +91,10 @@ function GroupContainer({  group_name,
       let candidatesObjArr = []
       bookingUserResources && Object.keys(bookingUserResources).map(function(key, index) {
         console.log("candidatesObjArr ", candidatesObjArr)
-        console.log("mapUsrResource[key]: ", mapUsrResource[key])
+        console.log("mapUsrById[key]: ", mapUsrById[key])
         if(group.roles.indexOf(bookingUserResources[key][0]) != -1){
           console.log("Tady je toto: ", group.roles, bookingUserResources[key][0])
-          candidatesObjArr.push(mapUsrResource[key])
+          candidatesObjArr.push(mapUsrById[key])
         }
         
       })
@@ -180,8 +180,8 @@ const StateToProps = () => {
         loadingMembers: state.group_state.confirmedGroupMembersLoading,
         allCandidates: state.candidate_state.allCandidates.candidates,
         mapMngGroupByName: state.project_state.ADManagerGroups.mapGroupsByName,
-        bookingUserResources: state.group_state.bookingEventsUsers.resources,
-        mapUsrResource: state.person_state.allPersons.mapUsrResource,
+        bookingUserResources: state.group_state.bookingEventsUsers.resourcesMngs,
+        mapUsrById: state.person_state.allPersons.mapUsrById,
 
       } 
   }

@@ -8,9 +8,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { makeStyles } from '@material-ui/core/styles';
-
 import FilterCheckView from "../sub_elements/FilterCheckView"
-
 
 export default function PopoverBody({ loading, error, members, filter, handleChangeFilter, handleAddMembers, choosenCand, setChoosenCand, dispatch}) {
   const classes = useStyles();

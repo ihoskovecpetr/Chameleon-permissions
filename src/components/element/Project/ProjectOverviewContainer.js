@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 import { createSelector } from 'reselect'
 
 import { setActiveProject, cleanActiveProject } from "../../modules/ProjectModule"
-import { fetchProjectGroupsMembers, fetchBookingEvents } from "../../modules/GroupModule"
+import { fetchProjectGroupsMembers, fetchBookingEvents, fetchBookingProjectMngs } from "../../modules/GroupModule"
 import ProjectOverviewView from "./ProjectOverviewView"
 import * as CandidateActions from "../../modules/CandidateModule"
 
@@ -20,14 +20,15 @@ function ProjectContainer(props){
 
 
     useEffect(() => {
-      props.getAllCandidates(["3D", "2D","MP","GR"])
+      props.getAllCandidates(["3D", "2D","MP","GR","manager","lead2D","lead3D","hr-manager","supervisor","producer","tech-lead2D","tech-leadMP"])
       console.log("Proj Cont push loc: ", history.location.pathname)
       // history.push(`${123}/overview`)
     }, [])
 
     useEffect(() => {
     console.log("Project CONTTT", props.activeProjectId)
-      props.getBookingEvents(props.activeProjectId)
+      // props.getBookingEvents(props.activeProjectId)
+      props.getBookingProjectMngs(props.activeProject.K2projectId)
   }, [props.activeProjectId])
 
     useEffect(() => {
@@ -68,11 +69,10 @@ const StateToProps = () => {
             // activeProject: getIsProjectActive(state, ownProps),
             activeProject: state.project_state.activeProject,
             activeProjectId: state.project_state.activeProject._id,
-            mapUsrResource: state.person_state.allPersons.mapUsrResource,
+            mapUsrById: state.person_state.allPersons.mapUsrById,
             mapGroupsByProjectId: state.project_state.ADManagerGroups.mapGroupsByProjectId,
-            bookingUserResources: state.group_state.bookingEventsUsers.resources
+            bookingUserResourcesMngs: state.group_state.bookingEventsUsers.resourcesMngs
         }
-  
   
   }
   }
@@ -82,6 +82,7 @@ const mapDispatchToProps = dispatch => {
         dispatch: (x) => dispatch(x),
         getProjectGroupsMembers: (k2ProjectId) => dispatch(fetchProjectGroupsMembers(k2ProjectId)),
         getBookingEvents: (project_id) => dispatch(fetchBookingEvents(project_id)),
+        getBookingProjectMngs: (project_id) => dispatch(fetchBookingProjectMngs(project_id)),
         getAllCandidates: (roles_arr) => dispatch(CandidateActions.fetchAllCandidates(roles_arr))
     }
   }

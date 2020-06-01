@@ -52,39 +52,39 @@ export default function reducer(state = initialState, action = {}) {
 
 
 // FETCH Candidates
-export function fetchCandidates(ArrRole) {
-  return dispatch => {
-    dispatch(fetchCandidatesBegin());
-    return server.getUsersByRole("3D")
-      .then(json => {
-          //FORMATING data to AD format
-          const formatedMembers = json.map(item => {
-              return ({
-                  ...item,
-                  displayName: item.name,
-                  sAMAccountName: item.ssoId
-              })
-          })
-        dispatch(fetchCandidatesSuccess(formatedMembers));
+// export function fetchCandidates(ArrRole) {
+//   return dispatch => {
+//     dispatch(fetchCandidatesBegin());
+//     return server.getUsersByRole("3D")
+//       .then(json => {
+//           //FORMATING data to AD format
+//           const formatedMembers = json.map(item => {
+//               return ({
+//                   ...item,
+//                   displayName: item.name,
+//                   sAMAccountName: item.ssoId
+//               })
+//           })
+//         dispatch(fetchCandidatesSuccess(formatedMembers));
 
-      //   return json.managedObjects;
-      })
-      .catch(error =>
-        dispatch(fetchCandidatesFailure(error))
-      );
-  };
-}
+//       //   return json.managedObjects;
+//       })
+//       .catch(error =>
+//         dispatch(fetchCandidatesFailure(error))
+//       );
+//   };
+// }
 
-export const fetchCandidatesBegin = () => ({
-  type: FETCH_CANDIDATES_BEGIN
-});
+// export const fetchCandidatesBegin = () => ({
+//   type: FETCH_CANDIDATES_BEGIN
+// });
 
-export const fetchCandidatesSuccess = data => ({
-type: FETCH_CANDIDATES_SUCCESS,
-payload: { members: data }
-});
+// export const fetchCandidatesSuccess = data => ({
+// type: FETCH_CANDIDATES_SUCCESS,
+// payload: { members: data }
+// });
 
-export const fetchCandidatesFailure = error => ({
-type: FETCH_CANDIDATES_FAILURE,
-payload: { error }
-});
+// export const fetchCandidatesFailure = error => ({
+// type: FETCH_CANDIDATES_FAILURE,
+// payload: { error }
+// });

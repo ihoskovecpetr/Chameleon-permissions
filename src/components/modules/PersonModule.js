@@ -31,6 +31,7 @@ export default function reducer(state = initialState, action = {}) {
         return {
           ...state, 
           allPersons: {
+            ...state.allPersons,
             loading: true,
             error: null,
             persons: []
@@ -43,13 +44,15 @@ export default function reducer(state = initialState, action = {}) {
             loading: false,
             error: null,
             persons: action.payload.presonArr,
-            mapUsrResource: action.payload.mapUsrResource
+            mapUsrResource: action.payload.mapUsrResource,
+            mapUsrById: action.payload.mapUsrById
           },
         };
     case FETCH_ALL_USERS_FAILURE:
         return {
           ...state,
           allPersons: {
+            ...state.allPersons,
             loading: false,
             error: action.payload.error,
             persons: []
@@ -112,7 +115,6 @@ export const fetchAllPersonBegin = () => ({
 export const fetchAllPersonSuccess = data => {
 
   const mapUsrResource = data.reduce((acum, current) => {
-
     //Just to bring correct format of AD members
     current.displayName = current.name
     current.sAMAccountName = current.ssoId
@@ -120,11 +122,20 @@ export const fetchAllPersonSuccess = data => {
     return acum
   }, {})
 
+  const mapUsrById = data.reduce((acum, current) => {
+    //Just to bring correct format of AD members
+    current.displayName = current.name
+    current.sAMAccountName = current.ssoId
+    acum[current._id] = current
+    return acum
+  }, {})
+
     return ({
       type: FETCH_ALL_USERS_SUCCESS,
       payload: { 
         presonArr: data, 
-        mapUsrResource: mapUsrResource
+        mapUsrResource: mapUsrResource,
+        mapUsrById: mapUsrById
       }
     })
 };

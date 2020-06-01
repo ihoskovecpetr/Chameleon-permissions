@@ -11,6 +11,8 @@ import Collapse from '@material-ui/core/Collapse';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import FaceIcon from '@material-ui/icons/Face';
+import PermContactCalendarIcon from '@material-ui/icons/PermContactCalendar';
+import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -25,11 +27,12 @@ export default function ProjectView({
       project_id, project_name, 
       company_name, producer_name, director_name, 
       loadingSpinner, projectGroups, 
+      projectManagers, activeProject,
       bookingUserResources, mapUsrResource}) {
   const classes = useStyles();
   const [openRes, setOpenRes] = useState(false)
 
-  console.log("ProjectView rendered projectGroups: ", projectGroups)
+  console.log("ProjectView rendered projectManagers: ", projectManagers)
 
 
   return (
@@ -45,7 +48,14 @@ export default function ProjectView({
         <ProjectManageAllContainer projectGroups={projectGroups} />
 
         <Grid container direction="row">
-
+      <Typography >Managers of this group</Typography>
+      <Grid container spacing={2} className={classes.containerMngr} >
+        {activeProject && projectManagers && projectManagers[activeProject.K2projectId] 
+        && projectManagers[activeProject.K2projectId].map(manager => <Grid item className={classes.itemMngr}>
+          <PermContactCalendarIcon />
+          {manager.displayName} 
+        </Grid>)}
+      </Grid>
       <List>
         <ListItem button onClick={() => setOpenRes(!openRes)}>
           <ListItemText primary="Show Booking Resources" />
@@ -82,7 +92,7 @@ export default function ProjectView({
          return <GroupContainer group_name={item.name} groupObj={item} project_name={project_name} key={index} autoFocus={index === 0} />
         }
         )}
-        {!projectGroups && <p>No AD data</p> }
+        {!projectGroups && <p>No AD data, open project: SAZKA_S10_2020 or ECS_OPENING</p> }
         </Grid>
     </div>
   );
@@ -91,6 +101,12 @@ export default function ProjectView({
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
+  },
+  containerMngr: {
+    padding: 10
+  },
+  itemMngr: {
+
   },
   gridGroups: {
     backgroundColor: "white",

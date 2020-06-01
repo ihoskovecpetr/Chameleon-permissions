@@ -56,6 +56,18 @@ export async function getBookingEvents(_id) {
     return a
 }
 
+//**********************************************************************************************************************
+// BOOKING EVENTS
+//**********************************************************************************************************************
+
+export async function getBookingProjectMngs(k2projectId) {
+
+    const a = await fetchServer('GET', `/booking_projects/${k2projectId}`);
+    console.log("Pre getBookingProjectsMngs : ", a)
+    return a
+}
+
+
 
 
 //**********************************************************************************************************************
